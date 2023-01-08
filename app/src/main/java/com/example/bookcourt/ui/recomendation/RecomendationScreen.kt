@@ -1,6 +1,5 @@
 package com.example.bookcourt.ui
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -21,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
@@ -30,6 +30,7 @@ import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Size
+import com.example.bookcourt.R
 import com.example.bookcourt.ui.recomendation.RecomendationViewModel
 import com.example.bookcourt.utils.CardStack
 import com.example.bookcourt.utils.rememberCardStackController
@@ -53,7 +54,7 @@ fun RecomendationContent(viewModel: RecomendationViewModel = hiltViewModel()) {
             mutableStateOf(false)
         }
         Text(
-            text = "Рекомендации",
+            text = stringResource(R.string.recomendations),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(0.dp, 0.dp, 0.dp, 5.dp),
@@ -132,12 +133,11 @@ fun BookCardImage(uri: String) {
 
         if (painter.state is AsyncImagePainter.State.Loading) {
             CircularProgressIndicator()
-            Log.d("Image", "Loading...")
         }
 
         Image(
             painter = painter,
-            contentDescription = "Book Image",
+            contentDescription = stringResource(R.string.book_image),
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
         )

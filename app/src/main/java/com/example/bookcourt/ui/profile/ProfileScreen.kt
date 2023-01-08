@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 
@@ -81,7 +82,7 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel()) {
                 enter = fadeIn(),
                 exit = fadeOut()
             ) {
-                StatisticsCard(viewModel,user.value!!,context)
+                StatisticsCard(user.value!!,context)
             }
 
             Column(
@@ -90,7 +91,7 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel()) {
                     .zIndex(1f)
             ) {
                 if (user.value != null) {
-                    HeaderProfile(user.value!!, viewModel)
+                    HeaderProfile(user.value!!)
                     Box(
                         modifier = Modifier
                             .padding(10.dp)
@@ -115,7 +116,7 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel()) {
 }
 
 @Composable
-fun HeaderProfile(user: User, viewModel: ProfileViewModel) {
+fun HeaderProfile(user: User) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -142,7 +143,7 @@ fun ProfileScreenPreview() {
 fun UserPhotoComponent(uri: String) {
     AsyncImage(
         model = uri,
-        contentDescription = "Book Cover",
+        contentDescription = stringResource(R.string.user_photo),
         contentScale = ContentScale.Crop,
         modifier = Modifier
             .size(60.dp)
@@ -151,7 +152,7 @@ fun UserPhotoComponent(uri: String) {
 }
 
 @Composable
-fun StatisticsCard(viewModel:ProfileViewModel,user: User,context:Context) {
+fun StatisticsCard(user: User,context:Context) {
     Box(
         modifier = Modifier
             .padding(30.dp)
@@ -163,7 +164,7 @@ fun StatisticsCard(viewModel:ProfileViewModel,user: User,context:Context) {
             modifier = Modifier.padding(20.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "Ваша Статистика",
+            Text(text = stringResource(R.string.your_statistics),
                 modifier = Modifier.padding(10.dp),
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
@@ -174,12 +175,12 @@ fun StatisticsCard(viewModel:ProfileViewModel,user: User,context:Context) {
                 val sendIntent: Intent = Intent().apply {
                     action = Intent.ACTION_SEND
                     putExtra(
-                        Intent.EXTRA_TEXT, "Моя статистика в приложении BookСourt:" + "\n"
+                        Intent.EXTRA_TEXT,  context.getString(R.string.user_statistics_in_the_app)+ "\n"
 
-                                + "Количество прочитанных мною книг: ${user.statistics.numberOfReadBooks}"
+                                + context.getString(R.string.number_of_books_read_by_the_user) +"${user.statistics.numberOfReadBooks}"
                                 + "\n"
-                                + "Количество книг которые мне понравились:${user.statistics.numberOfLikedBooks}"
-                                + "\n" + "Мои любимые жанры: ${user.statistics.favoriteGenreList[0]} , " +
+                                + context.getString(R.string.books_user_liked) +"${user.statistics.numberOfLikedBooks}"
+                                + "\n" + context.getString(R.string.users_favorite_genres) +" ${user.statistics.favoriteGenreList[0]} , " +
                                 "${user.statistics.favoriteGenreList[1]} , " +
                                 "${user.statistics.favoriteGenreList[2]} "
                     )
@@ -188,7 +189,7 @@ fun StatisticsCard(viewModel:ProfileViewModel,user: User,context:Context) {
                 val shareIntent = Intent.createChooser(sendIntent, null)
                 context.startActivity(shareIntent)
             }) {
-                Text(text = "Поделиться")
+                Text(text = stringResource(R.string.share))
             }
         }
 
@@ -198,9 +199,9 @@ fun StatisticsCard(viewModel:ProfileViewModel,user: User,context:Context) {
 @Composable
 fun StatisticsComponent(statistics: Statistics) {
     Column(modifier = Modifier.padding(10.dp)) {
-        Text(text = "Количество прочитанных книг: ${statistics.numberOfReadBooks}")
-        Text(text = "Количество книг которые вам понравились:${statistics.numberOfLikedBooks}")
-        Text(text = "Топ 3 любимых жанра:")
+        Text(text = stringResource(R.string.numberOfReadBooks) +" ${statistics.numberOfReadBooks}")
+        Text(text = stringResource(R.string.numberOfLikedBooks) +"${statistics.numberOfLikedBooks}")
+        Text(text = stringResource(R.string.top_favorite_genres))
         statistics.favoriteGenreList.forEachIndexed { index, it ->
             Text(text = "${index + 1}. ${it}")
         }
@@ -221,7 +222,7 @@ fun FeedBackCard(viewModel: ProfileViewModel){
     ) {
         Column(modifier = Modifier.padding(20.dp), horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
-                text = "Обратная связь",
+                text = stringResource(R.string.feedback),
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.h5
@@ -233,7 +234,7 @@ fun FeedBackCard(viewModel: ProfileViewModel){
                 viewModel.feedbackDataChanged(string)
             },
                 placeholder = {
-                    Text(text = "Введите номер телефона или электронную почту")
+                    Text(text = stringResource(R.string.placeholder_feedbackData))
                 })
             Spacer(modifier = Modifier
                 .height(10.dp)
@@ -243,7 +244,7 @@ fun FeedBackCard(viewModel: ProfileViewModel){
                 viewModel.feedbackMessageChanged(it)
             },
                 placeholder = {
-                    Text(text = "Введите свое сообщение")
+                    Text(text = stringResource(R.string.placeholder_feedbackMessage))
                 })
             Spacer(modifier = Modifier
                 .height(10.dp)
@@ -252,7 +253,7 @@ fun FeedBackCard(viewModel: ProfileViewModel){
             Button(onClick = {
                 viewModel.feedbackStateChanged()
             }) {
-                Text(text = "Отправить")
+                Text(text = stringResource(R.string.send_btn))
             }
         }
 
@@ -264,11 +265,11 @@ fun ProfileMenu(viewModel: ProfileViewModel){
     Column(modifier = Modifier
         .fillMaxHeight(0.5f)
         .fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally, ) {
-        ProfileMenuItem("Настройки"){}
-        ProfileMenuItem(text = "Статистика") {
+        ProfileMenuItem(stringResource(R.string.settings)){}
+        ProfileMenuItem(text = stringResource(R.string.statistics)) {
             viewModel.statisticsStateChanged()
         }
-        ProfileMenuItem(text = "Обратная связь") {
+        ProfileMenuItem(text = stringResource(R.string.feedback)) {
             viewModel.feedbackStateChanged()
         }
     }

@@ -1,3 +1,21 @@
 <resources>
     <string name="app_name">BookCourt</string>
+    <string name="placeholder_feedbackData">Введите номер телефона или электронную почту</string>
+    <string name="placeholder_feedbackMessage">Введите свое сообщение</string>
+    <string name="send_btn">Отправить</string>
+    <string name="feedback">Обратная связь</string>
+    <string name="share">Поделиться</string>
+    <string name="your_statistics">Ваша Статистика</string>
+    <string name="user_photo">User photo</string>
+    <string name="settings">Настройки</string>
+    <string name="statistics">Статистика</string>
+    <string name="recomendations">Рекомендации</string>
+    <string name="book_image">Book Image</string>
+    <string name="user_statistics_in_the_app">Моя статистика в приложении BookСourt:</string>
+    <string name="number_of_books_read_by_the_user">\"Количество прочитанных мною книг: \"</string>
+    <string name="books_user_liked">\"Количество книг которые мне понравились: \"</string>
+    <string name="users_favorite_genres">Мои любимые жанры:</string>
+    <string name="numberOfReadBooks">Количество прочитанных книг:</string>
+    <string name="numberOfLikedBooks">Количество книг которые вам понравились:</string>
+    <string name="top_favorite_genres">Топ 3 любимых жанра:</string>
 </resources>
