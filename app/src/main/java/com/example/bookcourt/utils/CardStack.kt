@@ -19,20 +19,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import coil.compose.AsyncImage
-import com.example.bookcourt.BookCardImage
 import com.example.bookcourt.models.Book
+import com.example.bookcourt.ui.BookCardImage
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun CardStack(
     modifier: Modifier = Modifier,
-    items: MutableList<Book>,
-    thresholdConfig: (Float, Float) -> ThresholdConfig = { _, _ -> FractionalThreshold(0.2f)},
+    items: List<Book>,
+    thresholdConfig: (Float, Float) -> ThresholdConfig = { _, _ -> FractionalThreshold(0.2f) },
     velocityThreshold: Dp = 125.dp,
     onSwipeLeft: (item: Book) -> Unit = {},
     onSwipeRight: (item: Book) -> Unit = {},
-    onEmptyStack: (lastItem: Book) -> Unit = {}
+    onEmptyStack: (lastItem: Book) -> Unit = {},
+    cardStackController: CardStackController
 ) {
     var i by remember {
         mutableStateOf(items.size - 1)
@@ -42,7 +43,6 @@ fun CardStack(
         onEmptyStack(items.last())
     }
 
-    val cardStackController = rememberCardStackController()
 
     cardStackController.onSwipeLeft = {
         onSwipeLeft(items[i])
@@ -56,7 +56,8 @@ fun CardStack(
 
     ConstraintLayout(
         modifier = modifier
-            .fillMaxSize()
+            .fillMaxWidth()
+            .fillMaxHeight(0.75f)
             .padding(0.dp)
     ) {
         val stack = createRef()
@@ -75,95 +76,37 @@ fun CardStack(
         ) {
             items.asReversed().forEachIndexed { index, item ->
                 BookCard(
-                    modifier = Modifier.moveTo(
-                        x = if (index == i) cardStackController.offsetX.value else 0f,
-                        y = if (index == i) cardStackController.offsetY.value else 0f
-                    )
-                        .visible(visible = index == i || index == i -1)
-                        .graphicsLayer(
-                            rotationZ = if (index == i) cardStackController.rotation.value else 0f,
-                            scaleX = if (index < i) cardStackController.scale.value else 1f,
-                            scaleY = if (index < i) cardStackController.scale.value else 1f
-                        ),
+                    modifier = Modifier
+                        .moveTo(
+                            x = if (index == i) cardStackController.offsetX.value else 0f,
+                            y = if (index == i) cardStackController.offsetY.value else 0f
+                        )
+                        .visible(visible = index == i || index == i - 1),
                     item,
-                    cardStackController
                 )
             }
+
         }
     }
-}
 
-//@Composable
-//fun Card(
-//    modifier: Modifier = Modifier,
-//    item: Book,
-//    cardStackController: CardStackController
-//) {
-//    Box(modifier = modifier) {
-//        if (item.url != null) {
-//            AsyncImage(
-//                model = item.url,
-//                contentDescription = "",
-//                contentScale = ContentScale.Crop,
-//                modifier = modifier.fillMaxSize()
-//            )
-//        }
-//
-//        Column(
-//            modifier = modifier
-//                .align(Alignment.BottomStart)
-//                .padding(10.dp)
-//        ) {
-//            Text(text = item.text, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 25.sp)
-//
-//            Text(text = item.subText, color = Color.White, fontSize = 20.sp)
-//
-//            Row {
-//                IconButton(
-//                    modifier = modifier.padding(50.dp, 0.dp, 0.dp, 0.dp),
-//                    onClick = { cardStackController.swipeLeft() },
-//                ) {
-//                    Icon(
-//                        Icons.Default.Close, contentDescription = "", tint = Color.White, modifier =
-//                        modifier
-//                            .height(50.dp)
-//                            .width(50.dp)
-//                    )
-//                }
-//
-//                Spacer(modifier = Modifier.weight(1f))
-//
-//                IconButton(
-//                    modifier = modifier.padding(0.dp, 0.dp, 50.dp, 0.dp),
-//                    onClick = { cardStackController.swipeRight() }
-//                ) {
-//                    Icon(
-//                        Icons.Default.FavoriteBorder, contentDescription = "", tint = Color.White, modifier =
-//                        modifier.height(50.dp).width(50.dp)
-//                    )
-//                }
-//            }
-//        }
-//    }
-//}
+
+}
 
 
 @Composable
 fun BookCard(
     modifier: Modifier = Modifier,
     item: Book,
-    cardStackController: CardStackController
 ) {
     Card(
-        elevation = 10.dp,
+        elevation = 5.dp,
         shape = RoundedCornerShape(20.dp),
         modifier = modifier
-            .fillMaxWidth()
-            .fillMaxHeight(0.8f)
+            .fillMaxSize()
     ) {
-        Box(){
+        Box() {
             Column(
-                modifier = modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize()
             ) {
                 BookCardImage(uri = item.image)
                 Text(text = item.name, fontWeight = FontWeight.Bold)
@@ -174,34 +117,11 @@ fun BookCard(
                 }
                 Text(text = item.description)
             }
-            Row {
-                IconButton(
-                    modifier = modifier.padding(50.dp, 0.dp, 0.dp, 0.dp),
-                    onClick = { cardStackController.swipeLeft() },
-                ) {
-                    Icon(
-                        Icons.Default.Close, contentDescription = "", tint = Color.White, modifier =
-                        modifier
-                            .height(50.dp)
-                            .width(50.dp)
-                    )
-                }
-
-                Spacer(modifier = Modifier.weight(1f))
-
-                IconButton(
-                    modifier = modifier.padding(0.dp, 0.dp, 50.dp, 0.dp),
-                    onClick = { cardStackController.swipeRight() }
-                ) {
-                    Icon(
-                        Icons.Default.FavoriteBorder, contentDescription = "", tint = Color.White, modifier =
-                        modifier.height(50.dp).width(50.dp)
-                    )
-                }
-            }
 
         }
     }
+
+
 }
 
 fun Modifier.moveTo(
@@ -217,7 +137,7 @@ fun Modifier.moveTo(
 
 fun Modifier.visible(
     visible: Boolean = true
-) = this.then(Modifier.layout{ measurable, constraints ->
+) = this.then(Modifier.layout { measurable, constraints ->
     val placeable = measurable.measure(constraints)
 
     if (visible) {
