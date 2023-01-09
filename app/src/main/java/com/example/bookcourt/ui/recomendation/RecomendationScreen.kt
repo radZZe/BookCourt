@@ -16,10 +16,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -73,7 +76,7 @@ fun RecomendationContent(viewModel: RecomendationViewModel = hiltViewModel()) {
                     onClick = { /*TODO*/ },
                     img = Icons.Default.Refresh,
                     contentDescription = "",
-                    tint = Color.Red,
+                    tint = Color.White,
                     45.dp,
                     45.dp
                 )
@@ -82,7 +85,7 @@ fun RecomendationContent(viewModel: RecomendationViewModel = hiltViewModel()) {
                     onClick = { cardStackController.swipeLeft() },
                     img = Icons.Default.Close,
                     contentDescription = "",
-                    tint = Color.Red,
+                    tint = Color.White,
                     60.dp,
                     60.dp
                 )
@@ -91,16 +94,16 @@ fun RecomendationContent(viewModel: RecomendationViewModel = hiltViewModel()) {
                     onClick = { cardStackController.swipeRight() },
                     img = Icons.Default.FavoriteBorder,
                     contentDescription = "",
-                    tint = Color.Green,
+                    tint = Color.White,
                     60.dp,
                     60.dp
                 )
                 IconButtonWrapper(
                     modifier = Modifier,
                     onClick = { /*TODO*/ },
-                    img = Icons.Default.Close,
+                    img = null,
                     contentDescription = "",
-                    tint = Color.White,
+                    tint = colorResource(id = R.color.main_color),
                     45.dp,
                     45.dp
                 )
@@ -149,7 +152,7 @@ fun BookCardImage(uri: String) {
 fun IconButtonWrapper(
     modifier: Modifier,
     onClick: () -> Unit,
-    img: ImageVector,
+    img: ImageVector?,
     contentDescription: String,
     tint: Color,
     height: Dp,
@@ -157,24 +160,36 @@ fun IconButtonWrapper(
 ) {
     Box(
         modifier = modifier
-            .background(Color.White)
-            .border(width = 3.dp, shape = CircleShape, color = Color.Gray)
-            .width(width)
-            .height(height),
-        contentAlignment = Alignment.Center
-    ) {
-        IconButton(
-            modifier = Modifier,
-            onClick = {
-                onClick()
-            }
-        ) {
-            Icon(
-                img, contentDescription = contentDescription, tint = tint, modifier =
-                Modifier
-                    .padding(5.dp)
-                    .fillMaxSize()
+            .clip(CircleShape)
+            .background(
+                brush = Brush
+                    .horizontalGradient(
+                        colors = listOf(
+                            colorResource(id = R.color.main_color),
+                            colorResource(id = R.color.second_color)
+                        )
+                    )
             )
-        }
-    }
+
+                    .width(width)
+                    .height(height),
+                contentAlignment = Alignment.Center
+            ) {
+                IconButton(
+                    modifier = Modifier,
+                    onClick = {
+                        onClick()
+                    }
+                ) {
+                    if(img!=null){
+                        Icon(
+                            img, contentDescription = contentDescription, tint = tint, modifier =
+                            Modifier
+                                .padding(5.dp)
+                                .fillMaxSize()
+                        )
+                    }
+
+                }
+            }
 }

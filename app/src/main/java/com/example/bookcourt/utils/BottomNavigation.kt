@@ -40,7 +40,7 @@ fun BottomNavigation(navController: NavController) {
                 .padding(start = 10.dp, top = 20.dp, end = 10.dp, bottom = 20.dp)
         ) {
             androidx.compose.material.BottomNavigation(
-                backgroundColor = colorResource(id = R.color.bottom_nav_bg),
+                backgroundColor = colorResource(id = R.color.main_color),
                 contentColor = Color.Black
             ) {
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -50,11 +50,11 @@ fun BottomNavigation(navController: NavController) {
                         icon = {
                             Icon(
                                 painterResource(id = item.icon),
-                                contentDescription = item.title
+                                contentDescription = item.title,
                             )
                         },
-                        selectedContentColor = Color.Black,
-                        unselectedContentColor = Color.Black.copy(0.4f),
+                        selectedContentColor = Color.White,
+                        unselectedContentColor = colorResource(id = R.color.unselected),
                         alwaysShowLabel = true,
                         selected = currentRoute == item.route,
                         onClick = {

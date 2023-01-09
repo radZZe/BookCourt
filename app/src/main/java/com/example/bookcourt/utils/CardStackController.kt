@@ -145,14 +145,9 @@ fun rememberCardStackController(
 fun Modifier.draggableStack(
     controller: CardStackController,
     thresholdConfig: (Float, Float) -> ThresholdConfig,
-    velocityThreshold: Dp = 125.dp
 ): Modifier = composed {
-    val scope = rememberCoroutineScope()
     val density = LocalDensity.current
 
-    val velocityThresholdPx = with(density) {
-        velocityThreshold.toPx()
-    }
 
     val thresholds = { a: Float, b: Float ->
         with(thresholdConfig(a, b)) {

@@ -17,9 +17,12 @@ import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -27,6 +30,7 @@ import androidx.compose.ui.text.style.TextAlign
 
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
@@ -48,7 +52,7 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel()) {
 
 
     Scaffold() {
-        Box{
+        Box {
             AnimatedVisibility(
                 visible = viewModel.alertDialogState.value,
                 modifier = Modifier.zIndex(2f),
@@ -59,7 +63,8 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel()) {
                     modifier = Modifier
                         .fillMaxSize()
                         .alpha(0.35f)
-                        .background(Color.Black).clickable {
+                        .background(Color.Black)
+                        .clickable {
                             viewModel.dismiss()
                         }
                 )
@@ -82,7 +87,7 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel()) {
                 enter = fadeIn(),
                 exit = fadeOut()
             ) {
-                StatisticsCard(user.value!!,context)
+                StatisticsCard(user.value!!, context)
             }
 
             Column(
@@ -117,18 +122,30 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel()) {
 
 @Composable
 fun HeaderProfile(user: User) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 20.dp, bottom = 20.dp, start = 20.dp)
-    ) {
-        UserPhotoComponent(user.image)
-        Column(modifier = Modifier.padding(start = 20.dp, end = 20.dp)) {
-            Text(text = "${user.name} ${user.surname}")
-            Text(text = user.email)
-        }
 
+    Box(modifier = Modifier
+        .fillMaxWidth()
+        .padding(10.dp), contentAlignment = Center) {
+        Surface(
+            shape = RoundedCornerShape(15.dp),
+            modifier = Modifier
+                .fillMaxWidth(1f)
+        ) {
+            Row(
+                modifier = Modifier
+                    .background(colorResource(id = R.color.main_color))
+                    .padding(10.dp)
+            ) {
+                UserPhotoComponent(user.image)
+                Column(modifier = Modifier.padding(start = 20.dp, end = 20.dp)) {
+                    Text(text = "${user.name} ${user.surname}", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                    Text(text = user.email, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                }
+
+            }
+        }
     }
+
 
 }
 
@@ -152,7 +169,7 @@ fun UserPhotoComponent(uri: String) {
 }
 
 @Composable
-fun StatisticsCard(user: User,context:Context) {
+fun StatisticsCard(user: User, context: Context) {
     Box(
         modifier = Modifier
             .padding(30.dp)
@@ -164,23 +181,26 @@ fun StatisticsCard(user: User,context:Context) {
             modifier = Modifier.padding(20.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = stringResource(R.string.your_statistics),
+            Text(
+                text = stringResource(R.string.your_statistics),
                 modifier = Modifier.padding(10.dp),
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
-                style = MaterialTheme.typography.h5)
+                style = MaterialTheme.typography.h5
+            )
             StatisticsComponent(user.statistics)
 
             Button(onClick = {
                 val sendIntent: Intent = Intent().apply {
                     action = Intent.ACTION_SEND
                     putExtra(
-                        Intent.EXTRA_TEXT,  context.getString(R.string.user_statistics_in_the_app)+ "\n"
+                        Intent.EXTRA_TEXT,
+                        context.getString(R.string.user_statistics_in_the_app) + "\n"
 
-                                + context.getString(R.string.number_of_books_read_by_the_user) +"${user.statistics.numberOfReadBooks}"
+                                + context.getString(R.string.number_of_books_read_by_the_user) + "${user.statistics.numberOfReadBooks}"
                                 + "\n"
-                                + context.getString(R.string.books_user_liked) +"${user.statistics.numberOfLikedBooks}"
-                                + "\n" + context.getString(R.string.users_favorite_genres) +" ${user.statistics.favoriteGenreList[0]} , " +
+                                + context.getString(R.string.books_user_liked) + "${user.statistics.numberOfLikedBooks}"
+                                + "\n" + context.getString(R.string.users_favorite_genres) + " ${user.statistics.favoriteGenreList[0]} , " +
                                 "${user.statistics.favoriteGenreList[1]} , " +
                                 "${user.statistics.favoriteGenreList[2]} "
                     )
@@ -199,8 +219,8 @@ fun StatisticsCard(user: User,context:Context) {
 @Composable
 fun StatisticsComponent(statistics: Statistics) {
     Column(modifier = Modifier.padding(10.dp)) {
-        Text(text = stringResource(R.string.numberOfReadBooks) +" ${statistics.numberOfReadBooks}")
-        Text(text = stringResource(R.string.numberOfLikedBooks) +"${statistics.numberOfLikedBooks}")
+        Text(text = stringResource(R.string.numberOfReadBooks) + " ${statistics.numberOfReadBooks}")
+        Text(text = stringResource(R.string.numberOfLikedBooks) + "${statistics.numberOfLikedBooks}")
         Text(text = stringResource(R.string.top_favorite_genres))
         statistics.favoriteGenreList.forEachIndexed { index, it ->
             Text(text = "${index + 1}. ${it}")
@@ -209,46 +229,57 @@ fun StatisticsComponent(statistics: Statistics) {
 }
 
 
-
 @Composable
-fun FeedBackCard(viewModel: ProfileViewModel){
+fun FeedBackCard(viewModel: ProfileViewModel) {
     Box(
         modifier = Modifier
             .padding(30.dp)
             .clip(RoundedCornerShape(15.dp))
-            .background(Color.White)
-            ,
+            .background(Color.White),
         contentAlignment = Center
     ) {
-        Column(modifier = Modifier.padding(20.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            modifier = Modifier.padding(20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Text(
                 text = stringResource(R.string.feedback),
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.h5
             )
-            Spacer(modifier = Modifier
-                .fillMaxWidth()
-                .height(20.dp))
-            TextField(modifier = Modifier.fillMaxWidth(),value = viewModel.feedbackData.value, onValueChange = { string ->
-                viewModel.feedbackDataChanged(string)
-            },
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(20.dp)
+            )
+            TextField(modifier = Modifier.fillMaxWidth(),
+                value = viewModel.feedbackData.value,
+                onValueChange = { string ->
+                    viewModel.feedbackDataChanged(string)
+                },
                 placeholder = {
                     Text(text = stringResource(R.string.placeholder_feedbackData))
                 })
-            Spacer(modifier = Modifier
-                .height(10.dp)
-                .fillMaxWidth())
+            Spacer(
+                modifier = Modifier
+                    .height(10.dp)
+                    .fillMaxWidth()
+            )
 
-            TextField(modifier = Modifier.fillMaxWidth(),value = viewModel.feedbackMessage.value, onValueChange = {
-                viewModel.feedbackMessageChanged(it)
-            },
+            TextField(modifier = Modifier.fillMaxWidth(),
+                value = viewModel.feedbackMessage.value,
+                onValueChange = {
+                    viewModel.feedbackMessageChanged(it)
+                },
                 placeholder = {
                     Text(text = stringResource(R.string.placeholder_feedbackMessage))
                 })
-            Spacer(modifier = Modifier
-                .height(10.dp)
-                .fillMaxWidth())
+            Spacer(
+                modifier = Modifier
+                    .height(10.dp)
+                    .fillMaxWidth()
+            )
 
             Button(onClick = {
                 viewModel.feedbackStateChanged()
@@ -261,11 +292,14 @@ fun FeedBackCard(viewModel: ProfileViewModel){
 }
 
 @Composable
-fun ProfileMenu(viewModel: ProfileViewModel){
-    Column(modifier = Modifier
-        .fillMaxHeight(0.5f)
-        .fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally, ) {
-        ProfileMenuItem(stringResource(R.string.settings)){}
+fun ProfileMenu(viewModel: ProfileViewModel) {
+    Column(
+        modifier = Modifier
+            .fillMaxHeight(0.5f)
+            .fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        ProfileMenuItem(stringResource(R.string.settings)) {}
         ProfileMenuItem(text = stringResource(R.string.statistics)) {
             viewModel.statisticsStateChanged()
         }
@@ -274,25 +308,27 @@ fun ProfileMenu(viewModel: ProfileViewModel){
         }
     }
 }
+
 @Composable
-fun ProfileMenuItem(text:String,onClick:()->Unit){
-    Box(modifier = Modifier
-        .fillMaxWidth()
-        .padding(10.dp)
-        .clip(RoundedCornerShape(15.dp))
-        .background(
-            Color.White
-        )
-        .border(1.dp, Color.Black, RoundedCornerShape(15.dp)),
-    contentAlignment = Center){
-        Text(text = text,
-            textAlign = TextAlign.Center,
-            fontWeight = FontWeight.Bold,
-            style = MaterialTheme.typography.h5, modifier = Modifier
-                .clickable {
-                    onClick()
-                }
-                .padding(10.dp))
+fun ProfileMenuItem(text: String, onClick: () -> Unit) {
+    Button(
+        shape = RoundedCornerShape(15.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(10.dp),
+        onClick = {onClick()},
+        colors =  ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.main_color))
+    ) {
+        Row(modifier = Modifier.background(colorResource(id = R.color.main_color)), horizontalArrangement = Arrangement.Center ){
+            Text(text = text,
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.h5, modifier = Modifier
+                    .padding(10.dp),
+            color = Color.White
+            )
+        }
+
     }
 }
 

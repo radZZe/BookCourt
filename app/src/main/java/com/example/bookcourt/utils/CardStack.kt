@@ -13,12 +13,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layout
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import coil.compose.AsyncImage
+import com.example.bookcourt.R
 import com.example.bookcourt.models.Book
 import com.example.bookcourt.ui.BookCardImage
 import kotlin.math.roundToInt
@@ -70,7 +73,6 @@ fun CardStack(
                 .draggableStack(
                     controller = cardStackController,
                     thresholdConfig = thresholdConfig,
-                    velocityThreshold = velocityThreshold
                 )
                 .fillMaxHeight()
         ) {
@@ -109,13 +111,31 @@ fun BookCard(
                 modifier = Modifier.fillMaxSize()
             ) {
                 BookCardImage(uri = item.image)
-                Text(text = item.name, fontWeight = FontWeight.Bold)
-                Row() {
-                    Text(text = item.author, color = Color.Black)
-                    Text(text = item.createdAt)
-                    Text(text = item.numberOfPage)
+                Column(modifier = Modifier.padding(10.dp)) {
+                    Text(text = item.name, fontWeight = FontWeight.Bold, fontSize = 20.sp)
+                    Row(
+                        modifier = Modifier.fillMaxWidth(0.7f),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            text = item.author,
+                            color = colorResource(id = R.color.bottom_nav_bg),
+                            fontSize = 16.sp
+                        )
+                        Text(
+                            text = item.createdAt,
+                            color = colorResource(id = R.color.bottom_nav_bg),
+                            fontSize = 16.sp
+                        )
+                        Text(
+                            text = "${item.numberOfPage} стр",
+                            color = colorResource(id = R.color.bottom_nav_bg),
+                            fontSize = 16.sp
+                        )
+                    }
+                    Text(text = item.description, maxLines = 3, overflow = TextOverflow.Ellipsis)
                 }
-                Text(text = item.description)
+
             }
 
         }
