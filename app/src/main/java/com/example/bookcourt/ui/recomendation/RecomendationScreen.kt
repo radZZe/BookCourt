@@ -1,5 +1,6 @@
 package com.example.bookcourt.ui
 
+import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -17,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -70,45 +72,6 @@ fun RecomendationContent(viewModel: RecomendationViewModel = hiltViewModel()) {
                 isEmpty.value = true
             }, cardStackController = cardStackController)
             Spacer(modifier = Modifier.padding(10.dp))
-            Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
-                IconButtonWrapper(
-                    modifier = Modifier,
-                    onClick = { /*TODO*/ },
-                    img = Icons.Default.Refresh,
-                    contentDescription = "",
-                    tint = Color.White,
-                    45.dp,
-                    45.dp
-                )
-                IconButtonWrapper(
-                    modifier = Modifier,
-                    onClick = { cardStackController.swipeLeft() },
-                    img = Icons.Default.Close,
-                    contentDescription = "",
-                    tint = Color.White,
-                    60.dp,
-                    60.dp
-                )
-                IconButtonWrapper(
-                    modifier = Modifier,
-                    onClick = { cardStackController.swipeRight() },
-                    img = Icons.Default.FavoriteBorder,
-                    contentDescription = "",
-                    tint = Color.White,
-                    60.dp,
-                    60.dp
-                )
-                IconButtonWrapper(
-                    modifier = Modifier,
-                    onClick = { /*TODO*/ },
-                    img = null,
-                    contentDescription = "",
-                    tint = colorResource(id = R.color.main_color),
-                    45.dp,
-                    45.dp
-                )
-
-            }
         }else{
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator()
@@ -141,7 +104,7 @@ fun BookCardImage(uri: String) {
         Image(
             painter = painter,
             contentDescription = stringResource(R.string.book_image),
-            contentScale = ContentScale.Crop,
+            contentScale = ContentScale.Fit,
             modifier = Modifier.fillMaxSize()
         )
 

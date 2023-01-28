@@ -14,12 +14,14 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.core.content.res.TypedArrayUtils.getString
 import coil.compose.AsyncImage
 import com.example.bookcourt.R
 import com.example.bookcourt.models.Book
@@ -114,11 +116,16 @@ fun BookCard(
                 Column(modifier = Modifier.padding(10.dp)) {
                     Text(text = item.name, fontWeight = FontWeight.Bold, fontSize = 20.sp)
                     Row(
-                        modifier = Modifier.fillMaxWidth(0.7f),
+                        modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
                             text = item.author,
+                            color = colorResource(id = R.color.bottom_nav_bg),
+                            fontSize = 16.sp
+                        )
+                        Text(
+                            text = item.genre,
                             color = colorResource(id = R.color.bottom_nav_bg),
                             fontSize = 16.sp
                         )
@@ -134,6 +141,8 @@ fun BookCard(
                         )
                     }
                     Text(text = item.description, maxLines = 3, overflow = TextOverflow.Ellipsis)
+                    Text(text =  stringResource(id = R.string.book_rating_info,item.rate), color = colorResource(id = R.color.rating_color),
+                        fontSize = 16.sp)
                 }
 
             }

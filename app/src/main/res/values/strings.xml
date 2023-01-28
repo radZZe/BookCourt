@@ -18,4 +18,5 @@
     <string name="numberOfReadBooks">Количество прочитанных книг:</string>
     <string name="numberOfLikedBooks">Количество книг которые вам понравились:</string>
     <string name="top_favorite_genres">Топ 3 любимых жанра:</string>
+    <string name="book_rating_info">Рейтинг %1$d \%%</string>
 </resources>
