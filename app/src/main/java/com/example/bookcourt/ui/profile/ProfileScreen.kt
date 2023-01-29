@@ -50,7 +50,6 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel()) {
         viewModel.getUserData(userId = userId)
     }
 
-
     Scaffold() {
         Box {
             AnimatedVisibility(
@@ -202,7 +201,8 @@ fun StatisticsCard(user: User, context: Context) {
                                 + context.getString(R.string.books_user_liked) + "${user.statistics.numberOfLikedBooks}"
                                 + "\n" + context.getString(R.string.users_favorite_genres) + " ${user.statistics.favoriteGenreList[0]} , " +
                                 "${user.statistics.favoriteGenreList[1]} , " +
-                                "${user.statistics.favoriteGenreList[2]} "
+                                "${user.statistics.favoriteGenreList[2]} " +
+                                "\n${getWantedBooks(user.statistics.wantToRead)}"
                     )
                     type = "text/plain"
                 }
@@ -220,11 +220,19 @@ fun StatisticsCard(user: User, context: Context) {
 fun StatisticsComponent(statistics: Statistics) {
     Column(modifier = Modifier.padding(10.dp)) {
         Text(text = stringResource(R.string.numberOfReadBooks) + " ${statistics.numberOfReadBooks}")
+        Spacer(modifier = Modifier.height(10.dp))
         Text(text = stringResource(R.string.numberOfLikedBooks) + "${statistics.numberOfLikedBooks}")
+        Spacer(modifier = Modifier.height(10.dp))
         Text(text = stringResource(R.string.top_favorite_genres))
         statistics.favoriteGenreList.forEachIndexed { index, it ->
             Text(text = "${index + 1}. ${it}")
         }
+        Spacer(modifier = Modifier.height(10.dp))
+        Text(text = "Хочу прочитать:")
+        statistics.wantToRead.forEachIndexed { index, book ->
+            Text(text = "${index + 1} $book")
+        }
+//        Text(text = getWantedBooks(statistics.wantToRead))
     }
 }
 
@@ -330,5 +338,16 @@ fun ProfileMenuItem(text: String, onClick: () -> Unit) {
         }
 
     }
+}
+
+fun getWantedBooks(list: List<String>) : String{
+    var res = "Хочу прочитать: \n"
+//    for (book in list) {
+//        res += "$book \n"
+//    }
+    list.forEachIndexed { number, book ->
+        res += "${number + 1} $book \n"
+    }
+    return res
 }
 
