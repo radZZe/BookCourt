@@ -7,6 +7,7 @@ import kotlinx.serialization.json.Json
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import java.io.File
+import java.nio.charset.Charset
 import javax.inject.Inject
 
 
@@ -14,7 +15,9 @@ class NetworkRepository @Inject constructor(
     private val client: OkHttpClient
 ) {
     suspend fun getAllBooks(context: Context):String?{
-        var json = File(context.filesDir,"book.json").readText()
+        var json = context.assets.open("books.json").bufferedReader().use {
+            it.readText()
+        }
 //        val request: Request = Request.Builder()
 //            .url("https://bookcourttest-ee89c-default-rtdb.asia-southeast1.firebasedatabase.app/books.json")
 //            .method("GET",null)
