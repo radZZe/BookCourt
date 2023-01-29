@@ -1,4 +1,5 @@
 package com.example.bookcourt.ui
+import android.app.Application
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -29,6 +30,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -53,17 +55,18 @@ fun RecomendationScreen() {
 fun RecomendationContent(viewModel: RecomendationViewModel = hiltViewModel()) {
 
     val bookJson = viewModel.allBooks
+    var context = LocalContext.current
+
     LaunchedEffect(key1 = Unit){
-        viewModel.getAllBooks()
+        viewModel.getAllBooks(context)
     }
+    val isEmpty = viewModel.isEmpty.value
 
     ShowTutor(viewModel = viewModel)
 
     val cardStackController = rememberCardStackController()
     Column(Modifier.padding(20.dp)) {
-        val isEmpty = remember {
-            mutableStateOf(false)
-        }
+
         Text(
             text = stringResource(R.string.recomendations),
             modifier = Modifier
@@ -73,6 +76,57 @@ fun RecomendationContent(viewModel: RecomendationViewModel = hiltViewModel()) {
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center
         )
+        if(!isEmpty){
+            if(bookJson.value != null){
+                CardStack(
+                    items = bookJson.value!!, onEmptyStack = {
+                        viewModel.isEmpty.value = true
+                    }, cardStackController = cardStackController)
+                Spacer(modifier = Modifier.padding(10.dp))
+                Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
+                    IconButtonWrapper(
+                        modifier = Modifier,
+                        onClick = { /*TODO*/ },
+                        img = Icons.Default.Refresh,
+                        contentDescription = "",
+                        tint = Color.White,
+                        45.dp,
+                        45.dp
+                    )
+                    IconButtonWrapper(
+                        modifier = Modifier,
+                        onClick = { cardStackController.swipeLeft() },
+                        img = Icons.Default.Close,
+                        contentDescription = "",
+                        tint = Color.White,
+                        60.dp,
+                        60.dp
+                    )
+                    IconButtonWrapper(
+                        modifier = Modifier,
+                        onClick = { cardStackController.swipeRight() },
+                        img = Icons.Default.FavoriteBorder,
+                        contentDescription = "",
+                        tint = Color.White,
+                        60.dp,
+                        60.dp
+                    )
+                    IconButtonWrapper(
+                        modifier = Modifier,
+                        onClick = { /*TODO*/ },
+                        img = null,
+                        contentDescription = "",
+                        tint = colorResource(id = R.color.main_color),
+                        45.dp,
+                        45.dp
+                    )
+
+                }
+            }else{
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
+                }
+            }
         if (bookJson.value != null) {
             CardStack(items = bookJson.value!!, onEmptyStack = {
                 isEmpty.value = true
@@ -80,7 +134,7 @@ fun RecomendationContent(viewModel: RecomendationViewModel = hiltViewModel()) {
             Spacer(modifier = Modifier.padding(10.dp))
         }else{
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
+                Text(text = "Книг пока что больше нет")
             }
         }
 
@@ -163,7 +217,6 @@ fun IconButtonWrapper(
             }
 }
 
-@Composable
 fun ShowTutor(viewModel: RecomendationViewModel) {
     val tutorState = viewModel.tutorState.collectAsState(initial = true)
     AnimatedVisibility(

@@ -26,13 +26,17 @@ import kotlin.math.sign
 open class CardStackController(
     val scope: CoroutineScope,
     private val screenWidth: Float,
+    private val screenHeight: Float,
     internal val animationSpec: AnimationSpec<Float> = SwipeableDefaults.AnimationSpec
 ) {
     val right = Offset(screenWidth, 0f)
     val left = Offset(-screenWidth, 0f)
     val center = Offset(0f, 0f)
+    val top = Offset(0f, screenHeight)
+    val bottom = Offset(0f, -screenHeight)
 
-    var threshold = 0.0f
+    var thresholdX = 0.0f
+    var thresholdY = 0.0f
 
     val offsetX = Animatable(0f)
     val offsetY = Animatable(0f)
@@ -41,6 +45,8 @@ open class CardStackController(
 
     var onSwipeLeft: () -> Unit = {}
     var onSwipeRight: () -> Unit = {}
+    var onSwipeUp: () -> Unit = {}
+    var onSwipeDown: () -> Unit = {}
 
     fun swipeLeft() {
         scope.apply {
@@ -102,6 +108,64 @@ open class CardStackController(
         }
     }
 
+    fun swipeUp() {
+        scope.apply {
+            launch {
+                offsetY.animateTo(-screenHeight, animationSpec)
+                onSwipeUp()
+
+                launch {
+                    offsetX.snapTo(0f)
+                }
+
+                launch {
+                    offsetY.snapTo(center.y)
+                }
+
+                launch {
+                    scale.snapTo(0.8f)
+                }
+
+                launch {
+                    rotation.snapTo(0f)
+                }
+            }
+
+            launch {
+                scale.animateTo(1f, animationSpec)
+            }
+        }
+    }
+
+    fun swipeDown() {
+        scope.apply {
+            launch {
+                offsetY.animateTo(screenHeight, animationSpec)
+                onSwipeDown()
+
+                launch {
+                    offsetX.snapTo(0f)
+                }
+
+                launch {
+                    offsetY.snapTo(center.y)
+                }
+
+                launch {
+                    scale.snapTo(0.8f)
+                }
+
+                launch {
+                    rotation.snapTo(0f)
+                }
+            }
+
+            launch {
+                scale.animateTo(1f, animationSpec)
+            }
+        }
+    }
+
     fun returnCenter() {
         scope.apply {
             launch {
@@ -131,11 +195,15 @@ fun rememberCardStackController(
     val screenWidth = with(LocalDensity.current) {
         LocalConfiguration.current.screenWidthDp.dp.toPx()
     }
+    val screenHeight = with(LocalDensity.current) {
+        LocalConfiguration.current.screenHeightDp.dp.toPx()
+    }
 
     return remember {
         CardStackController(
             scope = scope,
             screenWidth = screenWidth,
+            screenHeight = screenHeight,
             animationSpec = animationSpec
         )
     }
@@ -155,24 +223,25 @@ fun Modifier.draggableStack(
         }
     }
 
-    controller.threshold = thresholds(controller.center.x, controller.right.x)
+    controller.thresholdX = thresholds(controller.center.x, controller.right.x)
+    controller.thresholdY = thresholds(controller.center.y, controller.top.y)
 
     Modifier.pointerInput(Unit) {
         detectDragGestures(
             onDragEnd = {
-                if (controller.offsetX.value <= 0f) {
-                    if (controller.offsetX.value > -controller.threshold) {
-                        controller.returnCenter()
-                    } else {
-                        controller.swipeLeft()
-                    }
+
+                if (controller.offsetY.value <= -controller.thresholdY) {
+                    controller.swipeUp()
+                } else if (controller.offsetY.value >= controller.thresholdY) {
+                    controller.swipeDown()
+                } else if (controller.offsetX.value <= -controller.thresholdX) {
+                    controller.swipeLeft()
+                } else if (controller.offsetX.value >= controller.thresholdX) {
+                    controller.swipeRight()
                 } else {
-                    if (controller.offsetX.value < controller.threshold) {
-                        controller.returnCenter()
-                    } else {
-                        controller.swipeRight()
-                    }
+                    controller.returnCenter()
                 }
+
             },
             onDrag = { change, dragAmount ->
                 controller.scope.apply {
