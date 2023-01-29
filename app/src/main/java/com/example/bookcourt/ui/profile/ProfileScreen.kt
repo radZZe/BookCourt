@@ -2,9 +2,10 @@ package com.example.bookcourt.ui
 
 import android.content.Context
 import android.content.Intent
-import androidx.compose.animation.*
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -17,17 +18,13 @@ import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -49,7 +46,6 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel()) {
             "b9786ae1-4efb-46c4-a493-cb948cb80103" // Так как нет авторизации я храню просто id пользователя в тестовом формате
         viewModel.getUserData(userId = userId)
     }
-
 
     Scaffold() {
         Box {
@@ -123,9 +119,11 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel()) {
 @Composable
 fun HeaderProfile(user: User) {
 
-    Box(modifier = Modifier
-        .fillMaxWidth()
-        .padding(10.dp), contentAlignment = Center) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(10.dp), contentAlignment = Center
+    ) {
         Surface(
             shape = RoundedCornerShape(15.dp),
             modifier = Modifier
@@ -138,8 +136,18 @@ fun HeaderProfile(user: User) {
             ) {
                 UserPhotoComponent(user.image)
                 Column(modifier = Modifier.padding(start = 20.dp, end = 20.dp)) {
-                    Text(text = "${user.name} ${user.surname}", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                    Text(text = user.email, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                    Text(
+                        text = "${user.name} ${user.surname}",
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
+                    )
+                    Text(
+                        text = user.email,
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
+                    )
                 }
 
             }
@@ -202,7 +210,8 @@ fun StatisticsCard(user: User, context: Context) {
                                 + context.getString(R.string.books_user_liked) + "${user.statistics.numberOfLikedBooks}"
                                 + "\n" + context.getString(R.string.users_favorite_genres) + " ${user.statistics.favoriteGenreList[0]} , " +
                                 "${user.statistics.favoriteGenreList[1]} , " +
-                                "${user.statistics.favoriteGenreList[2]} "
+                                "${user.statistics.favoriteGenreList[2]} " +
+                                "\n${getWantedBooks(user.statistics.wantToRead)}"
                     )
                     type = "text/plain"
                 }
@@ -220,11 +229,19 @@ fun StatisticsCard(user: User, context: Context) {
 fun StatisticsComponent(statistics: Statistics) {
     Column(modifier = Modifier.padding(10.dp)) {
         Text(text = stringResource(R.string.numberOfReadBooks) + " ${statistics.numberOfReadBooks}")
+        Spacer(modifier = Modifier.height(10.dp))
         Text(text = stringResource(R.string.numberOfLikedBooks) + "${statistics.numberOfLikedBooks}")
+        Spacer(modifier = Modifier.height(10.dp))
         Text(text = stringResource(R.string.top_favorite_genres))
         statistics.favoriteGenreList.forEachIndexed { index, it ->
             Text(text = "${index + 1}. ${it}")
         }
+        Spacer(modifier = Modifier.height(10.dp))
+        Text(text = "Хочу прочитать:")
+        statistics.wantToRead.forEachIndexed { index, book ->
+            Text(text = "${index + 1} $book")
+        }
+//        Text(text = getWantedBooks(statistics.wantToRead))
     }
 }
 
@@ -316,19 +333,34 @@ fun ProfileMenuItem(text: String, onClick: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(10.dp),
-        onClick = {onClick()},
-        colors =  ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.main_color))
+        onClick = { onClick() },
+        colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.main_color))
     ) {
-        Row(modifier = Modifier.background(colorResource(id = R.color.main_color)), horizontalArrangement = Arrangement.Center ){
-            Text(text = text,
+        Row(
+            modifier = Modifier.background(colorResource(id = R.color.main_color)),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = text,
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.h5, modifier = Modifier
                     .padding(10.dp),
-            color = Color.White
+                color = Color.White
             )
         }
 
     }
+}
+
+fun getWantedBooks(list: List<String>): String {
+    var res = "Хочу прочитать: \n"
+//    for (book in list) {
+//        res += "$book \n"
+//    }
+    list.forEachIndexed { number, book ->
+        res += "${number + 1} $book \n"
+    }
+    return res
 }
 
