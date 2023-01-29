@@ -4,7 +4,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookcourt.data.repositories.NetworkRepository
-import com.example.bookcourt.models.BookRemote
 import com.example.bookcourt.models.User
 import com.example.bookcourt.models.UserRemote
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,9 +15,9 @@ import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 @HiltViewModel
-class ProfileViewModel@Inject constructor(
+class ProfileViewModel @Inject constructor(
     val repository: NetworkRepository
-):ViewModel() {
+) : ViewModel() {
     val user = mutableStateOf<User?>(null)
     val alertDialogState = mutableStateOf(false)
     val feedbackState = mutableStateOf(false)
@@ -26,34 +25,35 @@ class ProfileViewModel@Inject constructor(
     val feedbackData = mutableStateOf("")
     val feedbackMessage = mutableStateOf("")
 
-    fun dismiss(){
-        if(feedbackState.value){
+    fun dismiss() {
+        if (feedbackState.value) {
             feedbackStateChanged()
-        }else{
+        } else {
             statisticsStateChanged()
         }
     }
 
-    fun statisticsStateChanged(){
+    fun statisticsStateChanged() {
         statisticsState.value = !statisticsState.value
         alertDialogState.value = !alertDialogState.value
     }
 
-    fun feedbackStateChanged(){
+    fun feedbackStateChanged() {
         feedbackState.value = !feedbackState.value
         alertDialogState.value = !alertDialogState.value
     }
-    fun feedbackDataChanged(str:String){
+
+    fun feedbackDataChanged(str: String) {
         feedbackData.value = str
     }
 
-    fun feedbackMessageChanged(str: String){
+    fun feedbackMessageChanged(str: String) {
         feedbackMessage.value = str
     }
 
-    fun getUserData(userId:String){
+    fun getUserData(userId: String) {
         val jobMain = viewModelScope.launch(Dispatchers.IO) {
-            val job = async{repository.getUserData(userId)}
+            val job = async { repository.getUserData(userId) }
             val json = job.await()
             val data = Json.decodeFromString<UserRemote>("""$json""")
             user.value = data.toUser()

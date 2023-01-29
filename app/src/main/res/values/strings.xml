@@ -13,9 +13,10 @@
     <string name="book_image">Book Image</string>
     <string name="user_statistics_in_the_app">Моя статистика в приложении BookСourt:</string>
     <string name="number_of_books_read_by_the_user">\"Количество прочитанных мною книг: \"</string>
-    <string name="books_user_liked">\"Количество книг которые мне понравились: \"</string>
+    <string name="books_user_liked">\"Количество книг, которые мне понравились: \"</string>
     <string name="users_favorite_genres">Мои любимые жанры:</string>
     <string name="numberOfReadBooks">Количество прочитанных книг:</string>
     <string name="numberOfLikedBooks">Количество книг которые вам понравились:</string>
     <string name="top_favorite_genres">Топ 3 любимых жанра:</string>
+    <string name="book_rating_info">Рейтинг %1$d \%%</string>
 </resources>
