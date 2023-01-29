@@ -2,9 +2,10 @@ package com.example.bookcourt.ui
 
 import android.content.Context
 import android.content.Intent
-import androidx.compose.animation.*
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -17,17 +18,13 @@ import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -122,9 +119,11 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel()) {
 @Composable
 fun HeaderProfile(user: User) {
 
-    Box(modifier = Modifier
-        .fillMaxWidth()
-        .padding(10.dp), contentAlignment = Center) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(10.dp), contentAlignment = Center
+    ) {
         Surface(
             shape = RoundedCornerShape(15.dp),
             modifier = Modifier
@@ -137,8 +136,18 @@ fun HeaderProfile(user: User) {
             ) {
                 UserPhotoComponent(user.image)
                 Column(modifier = Modifier.padding(start = 20.dp, end = 20.dp)) {
-                    Text(text = "${user.name} ${user.surname}", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                    Text(text = user.email, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                    Text(
+                        text = "${user.name} ${user.surname}",
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
+                    )
+                    Text(
+                        text = user.email,
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
+                    )
                 }
 
             }
@@ -324,23 +333,27 @@ fun ProfileMenuItem(text: String, onClick: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(10.dp),
-        onClick = {onClick()},
-        colors =  ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.main_color))
+        onClick = { onClick() },
+        colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.main_color))
     ) {
-        Row(modifier = Modifier.background(colorResource(id = R.color.main_color)), horizontalArrangement = Arrangement.Center ){
-            Text(text = text,
+        Row(
+            modifier = Modifier.background(colorResource(id = R.color.main_color)),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = text,
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.h5, modifier = Modifier
                     .padding(10.dp),
-            color = Color.White
+                color = Color.White
             )
         }
 
     }
 }
 
-fun getWantedBooks(list: List<String>) : String{
+fun getWantedBooks(list: List<String>): String {
     var res = "Хочу прочитать: \n"
 //    for (book in list) {
 //        res += "$book \n"
