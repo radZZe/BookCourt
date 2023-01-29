@@ -1,6 +1,9 @@
 package com.example.bookcourt.ui.recomendation
 
+import android.content.Context
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookcourt.data.repositories.NetworkRepository
@@ -19,9 +22,10 @@ class RecomendationViewModel @Inject constructor(
     val repository: NetworkRepository
 ):ViewModel() {
     var allBooks = mutableStateOf<List<Book>?>(null)
-     fun getAllBooks(){
+    val isEmpty = mutableStateOf(false)
+     fun getAllBooks(context:Context){
         val jobMain = viewModelScope.launch(Dispatchers.IO) {
-            val job = async{repository.getAllBooks()!!}
+            val job = async{repository.getAllBooks(context)!!}
             val json = job.await()
             val data = Json.decodeFromString<List<BookRemote>>("""$json""")
             allBooks.value = data.map {

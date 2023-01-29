@@ -35,6 +35,8 @@ fun CardStack(
     velocityThreshold: Dp = 125.dp,
     onSwipeLeft: (item: Book) -> Unit = {},
     onSwipeRight: (item: Book) -> Unit = {},
+    onSwipeUp:(item:Book) ->Unit = {},
+    onSwipeDown:(item:Book)->Unit ={},
     onEmptyStack: (lastItem: Book) -> Unit = {},
     cardStackController: CardStackController
 ) {
@@ -48,12 +50,25 @@ fun CardStack(
 
 
     cardStackController.onSwipeLeft = {
+        // TODO логика свайпа влево
         onSwipeLeft(items[i])
         i--
     }
 
     cardStackController.onSwipeRight = {
+        // TODO логика свайпа вправо
         onSwipeRight(items[i])
+        i--
+    }
+
+    cardStackController.onSwipeUp = {
+        // TODO логика свайпа вверх
+        onSwipeUp(items[i])
+        i--
+    }
+
+    cardStackController.onSwipeDown = {
+        onSwipeDown(items[i])
         i--
     }
 

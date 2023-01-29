@@ -1,5 +1,6 @@
 package com.example.bookcourt.ui
 
+import android.app.Application
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -48,14 +49,15 @@ fun RecomendationScreen() {
 fun RecomendationContent(viewModel: RecomendationViewModel = hiltViewModel()) {
 
     val bookJson = viewModel.allBooks
+    var context = LocalContext.current
+
     LaunchedEffect(key1 = Unit){
-        viewModel.getAllBooks()
+        viewModel.getAllBooks(context)
     }
+    val isEmpty = viewModel.isEmpty.value
     val cardStackController = rememberCardStackController()
     Column(Modifier.padding(20.dp)) {
-        val isEmpty = remember {
-            mutableStateOf(false)
-        }
+
         Text(
             text = stringResource(R.string.recomendations),
             modifier = Modifier
@@ -65,53 +67,60 @@ fun RecomendationContent(viewModel: RecomendationViewModel = hiltViewModel()) {
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center
         )
-        if(bookJson.value != null){
-            CardStack(items = bookJson.value!!, onEmptyStack = {
-                isEmpty.value = true
-            }, cardStackController = cardStackController)
-            Spacer(modifier = Modifier.padding(10.dp))
-            Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
-                IconButtonWrapper(
-                    modifier = Modifier,
-                    onClick = { /*TODO*/ },
-                    img = Icons.Default.Refresh,
-                    contentDescription = "",
-                    tint = Color.White,
-                    45.dp,
-                    45.dp
-                )
-                IconButtonWrapper(
-                    modifier = Modifier,
-                    onClick = { cardStackController.swipeLeft() },
-                    img = Icons.Default.Close,
-                    contentDescription = "",
-                    tint = Color.White,
-                    60.dp,
-                    60.dp
-                )
-                IconButtonWrapper(
-                    modifier = Modifier,
-                    onClick = { cardStackController.swipeRight() },
-                    img = Icons.Default.FavoriteBorder,
-                    contentDescription = "",
-                    tint = Color.White,
-                    60.dp,
-                    60.dp
-                )
-                IconButtonWrapper(
-                    modifier = Modifier,
-                    onClick = { /*TODO*/ },
-                    img = null,
-                    contentDescription = "",
-                    tint = colorResource(id = R.color.main_color),
-                    45.dp,
-                    45.dp
-                )
+        if(!isEmpty){
+            if(bookJson.value != null){
+                CardStack(
+                    items = bookJson.value!!, onEmptyStack = {
+                        viewModel.isEmpty.value = true
+                    }, cardStackController = cardStackController)
+                Spacer(modifier = Modifier.padding(10.dp))
+                Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
+                    IconButtonWrapper(
+                        modifier = Modifier,
+                        onClick = { /*TODO*/ },
+                        img = Icons.Default.Refresh,
+                        contentDescription = "",
+                        tint = Color.White,
+                        45.dp,
+                        45.dp
+                    )
+                    IconButtonWrapper(
+                        modifier = Modifier,
+                        onClick = { cardStackController.swipeLeft() },
+                        img = Icons.Default.Close,
+                        contentDescription = "",
+                        tint = Color.White,
+                        60.dp,
+                        60.dp
+                    )
+                    IconButtonWrapper(
+                        modifier = Modifier,
+                        onClick = { cardStackController.swipeRight() },
+                        img = Icons.Default.FavoriteBorder,
+                        contentDescription = "",
+                        tint = Color.White,
+                        60.dp,
+                        60.dp
+                    )
+                    IconButtonWrapper(
+                        modifier = Modifier,
+                        onClick = { /*TODO*/ },
+                        img = null,
+                        contentDescription = "",
+                        tint = colorResource(id = R.color.main_color),
+                        45.dp,
+                        45.dp
+                    )
 
+                }
+            }else{
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
+                }
             }
         }else{
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
+                Text(text = "Книг пока что больше нет")
             }
         }
 
@@ -171,8 +180,8 @@ fun IconButtonWrapper(
                     )
             )
 
-                    .width(width)
-                    .height(height),
+            .width(width)
+            .height(height),
                 contentAlignment = Alignment.Center
             ) {
                 IconButton(

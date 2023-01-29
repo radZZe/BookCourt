@@ -1,0 +1,62 @@
+[
+  {
+    "data": {
+      "author": "Test author",
+      "createdAt": "1992",
+      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip",
+      "genre": "Комедия",
+      "image": "https://cv6.litres.ru/pub/c/elektronnaya-kniga/cover_415/36628165-ray-dalio-principy-zhizn-i-rabota.webp",
+      "loadingAt": "1672919896",
+      "name": "Test name",
+      "numberOfPage": "143",
+      "owner": "b9786ae1-4efb-46c4-a493-cb948cb80103",
+      "rate": 5
+    },
+    "id": "94001f0-e0f1-4166-b06f-818956c145bf"
+  },
+  {
+    "data": {
+      "author": "Test author1",
+      "createdAt": "1392",
+      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip",
+      "genre": "Комедия",
+      "image": "https://cv6.litres.ru/pub/c/elektronnaya-kniga/cover_415/36628165-ray-dalio-principy-zhizn-i-rabota.webp",
+      "loadingAt": "1672919896",
+      "name": "Test name1",
+      "numberOfPage": "123",
+      "owner": "b9786ae1-4efb-46c4-a493-cb948cb80103",
+      "rate": 5
+    },
+    "id": "890b9b88-4bf9-46f3-a4df-9c584c188423"
+  },
+  {
+    "data": {
+      "author": "Test author2",
+      "createdAt": "1322",
+      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip",
+      "genre": "Комедия",
+      "image": "https://cv6.litres.ru/pub/c/elektronnaya-kniga/cover_415/36628165-ray-dalio-principy-zhizn-i-rabota.webp",
+      "loadingAt": "1672919896",
+      "name": "Test name2",
+      "numberOfPage": "143",
+      "owner": "b9786ae1-4efb-46c4-a493-cb948cb80103",
+      "rate": 5
+    },
+    "id": "e8302cd0-c6c7-4f03-b896-005e6728eaee"
+  },
+  {
+    "data": {
+      "author": "Test author3",
+      "createdAt": "1211",
+      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip",
+      "genre": "Комедия",
+      "image": "https://cv6.litres.ru/pub/c/elektronnaya-kniga/cover_415/36628165-ray-dalio-principy-zhizn-i-rabota.webp",
+      "loadingAt": "1672919896",
+      "name": "Test name3",
+      "numberOfPage": "122",
+      "owner": "b9786ae1-4efb-46c4-a493-cb948cb80103",
+      "rate": 5
+    },
+    "id": "f94001f0-e0f1-4166-b06f-818956c145bf"
+  }
+]
