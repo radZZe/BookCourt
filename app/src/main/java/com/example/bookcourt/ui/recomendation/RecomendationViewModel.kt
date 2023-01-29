@@ -32,9 +32,9 @@ class RecomendationViewModel @Inject constructor(
     val isEmpty = mutableStateOf(false)
     val tutorState = dataStoreRepository.getBoolState(isTutorChecked)
 
-    fun getAllBooks() {
+    fun getAllBooks(context: Context) {
         val jobMain = viewModelScope.launch(Dispatchers.IO) {
-            val job = async { repository.getAllBooks()!! }
+            val job = async { repository.getAllBooks(context)!! }
             val json = job.await()
             val data = Json.decodeFromString<List<BookRemote>>("""$json""")
             allBooks.value = data.map {

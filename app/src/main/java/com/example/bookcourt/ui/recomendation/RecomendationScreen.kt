@@ -57,10 +57,10 @@ fun RecomendationContent(viewModel: RecomendationViewModel = hiltViewModel()) {
     val bookJson = viewModel.allBooks
     var context = LocalContext.current
 
-    LaunchedEffect(key1 = Unit){
+    LaunchedEffect(key1 = Unit) {
         viewModel.getAllBooks(context)
     }
-    val isEmpty = viewModel.isEmpty.value
+    var isEmpty = viewModel.isEmpty.value
 
     ShowTutor(viewModel = viewModel)
 
@@ -76,178 +76,138 @@ fun RecomendationContent(viewModel: RecomendationViewModel = hiltViewModel()) {
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center
         )
-        if(!isEmpty){
-            if(bookJson.value != null){
+        if (!isEmpty) {
+            if (bookJson.value != null) {
                 CardStack(
                     items = bookJson.value!!, onEmptyStack = {
                         viewModel.isEmpty.value = true
-                    }, cardStackController = cardStackController)
+                    }, cardStackController = cardStackController
+                )
                 Spacer(modifier = Modifier.padding(10.dp))
-                Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
-                    IconButtonWrapper(
-                        modifier = Modifier,
-                        onClick = { /*TODO*/ },
-                        img = Icons.Default.Refresh,
-                        contentDescription = "",
-                        tint = Color.White,
-                        45.dp,
-                        45.dp
-                    )
-                    IconButtonWrapper(
-                        modifier = Modifier,
-                        onClick = { cardStackController.swipeLeft() },
-                        img = Icons.Default.Close,
-                        contentDescription = "",
-                        tint = Color.White,
-                        60.dp,
-                        60.dp
-                    )
-                    IconButtonWrapper(
-                        modifier = Modifier,
-                        onClick = { cardStackController.swipeRight() },
-                        img = Icons.Default.FavoriteBorder,
-                        contentDescription = "",
-                        tint = Color.White,
-                        60.dp,
-                        60.dp
-                    )
-                    IconButtonWrapper(
-                        modifier = Modifier,
-                        onClick = { /*TODO*/ },
-                        img = null,
-                        contentDescription = "",
-                        tint = colorResource(id = R.color.main_color),
-                        45.dp,
-                        45.dp
-                    )
-
-                }
-            }else{
+            } else {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator()
                 }
             }
-        if (bookJson.value != null) {
-            CardStack(items = bookJson.value!!, onEmptyStack = {
-                isEmpty.value = true
-            }, cardStackController = cardStackController)
-            Spacer(modifier = Modifier.padding(10.dp))
-        }else{
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text(text = "Книг пока что больше нет")
-            }
-        }
-
-
-    }
-}
-
-
-@Composable
-fun BookCardImage(uri: String) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight(0.7f), contentAlignment = Alignment.Center
-    ) {
-        val painter = rememberAsyncImagePainter(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(uri)
-                .size(Size.ORIGINAL) // Set the target size to load the image at.
-                .build(),
-        )
-
-        if (painter.state is AsyncImagePainter.State.Loading) {
-            CircularProgressIndicator()
-        }
-
-        Image(
-            painter = painter,
-            contentDescription = stringResource(R.string.book_image),
-            contentScale = ContentScale.Fit,
-            modifier = Modifier.fillMaxSize()
-        )
-
-    }
-}
-
-@Composable
-fun IconButtonWrapper(
-    modifier: Modifier,
-    onClick: () -> Unit,
-    img: ImageVector?,
-    contentDescription: String,
-    tint: Color,
-    height: Dp,
-    width: Dp
-) {
-    Box(
-        modifier = modifier
-            .clip(CircleShape)
-            .background(
-                brush = Brush
-                    .horizontalGradient(
-                        colors = listOf(
-                            colorResource(id = R.color.main_color),
-                            colorResource(id = R.color.second_color)
-                        )
-                    )
-            )
-
-            .width(width)
-            .height(height),
-                contentAlignment = Alignment.Center
-            ) {
-                IconButton(
-                    modifier = Modifier,
-                    onClick = {
-                        onClick()
-                    }
-                ) {
-                    if(img!=null){
-                        Icon(
-                            img, contentDescription = contentDescription, tint = tint, modifier =
-                            Modifier
-                                .padding(5.dp)
-                                .fillMaxSize()
-                        )
-                    }
-
+        }else {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text(text = "Книг пока что больше нет")
                 }
             }
-}
 
-fun ShowTutor(viewModel: RecomendationViewModel) {
-    val tutorState = viewModel.tutorState.collectAsState(initial = true)
-    AnimatedVisibility(
-        visible = !tutorState.value,
-        modifier = Modifier.zIndex(1f),
-        enter = fadeIn(),
-        exit = fadeOut()
-    ) {
+
+        }
+    }
+
+
+
+    @Composable
+    fun BookCardImage(uri: String) {
         Box(
             modifier = Modifier
-                .fillMaxSize()
-                .alpha(0.55f)
-                .background(Color.Black)
-        )
-    }
-    Column(
-        verticalArrangement = Arrangement.Center,
-        modifier = Modifier
-            .zIndex(2f)
-            .fillMaxSize()
-    ) {
-        AnimatedVisibility(
+                .fillMaxWidth()
+                .fillMaxHeight(0.7f), contentAlignment = Alignment.Center
+        ) {
+            val painter = rememberAsyncImagePainter(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(uri)
+                    .size(Size.ORIGINAL) // Set the target size to load the image at.
+                    .build(),
+            )
 
+            if (painter.state is AsyncImagePainter.State.Loading) {
+                CircularProgressIndicator()
+            }
+
+            Image(
+                painter = painter,
+                contentDescription = stringResource(R.string.book_image),
+                contentScale = ContentScale.Fit,
+                modifier = Modifier.fillMaxSize()
+            )
+
+        }
+    }
+
+    @Composable
+    fun IconButtonWrapper(
+        modifier: Modifier,
+        onClick: () -> Unit,
+        img: ImageVector?,
+        contentDescription: String,
+        tint: Color,
+        height: Dp,
+        width: Dp
+    ) {
+        Box(
+            modifier = modifier
+                .clip(CircleShape)
+                .background(
+                    brush = Brush
+                        .horizontalGradient(
+                            colors = listOf(
+                                colorResource(id = R.color.main_color),
+                                colorResource(id = R.color.second_color)
+                            )
+                        )
+                )
+
+                .width(width)
+                .height(height),
+            contentAlignment = Alignment.Center
+        ) {
+            IconButton(
+                modifier = Modifier,
+                onClick = {
+                    onClick()
+                }
+            ) {
+                if (img != null) {
+                    Icon(
+                        img, contentDescription = contentDescription, tint = tint, modifier =
+                        Modifier
+                            .padding(5.dp)
+                            .fillMaxSize()
+                    )
+                }
+
+            }
+        }
+    }
+
+    @Composable
+    fun ShowTutor(viewModel: RecomendationViewModel) {
+        val tutorState = viewModel.tutorState.collectAsState(initial = true)
+        AnimatedVisibility(
             visible = !tutorState.value,
+            modifier = Modifier.zIndex(1f),
             enter = fadeIn(),
             exit = fadeOut()
         ) {
-            TutorialGreeting {
-                viewModel.editTutorState()
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .alpha(0.55f)
+                    .background(Color.Black)
+            )
+        }
+        Column(
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .zIndex(2f)
+                .fillMaxSize()
+        ) {
+            AnimatedVisibility(
+
+                visible = !tutorState.value,
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
+                TutorialGreeting {
+                    viewModel.editTutorState()
+                }
             }
         }
+
     }
 
-}
