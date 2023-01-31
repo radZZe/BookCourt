@@ -23,6 +23,7 @@ class DataStoreRepository(val context: Context) {
         val savedName: Preferences.Key<String> = stringPreferencesKey("user_name")
         val savedSurname: Preferences.Key<String> = stringPreferencesKey("user_surname")
         val savedPhoneNumber: Preferences.Key<String> = stringPreferencesKey("user_phone")
+        val uuid: Preferences.Key<String> = stringPreferencesKey("uuid")
     }
 
     suspend fun setPref(prefValue: Boolean, prefKey: Preferences.Key<Boolean>) {

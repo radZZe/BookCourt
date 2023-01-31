@@ -22,10 +22,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.core.content.res.TypedArrayUtils.getString
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.example.bookcourt.R
 import com.example.bookcourt.models.Book
 import com.example.bookcourt.ui.BookCardImage
+import com.example.bookcourt.ui.profile.ProfileViewModel
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -40,7 +42,8 @@ fun CardStack(
     onSwipeUp:(item:Book) ->Unit = {},
     onSwipeDown:(item:Book)->Unit ={},
     onEmptyStack: (lastItem: Book) -> Unit = {},
-    cardStackController: CardStackController
+    cardStackController: CardStackController,
+    viewModel: CardStackViewModel = hiltViewModel()
 ) {
     var i by remember {
         mutableStateOf(items.size - 1)
