@@ -18,7 +18,7 @@ interface MetricsRepositoryInterface {
 
     suspend fun screenTime()
 
-    suspend fun appTime()
+    suspend fun appTime(sessionTime: Int)
 
     suspend fun getDeviceModel(): String
 

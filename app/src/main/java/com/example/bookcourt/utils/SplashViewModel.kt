@@ -10,6 +10,6 @@ class SplashViewModel  @Inject constructor(
     private val dataStoreRepository: DataStoreRepository
 ) : ViewModel() {
 
-    val rememberMeState = dataStoreRepository.getBoolState(DataStoreRepository.isRemembered)
+    val rememberMeState = dataStoreRepository.getBoolPref(DataStoreRepository.isRemembered)
 
 }

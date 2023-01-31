@@ -24,6 +24,9 @@ class DataStoreRepository(val context: Context) {
         val savedSurname: Preferences.Key<String> = stringPreferencesKey("user_surname")
         val savedPhoneNumber: Preferences.Key<String> = stringPreferencesKey("user_phone")
         val uuid: Preferences.Key<String> = stringPreferencesKey("uuid")
+        val startSessionTime: Preferences.Key<Int> = intPreferencesKey("startSessionTime")
+        val endSessionTime: Preferences.Key<Int> = intPreferencesKey("endSessionTime")
+        val savedCity: Preferences.Key<String> = stringPreferencesKey("user_city")
         val savedLikedBooksCnt: Preferences.Key<Int> = intPreferencesKey("liked_books_cnt")
         val savedFavoriteGenres: Preferences.Key<String> = stringPreferencesKey("favorite_genres")
         val savedWantToReadList: Preferences.Key<String> = stringPreferencesKey("want_to_read_genres")
@@ -42,13 +45,13 @@ class DataStoreRepository(val context: Context) {
         }
     }
 
-    suspend fun setPref(prefValue:Int, prefKey: Preferences.Key<Int>) {
+    suspend fun setPref(prefValue: Int, prefKey: Preferences.Key<Int>) {
         dataStore.edit { pref->
             pref[prefKey] = prefValue
         }
     }
 
-    fun getBoolState(prefKey: Preferences.Key<Boolean>) : Flow<Boolean> {
+    fun getBoolPref(prefKey: Preferences.Key<Boolean>) : Flow<Boolean> {
         return dataStore.data
             .catch { exception->
                 if (exception is IOException) {
@@ -74,6 +77,20 @@ class DataStoreRepository(val context: Context) {
             }
             .map { pref->
                 val prefMode = pref[prefKey] ?: ""
+                prefMode
+            }
+    }
+    fun getIntPref(prefKey: Preferences.Key<Int>) : Flow<Int> {
+        return dataStore.data
+            .catch { exception->
+                if (exception is IOException) {
+                    emit(emptyPreferences())
+                } else {
+                    throw exception
+                }
+            }
+            .map { pref->
+                val prefMode = pref[prefKey] ?: 0
                 prefMode
             }
     }

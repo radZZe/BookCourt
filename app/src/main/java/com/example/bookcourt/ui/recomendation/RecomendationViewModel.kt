@@ -2,10 +2,7 @@ package com.example.bookcourt.ui.recomendation
 
 import android.content.Context
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -30,7 +27,7 @@ class RecomendationViewModel @Inject constructor(
 
     var allBooks = mutableStateOf<List<Book>?>(null)
     val isEmpty = mutableStateOf(false)
-    val tutorState = dataStoreRepository.getBoolState(isTutorChecked)
+    val tutorState = dataStoreRepository.getBoolPref(isTutorChecked)
 
     fun getAllBooks(context: Context) {
         val jobMain = viewModelScope.launch(Dispatchers.IO) {

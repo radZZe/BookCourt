@@ -122,6 +122,7 @@ fun HeaderProfile(user: User, viewModel: ProfileViewModel) {
     val userName = viewModel.userName.collectAsState(initial = "")
     val userSurname = viewModel.userSurname.collectAsState(initial = "")
     val userPhone = viewModel.userPhone.collectAsState(initial = "")
+    val userCity = viewModel.userCity.collectAsState(initial = "")
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -145,12 +146,21 @@ fun HeaderProfile(user: User, viewModel: ProfileViewModel) {
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp
                     )
-                    Text(
-                        text = userPhone.value,
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp
-                    )
+                    Row() {
+                        Text(
+                            text = userPhone.value,
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp
+                        )
+                        Spacer(modifier = Modifier.width(20.dp))
+                        Text(
+                            text = userCity.value,
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp
+                        )
+                    }
                 }
 
             }
