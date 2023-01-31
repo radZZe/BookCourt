@@ -24,6 +24,9 @@ class DataStoreRepository(val context: Context) {
         val savedSurname: Preferences.Key<String> = stringPreferencesKey("user_surname")
         val savedPhoneNumber: Preferences.Key<String> = stringPreferencesKey("user_phone")
         val uuid: Preferences.Key<String> = stringPreferencesKey("uuid")
+        val startSessionTime: Preferences.Key<Int> = intPreferencesKey("startSessionTime")
+        val endSessionTime: Preferences.Key<Int> = intPreferencesKey("endSessionTime")
+        val savedCity: Preferences.Key<String> = stringPreferencesKey("user_city")
     }
 
     suspend fun setPref(prefValue: Boolean, prefKey: Preferences.Key<Boolean>) {
@@ -38,7 +41,13 @@ class DataStoreRepository(val context: Context) {
         }
     }
 
-    fun getBoolState(prefKey: Preferences.Key<Boolean>) : Flow<Boolean> {
+    suspend fun setPref(prefValue: Int, prefKey: Preferences.Key<Int>) {
+        dataStore.edit { pref->
+            pref[prefKey] = prefValue
+        }
+    }
+
+    fun getBoolPref(prefKey: Preferences.Key<Boolean>) : Flow<Boolean> {
         return dataStore.data
             .catch { exception->
                 if (exception is IOException) {
@@ -64,6 +73,20 @@ class DataStoreRepository(val context: Context) {
             }
             .map { pref->
                 val prefMode = pref[prefKey] ?: ""
+                prefMode
+            }
+    }
+    fun getIntPref(prefKey: Preferences.Key<Int>) : Flow<Int> {
+        return dataStore.data
+            .catch { exception->
+                if (exception is IOException) {
+                    emit(emptyPreferences())
+                } else {
+                    throw exception
+                }
+            }
+            .map { pref->
+                val prefMode = pref[prefKey] ?: 0
                 prefMode
             }
     }

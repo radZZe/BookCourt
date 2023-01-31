@@ -4,6 +4,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookcourt.data.repositories.DataStoreRepository
+import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.savedCity
 import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.savedName
 import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.savedPhoneNumber
 import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.savedSurname
@@ -33,6 +34,7 @@ class ProfileViewModel @Inject constructor(
     val userName = dataStoreRepository.getPref(savedName)
     val userSurname = dataStoreRepository.getPref(savedSurname)
     val userPhone = dataStoreRepository.getPref(savedPhoneNumber)
+    val userCity = dataStoreRepository.getPref(savedCity)
 
     fun dismiss() {
         if (feedbackState.value) {

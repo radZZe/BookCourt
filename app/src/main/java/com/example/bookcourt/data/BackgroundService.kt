@@ -19,7 +19,7 @@ class BackgroundService {
         var body = Json.encodeToString(serializer = Metric.serializer(),
             metric
         )
-        Log.d("MetricUserData",body)
+        Log.d("MetricUserData", body)
     }
 
     fun job(){
