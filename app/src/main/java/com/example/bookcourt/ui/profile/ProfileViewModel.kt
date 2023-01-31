@@ -1,5 +1,6 @@
 package com.example.bookcourt.ui.profile
 
+import android.content.Context
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -62,9 +63,9 @@ class ProfileViewModel @Inject constructor(
         feedbackMessage.value = str
     }
 
-    fun getUserData(userId: String) {
+    fun getUserData(context: Context) {
         viewModelScope.launch(Dispatchers.IO) {
-            val job = async { repository.getUserData(userId) }
+            val job = async { repository.getUserData(context) }
             val json = job.await()
             val data = Json.decodeFromString<UserRemote>("""$json""")
             user.value = data.toUser()
