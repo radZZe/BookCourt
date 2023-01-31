@@ -28,14 +28,18 @@ class NetworkRepository @Inject constructor(
         return json
     }
 
-    suspend fun getUserData(userId:String):String?{
-        val request: Request = Request.Builder()
-            .url("https://bookcourttest-ee89c-default-rtdb.asia-southeast1.firebasedatabase.app/users/${userId}.json")
-            .method("GET", null)
-            .addHeader("Content-Type", "application/json")
-            .build()
-        val response = client.newCall(request).execute()
-        return response.body?.string()
+    suspend fun getUserData(context: Context):String{
+//        val request: Request = Request.Builder()
+//            .url("https://bookcourttest-ee89c-default-rtdb.asia-southeast1.firebasedatabase.app/users/${userId}.json")
+//            .method("GET", null)
+//            .addHeader("Content-Type", "application/json")
+//            .build()
+//        val response = client.newCall(request).execute()
+//        return response.body?.string()
+        var json = context.assets.open("user.json").bufferedReader().use {
+            it.readText()
+        }
+        return json
     }
 
     private fun jsonDataFromAssetFile(filename:String,context:Context ):String{

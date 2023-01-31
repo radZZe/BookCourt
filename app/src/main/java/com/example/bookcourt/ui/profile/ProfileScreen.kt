@@ -45,7 +45,7 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel()) {
     LaunchedEffect(key1 = Unit) {
         val userId =
             "b9786ae1-4efb-46c4-a493-cb948cb80103" // Так как нет авторизации я храню просто id пользователя в тестовом формате
-        viewModel.getUserData(userId = userId)
+        viewModel.getUserData(context)
     }
 
     Scaffold() {
