@@ -57,6 +57,10 @@ class CardStackViewModel @Inject constructor(
 
     }
 
+    private fun getTopGenres(){
+
+    }
+
     private fun toMap(value:String):MutableMap<String,Int>{
         return Json.decodeFromString(value)
     }
