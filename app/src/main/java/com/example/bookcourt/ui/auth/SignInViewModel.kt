@@ -71,7 +71,7 @@ class SignInViewModel @Inject constructor(
 
     }
 
-    fun getCity(context: Context, location: Location) {
+    fun getCity(context: Context, location: Location?) {
         if (location != null) {
             var address: List<Address>? = null
             try {
