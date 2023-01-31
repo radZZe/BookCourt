@@ -10,16 +10,21 @@ import androidx.compose.material.Scaffold
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.bookcourt.data.BackgroundService
 import com.example.bookcourt.ui.auth.SignInViewModel
 import com.example.bookcourt.ui.graphs.NavigationGraph
 import com.example.bookcourt.ui.theme.BookCourtTheme
 import com.example.bookcourt.utils.SplashViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    @Inject
+    lateinit var bgService: BackgroundService
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        bgService.job()
         setContent {
             BookCourtTheme {
                 val navController: NavHostController = rememberNavController()

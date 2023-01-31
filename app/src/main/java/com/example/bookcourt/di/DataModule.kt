@@ -11,6 +11,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import okhttp3.OkHttpClient
 import javax.inject.Singleton
 
 
@@ -26,8 +27,8 @@ class DataModule {
 
     @Provides
     @Singleton
-    fun provideBackgroundService():BackgroundService{
-        return BackgroundService()
+    fun provideBackgroundService(client: OkHttpClient):BackgroundService{
+        return BackgroundService(client)
     }
 
     @Provides
