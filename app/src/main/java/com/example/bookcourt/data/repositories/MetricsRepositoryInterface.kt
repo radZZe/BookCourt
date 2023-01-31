@@ -3,6 +3,7 @@ package com.example.bookcourt.data.repositories
 interface MetricsRepositoryInterface {
 
     suspend fun sendUserData(name:String,surname:String,phoneNumber:String,uuid: String)
+
     suspend fun onClick(objectType:String)
 
     suspend fun onSwipe(direction:String)
@@ -18,5 +19,12 @@ interface MetricsRepositoryInterface {
     suspend fun screenTime()
 
     suspend fun appTime(sessionTime: Int)
+
+    suspend fun getDeviceModel(): String
+
+    suspend fun getOS(): String
+
+    suspend fun detectShare()
+
 
 }

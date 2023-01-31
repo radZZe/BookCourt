@@ -14,8 +14,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import java.time.LocalDate
-import java.util.Date
-import java.util.UUID
+import java.util.*
 import javax.inject.Inject
 
 class MetricsRepository @Inject constructor(
@@ -23,7 +22,6 @@ class MetricsRepository @Inject constructor(
     private val dataStoreRepository: DataStoreRepository,
     private val hashing:Hashing
     ):MetricsRepositoryInterface {
-
 
     @RequiresApi(Build.VERSION_CODES.O)
     override suspend fun sendUserData(name:String, surname:String, phoneNumber:String,uuid: String){
@@ -75,6 +73,23 @@ class MetricsRepository @Inject constructor(
         }
     }
 
+
+    override suspend fun getDeviceModel(): String {
+        val manufacturer = Build.MANUFACTURER
+        val model = Build.MODEL
+        return if (model.lowercase(Locale.getDefault())
+                .startsWith(manufacturer.lowercase(Locale.getDefault()))
+        ) {
+            model
+        } else {
+            "$manufacturer $model"
+        }
+    }
+
+    override suspend fun getOS(): String  = "android version: "+Build.VERSION.SDK_INT.toString()
+    override suspend fun detectShare() {
+        TODO("Not yet implemented")
+    }
 }
 
 const val USER_DATA_TYPE ="userData"

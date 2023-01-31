@@ -1,5 +1,6 @@
 package com.example.bookcourt.utils
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -13,6 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layout
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -55,19 +57,19 @@ fun CardStack(
 
 
     cardStackController.onSwipeLeft = {
-        // TODO логика свайпа влево
+       viewModel.dislikeBook(items[i].genre)
         onSwipeLeft(items[i])
         i--
     }
 
     cardStackController.onSwipeRight = {
-        // TODO логика свайпа вправо
+        viewModel.likeBook(items[i].genre)
         onSwipeRight(items[i])
         i--
     }
 
     cardStackController.onSwipeUp = {
-        // TODO логика свайпа вверх
+        viewModel.wantToRead(items[i].name)
         onSwipeUp(items[i])
         i--
     }
