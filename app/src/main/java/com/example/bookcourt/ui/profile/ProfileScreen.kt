@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Modifier
@@ -92,7 +93,7 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel()) {
                     .zIndex(1f)
             ) {
                 if (user.value != null) {
-                    HeaderProfile(user.value!!)
+                    HeaderProfile(user.value!!, viewModel)
                     Box(
                         modifier = Modifier
                             .padding(10.dp)
@@ -117,8 +118,10 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel()) {
 }
 
 @Composable
-fun HeaderProfile(user: User) {
-
+fun HeaderProfile(user: User, viewModel: ProfileViewModel) {
+    val userName = viewModel.userName.collectAsState(initial = "")
+    val userSurname = viewModel.userSurname.collectAsState(initial = "")
+    val userPhone = viewModel.userPhone.collectAsState(initial = "")
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -137,13 +140,13 @@ fun HeaderProfile(user: User) {
                 UserPhotoComponent(user.image)
                 Column(modifier = Modifier.padding(start = 20.dp, end = 20.dp)) {
                     Text(
-                        text = "${user.name} ${user.surname}",
+                        text = "${userName.value} ${userSurname.value}",
                         color = Color.White,
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp
                     )
                     Text(
-                        text = user.email,
+                        text = userPhone.value,
                         color = Color.White,
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp
@@ -355,9 +358,6 @@ fun ProfileMenuItem(text: String, onClick: () -> Unit) {
 
 fun getWantedBooks(list: List<String>): String {
     var res = "Хочу прочитать: \n"
-//    for (book in list) {
-//        res += "$book \n"
-//    }
     list.forEachIndexed { number, book ->
         res += "${number + 1} $book \n"
     }

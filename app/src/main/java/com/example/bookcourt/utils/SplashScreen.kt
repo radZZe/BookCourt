@@ -17,6 +17,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import com.example.bookcourt.R
 import kotlinx.coroutines.delay
 
@@ -35,12 +36,12 @@ fun SplashScreen(navController: NavController, mViewModel: SplashViewModel) {
     LaunchedEffect(key1 = true) {
         startAnimation = true
         delay(2000)
-        if (rememberState.value.toString() == "true") {
+        if (rememberState.value == true) {
             navController.popBackStack()
-//            navController.navigate(route = Navigation.Main.route)
+            navController.navigate(route = BottomBarScreen.Recomendations.route)
         } else {
             navController.popBackStack()
-//            navController.navigate(route = Navigation.Auth.route)
+            navController.navigate(route = Screens.SignIn.route)
         }
     }
     SplashUI(alpha = alphaAnim.value)

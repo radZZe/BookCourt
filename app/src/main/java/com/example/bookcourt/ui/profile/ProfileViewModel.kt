@@ -3,6 +3,10 @@ package com.example.bookcourt.ui.profile
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.bookcourt.data.repositories.DataStoreRepository
+import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.savedName
+import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.savedPhoneNumber
+import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.savedSurname
 import com.example.bookcourt.data.repositories.NetworkRepository
 import com.example.bookcourt.models.User
 import com.example.bookcourt.models.UserRemote
@@ -16,7 +20,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
-    val repository: NetworkRepository
+    val repository: NetworkRepository,
+    val dataStoreRepository: DataStoreRepository
 ) : ViewModel() {
     val user = mutableStateOf<User?>(null)
     val alertDialogState = mutableStateOf(false)
@@ -24,6 +29,10 @@ class ProfileViewModel @Inject constructor(
     val statisticsState = mutableStateOf(false)
     val feedbackData = mutableStateOf("")
     val feedbackMessage = mutableStateOf("")
+
+    val userName = dataStoreRepository.getPref(savedName)
+    val userSurname = dataStoreRepository.getPref(savedSurname)
+    val userPhone = dataStoreRepository.getPref(savedPhoneNumber)
 
     fun dismiss() {
         if (feedbackState.value) {
@@ -52,7 +61,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun getUserData(userId: String) {
-        val jobMain = viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             val job = async { repository.getUserData(userId) }
             val json = job.await()
             val data = Json.decodeFromString<UserRemote>("""$json""")
