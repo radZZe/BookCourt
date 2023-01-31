@@ -1,7 +1,12 @@
 package com.example.bookcourt.di
 
 import android.app.Application
+import android.text.BoringLayout.Metrics
+import com.example.bookcourt.data.BackgroundService
 import com.example.bookcourt.data.repositories.DataStoreRepository
+import com.example.bookcourt.data.repositories.MetricsRepository
+import com.example.bookcourt.models.Metric
+import com.example.bookcourt.utils.Hashing
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -19,4 +24,20 @@ class DataModule {
         return DataStoreRepository(application)
     }
 
+    @Provides
+    @Singleton
+    fun provideBackgroundService():BackgroundService{
+        return BackgroundService()
+    }
+
+    @Provides
+    @Singleton
+    fun provideMetrics(bgService: BackgroundService,dataStoreRepository: DataStoreRepository,hashing:Hashing):MetricsRepository{
+        return MetricsRepository(bgService,dataStoreRepository,hashing)
+    }
+
+    @Provides
+    fun provideHashing():Hashing{
+        return Hashing
+    }
 }
