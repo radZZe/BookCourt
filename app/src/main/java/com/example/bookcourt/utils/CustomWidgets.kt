@@ -136,7 +136,7 @@ fun CustomCheckBox(
             onCheckedChange = { onCheckedChange(it) },
             colors = CheckboxDefaults.colors(
                 checkedColor = colorResource(id = R.color.main_color),
-                uncheckedColor = Color.White,
+                uncheckedColor = Color.Gray,
             )
         )
         Text(

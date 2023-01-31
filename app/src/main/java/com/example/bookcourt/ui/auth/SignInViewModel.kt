@@ -41,7 +41,7 @@ class SignInViewModel @Inject constructor(
         phoneNumber = newText
     }
 
-    private fun editPrefs() {
+    fun editPrefs() {
         viewModelScope.launch {
             dataStoreRepository.setPref(surname, savedSurname)
             dataStoreRepository.setPref(name, savedName)
@@ -50,9 +50,9 @@ class SignInViewModel @Inject constructor(
         }
     }
 
-    fun signIn(onSuccess: () -> Unit) {
-        if (isRememberMe) {
-            editPrefs()
-        }
-    }
+//    fun signIn(onSuccess: () -> Unit) {
+//        if (isRememberMe) {
+//            editPrefs()
+//        }
+//    }
 }
