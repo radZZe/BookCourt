@@ -1,5 +1,7 @@
 package com.example.bookcourt.ui.profile
 
+import android.util.Log
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,11 +10,13 @@ import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKey
 import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.savedPhoneNumber
 import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.savedSurname
 import com.example.bookcourt.data.repositories.NetworkRepository
+import com.example.bookcourt.models.Statistics
 import com.example.bookcourt.models.User
 import com.example.bookcourt.models.UserRemote
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
@@ -60,12 +64,65 @@ class ProfileViewModel @Inject constructor(
         feedbackMessage.value = str
     }
 
+    private suspend fun getTopGenres(): List<String> {
+        val genresList = mutableListOf("Отсутствует","Отсутствует","Отсутствует")
+            val genres = dataStoreRepository.getPref(DataStoreRepository.savedFavoriteGenres).first()
+            var genresMap = emptyMap<String,Int>()
+            if (genres.isNotBlank()){
+                genresMap = Json.decodeFromString(genres)
+            }
+            var cnt = 1
+           for (element in genresMap){
+               if (cnt==1){
+                   genresList[0] = element.key
+               }
+               else if (cnt==2){
+                   genresList[1] = element.key
+               }
+               else if (cnt==3){
+                   genresList[2] = element.key
+               }
+               else{
+                   break
+               }
+               cnt++
+           }
+        return genresList
+    }
+
+    private suspend fun generateStatistics():Statistics{
+            val likedBooks =
+                dataStoreRepository.getPrefInt(DataStoreRepository.savedLikedBooksCnt).first()
+            val wantToRead = dataStoreRepository.getPref(DataStoreRepository.savedWantToReadList).first()
+            var wantToReadGenres = emptyList<String>()
+            if (wantToRead.isNotBlank()) {
+                wantToReadGenres = Json.decodeFromString<List<String>>(wantToRead)
+            }
+            val disliked = dataStoreRepository.getPref(DataStoreRepository.dislikedGenresList).first()
+            var dislikedGenres = emptyList<String>()
+            if (disliked.isNotBlank()){
+                dislikedGenres =Json.decodeFromString<List<String>>(disliked)
+            }
+            val favoriteGenres =  getTopGenres()
+            return Statistics(
+                0,
+                likedBooks,
+                favoriteGenres,
+                wantToReadGenres,
+                dislikedGenres,
+                "Unknown"
+            )
+    }
+
     fun getUserData(userId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val job = async { repository.getUserData(userId) }
             val json = job.await()
             val data = Json.decodeFromString<UserRemote>("""$json""")
-            user.value = data.toUser()
+            val statistics = async { generateStatistics() }.await()
+            user.value = data.toUser().apply {
+                this.statistics = statistics
+            }
         }
     }
 }
