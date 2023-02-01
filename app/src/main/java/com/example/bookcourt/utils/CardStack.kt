@@ -1,6 +1,8 @@
 package com.example.bookcourt.utils
 
+import android.os.Build
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -32,6 +34,7 @@ import com.example.bookcourt.ui.BookCardImage
 import com.example.bookcourt.ui.profile.ProfileViewModel
 import kotlin.math.roundToInt
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun CardStack(

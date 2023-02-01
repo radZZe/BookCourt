@@ -81,7 +81,19 @@ fun RecomendationContent(viewModel: RecomendationViewModel = hiltViewModel()) {
                 CardStack(
                     items = bookJson.value!!, onEmptyStack = {
                         viewModel.isEmpty.value = true
-                    }, cardStackController = cardStackController
+                    }, cardStackController = cardStackController,
+                    onSwipeLeft = {
+                        viewModel.metricSwipeLeft(it)
+                    },
+                    onSwipeRight = {
+                        viewModel.metricSwipeRight(it)
+                    },
+                    onSwipeUp = {
+                        viewModel.metricSwipeTop(it)
+                    },
+                    onSwipeDown = {
+                        viewModel.metricSwipeDown(it)
+                    }
                 )
                 Spacer(modifier = Modifier.padding(10.dp))
             } else {
