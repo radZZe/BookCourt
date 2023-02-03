@@ -10,7 +10,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -50,7 +49,7 @@ import com.example.bookcourt.utils.rememberCardStackController
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun RecomendationScreen(navController: NavController) {
-    RecomendationContent(navController = navController)
+    RecomendationContent(navController)
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -73,23 +72,13 @@ fun RecomendationContent(
 
     val cardStackController = rememberCardStackController()
     Column(Modifier.padding(20.dp)) {
-
-        Text(
-            text = stringResource(R.string.recomendations),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(0.dp, 0.dp, 0.dp, 5.dp),
-            style = MaterialTheme.typography.h4,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center
-        )
         if (!isEmpty) {
             if (bookJson.value != null) {
                 CardStack(
+                    modifier = Modifier.fillMaxSize(),
                     items = bookJson.value!!, onEmptyStack = {
                         viewModel.isEmpty.value = true
                     }, cardStackController = cardStackController,
-                    navController = navController
                     onSwipeLeft = {
                         viewModel.metricSwipeLeft(it)
                     },
@@ -101,9 +90,9 @@ fun RecomendationContent(
                     },
                     onSwipeDown = {
                         viewModel.metricSwipeDown(it)
-                    }
+                    },
+                    navController = navController
                 )
-                Spacer(modifier = Modifier.padding(10.dp))
             } else {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator()
@@ -126,19 +115,6 @@ fun RecomendationContent(
     }
 }
 
-@Composable
-fun BookCardImage(uri: String) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight(0.7f), contentAlignment = Alignment.Center
-    ) {
-        val painter = rememberAsyncImagePainter(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(uri)
-                .size(Size.ORIGINAL) // Set the target size to load the image at.
-                .build(),
-        )
 
 @Composable
 fun BookCardImage(uri: String) {
@@ -154,46 +130,17 @@ fun BookCardImage(uri: String) {
                 .build(),
         )
 
-
-    @Composable
-    fun BookCardImage(uri: String) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 117.dp)
-        ) {
-            val painter = rememberAsyncImagePainter(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(uri)
-                    .size(Size.ORIGINAL) // Set the target size to load the image at.
-                    .build(),
-            )
-
-            if (painter.state is AsyncImagePainter.State.Loading) {
-                CircularProgressIndicator()
-            }
-
-            Image(
-                painter = painter,
-                contentDescription = stringResource(R.string.book_image),
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize()
-                    .clip(RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp))
-            )
+        if (painter.state is AsyncImagePainter.State.Loading) {
+            CircularProgressIndicator()
         }
-//=======
-  //      if (painter.state is AsyncImagePainter.State.Loading) {
-    //        CircularProgressIndicator()
-      //  }
-//
-  //      Image(
-    //        painter = painter,
-      //      contentDescription = stringResource(R.string.book_image),
-        //    contentScale = ContentScale.Fit,
-          //  modifier = Modifier.fillMaxSize()
-        //)
-//
-//>>>>>>> master
+
+        Image(
+            painter = painter,
+            contentDescription = stringResource(R.string.book_image),
+            contentScale = ContentScale.Fit,
+            modifier = Modifier.fillMaxSize()
+        )
+
     }
 }
 

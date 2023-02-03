@@ -4,6 +4,8 @@ import StatisticsScreen
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -81,6 +83,9 @@ fun NavigationGraph(
             },
             navArgument("rate"){
                 type = NavType.IntType
+            },
+            navArgument("onSwipeDirection"){
+                type= NavType.StringType
             }
             )
         ) {
@@ -91,6 +96,7 @@ fun NavigationGraph(
             val createdAt = it.arguments?.getString("createdAt")?:"unset"
             val numberOfPage = it.arguments?.getString("numberOfPage")?:"unset"
             val rate = it.arguments?.getInt("rate")?:0
+            val onSwipeDirection = it.arguments?.getString("onSwipeDirection")?:null
             val book = Book(
                 title,
                 authorName,
@@ -100,7 +106,10 @@ fun NavigationGraph(
                 rate,
                 "Danull",
                 genre,
-                "Danull"
+                "Danull",
+                onSwipeDirection = remember {
+                    mutableStateOf(onSwipeDirection)
+                }
 
             )
             CardInfoScreen(navController,book)

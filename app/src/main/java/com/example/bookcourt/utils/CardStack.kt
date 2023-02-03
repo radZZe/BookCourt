@@ -6,7 +6,6 @@ import androidx.compose.foundation.clickable
 import android.os.Build
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -16,12 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layout
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -36,22 +31,9 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import coil.compose.AsyncImagePainter
-import coil.compose.rememberAsyncImagePainter
-import coil.request.ImageRequest
-import coil.size.Size
 import com.example.bookcourt.R
 import com.example.bookcourt.models.Book
 import com.example.bookcourt.ui.BookCardImage
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.encodeToJsonElement
-import androidx.lifecycle.viewModelScope
-import coil.compose.AsyncImage
-import com.example.bookcourt.R
-import com.example.bookcourt.models.Book
-import com.example.bookcourt.ui.BookCardImage
-import com.example.bookcourt.ui.profile.ProfileViewModel
-import okhttp3.internal.wait
 import kotlin.math.roundToInt
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -143,12 +125,11 @@ fun CardStack(
                             navController.navigate(
                                 Screens.CardInfo.route +
                                         "/${item.name}/${item.author}/${item.description}/${item.genre}"
-                                        + "/${item.createdAt}/${item.numberOfPage}/${item.rate}"
+                                        + "/${item.createdAt}/${item.numberOfPage}/${item.rate}/${item.onSwipeDirection.value}"
                             )
                         },
                     item,
                     navController,
-                    item,
                     viewModel
                 )
             }
@@ -268,10 +249,64 @@ fun BookCard1(
 }
 
 @Composable
-fun BookCard(modifier: Modifier = Modifier,
-                  item: Book,
-                  navController: NavController) {
+fun BookCard(
+    modifier: Modifier = Modifier,
+    item: Book,
+    navController: NavController,
+    viewModel: CardStackViewModel
+) {
+
+    var colorStopsNull = arrayOf(
+        0.0f to Color.Transparent,
+        0.8f to Color.Transparent
+    )
+    var brush = Brush.verticalGradient(colorStops = colorStopsNull)
+    when (item.onSwipeDirection.value) {
+        DIRECTION_RIGHT -> {
+            val colorStopsRight = arrayOf(
+                0.0f to Color(0.3f, 0.55f, 0.21f, 0.75f),
+                0.8f to Color.Transparent
+            )
+            brush = Brush.horizontalGradient(colorStops = colorStopsRight)
+        }
+        DIRECTION_LEFT -> {
+            val colorStopsLeft = arrayOf(
+
+                0.0f to Color.Transparent,
+                0.8f to Color(1f, 0.31f, 0.31f, 0.75f)
+            )
+            brush = Brush.horizontalGradient(colorStops = colorStopsLeft)
+        }
+        DIRECTION_TOP -> { // Note the block
+            val colorStopsTop = arrayOf(
+                0.0f to Color.Transparent,
+                0.8f to Color(1f, 0.6f, 0f, 0.75f),
+            )
+            brush = Brush.verticalGradient(colorStops = colorStopsTop)
+        }
+        DIRECTION_BOTTOM -> {
+            val colorStopsBottom = arrayOf(
+                0.0f to Color(0.3f, 0f, 0.41f, 0.75f),
+                0.8f to Color.Transparent
+            )
+
+            brush = Brush.verticalGradient(colorStops = colorStopsBottom)
+        }
+        else -> {
+            brush = Brush.verticalGradient(colorStops = colorStopsNull)
+        }
+    }
+
+    val darkGradient = Brush.verticalGradient(
+        listOf(
+            Color(0xFF303845),
+            Color(0xFF2E3643),
+            Color(0xFF14161A)
+        )
+    )
+
     Card(
+        backgroundColor = Color.Transparent,
         elevation = 5.dp,
         shape = RoundedCornerShape(20.dp),
         modifier = modifier
@@ -281,85 +316,80 @@ fun BookCard(modifier: Modifier = Modifier,
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(
-                    Brush.verticalGradient(
-                        listOf(
-                            Color(0xFF303845),
-                            Color(0xFF2E3643),
-                            Color(0xFF14161A)
-                        )
-                    )
-                )
+                .background(darkGradient)
                 .clip(RoundedCornerShape(topStart = 23.dp, topEnd = 23.dp))
         ) {
-            BookCardImage(uri = item.image)
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(start = 20.dp, bottom = 60.dp),
-                contentAlignment = Alignment.BottomStart
-            ) {
-                Column(modifier = Modifier, verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                    Text(
-                        text = item.name, color = Color.White, fontSize = 20.sp,
-                        fontFamily = FontFamily(
-                            Font(
-                                R.font.manrope_extrabold,
-                                weight = FontWeight.W600
-                            )
-                        )
-                    )
-                    Text(
-                        text = item.author, color = Color(0xFFFFFDFF), fontSize = 16.sp,
-                        fontFamily = FontFamily(
-                            Font(
-                                R.font.manrope_medium,
-                                weight = FontWeight.W600
-                            )
-                        )
-                    )
-                }
-            }
-            Row(
-                modifier = Modifier,
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                Column(
+            Column(modifier = Modifier.fillMaxSize().background(brush)) {
+                BookCardImage(uri = item.image)
+                Box(
                     modifier = Modifier
-                        .padding(top = 800.dp, start = 10.dp, bottom = 15.dp)
-                        .fillMaxSize(),
-                    verticalArrangement = Arrangement.Bottom
+                        .fillMaxSize()
+                        .padding(start = 20.dp, bottom = 60.dp),
+                    contentAlignment = Alignment.BottomStart
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .size(width = 132.dp, height = 32.dp)
-                            .clip(RoundedCornerShape(50.dp))
-                            .background(color = Color(0xFF8BB298))
-                            .clickable { },
-                        Alignment.Center,
-
-
-                        ) {
-                        Text(text = item.genre, color = Color(0xFFFFFFFF), fontSize = 14.sp)
+                    Column(modifier = Modifier, verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                        Text(
+                            text = item.name, color = Color.White, fontSize = 20.sp,
+                            fontFamily = FontFamily(
+                                Font(
+                                    R.font.manrope_extrabold,
+                                    weight = FontWeight.W600
+                                )
+                            )
+                        )
+                        Text(
+                            text = item.author, color = Color(0xFFFFFDFF), fontSize = 16.sp,
+                            fontFamily = FontFamily(
+                                Font(
+                                    R.font.manrope_medium,
+                                    weight = FontWeight.W600
+                                )
+                            )
+                        )
                     }
+                }
+                Row(
+                    modifier = Modifier,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .padding(top = 800.dp, start = 10.dp, bottom = 15.dp)
+                            .fillMaxSize(),
+                        verticalArrangement = Arrangement.Bottom
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(width = 132.dp, height = 32.dp)
+                                .clip(RoundedCornerShape(50.dp))
+                                .background(color = Color(0xFF8BB298))
+                                .clickable { },
+                            Alignment.Center,
 
 
+                            ) {
+                            Text(text = item.genre, color = Color(0xFFFFFFFF), fontSize = 14.sp)
+                        }
+
+
+                    }
+                }
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(
+                            top = 810.dp, bottom = 5.dp, start = 350.dp, end = 5.dp
+                        )
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.shop),
+                        contentDescription = "icon_shop",
+                        modifier = Modifier
+                            .size(width = 25.dp, height = 24.dp)
+                    )
                 }
             }
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(
-                        top = 810.dp, bottom = 5.dp, start = 350.dp, end = 5.dp
-                    )
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.shop),
-                    contentDescription = "icon_shop",
-                    modifier = Modifier
-                        .size(width = 25.dp, height = 24.dp)
-                )
-            }
+
 
         }
     }
@@ -425,10 +455,12 @@ fun BookCardTest(
         }
     }
     val listColors = listOf(Color(0.3f, 0f, 0.41f, 0.75f), Color.Transparent)
-    val customBrush = Brush.verticalGradient(colorStops = arrayOf(
-        0.0f to Color(0.3f, 0f, 0.41f, 0.75f),
-        0.5f to Color.Transparent
-    ))
+    val customBrush = Brush.verticalGradient(
+        colorStops = arrayOf(
+            0.0f to Color(0.3f, 0f, 0.41f, 0.75f),
+            0.5f to Color.Transparent
+        )
+    )
     // Убери старт Y и енд Y
 //    val customBrush = remember {
 //        object : ShaderBrush() {
@@ -442,7 +474,6 @@ fun BookCardTest(
 //            }
 //        }
 //    }
-
 
 
     Card(
