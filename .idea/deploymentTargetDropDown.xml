@@ -7,10 +7,14 @@
         <deviceKey>
           <Key>
             <type value="VIRTUAL_DEVICE_PATH" />
-            <value value="D:\Users\DNS\avd\.android\avd\Pixel_2_API_30_1.avd" />
+            <value value="C:\Users\yato0\.android\avd\Pixel_2_API_30.avd" />
           </Key>
         </deviceKey>
       </Target>
+
+    </targetSelectedWithDropDown>
+    <timeTargetWasSelectedWithDropDown value="2023-02-03T06:28:30.862200600Z" />
+    //Здесь был конфликт
     </runningDeviceTargetSelectedWithDropDown>
     <timeTargetWasSelectedWithDropDown value="2023-02-03T12:32:47.861884300Z" />
   </component>

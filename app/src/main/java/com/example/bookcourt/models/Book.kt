@@ -1,7 +1,6 @@
 package com.example.bookcourt.models
-
 import androidx.compose.runtime.MutableState
-
+@kotlinx.serialization.Serializable
 data class Book(
     val name:String,
     val author:String,

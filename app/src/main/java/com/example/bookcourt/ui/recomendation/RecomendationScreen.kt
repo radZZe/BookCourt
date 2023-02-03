@@ -10,6 +10,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -49,7 +50,7 @@ import com.example.bookcourt.utils.rememberCardStackController
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun RecomendationScreen(navController: NavController) {
-    RecomendationContent(navController)
+    RecomendationContent(navController = navController)
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -88,6 +89,7 @@ fun RecomendationContent(
                     items = bookJson.value!!, onEmptyStack = {
                         viewModel.isEmpty.value = true
                     }, cardStackController = cardStackController,
+                    navController = navController
                     onSwipeLeft = {
                         viewModel.metricSwipeLeft(it)
                     },
@@ -152,17 +154,46 @@ fun BookCardImage(uri: String) {
                 .build(),
         )
 
-        if (painter.state is AsyncImagePainter.State.Loading) {
-            CircularProgressIndicator()
+
+    @Composable
+    fun BookCardImage(uri: String) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 117.dp)
+        ) {
+            val painter = rememberAsyncImagePainter(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(uri)
+                    .size(Size.ORIGINAL) // Set the target size to load the image at.
+                    .build(),
+            )
+
+            if (painter.state is AsyncImagePainter.State.Loading) {
+                CircularProgressIndicator()
+            }
+
+            Image(
+                painter = painter,
+                contentDescription = stringResource(R.string.book_image),
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+                    .clip(RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp))
+            )
         }
-
-        Image(
-            painter = painter,
-            contentDescription = stringResource(R.string.book_image),
-            contentScale = ContentScale.Fit,
-            modifier = Modifier.fillMaxSize()
-        )
-
+//=======
+  //      if (painter.state is AsyncImagePainter.State.Loading) {
+    //        CircularProgressIndicator()
+      //  }
+//
+  //      Image(
+    //        painter = painter,
+      //      contentDescription = stringResource(R.string.book_image),
+        //    contentScale = ContentScale.Fit,
+          //  modifier = Modifier.fillMaxSize()
+        //)
+//
+//>>>>>>> master
     }
 }
 
@@ -189,7 +220,17 @@ fun ShowTutor(viewModel: RecomendationViewModel) {
             .zIndex(2f)
             .fillMaxSize()
     ) {
+        AnimatedVisibility(
+            visible = !tutorState.value,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
+            TutorialGreeting {
+                viewModel.editTutorState()
+            }
+        }
     }
+
 }
 
 
