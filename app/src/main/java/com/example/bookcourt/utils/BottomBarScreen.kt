@@ -9,6 +9,7 @@ sealed class Screens(
 ) {
     object SignIn : Screens(route = "SIGN_IN", title = "SIGN_IN")
     object Splash : Screens(route = "SPLASH", title = "SPLASH")
+    object Statistics : Screens(route = "STATS", title = "STATS")
 }
 
 sealed class BottomBarScreen(
