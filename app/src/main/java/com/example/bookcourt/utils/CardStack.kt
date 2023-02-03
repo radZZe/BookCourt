@@ -321,73 +321,109 @@ fun BookCard(
         ) {
             Column(modifier = Modifier.fillMaxSize().background(brush)) {
                 BookCardImage(uri = item.image)
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(start = 20.dp, bottom = 60.dp),
-                    contentAlignment = Alignment.BottomStart
-                ) {
-                    Column(modifier = Modifier, verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                        Text(
-                            text = item.name, color = Color.White, fontSize = 20.sp,
+                Column(
+                    modifier = Modifier.fillMaxSize().padding(top = 60.dp,bottom = 20.dp,start = 20.dp, end = 20.dp),
+                    verticalArrangement = Arrangement.SpaceBetween
+                    ){
+                    Text(text="48 законов власти",color = Color.White, fontSize = 20.sp,
                             fontFamily = FontFamily(
                                 Font(
                                     R.font.manrope_extrabold,
                                     weight = FontWeight.W600
                                 )
-                            )
-                        )
-                        Text(
-                            text = item.author, color = Color(0xFFFFFDFF), fontSize = 16.sp,
+                            ))
+                    Text(text="Грин Р.", color = Color(0xFFFFFDFF), fontSize = 16.sp,
                             fontFamily = FontFamily(
                                 Font(
                                     R.font.manrope_medium,
                                     weight = FontWeight.W600
                                 )
-                            )
-                        )
-                    }
-                }
-                Row(
-                    modifier = Modifier,
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .padding(top = 800.dp, start = 10.dp, bottom = 15.dp)
-                            .fillMaxSize(),
-                        verticalArrangement = Arrangement.Bottom
-                    ) {
+                            ))
+                    Row(modifier = Modifier.fillMaxSize()){
                         Box(
                             modifier = Modifier
-                                .size(width = 132.dp, height = 32.dp)
                                 .clip(RoundedCornerShape(50.dp))
-                                .background(color = Color(0xFF8BB298))
-                                .clickable { },
+                                .background(color = Color(0xFF8BB298)).padding(),
                             Alignment.Center,
 
 
                             ) {
-                            Text(text = item.genre, color = Color(0xFFFFFFFF), fontSize = 14.sp)
+                            Text(modifier = Modifier.padding(start = 10.dp,end=10.dp),text = "Фантастика", color = Color(0xFFFFFFFF), fontSize = 14.sp,fontFamily = FontFamily(
+                                Font(
+                                    R.font.manrope_medium,
+                                    weight = FontWeight.W600
+                                )
+                            ))
                         }
-
-
                     }
                 }
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(
-                            top = 810.dp, bottom = 5.dp, start = 350.dp, end = 5.dp
-                        )
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.shop),
-                        contentDescription = "icon_shop",
-                        modifier = Modifier
-                            .size(width = 25.dp, height = 24.dp)
-                    )
-                }
+//                Box(
+//                    modifier = Modifier
+//                        .fillMaxSize()
+//                        .padding(start = 20.dp, bottom = 0.dp),
+//                    contentAlignment = Alignment.BottomStart
+//                ) {
+//                    Column(modifier = Modifier, verticalArrangement = Arrangement.spacedBy(10.dp)) {
+//                        Text(
+//                            text = item.name, color = Color.White, fontSize = 20.sp,
+//                            fontFamily = FontFamily(
+//                                Font(
+//                                    R.font.manrope_extrabold,
+//                                    weight = FontWeight.W600
+//                                )
+//                            )
+//                        )
+//                        Text(
+//                            text = item.author, color = Color(0xFFFFFDFF), fontSize = 16.sp,
+//                            fontFamily = FontFamily(
+//                                Font(
+//                                    R.font.manrope_medium,
+//                                    weight = FontWeight.W600
+//                                )
+//                            )
+//                        )
+//                    }
+//                }
+//                Row(
+//                    modifier = Modifier,
+//                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+//                ) {
+//                    Column(
+//                        modifier = Modifier
+//                            .padding( start = 10.dp, bottom = 15.dp)
+//                            .fillMaxSize(),
+//                        verticalArrangement = Arrangement.Bottom
+//                    ) {
+//                        Box(
+//                            modifier = Modifier
+//                                .size(width = 132.dp, height = 32.dp)
+//                                .clip(RoundedCornerShape(50.dp))
+//                                .background(color = Color(0xFF8BB298))
+//                                .clickable { },
+//                            Alignment.Center,
+//
+//
+//                            ) {
+//                            Text(text = item.genre, color = Color(0xFFFFFFFF), fontSize = 14.sp)
+//                        }
+//
+//
+//                    }
+//                }
+//                Box(
+//                    modifier = Modifier
+//                        .fillMaxSize()
+//                        .padding(
+//                            top = 810.dp, bottom = 5.dp, start = 350.dp, end = 5.dp
+//                        )
+//                ) {
+//                    Image(
+//                        painter = painterResource(id = R.drawable.shop),
+//                        contentDescription = "icon_shop",
+//                        modifier = Modifier
+//                            .size(width = 25.dp, height = 24.dp)
+//                    )
+//                }
             }
 
 
