@@ -64,6 +64,7 @@ class DataStoreRepository(val context: Context) {
                 val prefMode = pref[prefKey] ?: false
                 prefMode
             }
+
     }
 
     fun getPref(prefKey: Preferences.Key<String>) : Flow<String> {
@@ -79,7 +80,9 @@ class DataStoreRepository(val context: Context) {
                 val prefMode = pref[prefKey] ?: ""
                 prefMode
             }
+
     }
+
     fun getIntPref(prefKey: Preferences.Key<Int>) : Flow<Int> {
         return dataStore.data
             .catch { exception->
@@ -93,21 +96,7 @@ class DataStoreRepository(val context: Context) {
                 val prefMode = pref[prefKey] ?: 0
                 prefMode
             }
-    }
 
-    fun getPrefInt(prefKey: Preferences.Key<Int>) : Flow<Int> {
-        return dataStore.data
-            .catch { exception->
-                if (exception is IOException) {
-                    emit(emptyPreferences())
-                } else {
-                    throw exception
-                }
-            }
-            .map { pref->
-                val prefMode = pref[prefKey] ?: 0
-                prefMode
-            }
     }
 
 }

@@ -1,12 +1,8 @@
 package com.example.bookcourt.utils
 
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
-import androidx.compose.animation.core.Animatable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
@@ -14,7 +10,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.bookcourt.data.repositories.DataStoreRepository
 import com.example.bookcourt.data.repositories.MetricsRepository
 import com.example.bookcourt.models.Book
-import com.example.bookcourt.models.UserAction
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -23,10 +18,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToJsonElement
-import kotlinx.serialization.json.jsonObject
 import javax.inject.Inject
-import kotlin.math.abs
-import kotlin.math.sign
 
 @HiltViewModel
 class CardStackViewModel @Inject constructor(
@@ -46,7 +38,7 @@ class CardStackViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             val likedBooks =
                 withContext(Dispatchers.Default) {
-                    dataStoreRepository.getPrefInt(DataStoreRepository.savedLikedBooksCnt)
+                    dataStoreRepository.getIntPref(DataStoreRepository.savedLikedBooksCnt)
                 }.first()+1
             val favoriteGenres =
                 withContext(Dispatchers.Default) {

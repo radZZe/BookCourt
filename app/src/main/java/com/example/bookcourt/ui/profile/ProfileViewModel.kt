@@ -1,7 +1,5 @@
 package com.example.bookcourt.ui.profile
 
-import android.util.Log
-import androidx.compose.runtime.MutableState
 import android.content.Context
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -95,7 +93,7 @@ class ProfileViewModel @Inject constructor(
 
     private suspend fun generateStatistics():Statistics{
             val likedBooks =
-                dataStoreRepository.getPrefInt(DataStoreRepository.savedLikedBooksCnt).first()
+                dataStoreRepository.getIntPref(DataStoreRepository.savedLikedBooksCnt).first()
             val wantToRead = dataStoreRepository.getPref(DataStoreRepository.savedWantToReadList).first()
             var wantToReadGenres = emptyList<String>()
             if (wantToRead.isNotBlank()) {
@@ -112,7 +110,6 @@ class ProfileViewModel @Inject constructor(
                 likedBooks,
                 favoriteGenres,
                 wantToReadGenres,
-                dislikedGenres,
                 "Unknown"
             )
     }

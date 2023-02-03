@@ -41,7 +41,7 @@ fun TutorialGreeting(
             .fillMaxWidth()
             .wrapContentHeight(),
         shape = RoundedCornerShape(20.dp),
-        color = LightBrown,
+        color = Color.White,
         elevation = 10.dp
     ) {
         Column(
@@ -126,21 +126,6 @@ fun TutorialGreeting(
                 horizontalArrangement = Arrangement.Center
             ) {
                 CustomButton(text = "Ok!") { onCLick() }
-//                Button(
-//                    onClick = {
-//                        onCLick()
-//                    },
-//                    shape = RoundedCornerShape(10.dp),
-//                    colors = ButtonDefaults.buttonColors(
-//                        backgroundColor = colorResource(id = R.color.main_color)
-//                    )
-//                ) {
-//                    Text(
-//                        text = "OK!",
-//                        color = Color.White,
-//                        fontSize = 22.sp,
-//                    )
-//                }
             }
         }
     }

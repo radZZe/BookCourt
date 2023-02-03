@@ -77,10 +77,7 @@ fun StatisticsScreenUi(
             ReadBooksCardHeader(navController, state, mViewModel)
             CustomButton("Поделиться!") {
                 mViewModel.user.value?.let {
-                    mViewModel.shareStats(
-                        context,
-                        it
-                    )
+                    mViewModel.shareStats(context)
                 }
             }
         }
@@ -174,7 +171,7 @@ fun ReadBooksCardHeader(
             Spacer(modifier = Modifier.height(22.dp))
             Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
                 Text(
-                    text = "уже 9!",
+                    text = "Уже ${mViewModel.user.value?.statistics?.numberOfReadBooks}!",
                     fontSize = 32.sp,
                     fontFamily = Gilroy,
                     fontWeight = FontWeight.Bold,

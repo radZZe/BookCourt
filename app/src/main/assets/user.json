@@ -5,5 +5,20 @@
     "name": "Danila",
     "password": "1f6e25cce3295e79d4030bdacd86010d0f5588ac20874790032f411d52297c25",
     "surname": "Razdobarov",
-    "token": "b9786ae1-4efb-46c4-a493-cb948cb80103"
+    "token": "b9786ae1-4efb-46c4-a493-cb948cb80103",
+    "statistics": {
+        "numberOfLikedBooks": 9,
+        "numberOfReadBooks": 11,
+        "favoriteGenreList": [
+            "Комедия",
+            "Драма",
+            "Трагедия"
+        ],
+        "wantToRead": [
+            "Война и мир",
+            "Война и мир 2",
+            "война и мир 3"
+        ],
+        "userClass": "пусто"
+    }
 }

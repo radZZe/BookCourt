@@ -8,6 +8,5 @@ data class Statistics(
     val numberOfLikedBooks:Int,
     val favoriteGenreList:List<String>,
     val wantToRead: List<String>,
-    val dislikedGenreList:List<String>,
     val userClass:String ="",
 )
