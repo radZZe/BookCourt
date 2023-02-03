@@ -18,6 +18,8 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.bookcourt.models.Book
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlin.math.abs
@@ -27,7 +29,8 @@ open class CardStackController(
     val scope: CoroutineScope,
     private val screenWidth: Float,
     private val screenHeight: Float,
-    internal val animationSpec: AnimationSpec<Float> = SwipeableDefaults.AnimationSpec
+    internal val animationSpec: AnimationSpec<Float> = SwipeableDefaults.AnimationSpec,
+    val viewModel: CardStackViewModel
 ) {
     val right = Offset(screenWidth, 0f)
     val left = Offset(-screenWidth, 0f)
@@ -51,9 +54,9 @@ open class CardStackController(
     fun swipeLeft() {
         scope.apply {
             launch {
-                offsetX.animateTo(-screenWidth, animationSpec)
 
-                onSwipeLeft()
+                offsetX.animateTo(-screenWidth, animationSpec)
+                onSwipeUp()
 
                 launch {
                     offsetX.snapTo(center.x)
@@ -168,6 +171,7 @@ open class CardStackController(
 
     fun returnCenter() {
         scope.apply {
+            viewModel.changeDirection(null, viewModel.currentItem.value)
             launch {
                 offsetX.animateTo(center.x, animationSpec)
             }
@@ -189,7 +193,8 @@ open class CardStackController(
 
 @Composable
 fun rememberCardStackController(
-    animationSpec: AnimationSpec<Float> = SwipeableDefaults.AnimationSpec
+    animationSpec: AnimationSpec<Float> = SwipeableDefaults.AnimationSpec,
+    viewModel: CardStackViewModel = hiltViewModel()
 ): CardStackController {
     val scope = rememberCoroutineScope()
     val screenWidth = with(LocalDensity.current) {
@@ -204,7 +209,8 @@ fun rememberCardStackController(
             scope = scope,
             screenWidth = screenWidth,
             screenHeight = screenHeight,
-            animationSpec = animationSpec
+            animationSpec = animationSpec,
+            viewModel
         )
     }
 }
@@ -248,6 +254,33 @@ fun Modifier.draggableStack(
                     launch {
                         controller.offsetX.snapTo(controller.offsetX.value + dragAmount.x)
                         controller.offsetY.snapTo(controller.offsetY.value + dragAmount.y)
+
+                        if (controller.offsetY.value <= -controller.thresholdY) {
+                            controller.viewModel.changeDirection(
+                                DIRECTION_TOP,
+                                controller.viewModel.currentItem.value
+                            )
+                        } else if (controller.offsetY.value >= controller.thresholdY) {
+                            controller.viewModel.changeDirection(
+                                DIRECTION_BOTTOM,
+                                controller.viewModel.currentItem.value
+                            )
+                        } else if (controller.offsetX.value <= -controller.thresholdX) {
+                            controller.viewModel.changeDirection(
+                                DIRECTION_LEFT,
+                                controller.viewModel.currentItem.value
+                            )
+                        } else if (controller.offsetX.value >= controller.thresholdX) {
+                            controller.viewModel.changeDirection(
+                                DIRECTION_RIGHT,
+                                controller.viewModel.currentItem.value
+                            )
+                        } else {
+                            controller.viewModel.changeDirection(
+                                null,
+                                controller.viewModel.currentItem.value
+                            )
+                        }
 
                         val targetRotation = normalize(
                             controller.center.x,

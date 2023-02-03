@@ -1,5 +1,8 @@
 package com.example.bookcourt.ui.graphs
 
+import StatisticsScreen
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -13,6 +16,7 @@ import com.example.bookcourt.ui.ProfileScreen
 import com.example.bookcourt.ui.RecomendationScreen
 import com.example.bookcourt.ui.auth.SignInScreen
 import com.example.bookcourt.ui.auth.SignInViewModel
+import com.example.bookcourt.ui.statistics.StatisticsViewModel
 import com.example.bookcourt.utils.BottomBarScreen
 import com.example.bookcourt.utils.Screens
 import com.example.bookcourt.utils.SplashScreen
@@ -20,11 +24,13 @@ import com.example.bookcourt.utils.SplashViewModel
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NavigationGraph(
     navController: NavHostController,
     splashScreenViewModel: SplashViewModel,
-    signInScreenViewModel: SignInViewModel
+    signInScreenViewModel: SignInViewModel,
+    statisticsViewModel: StatisticsViewModel
 ) {
     NavHost(navController, startDestination = Screens.Splash.route) {
         composable(BottomBarScreen.Library.route) {
@@ -100,6 +106,8 @@ fun NavigationGraph(
             CardInfoScreen(navController,book)
         }
 
-
+        composable(Screens.Statistics.route) {
+            StatisticsScreen(navController = navController, statisticsViewModel)
+        }
     }
 }

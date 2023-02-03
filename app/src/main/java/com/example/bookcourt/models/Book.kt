@@ -1,5 +1,5 @@
 package com.example.bookcourt.models
-
+import androidx.compose.runtime.MutableState
 @kotlinx.serialization.Serializable
 data class Book(
     val name:String,
@@ -11,4 +11,5 @@ data class Book(
     val owner:String,
     val genre:String,
     val image:String,
+    val onSwipeDirection:MutableState<String?>
 )

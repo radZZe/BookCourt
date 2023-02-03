@@ -1,6 +1,8 @@
 package com.example.bookcourt.ui.recomendation
 
 import android.content.Context
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
@@ -8,9 +10,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookcourt.data.repositories.DataStoreRepository
 import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.isTutorChecked
+import com.example.bookcourt.data.repositories.MetricsRepository
 import com.example.bookcourt.data.repositories.NetworkRepository
 import com.example.bookcourt.models.Book
 import com.example.bookcourt.models.BookRemote
+import com.example.bookcourt.models.UserAction
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -22,12 +26,45 @@ import javax.inject.Inject
 @HiltViewModel
 class RecomendationViewModel @Inject constructor(
     val repository: NetworkRepository,
-    private val dataStoreRepository: DataStoreRepository
+    private val dataStoreRepository: DataStoreRepository,
+    private val metricRep:MetricsRepository
 ) : ViewModel() {
 
     var allBooks = mutableStateOf<List<Book>?>(null)
     val isEmpty = mutableStateOf(false)
     val tutorState = dataStoreRepository.getBoolPref(isTutorChecked)
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun metricSwipeLeft(book:Book){
+        var userAction = UserAction(action = "Не понравилась книга { название:${book.name} автор: ${book.author}} ") // добавить сюда id книги
+        viewModelScope.launch {
+            metricRep.onAction(userAction)
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun metricSwipeRight(book:Book){
+        var userAction = UserAction(action = "Понравилась книга { название:${book.name} автор: ${book.author}} ") // добавить сюда id книги
+        viewModelScope.launch {
+            metricRep.onAction(userAction)
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun metricSwipeTop(book: Book){
+        var userAction = UserAction(action = "Добавил в хочу прочесть книгу { название:${book.name} автор: ${book.author}} ") // добавить сюда id книги
+        viewModelScope.launch {
+            metricRep.onAction(userAction)
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun metricSwipeDown(book: Book){
+        var userAction = UserAction(action = "Пропустил книгу { название:${book.name} автор: ${book.author}} ") // добавить сюда id книги
+        viewModelScope.launch {
+            metricRep.onAction(userAction)
+        }
+    }
 
     fun getAllBooks(context: Context) {
         val jobMain = viewModelScope.launch(Dispatchers.IO) {
