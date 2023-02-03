@@ -1,5 +1,7 @@
 package com.example.bookcourt.ui
 import android.app.Application
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -40,16 +42,20 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Size
 import com.example.bookcourt.R
+import com.example.bookcourt.models.Book
 import com.example.bookcourt.ui.recomendation.RecomendationViewModel
 import com.example.bookcourt.ui.theme.TutorialGreeting
 import com.example.bookcourt.utils.CardStack
+import com.example.bookcourt.utils.DIRECTION_TOP
 import com.example.bookcourt.utils.rememberCardStackController
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun RecomendationScreen() {
     RecomendationContent()
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun RecomendationContent(viewModel: RecomendationViewModel = hiltViewModel()) {
@@ -81,7 +87,19 @@ fun RecomendationContent(viewModel: RecomendationViewModel = hiltViewModel()) {
                 CardStack(
                     items = bookJson.value!!, onEmptyStack = {
                         viewModel.isEmpty.value = true
-                    }, cardStackController = cardStackController
+                    }, cardStackController = cardStackController,
+                    onSwipeLeft = {
+                        viewModel.metricSwipeLeft(it)
+                    },
+                    onSwipeRight = {
+                        viewModel.metricSwipeRight(it)
+                    },
+                    onSwipeUp = {
+                        viewModel.metricSwipeTop(it)
+                    },
+                    onSwipeDown = {
+                        viewModel.metricSwipeDown(it)
+                    }
                 )
                 Spacer(modifier = Modifier.padding(10.dp))
             } else {
@@ -99,83 +117,36 @@ fun RecomendationContent(viewModel: RecomendationViewModel = hiltViewModel()) {
         }
     }
 
-
-
-    @Composable
-    fun BookCardImage(uri: String) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(0.7f), contentAlignment = Alignment.Center
-        ) {
-            val painter = rememberAsyncImagePainter(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(uri)
-                    .size(Size.ORIGINAL) // Set the target size to load the image at.
-                    .build(),
-            )
-
-            if (painter.state is AsyncImagePainter.State.Loading) {
-                CircularProgressIndicator()
-            }
-
-            Image(
-                painter = painter,
-                contentDescription = stringResource(R.string.book_image),
-                contentScale = ContentScale.Fit,
-                modifier = Modifier.fillMaxSize()
-            )
-
-        }
-    }
-
-    @Composable
-    fun IconButtonWrapper(
-        modifier: Modifier,
-        onClick: () -> Unit,
-        img: ImageVector?,
-        contentDescription: String,
-        tint: Color,
-        height: Dp,
-        width: Dp
+@Composable
+fun BookCardImage(uri: String) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(0.7f), contentAlignment = Alignment.Center
     ) {
-        Box(
-            modifier = modifier
-                .clip(CircleShape)
-                .background(
-                    brush = Brush
-                        .horizontalGradient(
-                            colors = listOf(
-                                colorResource(id = R.color.main_color),
-                                colorResource(id = R.color.second_color)
-                            )
-                        )
-                )
+        val painter = rememberAsyncImagePainter(
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(uri)
+                .size(Size.ORIGINAL) // Set the target size to load the image at.
+                .build(),
+        )
 
-                .width(width)
-                .height(height),
-            contentAlignment = Alignment.Center
-        ) {
-            IconButton(
-                modifier = Modifier,
-                onClick = {
-                    onClick()
-                }
-            ) {
-                if (img != null) {
-                    Icon(
-                        img, contentDescription = contentDescription, tint = tint, modifier =
-                        Modifier
-                            .padding(5.dp)
-                            .fillMaxSize()
-                    )
-                }
-
-            }
+        if (painter.state is AsyncImagePainter.State.Loading) {
+            CircularProgressIndicator()
         }
-    }
 
-    @Composable
+        Image(
+            painter = painter,
+            contentDescription = stringResource(R.string.book_image),
+            contentScale = ContentScale.Fit,
+            modifier = Modifier.fillMaxSize()
+        )
+
+    }
+}
+
+
+@Composable
     fun ShowTutor(viewModel: RecomendationViewModel) {
         val tutorState = viewModel.tutorState.collectAsState(initial = true)
         AnimatedVisibility(
@@ -210,4 +181,62 @@ fun RecomendationContent(viewModel: RecomendationViewModel = hiltViewModel()) {
         }
 
     }
+
+@OptIn(ExperimentalMaterialApi::class)
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun RecomendationContentTest(){
+    val bookJson = remember {
+        mutableStateOf<List<Book>?>(listOf(
+            Book(
+                name = "test",
+                author = "test",
+                description = "test",
+                createdAt = "test",
+                numberOfPage = "test",
+                rate = 1,
+                owner = "test",
+                genre = "test",
+                image ="https://cv6.litres.ru/pub/c/elektronnaya-kniga/cover_415/36628165-ray-dalio-principy-zhizn-i-rabota.webp",
+                onSwipeDirection = mutableStateOf(DIRECTION_TOP)
+            )
+        )
+        )
+    }
+    var context = LocalContext.current
+
+
+    Column(Modifier.padding(20.dp)) {
+
+        Text(
+            text = stringResource(R.string.recomendations),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(0.dp, 0.dp, 0.dp, 5.dp),
+            style = MaterialTheme.typography.h4,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center
+        )
+            if (bookJson.value != null) {
+                CardStack(
+                    items = bookJson.value!!, cardStackController = rememberCardStackController()
+                )
+                Spacer(modifier = Modifier.padding(10.dp))
+            } else {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
+                }
+            }
+
+
+
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Preview
+@Composable
+fun RecomendationContentTestPreview(){
+    RecomendationContentTest()
+}
 

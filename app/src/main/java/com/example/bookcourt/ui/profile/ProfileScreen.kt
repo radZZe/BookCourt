@@ -45,7 +45,7 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel()) {
     LaunchedEffect(key1 = Unit) {
         val userId =
             "b9786ae1-4efb-46c4-a493-cb948cb80103" // Так как нет авторизации я храню просто id пользователя в тестовом формате
-        viewModel.getUserData(userId = userId)
+        viewModel.getUserData(context)
     }
 
     Scaffold() {
@@ -122,6 +122,7 @@ fun HeaderProfile(user: User, viewModel: ProfileViewModel) {
     val userName = viewModel.userName.collectAsState(initial = "")
     val userSurname = viewModel.userSurname.collectAsState(initial = "")
     val userPhone = viewModel.userPhone.collectAsState(initial = "")
+    val userCity = viewModel.userCity.collectAsState(initial = "")
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -145,12 +146,21 @@ fun HeaderProfile(user: User, viewModel: ProfileViewModel) {
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp
                     )
-                    Text(
-                        text = userPhone.value,
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp
-                    )
+                    Row() {
+                        Text(
+                            text = userPhone.value,
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp
+                        )
+                        Spacer(modifier = Modifier.width(20.dp))
+                        Text(
+                            text = userCity.value,
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp
+                        )
+                    }
                 }
 
             }

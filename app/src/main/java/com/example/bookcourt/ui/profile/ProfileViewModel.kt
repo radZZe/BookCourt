@@ -2,10 +2,12 @@ package com.example.bookcourt.ui.profile
 
 import android.util.Log
 import androidx.compose.runtime.MutableState
+import android.content.Context
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookcourt.data.repositories.DataStoreRepository
+import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.savedCity
 import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.savedName
 import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.savedPhoneNumber
 import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.savedSurname
@@ -37,6 +39,7 @@ class ProfileViewModel @Inject constructor(
     val userName = dataStoreRepository.getPref(savedName)
     val userSurname = dataStoreRepository.getPref(savedSurname)
     val userPhone = dataStoreRepository.getPref(savedPhoneNumber)
+    val userCity = dataStoreRepository.getPref(savedCity)
 
     fun dismiss() {
         if (feedbackState.value) {
@@ -114,9 +117,9 @@ class ProfileViewModel @Inject constructor(
             )
     }
 
-    fun getUserData(userId: String) {
+    fun getUserData(context: Context) {
         viewModelScope.launch(Dispatchers.IO) {
-            val job = async { repository.getUserData(userId) }
+            val job = async { repository.getUserData(context) }
             val json = job.await()
             val data = Json.decodeFromString<UserRemote>("""$json""")
             val statistics = async { generateStatistics() }.await()

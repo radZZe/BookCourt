@@ -1,9 +1,20 @@
 package com.example.bookcourt.utils
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
+import androidx.compose.animation.core.Animatable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookcourt.data.repositories.DataStoreRepository
+import com.example.bookcourt.data.repositories.MetricsRepository
+import com.example.bookcourt.models.Book
+import com.example.bookcourt.models.UserAction
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -14,11 +25,22 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToJsonElement
 import kotlinx.serialization.json.jsonObject
 import javax.inject.Inject
+import kotlin.math.abs
+import kotlin.math.sign
 
 @HiltViewModel
 class CardStackViewModel @Inject constructor(
-    val dataStoreRepository: DataStoreRepository
+    val dataStoreRepository: DataStoreRepository,
+    private val metricRep:MetricsRepository
 ) : ViewModel() {
+
+    var direction = mutableStateOf<String?>(null)
+    val allBooks = mutableStateOf(listOf<Book>())
+    var currentItem :MutableState<Book?> = mutableStateOf<Book?>(null)
+
+    fun changeCurrentItem(item:Book){
+        currentItem.value = item
+    }
 
     fun likeBook(genre:String){
         viewModelScope.launch(Dispatchers.IO) {
@@ -54,6 +76,10 @@ class CardStackViewModel @Inject constructor(
         else{
           return mapOf(genre to 1)
         }
+
+    }
+
+    private fun getTopGenres(){
 
     }
 
@@ -102,6 +128,47 @@ class CardStackViewModel @Inject constructor(
             genres.add(bookTitle)
             dataStoreRepository.setPref(fromList(genres),DataStoreRepository.savedWantToReadList)
             Log.d("Danull","Want to read: $genres")
+        }
+    }
+
+    fun getColorSwipe(direction:String?): Brush?{
+        if(direction == DIRECTION_BOTTOM){
+            val colorStopsBottom = arrayOf(
+                0.0f to Color(0.3f,0f,0.41f,0.75f),
+                0.8f to Color.Transparent
+            )
+
+            var brush = Brush.verticalGradient(colorStops = colorStopsBottom, startY = 0f,endY=1f)
+            return brush
+        }else if(direction == DIRECTION_RIGHT){
+            val colorStopsRight = arrayOf(
+                0.0f to Color(0.3f,0.55f,0.21f,0.75f),
+                0.8f to Color.Transparent
+            )
+            var brush = Brush.horizontalGradient(colorStops = colorStopsRight, startX = 0f, endX = 1f)
+            return brush
+        }else if (direction == DIRECTION_TOP){
+            val colorStopsTop = arrayOf(
+                0.0f to Color(1f,0.6f,0f,0.75f),
+                0.8f to Color.Transparent
+            )
+            var brush = Brush.verticalGradient(colorStops = colorStopsTop,startY = 1f,endY=0f)
+            return brush
+        }else if (direction == DIRECTION_LEFT){
+            val colorStopsLeft = arrayOf(
+                0.0f to Color(1f,0.31f,0.31f,0.75f),
+                0.8f to Color.Transparent
+            )
+            var brush = Brush.horizontalGradient(colorStops = colorStopsLeft, startX = 0f, endX = 1f)
+            return brush
+        }else{
+            return null
+        }
+    }
+
+    fun changeDirection(newDirection:String?,item:Book?){
+        if(item!=null){
+            item.onSwipeDirection.value = newDirection
         }
     }
 }
