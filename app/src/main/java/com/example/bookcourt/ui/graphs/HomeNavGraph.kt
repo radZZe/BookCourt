@@ -82,11 +82,11 @@ fun NavigationGraph(
                 type = NavType.StringType
             },
             navArgument("rate"){
-                type = NavType.IntType
-            },
-            navArgument("onSwipeDirection"){
-                type= NavType.StringType
+                type = NavType.StringType
             }
+            //navArgument("onSwipeDirection"){
+           //     type= NavType.StringType
+           // }
             )
         ) {
             val title  = it.arguments?.getString("title")?:"unset"
@@ -95,21 +95,21 @@ fun NavigationGraph(
             val genre = it.arguments?.getString("genre")?:"unset"
             val createdAt = it.arguments?.getString("createdAt")?:"unset"
             val numberOfPage = it.arguments?.getString("numberOfPage")?:"unset"
-            val rate = it.arguments?.getInt("rate")?:0
-            val onSwipeDirection = it.arguments?.getString("onSwipeDirection")?:null
+            val rate = it.arguments?.getString("rate")?:"0"
+           // val onSwipeDirection = it.arguments?.getString("onSwipeDirection")?:null
             val book = Book(
                 title,
                 authorName,
                 descrtiption,
                 createdAt,
                 numberOfPage,
-                rate,
+                rate.toInt(),
                 "Danull",
                 genre,
                 "Danull",
                 onSwipeDirection = remember {
-                    mutableStateOf(onSwipeDirection)
-                }
+                    mutableStateOf(null)
+                         }
 
             )
             CardInfoScreen(navController,book)
