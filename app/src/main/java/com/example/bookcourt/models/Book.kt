@@ -1,5 +1,7 @@
 package com.example.bookcourt.models
 
+import androidx.compose.runtime.MutableState
+
 data class Book(
     val name:String,
     val author:String,
@@ -10,4 +12,5 @@ data class Book(
     val owner:String,
     val genre:String,
     val image:String,
+    val onSwipeDirection:MutableState<String?>
 )
