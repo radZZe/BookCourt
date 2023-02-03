@@ -7,6 +7,7 @@ import com.example.bookcourt.data.BackgroundService
 import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.uuid
 import com.example.bookcourt.models.AppSessionLength
 import com.example.bookcourt.models.Metric
+import com.example.bookcourt.models.UserAction
 import com.example.bookcourt.models.UserDataMetric
 import com.example.bookcourt.utils.Hashing
 import kotlinx.coroutines.coroutineScope
@@ -34,6 +35,19 @@ class MetricsRepository @Inject constructor(
     }
 
     override suspend fun onClick(objectName:String){
+
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    override suspend fun onAction(action: UserAction){
+        dataStoreRepository.getPref(uuid).collect {
+            var uuid = it
+            var json = Json.encodeToString(serializer = UserAction.serializer(),
+                action
+            )
+            var metric = Metric(type = USER_DATA_TYPE, data = json, date = LocalDate.now().toString(), GUID = "TEST!!!", UUID = uuid)
+            bgService.addToStack(metric)
+        }
 
     }
 

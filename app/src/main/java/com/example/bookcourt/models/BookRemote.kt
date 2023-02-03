@@ -1,5 +1,6 @@
 package com.example.bookcourt.models
 
+import androidx.compose.runtime.mutableStateOf
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -17,7 +18,8 @@ data class BookRemote(
             data.rate,
             data.owner,
             data.genre,
-            data.image
+            data.image,
+            mutableStateOf(null)
         )
     }
 }
