@@ -37,20 +37,20 @@ class StatisticsViewModel @Inject constructor(
         }
     }
 
-    fun shareStats(context: Context, user: User) {
+    fun shareStats(context: Context,) {
         val sendIntent: Intent = Intent().apply {
             action = Intent.ACTION_SEND
             putExtra(
                 Intent.EXTRA_TEXT,
                 context.getString(R.string.user_statistics_in_the_app) + "\n"
 
-//                        + context.getString(R.string.number_of_books_read_by_the_user) + "${user.statistics.numberOfReadBooks}"
-//                        + "\n"
-//                        + context.getString(R.string.books_user_liked) + "${user.statistics.numberOfLikedBooks}"
-//                        + "\n" + context.getString(R.string.users_favorite_genres) + " ${user.statistics.favoriteGenreList[0]} , " +
-//                        "${user.statistics.favoriteGenreList[1]} , " +
-//                        "${user.statistics.favoriteGenreList[2]} " +
-//                        "\n${getWantedBooks(user.statistics.wantToRead)}"
+                        + context.getString(R.string.number_of_books_read_by_the_user) + "${user.value?.statistics?.numberOfReadBooks}"
+                        + "\n"
+                        + context.getString(R.string.books_user_liked) + "${user.value?.statistics?.numberOfLikedBooks}"
+                        + "\n" + context.getString(R.string.users_favorite_genres) + " ${user.value?.statistics?.favoriteGenreList?.get(0)} , " +
+                        "${user.value?.statistics?.favoriteGenreList?.get(1)} , " +
+                        "${user.value?.statistics?.favoriteGenreList?.get(2)} " +
+                        "\n${getWantedBooks(user.value?.statistics?.wantToRead ?: listOf(""))}"
             )
             type = "text/plain"
         }
