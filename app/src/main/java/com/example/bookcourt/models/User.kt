@@ -8,5 +8,5 @@ data class User(
     val surname:String,
     val email:String,
     val image:String,
-    val statistics:Statistics,
+    var statistics:Statistics,
 )

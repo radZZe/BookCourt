@@ -1,5 +1,8 @@
 package com.example.bookcourt.ui
-
+import android.app.Application
+import android.os.Build
+import androidx.annotation.RequiresApi
+import androidx.compose.animation.scaleIn
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -34,18 +37,22 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Size
 import com.example.bookcourt.R
+import com.example.bookcourt.models.Book
 import com.example.bookcourt.ui.recomendation.RecomendationViewModel
 import com.example.bookcourt.ui.theme.CustomButton
 import com.example.bookcourt.ui.theme.TutorialGreeting
 import com.example.bookcourt.utils.CardStack
 import com.example.bookcourt.utils.Screens
+import com.example.bookcourt.utils.DIRECTION_TOP
 import com.example.bookcourt.utils.rememberCardStackController
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun RecomendationScreen(navController: NavController) {
     RecomendationContent(navController)
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun RecomendationContent(
@@ -80,7 +87,19 @@ fun RecomendationContent(
                 CardStack(
                     items = bookJson.value!!, onEmptyStack = {
                         viewModel.isEmpty.value = true
-                    }, cardStackController = cardStackController
+                    }, cardStackController = cardStackController,
+                    onSwipeLeft = {
+                        viewModel.metricSwipeLeft(it)
+                    },
+                    onSwipeRight = {
+                        viewModel.metricSwipeRight(it)
+                    },
+                    onSwipeUp = {
+                        viewModel.metricSwipeTop(it)
+                    },
+                    onSwipeDown = {
+                        viewModel.metricSwipeDown(it)
+                    }
                 )
                 Spacer(modifier = Modifier.padding(10.dp))
             } else {
@@ -105,6 +124,19 @@ fun RecomendationContent(
     }
 }
 
+@Composable
+fun BookCardImage(uri: String) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(0.7f), contentAlignment = Alignment.Center
+    ) {
+        val painter = rememberAsyncImagePainter(
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(uri)
+                .size(Size.ORIGINAL) // Set the target size to load the image at.
+                .build(),
+        )
 
 @Composable
 fun BookCardImage(uri: String) {
@@ -134,51 +166,6 @@ fun BookCardImage(uri: String) {
     }
 }
 
-@Composable
-fun IconButtonWrapper(
-    modifier: Modifier,
-    onClick: () -> Unit,
-    img: ImageVector?,
-    contentDescription: String,
-    tint: Color,
-    height: Dp,
-    width: Dp
-) {
-    Box(
-        modifier = modifier
-            .clip(CircleShape)
-            .background(
-                brush = Brush
-                    .horizontalGradient(
-                        colors = listOf(
-                            colorResource(id = R.color.main_color),
-                            colorResource(id = R.color.second_color)
-                        )
-                    )
-            )
-
-            .width(width)
-            .height(height),
-        contentAlignment = Alignment.Center
-    ) {
-        IconButton(
-            modifier = Modifier,
-            onClick = {
-                onClick()
-            }
-        ) {
-            if (img != null) {
-                Icon(
-                    img, contentDescription = contentDescription, tint = tint, modifier =
-                    Modifier
-                        .padding(5.dp)
-                        .fillMaxSize()
-                )
-            }
-
-        }
-    }
-}
 
 @Composable
 fun ShowTutor(viewModel: RecomendationViewModel) {
@@ -202,16 +189,8 @@ fun ShowTutor(viewModel: RecomendationViewModel) {
             .zIndex(2f)
             .fillMaxSize()
     ) {
-        AnimatedVisibility(
-            visible = !tutorState.value,
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
-            TutorialGreeting {
-                viewModel.editTutorState()
-            }
-        }
     }
-
 }
+
+
 
