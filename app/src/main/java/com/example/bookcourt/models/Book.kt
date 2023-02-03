@@ -1,5 +1,6 @@
 package com.example.bookcourt.models
 
+@kotlinx.serialization.Serializable
 data class Book(
     val name:String,
     val author:String,

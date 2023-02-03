@@ -10,6 +10,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -35,6 +36,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
@@ -46,13 +48,14 @@ import com.example.bookcourt.utils.CardStack
 import com.example.bookcourt.utils.rememberCardStackController
 
 @Composable
-fun RecomendationScreen() {
-    RecomendationContent()
+fun RecomendationScreen(navController: NavController) {
+    RecomendationContent(navController = navController)
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun RecomendationContent(viewModel: RecomendationViewModel = hiltViewModel()) {
+fun RecomendationContent(viewModel: RecomendationViewModel = hiltViewModel(),
+    navController: NavController) {
 
     val bookJson = viewModel.allBooks
     var context = LocalContext.current
@@ -81,7 +84,8 @@ fun RecomendationContent(viewModel: RecomendationViewModel = hiltViewModel()) {
                 CardStack(
                     items = bookJson.value!!, onEmptyStack = {
                         viewModel.isEmpty.value = true
-                    }, cardStackController = cardStackController
+                    }, cardStackController = cardStackController,
+                    navController = navController
                 )
                 Spacer(modifier = Modifier.padding(10.dp))
             } else {
@@ -106,7 +110,7 @@ fun RecomendationContent(viewModel: RecomendationViewModel = hiltViewModel()) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.7f), contentAlignment = Alignment.Center
+                .padding(bottom = 117.dp)
         ) {
             val painter = rememberAsyncImagePainter(
                 model = ImageRequest.Builder(LocalContext.current)
@@ -122,10 +126,10 @@ fun RecomendationContent(viewModel: RecomendationViewModel = hiltViewModel()) {
             Image(
                 painter = painter,
                 contentDescription = stringResource(R.string.book_image),
-                contentScale = ContentScale.Fit,
+                contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()
+                    .clip(RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp))
             )
-
         }
     }
 
