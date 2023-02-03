@@ -23,14 +23,14 @@ class BackgroundService @Inject constructor(
     var stack = mutableStateOf(mutableListOf<Metric>())
 
     fun addToStack(metric: Metric){
-
-        //var body = Json.encodeToString(serializer = Metric.serializer(),
-           // metric
-       // )
-        //Log.d("MetricUserData", body)
+//
+//        var body = Json.encodeToString(serializer = Metric.serializer(),
+//            metric
+//        )
+//        Log.d("MetricUserData", body)
 
         stack.value.add(metric)
-        // Реализацию в комментариях используйте для тестов другая реализация еще не готова
+//         Реализацию в комментариях используйте для тестов другая реализация еще не готова
 //        var body = Json.encodeToString(serializer = Metric.serializer(),
 //            metric
 //        )
