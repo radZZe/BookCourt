@@ -56,7 +56,7 @@ open class CardStackController(
             launch {
 
                 offsetX.animateTo(-screenWidth, animationSpec)
-                onSwipeUp()
+                onSwipeLeft()
 
                 launch {
                     offsetX.snapTo(center.x)

@@ -56,6 +56,8 @@ fun RecomendationContent(
     LaunchedEffect(key1 = Unit) {
         if(bookJson.value==null){
             viewModel.getAllBooks(context)
+        }else if(bookJson.value!!.isEmpty()){
+            viewModel.getAllBooks(context)
         }
 
     }
@@ -73,15 +75,19 @@ fun RecomendationContent(
                         viewModel.isEmpty.value = true
                     }, cardStackController = cardStackController,
                     onSwipeLeft = {
+                        viewModel.allBooks.value?.remove(it)
                         viewModel.metricSwipeLeft(it)
                     },
                     onSwipeRight = {
+                        viewModel.allBooks.value?.remove(it)
                         viewModel.metricSwipeRight(it)
                     },
                     onSwipeUp = {
+                        viewModel.allBooks.value?.remove(it)
                         viewModel.metricSwipeTop(it)
                     },
                     onSwipeDown = {
+                        viewModel.allBooks.value?.remove(it)
                         viewModel.metricSwipeDown(it)
                     },
                     navController = navController

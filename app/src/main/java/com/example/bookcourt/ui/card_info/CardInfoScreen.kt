@@ -23,14 +23,15 @@ import com.example.bookcourt.R
 import com.example.bookcourt.models.Book
 import com.example.bookcourt.ui.theme.Brown
 import com.example.bookcourt.utils.BottomBarScreen
+import com.example.bookcourt.utils.Screens
 
 @Composable
 fun CardInfoScreen(navController: NavController, book: Book) {
-    BookInfoCard(book)
+    BookInfoCard(book,navController)
 }
 
 @Composable
-fun BookInfoCard(book: Book) {
+fun BookInfoCard(book: Book,navController: NavController) {
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -60,7 +61,7 @@ fun BookInfoCard(book: Book) {
                         modifier = Modifier
                             .size(18.dp)
                             .clickable {
-//                                navController.popBackStack()
+                                navController.popBackStack()
                             })
                 }
                 Text(

@@ -36,25 +36,25 @@ class BackgroundService @Inject constructor(
 
 
     fun job(){
-        GlobalScope.launch {
-            stack.value.forEach{ metric ->
-                var body = Json.encodeToString(serializer = Metric.serializer(),
-                    metric
-                )
-                var mediaType = "application/json".toMediaTypeOrNull();
-                var requestBody = RequestBody.create(
-                    mediaType,
-                    body
-                )
-                val request: Request = Request.Builder()
-                    .url("https://bookcourttest-ee89c-default-rtdb.asia-southeast1.firebasedatabase.app/testMetric.json")
-                    .method("GET", requestBody)
-                    .addHeader("Content-Type", "application/json")
-                    .build()
-                val response = client.newCall(request).execute()
-                Log.d("clientOk",response.code.toString())
-                stack.value.remove(metric)
-            }
-        }
+//        GlobalScope.launch {
+//            stack.value.forEach{ metric ->
+//                var body = Json.encodeToString(serializer = Metric.serializer(),
+//                    metric
+//                )
+//                var mediaType = "application/json".toMediaTypeOrNull();
+//                var requestBody = RequestBody.create(
+//                    mediaType,
+//                    body
+//                )
+//                val request: Request = Request.Builder()
+//                    .url("https://bookcourttest-ee89c-default-rtdb.asia-southeast1.firebasedatabase.app/testMetric.json")
+//                    .method("GET", requestBody)
+//                    .addHeader("Content-Type", "application/json")
+//                    .build()
+//                val response = client.newCall(request).execute()
+//                Log.d("clientOk",response.code.toString())
+//                stack.value.remove(metric)
+//            }
+//        }
     }
 }

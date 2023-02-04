@@ -27,7 +27,7 @@ class CardStackViewModel @Inject constructor(
 ) : ViewModel() {
 
     var direction = mutableStateOf<String?>(null)
-    val allBooks = mutableStateOf(listOf<Book>())
+
     var currentItem :MutableState<Book?> = mutableStateOf<Book?>(null)
 
     fun changeCurrentItem(item:Book){

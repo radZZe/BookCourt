@@ -30,7 +30,7 @@ class RecomendationViewModel @Inject constructor(
     private val metricRep:MetricsRepository
 ) : ViewModel() {
 
-    var allBooks = mutableStateOf<List<Book>?>(null)
+    var allBooks = mutableStateOf<MutableList<Book>?>(null)
     val isEmpty = mutableStateOf(false)
     val tutorState = dataStoreRepository.getBoolPref(isTutorChecked)
 
@@ -71,10 +71,10 @@ class RecomendationViewModel @Inject constructor(
         val jobMain = viewModelScope.launch(Dispatchers.IO) {
             val job = async { repository.getAllBooks(context)!! }
             val json = job.await()
-            val data = Json.decodeFromString<List<BookRemote>>("""$json""")
+            val data = Json.decodeFromString<MutableList<BookRemote>>("""$json""")
             allBooks.value = data.map {
                 it.toBook()
-            }
+            } as MutableList<Book>
         }
     }
 

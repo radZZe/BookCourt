@@ -42,14 +42,14 @@ import kotlin.math.roundToInt
 @Composable
 fun CardStack(
     modifier: Modifier = Modifier,
-    items: List<Book>,
+    items:   List<Book>,
     thresholdConfig: (Float, Float) -> ThresholdConfig = { _, _ -> FractionalThreshold(0.2f) },
     velocityThreshold: Dp = 125.dp,
     onSwipeLeft: (item: Book) -> Unit = {},
     onSwipeRight: (item: Book) -> Unit = {},
     onSwipeUp: (item: Book) -> Unit = {},
     onSwipeDown: (item: Book) -> Unit = {},
-    onEmptyStack: (lastItem: Book) -> Unit = {},
+    onEmptyStack: () -> Unit = {},
     cardStackController: CardStackController,
     viewModel: CardStackViewModel = hiltViewModel(),
     navController: NavController
@@ -60,7 +60,7 @@ fun CardStack(
     if (i != -1) viewModel.currentItem.value = items[i]
 
     if (i == -1) {
-        onEmptyStack(items.last())
+        onEmptyStack()
     }
 
 
@@ -106,138 +106,32 @@ fun CardStack(
                 .fillMaxHeight()
         ) {
             items.forEachIndexed { index, item ->
-                BookCard(
-                    modifier = Modifier
-                        .draggableStack(
-                            controller = cardStackController,
-                            thresholdConfig = thresholdConfig,
-                        )
-                        .moveTo(
-                            x = if (index == i) cardStackController.offsetX.value else 0f,
-                            y = if (index == i) cardStackController.offsetY.value else 0f
-                        )
-                        .visible(visible = index == i || index == i - 1)
-                        .graphicsLayer(
-                            rotationZ = if (index == i) cardStackController.rotation.value else 0f,
-                        )
-                        .clickable {
-                            navController.navigate(
-                                Screens.CardInfo.route +
-                                        "/${item.name}/${item.author}/${item.description}/${item.genre}"
-                                        + "/${item.createdAt}/${item.numberOfPage}/${item.rate}"
+                    BookCard(
+                        modifier = Modifier
+                            .draggableStack(
+                                controller = cardStackController,
+                                thresholdConfig = thresholdConfig,
                             )
-                        },
-                    item,
-                    navController,
-                    viewModel
-                )
-            }
-
-        }
-    }
-
-
-}
-
-@Composable
-fun BookCard1(
-    modifier: Modifier = Modifier,
-    item: Book,
-    viewModel: CardStackViewModel
-) {
-    var colorStopsNull = arrayOf(
-        0.0f to Color.Transparent,
-        0.8f to Color.Transparent
-    )
-    var brush = Brush.verticalGradient(colorStops = colorStopsNull)
-    when (item.onSwipeDirection.value) {
-        DIRECTION_RIGHT -> {
-            val colorStopsRight = arrayOf(
-                0.0f to Color(0.3f, 0.55f, 0.21f, 0.75f),
-                0.8f to Color.Transparent
-            )
-            brush = Brush.horizontalGradient(colorStops = colorStopsRight)
-        }
-        DIRECTION_LEFT -> {
-            val colorStopsLeft = arrayOf(
-
-                0.0f to Color.Transparent,
-                0.8f to Color(1f, 0.31f, 0.31f, 0.75f)
-            )
-            brush = Brush.horizontalGradient(colorStops = colorStopsLeft)
-        }
-        DIRECTION_TOP -> { // Note the block
-            val colorStopsTop = arrayOf(
-                0.0f to Color.Transparent,
-                0.8f to Color(1f, 0.6f, 0f, 0.75f),
-            )
-            brush = Brush.verticalGradient(colorStops = colorStopsTop)
-        }
-        DIRECTION_BOTTOM -> {
-            val colorStopsBottom = arrayOf(
-                0.0f to Color(0.3f, 0f, 0.41f, 0.75f),
-                0.8f to Color.Transparent
-            )
-
-            brush = Brush.verticalGradient(colorStops = colorStopsBottom)
-        }
-        else -> {
-            brush = Brush.verticalGradient(colorStops = colorStopsNull)
-        }
-    }
-
-
-
-
-
-    Card(
-        backgroundColor = Color.Transparent,
-        elevation = 5.dp,
-        shape = RoundedCornerShape(20.dp),
-        modifier = modifier
-            .fillMaxSize()
-    ) {
-        Box(modifier = Modifier.background(Color.White)) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(brush)
-            ) {
-                BookCardImage(uri = item.image)
-                Column(modifier = Modifier.padding(10.dp)) {
-                    Text(text = item.name, fontWeight = FontWeight.Bold, fontSize = 20.sp)
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text(
-                            text = item.author,
-                            color = colorResource(id = R.color.bottom_nav_bg),
-                            fontSize = 16.sp
-                        )
-                        Text(
-                            text = item.genre,
-                            color = colorResource(id = R.color.bottom_nav_bg),
-                            fontSize = 16.sp
-                        )
-                        Text(
-                            text = item.createdAt,
-                            color = colorResource(id = R.color.bottom_nav_bg),
-                            fontSize = 16.sp
-                        )
-                        Text(
-                            text = "${item.numberOfPage} стр",
-                            color = colorResource(id = R.color.bottom_nav_bg),
-                            fontSize = 16.sp
-                        )
-                    }
-                    Text(text = item.description, maxLines = 3, overflow = TextOverflow.Ellipsis)
-                    Text(
-                        text = stringResource(id = R.string.book_rating_info, item.rate),
-                        color = colorResource(id = R.color.rating_color),
-                        fontSize = 16.sp
+                            .moveTo(
+                                x = if (index == i) cardStackController.offsetX.value else 0f,
+                                y = if (index == i) cardStackController.offsetY.value else 0f
+                            )
+                            .visible(visible = index == i || index == i - 1)
+                            .graphicsLayer(
+                                rotationZ = if (index == i) cardStackController.rotation.value else 0f,
+                            )
+                            .clickable {
+                                navController.navigate(
+                                    Screens.CardInfo.route +
+                                            "/${item.name}/${item.author}/${item.description}/${item.genre}"
+                                            + "/${item.createdAt}/${item.numberOfPage}/${item.rate}"
+                                )
+                            },
+                        item,
+                        navController,
+                        viewModel
                     )
-                }
+
 
             }
 
@@ -246,6 +140,7 @@ fun BookCard1(
 
 
 }
+
 
 @Composable
 fun BookCard(
@@ -331,7 +226,7 @@ fun BookCard(
                         .padding(top = 60.dp, bottom = 20.dp, start = 20.dp, end = 20.dp),
                     verticalArrangement = Arrangement.SpaceBetween
                 ){
-                    Text(text="48 законов власти",color = Color.White, fontSize = 20.sp,
+                    Text(text=item.name,color = Color.White, fontSize = 20.sp,
                             fontFamily = FontFamily(
                                 Font(
                                     R.font.manrope_extrabold,
@@ -339,7 +234,7 @@ fun BookCard(
                                 )
                             ))
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text(text="Грин Р.", color = Color(0xFFFFFDFF), fontSize = 16.sp,
+                    Text(text=item.author, color = Color(0xFFFFFDFF), fontSize = 16.sp,
                             fontFamily = FontFamily(
                                 Font(
                                     R.font.manrope_medium,
@@ -358,7 +253,7 @@ fun BookCard(
                             ) {
                             Text(
                                 modifier = Modifier.padding(start = 10.dp, end=10.dp, top = 4.dp, bottom = 4.dp),
-                                text = "Фантастика", color = Color(0xFFFFFFFF),
+                                text =item.genre, color = Color(0xFFFFFFFF),
                                 fontSize = 16.sp,
                                 fontFamily = FontFamily(
                                     Font(
