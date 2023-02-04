@@ -54,43 +54,41 @@ fun CardStack(
     viewModel: CardStackViewModel = hiltViewModel(),
     navController: NavController
 ) {
-    viewModel.allBooks.value = items
-    var allBooks = viewModel.allBooks.value
     var i by remember {
-        mutableStateOf(allBooks.size - 1)
+        mutableStateOf(items.size - 1)
     }
-    if (i != -1) viewModel.currentItem.value = allBooks[i]
+    if (i != -1) viewModel.currentItem.value = items[i]
 
     if (i == -1) {
-        onEmptyStack(allBooks.last())
+        onEmptyStack(items.last())
     }
 
 
     cardStackController.onSwipeLeft = {
-        viewModel.dislikeBook(allBooks[i].genre)
-        onSwipeLeft(allBooks[i])
+        viewModel.dislikeBook(items[i].genre)
+        onSwipeLeft(items[i])
         i--
-        if (i != -1) viewModel.changeCurrentItem(allBooks[i])
+        if (i != -1) viewModel.changeCurrentItem(items[i])
     }
 
     cardStackController.onSwipeRight = {
-        viewModel.likeBook(allBooks[i].genre)
-        onSwipeRight(allBooks[i])
+        viewModel.likeBook(items[i].genre)
+        onSwipeRight(items[i])
         i--
-        if (i != -1) viewModel.changeCurrentItem(allBooks[i])
+        if (i != -1) viewModel.changeCurrentItem(items[i])
     }
 
     cardStackController.onSwipeUp = {
-        viewModel.wantToRead(allBooks[i].name)
-        onSwipeUp(allBooks[i])
+        viewModel.wantToRead(items[i].name)
+        onSwipeUp(items[i])
         i--
-        if (i != -1) viewModel.changeCurrentItem(allBooks[i])
+        if (i != -1) viewModel.changeCurrentItem(items[i])
     }
 
     cardStackController.onSwipeDown = {
-        onSwipeDown(allBooks[i])
+        onSwipeDown(items[i])
         i--
-        if (i != -1) viewModel.changeCurrentItem(allBooks[i])
+        if (i != -1) viewModel.changeCurrentItem(items[i])
     }
     ConstraintLayout(
         modifier = modifier
@@ -107,7 +105,7 @@ fun CardStack(
                 }
                 .fillMaxHeight()
         ) {
-            allBooks.forEachIndexed { index, item ->
+            items.forEachIndexed { index, item ->
                 BookCard(
                     modifier = Modifier
                         .draggableStack(
@@ -332,7 +330,7 @@ fun BookCard(
                         .fillMaxSize()
                         .padding(top = 60.dp, bottom = 20.dp, start = 20.dp, end = 20.dp),
                     verticalArrangement = Arrangement.SpaceBetween
-                    ){
+                ){
                     Text(text="48 законов власти",color = Color.White, fontSize = 20.sp,
                             fontFamily = FontFamily(
                                 Font(

@@ -34,6 +34,7 @@ class RecomendationViewModel @Inject constructor(
     val isEmpty = mutableStateOf(false)
     val tutorState = dataStoreRepository.getBoolPref(isTutorChecked)
 
+
     @RequiresApi(Build.VERSION_CODES.O)
     fun metricSwipeLeft(book:Book){
         var userAction = UserAction(action = "Не понравилась книга { название:${book.name} автор: ${book.author}} ") // добавить сюда id книги
