@@ -258,7 +258,7 @@ fun DisplayBooks(state: MutableState<Boolean>, mViewModel: StatisticsViewModel) 
                     text = genres?.get(0) ?: "",
                     fontFamily = Gilroy,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(start = 16.dp)
+                    modifier = Modifier.padding(start = 6.dp)
                 )
                 Image(
                     painter = painterResource(id = R.drawable.three_books),
@@ -277,7 +277,7 @@ fun DisplayBooks(state: MutableState<Boolean>, mViewModel: StatisticsViewModel) 
                     text = genres?.get(1) ?: "",
                     fontFamily = Gilroy,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(start = 16.dp)
+                    modifier = Modifier.padding(start = 6.dp)
                 )
                 Image(
                     painter = painterResource(id = R.drawable.three_books),
@@ -302,7 +302,7 @@ fun DisplayBooks(state: MutableState<Boolean>, mViewModel: StatisticsViewModel) 
                     text = genres?.get(2) ?: "",
                     fontFamily = Gilroy,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(start = 16.dp)
+                    modifier = Modifier.padding(start = 6.dp)
                 )
                 Image(
                     painter = painterResource(id = R.drawable.three_books),

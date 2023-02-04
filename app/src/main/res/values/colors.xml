@@ -12,4 +12,6 @@
     <color name="second_color">#5EB4FF</color>
     <color name="unselected">#9BCEFB</color>
     <color name="rating_color">#FF9800</color>
+    <color name="light_brown">#B2AC8B</color>
+    <color name="brown">#483936</color>
 </resources>
