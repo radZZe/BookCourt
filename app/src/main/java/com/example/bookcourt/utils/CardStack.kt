@@ -28,6 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -319,10 +320,17 @@ fun BookCard(
                 .background(darkGradient)
                 .clip(RoundedCornerShape(topStart = 23.dp, topEnd = 23.dp))
         ) {
-            Column(modifier = Modifier.fillMaxSize().background(brush)) {
-                BookCardImage(uri = item.image)
+            Column(modifier = Modifier
+                .fillMaxSize()
+                .background(brush)) {
+                Box(modifier = Modifier.wrapContentSize()) {
+                    BookCardImage(uri = item.image)
+                }
+
                 Column(
-                    modifier = Modifier.fillMaxSize().padding(top = 60.dp,bottom = 20.dp,start = 20.dp, end = 20.dp),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(top = 60.dp, bottom = 20.dp, start = 20.dp, end = 20.dp),
                     verticalArrangement = Arrangement.SpaceBetween
                     ){
                     Text(text="48 законов власти",color = Color.White, fontSize = 20.sp,
@@ -332,6 +340,7 @@ fun BookCard(
                                     weight = FontWeight.W600
                                 )
                             ))
+                    Spacer(modifier = Modifier.height(8.dp))
                     Text(text="Грин Р.", color = Color(0xFFFFFDFF), fontSize = 16.sp,
                             fontFamily = FontFamily(
                                 Font(
@@ -339,21 +348,27 @@ fun BookCard(
                                     weight = FontWeight.W600
                                 )
                             ))
+                    Spacer(modifier = Modifier.height(12.dp))
                     Row(modifier = Modifier.fillMaxSize()){
                         Box(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(50.dp))
-                                .background(color = Color(0xFF8BB298)).padding(),
+                                .background(color = Color(0xFF8BB298))
+                                .padding(),
                             Alignment.Center,
 
-
                             ) {
-                            Text(modifier = Modifier.padding(start = 10.dp,end=10.dp),text = "Фантастика", color = Color(0xFFFFFFFF), fontSize = 14.sp,fontFamily = FontFamily(
-                                Font(
-                                    R.font.manrope_medium,
-                                    weight = FontWeight.W600
+                            Text(
+                                modifier = Modifier.padding(start = 10.dp, end=10.dp, top = 4.dp, bottom = 4.dp),
+                                text = "Фантастика", color = Color(0xFFFFFFFF),
+                                fontSize = 16.sp,
+                                fontFamily = FontFamily(
+                                    Font(
+                                        R.font.manrope_medium,
+                                        weight = FontWeight.W600
+                                    )
                                 )
-                            ))
+                            )
                         }
                     }
                 }
@@ -428,7 +443,9 @@ fun BookCard(
 
 
         }
+        Box(modifier = Modifier.zIndex(2f).background(brush))
     }
+
 }
 
 

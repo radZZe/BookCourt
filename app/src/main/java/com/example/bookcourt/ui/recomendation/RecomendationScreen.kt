@@ -127,7 +127,7 @@ fun BookCardImage(uri: String) {
             painter = painter,
             contentDescription = stringResource(R.string.book_image),
             contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize().zIndex(1f)
         )
 
     }
