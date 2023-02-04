@@ -54,7 +54,10 @@ fun RecomendationContent(
     var context = LocalContext.current
 
     LaunchedEffect(key1 = Unit) {
-        viewModel.getAllBooks(context)
+        if(bookJson.value==null){
+            viewModel.getAllBooks(context)
+        }
+
     }
     var isEmpty = viewModel.isEmpty.value
 
