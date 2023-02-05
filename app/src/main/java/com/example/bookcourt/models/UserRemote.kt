@@ -10,7 +10,7 @@ data class UserRemote(
     val image:String,
     val createdAt:String,
 //    @kotlinx.serialization.Transient
-    val statistics:Statistics = Statistics(0,0, listOf<String>(),listOf<String>(),""),
+    val statistics:Statistics = Statistics(0,0,0, listOf<String>(),listOf<String>(),""),
     val password:String,
     val token:String,
 ){

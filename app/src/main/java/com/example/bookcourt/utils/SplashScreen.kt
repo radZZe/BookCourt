@@ -88,6 +88,12 @@ fun SplashUI(alpha: Float) {
                 color = LightBrown,
                 fontFamily = Gilroy
             )
+            Text(
+                text = "1.0.0",
+                fontSize = 20.sp,
+                color = LightBrown,
+                fontFamily = Gilroy
+            )
         }
     }
 

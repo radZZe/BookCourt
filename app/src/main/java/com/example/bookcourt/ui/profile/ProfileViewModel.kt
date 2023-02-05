@@ -101,6 +101,8 @@ class ProfileViewModel @Inject constructor(
             }
             val disliked = dataStoreRepository.getPref(DataStoreRepository.dislikedGenresList).first()
             var dislikedGenres = emptyList<String>()
+        val dislikedBooksCnt =
+            dataStoreRepository.getIntPref(DataStoreRepository.savedDislikedBooksCnt).first()
             if (disliked.isNotBlank()){
                 dislikedGenres =Json.decodeFromString<List<String>>(disliked)
             }
@@ -108,6 +110,7 @@ class ProfileViewModel @Inject constructor(
             return Statistics(
                 0,
                 likedBooks,
+                dislikedBooksCnt,
                 favoriteGenres,
                 wantToReadGenres,
                 "Unknown"
