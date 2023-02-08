@@ -107,8 +107,9 @@ class CardStackViewModel @Inject constructor(
             }
             genres.add(genre)
             dataStoreRepository.setPref(fromList(genres),DataStoreRepository.dislikedGenresList)
-            dataStoreRepository.setPref(dislikedBooksCnt+1,DataStoreRepository.savedDislikedBooksCnt)
+            dataStoreRepository.setPref(dislikedBooksCnt,DataStoreRepository.savedDislikedBooksCnt)
             Log.d("Danull","Disliked: $genres")
+            Log.d("Danull","Disliked cnt : $dislikedBooksCnt")
         }
     }
 
