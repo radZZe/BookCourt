@@ -7,8 +7,9 @@
     "surname": "Razdobarov",
     "token": "b9786ae1-4efb-46c4-a493-cb948cb80103",
     "statistics": {
-        "numberOfLikedBooks": 9,
-        "numberOfReadBooks": 11,
+        "numberOfLikedBooks": 0,
+        "numberOfReadBooks": 0,
+        "numberOfDislikedBooks": 0,
         "favoriteGenreList": [
             "Комедия",
             "Драма",

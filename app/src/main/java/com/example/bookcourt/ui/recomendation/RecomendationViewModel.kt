@@ -33,7 +33,7 @@ class RecomendationViewModel @Inject constructor(
     var allBooks = mutableStateOf<MutableList<Book>?>(null)
     val isEmpty = mutableStateOf(false)
     val tutorState = dataStoreRepository.getBoolPref(isTutorChecked)
-
+    var isScreenChanged = false //bullshit
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun metricSwipeLeft(book:Book){
