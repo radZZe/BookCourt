@@ -60,45 +60,44 @@ fun CardStack(
     navController: NavController
 ) {
     val readBooksList = viewModel.readBooks.collectAsState(initial = "")
-    val validBooks = items.filter { book ->
-        book.name !in readBooksList.value
-    }
     var i by remember {
-        mutableStateOf(validBooks.size - 1)
+        mutableStateOf(items.size - 1)
     }
-    if (i != -1) viewModel.currentItem.value = validBooks[i]
+
+
+    if (i != -1) viewModel.currentItem.value = items[i]
 
     if (i == -1) {
         onEmptyStack()
     }
 
     cardStackController.onSwipeLeft = {
-        viewModel.dislikeBook(validBooks[i].genre)
-        viewModel.readBooks(validBooks[i].name)
-        onSwipeLeft(validBooks[i])
+        viewModel.dislikeBook(items[i].genre)
+        viewModel.readBooks(items[i].name)
+        onSwipeLeft(items[i])
         i--
-        if (i != -1) viewModel.changeCurrentItem(validBooks[i])
+        if (i != -1) viewModel.changeCurrentItem(items[i])
     }
 
     cardStackController.onSwipeRight = {
-        viewModel.likeBook(validBooks[i].genre)
-        viewModel.readBooks(validBooks[i].name)
-        onSwipeRight(validBooks[i])
+        viewModel.likeBook(items[i].genre)
+        viewModel.readBooks(items[i].name)
+        onSwipeRight(items[i])
         i--
-        if (i != -1) viewModel.changeCurrentItem(validBooks[i])
+        if (i != -1) viewModel.changeCurrentItem(items[i])
     }
 
     cardStackController.onSwipeUp = {
-        viewModel.wantToRead(validBooks[i].name)
-        onSwipeUp(validBooks[i])
+        viewModel.wantToRead(items[i].name)
+        onSwipeUp(items[i])
         i--
-        if (i != -1) viewModel.changeCurrentItem(validBooks[i])
+        if (i != -1) viewModel.changeCurrentItem(items[i])
     }
 
     cardStackController.onSwipeDown = {
-        onSwipeDown(validBooks[i])
+        onSwipeDown(items[i])
         i--
-        if (i != -1) viewModel.changeCurrentItem(validBooks[i])
+        if (i != -1) viewModel.changeCurrentItem(items[i])
     }
     ConstraintLayout(
         modifier = modifier
@@ -115,7 +114,7 @@ fun CardStack(
                 }
                 .fillMaxHeight()
         ) {
-            validBooks.forEachIndexed { index, item ->
+            items.forEachIndexed { index, item ->
                     BookCard(
                         modifier = Modifier
                             .draggableStack(

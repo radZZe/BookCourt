@@ -117,7 +117,7 @@ class CardStackViewModel @Inject constructor(
         }
     }
 
-    fun wantToRead(bookTitle: String){
+    fun wantToRead(bookTitle: String){  //REFACTOR
         viewModelScope.launch(Dispatchers.IO) {
             var genres = arrayListOf<String>()
             val savedGenres =
