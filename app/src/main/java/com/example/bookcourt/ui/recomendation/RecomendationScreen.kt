@@ -1,6 +1,7 @@
 package com.example.bookcourt.ui
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -24,17 +25,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Size
 import com.example.bookcourt.R
+import com.example.bookcourt.ui.recomendation.Notification
+import com.example.bookcourt.ui.recomendation.NotificationMessage
 import com.example.bookcourt.ui.recomendation.RecomendationViewModel
 import com.example.bookcourt.ui.theme.CustomButton
 import com.example.bookcourt.ui.theme.TutorialGreeting
-import com.example.bookcourt.utils.CardStack
-import com.example.bookcourt.utils.Screens
-import com.example.bookcourt.utils.rememberCardStackController
+import com.example.bookcourt.utils.*
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -62,9 +64,8 @@ fun RecomendationContent(
 
     }
     var isEmpty = viewModel.isEmpty.value
-//    }
 
-//    ShowTutor(viewModel = viewModel)
+    ShowTutor(viewModel = viewModel)
 
     val cardStackController = rememberCardStackController()
     Column(Modifier.padding(20.dp)) {
@@ -100,16 +101,10 @@ fun RecomendationContent(
                 }
             }
         } else {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(start = 24.dp, end = 24.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                CustomButton(text = "Посмотреть статистику") {
-                    navController.popBackStack()
-                    navController.navigate(route = Screens.Statistics.route)
-                }
+            if (!viewModel.isScreenChanged){
+                navController.popBackStack()
+                navController.navigate(route = Screens.Statistics.route)
+                viewModel.isScreenChanged = true
             }
         }
     }
@@ -133,6 +128,14 @@ fun BookCardImage(uri: String) {
         if (painter.state is AsyncImagePainter.State.Loading) {
             CircularProgressIndicator()
         }
+        Row(modifier = Modifier.zIndex(1f).fillMaxSize(), horizontalArrangement = Arrangement.End) {
+            NotificationMessage(Modifier.padding(top=20.dp))
+            Notification(count = 5,
+                Modifier
+//                    .align(Alignment.TopEnd)
+                    .padding(top = 100.dp)
+                    .zIndex(1f))
+        }
 
         Image(
             painter = painter,
@@ -140,7 +143,7 @@ fun BookCardImage(uri: String) {
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .fillMaxSize()
-                .zIndex(1f)
+                .zIndex(0f)
         )
 
     }

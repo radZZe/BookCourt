@@ -28,6 +28,7 @@ class DataStoreRepository(val context: Context) {
         val endSessionTime: Preferences.Key<Int> = intPreferencesKey("endSessionTime")
         val savedCity: Preferences.Key<String> = stringPreferencesKey("user_city")
         val savedLikedBooksCnt: Preferences.Key<Int> = intPreferencesKey("liked_books_cnt")
+        val savedDislikedBooksCnt: Preferences.Key<Int> = intPreferencesKey("disliked_books_cnt")
         val savedFavoriteGenres: Preferences.Key<String> = stringPreferencesKey("favorite_genres")
         val savedWantToReadList: Preferences.Key<String> = stringPreferencesKey("want_to_read_genres")
         val dislikedGenresList: Preferences.Key<String> = stringPreferencesKey("disliked_genres")

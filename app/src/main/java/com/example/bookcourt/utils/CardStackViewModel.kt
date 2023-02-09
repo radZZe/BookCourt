@@ -14,6 +14,7 @@ import com.example.bookcourt.models.Book
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -102,12 +103,17 @@ class CardStackViewModel @Inject constructor(
                 withContext(Dispatchers.Default) {
                     dataStoreRepository.getPref(DataStoreRepository.dislikedGenresList)
                 }.first()
+            val dislikedBooksCnt =  withContext(Dispatchers.Default) {
+                dataStoreRepository.getIntPref(DataStoreRepository.savedDislikedBooksCnt)
+            }.first() + 1
             if (savedGenres.isNotBlank()){
                 genres = toList(savedGenres)
             }
             genres.add(genre)
             dataStoreRepository.setPref(fromList(genres),DataStoreRepository.dislikedGenresList)
+            dataStoreRepository.setPref(dislikedBooksCnt,DataStoreRepository.savedDislikedBooksCnt)
             Log.d("Danull","Disliked: $genres")
+            Log.d("Danull","Disliked cnt : $dislikedBooksCnt")
         }
     }
 

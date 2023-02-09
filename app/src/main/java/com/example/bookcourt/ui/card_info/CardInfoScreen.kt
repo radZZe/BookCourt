@@ -243,7 +243,7 @@ fun CardStat(book: Book) {
                     modifier = Modifier
                 )
                 Text(
-                    text = "679₽", fontSize = 14.sp,
+                    text = "${book.price}₽", fontSize = 14.sp,
                     fontFamily = FontFamily(
                         Font(
                             R.font.manrope_semibold,
