@@ -35,6 +35,7 @@ import androidx.navigation.NavController
 import com.example.bookcourt.R
 import com.example.bookcourt.models.Book
 import com.example.bookcourt.ui.BookCardImage
+import com.example.bookcourt.ui.theme.Gilroy
 import kotlin.math.roundToInt
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -54,41 +55,46 @@ fun CardStack(
     viewModel: CardStackViewModel = hiltViewModel(),
     navController: NavController
 ) {
-    var i by remember {
-        mutableStateOf(items.size - 1)
+    val readBooksList = viewModel.readBooks.collectAsState(initial = "")
+    val validBooks = items.filter { book ->
+        book.name !in readBooksList.value
     }
-    if (i != -1) viewModel.currentItem.value = items[i]
+    var i by remember {
+        mutableStateOf(validBooks.size - 1)
+    }
+    if (i != -1) viewModel.currentItem.value = validBooks[i]
 
     if (i == -1) {
         onEmptyStack()
     }
 
-
     cardStackController.onSwipeLeft = {
-        viewModel.dislikeBook(items[i].genre)
-        onSwipeLeft(items[i])
+        viewModel.dislikeBook(validBooks[i].genre)
+        viewModel.readBooks(validBooks[i].name)
+        onSwipeLeft(validBooks[i])
         i--
-        if (i != -1) viewModel.changeCurrentItem(items[i])
+        if (i != -1) viewModel.changeCurrentItem(validBooks[i])
     }
 
     cardStackController.onSwipeRight = {
-        viewModel.likeBook(items[i].genre)
-        onSwipeRight(items[i])
+        viewModel.likeBook(validBooks[i].genre)
+        viewModel.readBooks(validBooks[i].name)
+        onSwipeRight(validBooks[i])
         i--
-        if (i != -1) viewModel.changeCurrentItem(items[i])
+        if (i != -1) viewModel.changeCurrentItem(validBooks[i])
     }
 
     cardStackController.onSwipeUp = {
-        viewModel.wantToRead(items[i].name)
-        onSwipeUp(items[i])
+        viewModel.wantToRead(validBooks[i].name)
+        onSwipeUp(validBooks[i])
         i--
-        if (i != -1) viewModel.changeCurrentItem(items[i])
+        if (i != -1) viewModel.changeCurrentItem(validBooks[i])
     }
 
     cardStackController.onSwipeDown = {
-        onSwipeDown(items[i])
+        onSwipeDown(validBooks[i])
         i--
-        if (i != -1) viewModel.changeCurrentItem(items[i])
+        if (i != -1) viewModel.changeCurrentItem(validBooks[i])
     }
     ConstraintLayout(
         modifier = modifier
@@ -105,7 +111,8 @@ fun CardStack(
                 }
                 .fillMaxHeight()
         ) {
-            items.forEachIndexed { index, item ->
+            validBooks.forEachIndexed { index, item ->
+//                if (item.name !in readBooksList.value) {
                     BookCard(
                         modifier = Modifier
                             .draggableStack(
@@ -131,8 +138,9 @@ fun CardStack(
                         navController,
                         viewModel
                     )
-
-
+//                } else {
+//                    i--
+//                }
             }
 
         }
@@ -155,6 +163,7 @@ fun BookCard(
         0.8f to Color.Transparent
     )
     var brush = Brush.verticalGradient(colorStops = colorStopsNull)
+
     when (item.onSwipeDirection.value) {
         DIRECTION_RIGHT -> {
             val colorStopsRight = arrayOf(
@@ -205,8 +214,7 @@ fun BookCard(
         shape = RoundedCornerShape(20.dp),
         modifier = modifier
             .fillMaxSize()
-    )
-    {
+    ) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -336,7 +344,49 @@ fun BookCard(
 
 
         }
-        Box(modifier = Modifier.zIndex(2f).background(brush))
+        Box(modifier = Modifier
+            .zIndex(2f)
+            .background(brush),
+            contentAlignment = Alignment.Center
+        ) {
+            when (item.onSwipeDirection.value) {
+                DIRECTION_TOP -> {
+                    Text(
+                        text = "Хочу прочитать",
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = Gilroy,
+                        color = Color.White
+                    )
+                }
+                DIRECTION_BOTTOM -> {
+                    Text(
+                        text = "Пропустить",
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = Gilroy,
+                        color = Color.White
+                    )
+                }
+                DIRECTION_RIGHT -> {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_like),
+                        contentDescription = "contextIcon",
+                        tint = Color.Green,
+                        modifier = Modifier.size(100.dp)
+                    )
+                }
+                DIRECTION_LEFT -> {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_dislike),
+                        contentDescription = "contextIcon",
+                        tint = Color.Red,
+                        modifier = Modifier.size(100.dp)
+                    )
+                }
+                else -> {}
+            }
+        }
     }
 
 }
@@ -508,6 +558,10 @@ fun Modifier.visible(
         layout(0, 0) {}
     }
 })
+
+fun skip() {
+
+}
 
 
 const val DIRECTION_LEFT = "direction_left"

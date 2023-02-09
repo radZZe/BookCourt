@@ -5,18 +5,12 @@ import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Button
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
+import androidx.compose.material.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -38,7 +32,6 @@ import androidx.navigation.NavController
 import com.example.bookcourt.R
 import com.example.bookcourt.ui.theme.*
 import com.example.bookcourt.utils.BottomBarScreen
-import com.example.bookcourt.utils.Screens
 import com.example.bookcourt.utils.isPermanentlyDenied
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
@@ -46,7 +39,6 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 
 
-//@Preview
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun SignInScreen(navController: NavController, mViewModel: SignInViewModel) {
@@ -76,6 +68,7 @@ fun SignInScreen(navController: NavController, mViewModel: SignInViewModel) {
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AuthFields(navController: NavController, mViewModel: SignInViewModel) {
+    var validationState = remember { mutableStateOf(true) }
     Box(
         modifier = Modifier
             .padding(start = 32.dp, end = 32.dp)
@@ -89,6 +82,7 @@ fun AuthFields(navController: NavController, mViewModel: SignInViewModel) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 20.dp, end = 20.dp, top = 0.dp, bottom = 20.dp)
+                .verticalScroll(rememberScrollState(), reverseScrolling = true)
         ) {
             Image(
                 painter = painterResource(id = R.drawable.app_logo),
@@ -106,11 +100,11 @@ fun AuthFields(navController: NavController, mViewModel: SignInViewModel) {
             TextBlock(
                 "Телефон",
                 "Введите номер телефона",
-                mViewModel.phoneNumber
+                mViewModel.phoneNumber,
+                keyboardType = KeyboardType.Phone
             ) { mViewModel.onPhoneChanged(it) }
             Spacer(modifier = Modifier.height(18.dp))
             AutoCompleteTextField("Город", "Начните вводить свой город...")
-//            TextBlock("Город", "NamePlaceholder", mViewModel.name) { mViewModel.onNameChanged(it) }
             Spacer(modifier = Modifier.height(36.dp))
             Box(
                 modifier = Modifier
@@ -119,10 +113,14 @@ fun AuthFields(navController: NavController, mViewModel: SignInViewModel) {
                     .background(Brown)
                     .padding(top = 12.dp, bottom = 12.dp)
                     .clickable {
-                        navController.popBackStack()
-//                        navController.navigate(route = Screens.Statistics.route)
-                        navController.navigate(route = BottomBarScreen.Recomendations.route)
-                        mViewModel.editPrefs()
+                        if (mViewModel.isValidPhone()) {
+                            navController.popBackStack()
+                            navController.navigate(route = BottomBarScreen.Recomendations.route)
+                            mViewModel.onCheckedChanged()
+                            mViewModel.editPrefs()
+                        } else {
+                            validationState.value = false
+                        }
                     },
                 Alignment.Center
             ) {
@@ -131,8 +129,11 @@ fun AuthFields(navController: NavController, mViewModel: SignInViewModel) {
                     color = LightBrown,
                     fontSize = 16.sp,
                     fontFamily = Gilroy,
-                    fontWeight = FontWeight.Bold,
+                    fontWeight = FontWeight.Bold
                 )
+            }
+            if (!validationState.value) {
+                SimpleAlertDialog(validationState)
             }
         }
     }
@@ -143,6 +144,7 @@ fun TextBlock(
     title: String,
     placeholder: String,
     value: String,
+    keyboardType: KeyboardType = KeyboardType.Text,
     onValueChange: (String) -> Unit
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
@@ -176,7 +178,7 @@ fun TextBlock(
                 )
             },
             keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Text,
+                keyboardType = keyboardType,
                 imeAction = ImeAction.Next
             ),
         )
@@ -315,5 +317,45 @@ fun GetLocationPermission(mViewModel: SignInViewModel) {
 
 }
 
+@Composable
+fun SimpleAlertDialog(state: MutableState<Boolean>) {
+    AlertDialog(
+        onDismissRequest = { },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                          state.value = true
+                },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(15.dp),
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = BrightOlive
+                )
+            ) {
+                Text(
+                    text = "Хорошо",
+                    fontFamily = Gilroy,
+                    fontSize = 18.sp,
+                    color = Color.White
+                )
+            }
+        },
+        shape = RoundedCornerShape(15.dp),
+        title = {
+            Text(
+                text = "Неверный формат",
+                fontFamily = Gilroy,
+                fontSize = 18.sp,
+            )
+        },
+        text = {
+            Text(
+                text = "Пожалуйста, проверьте правильность введенного номера телефона",
+                fontFamily = Gilroy,
+                fontSize = 16.sp,
+            )
+        }
+    )
+}
 
 

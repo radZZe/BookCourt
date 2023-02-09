@@ -62,8 +62,9 @@ fun RecomendationContent(
 
     }
     var isEmpty = viewModel.isEmpty.value
+//    }
 
-    ShowTutor(viewModel = viewModel)
+//    ShowTutor(viewModel = viewModel)
 
     val cardStackController = rememberCardStackController()
     Column(Modifier.padding(20.dp)) {
@@ -71,7 +72,8 @@ fun RecomendationContent(
             if (bookJson.value != null) {
                 CardStack(
                     modifier = Modifier.fillMaxSize(),
-                    items = bookJson.value!!, onEmptyStack = {
+                    items = bookJson.value!!,
+                    onEmptyStack = {
                         viewModel.isEmpty.value = true
                     }, cardStackController = cardStackController,
                     onSwipeLeft = {
@@ -136,47 +138,49 @@ fun BookCardImage(uri: String) {
             painter = painter,
             contentDescription = stringResource(R.string.book_image),
             contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize().zIndex(1f)
-        )
-
-    }
-}
-
-
-@Composable
-fun ShowTutor(viewModel: RecomendationViewModel) {
-    val tutorState = viewModel.tutorState.collectAsState(initial = true)
-    AnimatedVisibility(
-        visible = !tutorState.value,
-        modifier = Modifier.zIndex(1f),
-        enter = fadeIn(),
-        exit = fadeOut()
-    ) {
-        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .alpha(0.55f)
-                .background(Color.Black)
+                .zIndex(1f)
         )
-    }
-    Column(
-        verticalArrangement = Arrangement.Center,
-        modifier = Modifier
-            .zIndex(2f)
-            .fillMaxSize()
-    ) {
-        AnimatedVisibility(
-            visible = !tutorState.value,
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
-            TutorialGreeting {
-                viewModel.editTutorState()
-            }
-        }
-    }
 
+    }
 }
+
+
+//@Composable
+//fun ShowTutor(viewModel: RecomendationViewModel) {
+//    val tutorState = viewModel.tutorState.collectAsState(initial = true)
+//    AnimatedVisibility(
+//        visible = !tutorState.value,
+//        modifier = Modifier.zIndex(1f),
+//        enter = fadeIn(),
+//        exit = fadeOut()
+//    ) {
+//        Box(
+//            modifier = Modifier
+//                .fillMaxSize()
+//                .alpha(0.55f)
+//                .background(Color.Black)
+//        )
+//    }
+//    Column(
+//        verticalArrangement = Arrangement.Center,
+//        modifier = Modifier
+//            .zIndex(2f)
+//            .fillMaxSize()
+//    ) {
+//        AnimatedVisibility(
+//            visible = !tutorState.value,
+//            enter = fadeIn(),
+//            exit = fadeOut()
+//        ) {
+//            TutorialGreeting {
+//                viewModel.editTutorState()
+//            }
+//        }
+//    }
+//
+//}
 
 
 

@@ -28,6 +28,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
+import androidx.compose.ui.zIndex
 import com.example.bookcourt.R
 import com.example.bookcourt.utils.Constants.cities
 
@@ -125,7 +126,7 @@ fun TutorialGreeting(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
             ) {
-                CustomButton(text = "Ok!") { onCLick() }
+                CustomButton(text = "Хорошо", color = BrightOlive, textColor = Color.White) { onCLick() }
             }
         }
     }
@@ -157,17 +158,17 @@ fun CustomCheckBox(
 }
 
 @Composable
-fun CustomButton(text: String, onCLick: () -> Unit = {}) {
+fun CustomButton(text: String, textColor: Color = LightBrown, color: Color = Brown, onCLick: () -> Unit = {}) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(50.dp))
-            .background(Brown)
+            .background(color = color)
             .padding(top = 12.dp, bottom = 12.dp, start = 20.dp, end = 20.dp)
             .clickable { onCLick() },
         Alignment.Center
     ) {
-        Text(text = text, color = LightBrown, fontSize = 16.sp, fontFamily = Gilroy)
+        Text(text = text, color = textColor, fontSize = 16.sp, fontFamily = Gilroy)
     }
 }
 
@@ -272,7 +273,7 @@ fun AutoCompleteTextField(label: String, placeholder: String) {
 //                .width(textFieldsSize.width.dp),
         ) {
             LazyColumn(
-                modifier = Modifier.heightIn(max = 150.dp)
+                modifier = Modifier.heightIn(max = 150.dp).zIndex(2f)
             ) {
                 if (textFieldValue.isNotEmpty()) {
                     items(

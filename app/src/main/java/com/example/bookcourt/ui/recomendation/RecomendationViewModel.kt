@@ -2,7 +2,9 @@ package com.example.bookcourt.ui.recomendation
 
 import android.content.Context
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
@@ -10,6 +12,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookcourt.data.repositories.DataStoreRepository
 import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.isTutorChecked
+import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.readBooksList
 import com.example.bookcourt.data.repositories.MetricsRepository
 import com.example.bookcourt.data.repositories.NetworkRepository
 import com.example.bookcourt.models.Book
@@ -18,6 +21,10 @@ import com.example.bookcourt.models.UserAction
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.FlowCollector
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
@@ -31,8 +38,11 @@ class RecomendationViewModel @Inject constructor(
 ) : ViewModel() {
 
     var allBooks = mutableStateOf<MutableList<Book>?>(null)
+    var readBooks = dataStoreRepository.getPref(readBooksList)
     val isEmpty = mutableStateOf(false)
-    val tutorState = dataStoreRepository.getBoolPref(isTutorChecked)
+
+
+//    val tutorState = dataStoreRepository.getBoolPref(isTutorChecked)
 
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -78,13 +88,13 @@ class RecomendationViewModel @Inject constructor(
         }
     }
 
-    private var tutorStateBool by mutableStateOf(false)
+//    private var tutorStateBool by mutableStateOf(false)
 
-    fun editTutorState() {
-        tutorStateBool = true
-        viewModelScope.launch {
-            dataStoreRepository.setPref(tutorStateBool, isTutorChecked)
-        }
-    }
+//    fun editTutorState() {
+//        tutorStateBool = true
+//        viewModelScope.launch {
+//            dataStoreRepository.setPref(tutorStateBool, isTutorChecked)
+//        }
+//    }
 
 }
