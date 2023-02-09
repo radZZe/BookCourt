@@ -83,6 +83,11 @@ class RecomendationViewModel @Inject constructor(
             allBooks.value = data.map {
                 it.toBook()
             } as MutableList<Book>
+            readBooks.collect{ data ->
+                allBooks.value = allBooks.value!!.filter{
+                    it.name !in data
+                } as MutableList<Book>
+            }
         }
     }
 
