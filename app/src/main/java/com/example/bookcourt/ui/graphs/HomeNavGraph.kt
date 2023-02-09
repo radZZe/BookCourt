@@ -13,6 +13,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.bookcourt.models.Book
+import com.example.bookcourt.models.BookInfo
 import com.example.bookcourt.ui.CardInfoScreen
 import com.example.bookcourt.ui.ProfileScreen
 import com.example.bookcourt.ui.RecomendationScreen
@@ -61,8 +62,8 @@ fun NavigationGraph(
         }
         composable(Screens.CardInfo.route+
                 "/{title}/{authorName}/{description}" +
-                "/{genre}/{createdAt}" +
-                "/{numberOfPage}/{rate}/{price}/{shopOwner}/{buyUri}",
+                "/{genre}" +
+                "/{numberOfPage}/{rate}/{price}",
         arguments = listOf(
             navArgument("title"){
                 type = NavType.StringType
@@ -76,9 +77,6 @@ fun NavigationGraph(
             navArgument("genre"){
                 type = NavType.StringType
             },
-            navArgument("createdAt"){
-                type = NavType.StringType
-            },
             navArgument("numberOfPage"){
                 type = NavType.StringType
             },
@@ -88,40 +86,26 @@ fun NavigationGraph(
             navArgument("price"){
                 type = NavType.IntType
             },
-            navArgument("shopOwner"){
-                type = NavType.StringType
-            },
-            navArgument("buyUri"){
-                type = NavType.StringType
-            }
+//            navArgument("buyUri"){
+//                type = NavType.StringType
+//            }
             )
         ) {
             val title  = it.arguments?.getString("title")?:"unset"
             val authorName = it.arguments?.getString("authorName")?:"unset"
             val description = it.arguments?.getString("description")?:"unset"
             val genre = it.arguments?.getString("genre")?:"unset"
-            val createdAt = it.arguments?.getString("createdAt")?:"unset"
             val numberOfPage = it.arguments?.getString("numberOfPage")?:"unset"
             val rate = it.arguments?.getInt("rate")?:0
             val price = it.arguments?.getInt("price")?:0
-            val shopOwner = it.arguments?.getString("shopOwner")?:"unset"
-            val buyUri = it.arguments?.getString("buyUri")?:"unset"
-            val book = Book(
-                title,
-                authorName,
+            val book = BookInfo(
+                name = title,
+                author = authorName,
                 description,
-                createdAt,
                 numberOfPage,
                 rate,
-                "Danull",
                 genre,
-                "Danull",
-                onSwipeDirection = remember {
-                    mutableStateOf(null)
-                         },
                 price,
-                shopOwner,
-                buyUri
 
             )
             CardInfoScreen(navController,book)
