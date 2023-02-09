@@ -61,9 +61,10 @@ fun NavigationGraph(
         }
         composable(Screens.CardInfo.route+
                 "/{title}/{authorName}/{description}" +
-                "/{genre}/{createdAt}/" +
-                "{numberOfPage}/{rate}",
-        arguments = listOf(navArgument("title"){
+                "/{genre}/{createdAt}" +
+                "/{numberOfPage}/{rate}/{price}/{shopOwner}/{buyUri}",
+        arguments = listOf(
+            navArgument("title"){
                 type = NavType.StringType
             },
             navArgument("authorName"){
@@ -83,24 +84,32 @@ fun NavigationGraph(
             },
             navArgument("rate"){
                 type = NavType.StringType
+            },
+            navArgument("price"){
+                type = NavType.IntType
+            },
+            navArgument("shopOwner"){
+                type = NavType.StringType
+            },
+            navArgument("buyUri"){
+                type = NavType.StringType
             }
-            //navArgument("onSwipeDirection"){
-           //     type= NavType.StringType
-           // }
             )
         ) {
             val title  = it.arguments?.getString("title")?:"unset"
             val authorName = it.arguments?.getString("authorName")?:"unset"
-            val descrtiption = it.arguments?.getString("description")?:"unset"
+            val description = it.arguments?.getString("description")?:"unset"
             val genre = it.arguments?.getString("genre")?:"unset"
             val createdAt = it.arguments?.getString("createdAt")?:"unset"
             val numberOfPage = it.arguments?.getString("numberOfPage")?:"unset"
             val rate = it.arguments?.getString("rate")?:"0"
-           // val onSwipeDirection = it.arguments?.getString("onSwipeDirection")?:null
+            val price = it.arguments?.getInt("price")?:0
+            val shopOwner = it.arguments?.getString("shopOwner")?:"unset"
+            val buyUri = it.arguments?.getString("buyUri")?:"unset"
             val book = Book(
                 title,
                 authorName,
-                descrtiption,
+                description,
                 createdAt,
                 numberOfPage,
                 rate.toInt(),
@@ -109,7 +118,10 @@ fun NavigationGraph(
                 "Danull",
                 onSwipeDirection = remember {
                     mutableStateOf(null)
-                         }
+                         },
+                price,
+                shopOwner,
+                buyUri
 
             )
             CardInfoScreen(navController,book)

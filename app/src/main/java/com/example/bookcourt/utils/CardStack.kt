@@ -1,5 +1,7 @@
 package com.example.bookcourt.utils
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -17,6 +19,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.layout.layout
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -35,6 +38,7 @@ import androidx.navigation.NavController
 import com.example.bookcourt.R
 import com.example.bookcourt.models.Book
 import com.example.bookcourt.ui.BookCardImage
+import com.example.bookcourt.ui.getWantedBooks
 import kotlin.math.roundToInt
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -42,7 +46,7 @@ import kotlin.math.roundToInt
 @Composable
 fun CardStack(
     modifier: Modifier = Modifier,
-    items:   List<Book>,
+    items: List<Book>,
     thresholdConfig: (Float, Float) -> ThresholdConfig = { _, _ -> FractionalThreshold(0.2f) },
     velocityThreshold: Dp = 125.dp,
     onSwipeLeft: (item: Book) -> Unit = {},
@@ -98,39 +102,40 @@ fun CardStack(
     ) {
         val stack = createRef()
 
-        Box(
-            modifier = modifier
-                .constrainAs(stack) {
-                    top.linkTo(parent.top)
-                }
-                .fillMaxHeight()
-        ) {
+        Box(modifier = modifier
+            .constrainAs(stack) {
+                top.linkTo(parent.top)
+            }
+            .fillMaxHeight()) {
             items.forEachIndexed { index, item ->
-                    BookCard(
-                        modifier = Modifier
-                            .draggableStack(
-                                controller = cardStackController,
-                                thresholdConfig = thresholdConfig,
+                BookCard(
+                    modifier = Modifier
+                        .draggableStack(
+                            controller = cardStackController,
+                            thresholdConfig = thresholdConfig,
+                        )
+                        .moveTo(
+                            x = if (index == i) cardStackController.offsetX.value else 0f,
+                            y = if (index == i) cardStackController.offsetY.value else 0f
+                        )
+                        .visible(visible = index == i || index == i - 1)
+                        .graphicsLayer(
+                            rotationZ = if (index == i) cardStackController.rotation.value else 0f,
+                        )
+                        .clickable {
+                            navController.navigate(
+                                Screens.CardInfo.route +
+
+                                        "/{title}/{authorName}/{description}" +
+                                        "/{genre}/{createdAt}" +
+                                        "/{numberOfPage}/{2/{${1}}/{shopOwner}/{buyUri}"
+//                                        "/${item.name}/${item.author}" +
+//                                        "/${item.description}/${item.genre}" +
+//                                        "/${item.createdAt}/${item.numberOfPage}" +
+//                                        "/${item.rate}/${item.price}/${item.shop_owner}/${item.buy_uri}"
                             )
-                            .moveTo(
-                                x = if (index == i) cardStackController.offsetX.value else 0f,
-                                y = if (index == i) cardStackController.offsetY.value else 0f
-                            )
-                            .visible(visible = index == i || index == i - 1)
-                            .graphicsLayer(
-                                rotationZ = if (index == i) cardStackController.rotation.value else 0f,
-                            )
-                            .clickable {
-                                navController.navigate(
-                                    Screens.CardInfo.route +
-                                            "/${item.name}/${item.author}/${item.description}/${item.genre}"
-                                            + "/${item.createdAt}/${item.numberOfPage}/${item.rate}"
-                                )
-                            },
-                        item,
-                        navController,
-                        viewModel
-                    )
+                        }, item, navController, viewModel
+                )
 
 
             }
@@ -150,24 +155,22 @@ fun BookCard(
     viewModel: CardStackViewModel
 ) {
 
+    val context = LocalContext.current
     var colorStopsNull = arrayOf(
-        0.0f to Color.Transparent,
-        0.8f to Color.Transparent
+        0.0f to Color.Transparent, 0.8f to Color.Transparent
     )
     var brush = Brush.verticalGradient(colorStops = colorStopsNull)
     when (item.onSwipeDirection.value) {
         DIRECTION_RIGHT -> {
             val colorStopsRight = arrayOf(
-                0.0f to Color(0.3f, 0.55f, 0.21f, 0.75f),
-                0.8f to Color.Transparent
+                0.0f to Color(0.3f, 0.55f, 0.21f, 0.75f), 0.8f to Color.Transparent
             )
             brush = Brush.horizontalGradient(colorStops = colorStopsRight)
         }
         DIRECTION_LEFT -> {
             val colorStopsLeft = arrayOf(
 
-                0.0f to Color.Transparent,
-                0.8f to Color(1f, 0.31f, 0.31f, 0.75f)
+                0.0f to Color.Transparent, 0.8f to Color(1f, 0.31f, 0.31f, 0.75f)
             )
             brush = Brush.horizontalGradient(colorStops = colorStopsLeft)
         }
@@ -180,8 +183,7 @@ fun BookCard(
         }
         DIRECTION_BOTTOM -> {
             val colorStopsBottom = arrayOf(
-                0.0f to Color(0.3f, 0f, 0.41f, 0.75f),
-                0.8f to Color.Transparent
+                0.0f to Color(0.3f, 0f, 0.41f, 0.75f), 0.8f to Color.Transparent
             )
 
             brush = Brush.verticalGradient(colorStops = colorStopsBottom)
@@ -193,9 +195,7 @@ fun BookCard(
 
     val darkGradient = Brush.verticalGradient(
         listOf(
-            Color(0xFF303845),
-            Color(0xFF2E3643),
-            Color(0xFF14161A)
+            Color(0xFF303845), Color(0xFF2E3643), Color(0xFF14161A)
         )
     )
 
@@ -203,19 +203,19 @@ fun BookCard(
         backgroundColor = Color.Transparent,
         elevation = 5.dp,
         shape = RoundedCornerShape(20.dp),
-        modifier = modifier
-            .fillMaxSize()
-    )
-    {
+        modifier = modifier.fillMaxSize()
+    ) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(darkGradient)
                 .clip(RoundedCornerShape(topStart = 23.dp, topEnd = 23.dp))
         ) {
-            Column(modifier = Modifier
-                .fillMaxSize()
-                .background(brush)) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(brush)
+            ) {
                 Box(modifier = Modifier.wrapContentSize()) {
                     BookCardImage(uri = item.image)
                 }
@@ -223,26 +223,38 @@ fun BookCard(
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(top = 60.dp, bottom = 20.dp, start = 20.dp, end = 20.dp),
+                        .padding(top = 50.dp, bottom = 20.dp, start = 20.dp, end = 20.dp),
                     verticalArrangement = Arrangement.SpaceBetween
-                ){
-                    Text(text=item.name,color = Color.White, fontSize = 20.sp,
-                            fontFamily = FontFamily(
-                                Font(
-                                    R.font.manrope_extrabold,
-                                    weight = FontWeight.W600
-                                )
-                            ))
+                ) {
+                    Text(
+                        text = item.name,
+                        color = Color.White,
+                        fontSize = 20.sp,
+                        fontFamily = FontFamily(
+                            Font(
+                                R.font.manrope_extrabold, weight = FontWeight.W600
+                            )
+                        ),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text(text=item.author, color = Color(0xFFFFFDFF), fontSize = 16.sp,
-                            fontFamily = FontFamily(
-                                Font(
-                                    R.font.manrope_medium,
-                                    weight = FontWeight.W600
-                                )
-                            ))
+                    Text(
+                        text = item.author,
+                        color = Color(0xFFFFFDFF),
+                        fontSize = 16.sp,
+                        fontFamily = FontFamily(
+                            Font(
+                                R.font.manrope_medium, weight = FontWeight.W600
+                            )
+                        )
+                    )
                     Spacer(modifier = Modifier.height(12.dp))
-                    Row(modifier = Modifier.fillMaxSize()){
+                    Row(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         Box(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(50.dp))
@@ -252,241 +264,56 @@ fun BookCard(
 
                             ) {
                             Text(
-                                modifier = Modifier.padding(start = 10.dp, end=10.dp, top = 4.dp, bottom = 4.dp),
-                                text =item.genre, color = Color(0xFFFFFFFF),
+                                modifier = Modifier.padding(
+                                    start = 10.dp, end = 10.dp, top = 4.dp, bottom = 4.dp
+                                ),
+                                text = item.genre,
+                                color = Color(0xFFFFFFFF),
                                 fontSize = 16.sp,
                                 fontFamily = FontFamily(
                                     Font(
-                                        R.font.manrope_medium,
-                                        weight = FontWeight.W600
+                                        R.font.manrope_medium, weight = FontWeight.W600
                                     )
+                                )
+                            )
+
+                        }
+                        Box(modifier = Modifier
+                            .clip(RoundedCornerShape(50.dp))
+                            .background(Color(0xFF483936))
+                            .clickable {
+                                val sendIntent: Intent = Intent(
+                                    Intent.ACTION_VIEW, Uri.parse(
+                                        item.buy_uri
+                                    )
+                                )
+                                val webIntent = Intent.createChooser(sendIntent, null)
+                                context.startActivity(webIntent)
+                            }) {
+                            Text(
+                                modifier = Modifier.padding(10.dp), text = "Купить", color = Color(
+                                    0xFFB2AC8B
                                 )
                             )
                         }
                     }
                 }
-//                Box(
-//                    modifier = Modifier
-//                        .fillMaxSize()
-//                        .padding(start = 20.dp, bottom = 0.dp),
-//                    contentAlignment = Alignment.BottomStart
-//                ) {
-//                    Column(modifier = Modifier, verticalArrangement = Arrangement.spacedBy(10.dp)) {
-//                        Text(
-//                            text = item.name, color = Color.White, fontSize = 20.sp,
-//                            fontFamily = FontFamily(
-//                                Font(
-//                                    R.font.manrope_extrabold,
-//                                    weight = FontWeight.W600
-//                                )
-//                            )
-//                        )
-//                        Text(
-//                            text = item.author, color = Color(0xFFFFFDFF), fontSize = 16.sp,
-//                            fontFamily = FontFamily(
-//                                Font(
-//                                    R.font.manrope_medium,
-//                                    weight = FontWeight.W600
-//                                )
-//                            )
-//                        )
-//                    }
-//                }
-//                Row(
-//                    modifier = Modifier,
-//                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-//                ) {
-//                    Column(
-//                        modifier = Modifier
-//                            .padding( start = 10.dp, bottom = 15.dp)
-//                            .fillMaxSize(),
-//                        verticalArrangement = Arrangement.Bottom
-//                    ) {
-//                        Box(
-//                            modifier = Modifier
-//                                .size(width = 132.dp, height = 32.dp)
-//                                .clip(RoundedCornerShape(50.dp))
-//                                .background(color = Color(0xFF8BB298))
-//                                .clickable { },
-//                            Alignment.Center,
-//
-//
-//                            ) {
-//                            Text(text = item.genre, color = Color(0xFFFFFFFF), fontSize = 14.sp)
-//                        }
-//
-//
-//                    }
-//                }
-//                Box(
-//                    modifier = Modifier
-//                        .fillMaxSize()
-//                        .padding(
-//                            top = 810.dp, bottom = 5.dp, start = 350.dp, end = 5.dp
-//                        )
-//                ) {
-//                    Image(
-//                        painter = painterResource(id = R.drawable.shop),
-//                        contentDescription = "icon_shop",
-//                        modifier = Modifier
-//                            .size(width = 25.dp, height = 24.dp)
-//                    )
-//                }
             }
 
 
         }
-        Box(modifier = Modifier.zIndex(2f).background(brush))
-    }
-
-}
-
-
-@Composable
-fun BookCardTest(
-    modifier: Modifier = Modifier,
-
-    ) {
-    var item = Book(
-        name = "test",
-        author = "test",
-        description = "test",
-        createdAt = "test",
-        numberOfPage = "test",
-        rate = 1,
-        owner = "test",
-        genre = "test",
-        image = "https://cv6.litres.ru/pub/c/elektronnaya-kniga/cover_415/36628165-ray-dalio-principy-zhizn-i-rabota.webp",
-        onSwipeDirection = remember {
-            mutableStateOf(DIRECTION_TOP)
-        }
-    )
-    var colorStopsNull = arrayOf(
-        0.0f to Color.Transparent,
-        0.8f to Color.Transparent
-    )
-    var brush = Brush.verticalGradient(colorStops = colorStopsNull)
-    when (item.onSwipeDirection.value) {
-        DIRECTION_RIGHT -> {
-            val colorStopsRight = arrayOf(
-                0.0f to Color(0.3f, 0.55f, 0.21f, 0.75f),
-                0.8f to Color.Transparent
-            )
-            brush = Brush.horizontalGradient(colorStops = colorStopsRight)
-        }
-        DIRECTION_LEFT -> {
-            val colorStopsLeft = arrayOf(
-                0.0f to Color(1f, 0.31f, 0.31f, 0.75f),
-                0.8f to Color.Transparent
-            )
-            brush = Brush.horizontalGradient(colorStops = colorStopsLeft)
-        }
-        DIRECTION_TOP -> { // Note the block
-            val colorStopsTop = arrayOf(
-                0.1f to Color(1f, 0.6f, 0f, 0.75f),
-                0.8f to Color.Transparent
-            )
-            brush = Brush.verticalGradient(colorStops = colorStopsTop)
-        }
-        DIRECTION_BOTTOM -> {
-            val colorStopsBottom = arrayOf(
-                0.0f to Color(0.3f, 0f, 0.41f, 0.75f),
-                0.1f to Color.Transparent
-            )
-
-            brush = Brush.verticalGradient(colorStops = colorStopsBottom)
-        }
-        else -> {
-            brush = Brush.verticalGradient(colorStops = colorStopsNull)
-        }
-    }
-    val listColors = listOf(Color(0.3f, 0f, 0.41f, 0.75f), Color.Transparent)
-    val customBrush = Brush.verticalGradient(
-        colorStops = arrayOf(
-            0.0f to Color(0.3f, 0f, 0.41f, 0.75f),
-            0.5f to Color.Transparent
+        Box(
+            modifier = Modifier
+                .zIndex(2f)
+                .background(brush)
         )
-    )
-    // Убери старт Y и енд Y
-//    val customBrush = remember {
-//        object : ShaderBrush() {
-//            override fun createShader(size: Size): Shader {
-//                return LinearGradientShader(
-//                    colors = listColors,
-//                    colorStops = listOf(0.1f,0.8f),
-//                    from = Offset.Zero,
-//                    to = Offset(size.width / 3f, 0f),
-//                )
-//            }
-//        }
-//    }
-
-
-    Card(
-        backgroundColor = Color.Transparent,
-        elevation = 5.dp,
-        shape = RoundedCornerShape(20.dp),
-        modifier = modifier
-            .fillMaxSize()
-    ) {
-        Box(modifier = Modifier.background(Color.White)) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(customBrush)
-            ) {
-                BookCardImage(uri = item.image)
-                Column(modifier = Modifier.padding(10.dp)) {
-                    Text(text = item.name, fontWeight = FontWeight.Bold, fontSize = 20.sp)
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text(
-                            text = item.author,
-                            color = colorResource(id = R.color.bottom_nav_bg),
-                            fontSize = 16.sp
-                        )
-                        Text(
-                            text = item.genre,
-                            color = colorResource(id = R.color.bottom_nav_bg),
-                            fontSize = 16.sp
-                        )
-                        Text(
-                            text = item.createdAt,
-                            color = colorResource(id = R.color.bottom_nav_bg),
-                            fontSize = 16.sp
-                        )
-                        Text(
-                            text = "${item.numberOfPage} стр",
-                            color = colorResource(id = R.color.bottom_nav_bg),
-                            fontSize = 16.sp
-                        )
-                    }
-                    Text(text = item.description, maxLines = 3, overflow = TextOverflow.Ellipsis)
-                    Text(
-                        text = stringResource(id = R.string.book_rating_info, item.rate),
-                        color = colorResource(id = R.color.rating_color),
-                        fontSize = 16.sp
-                    )
-                }
-            }
-
-        }
     }
 
-}
-
-@Preview
-@Composable
-fun BookCardTestPreview() {
-    BookCardTest(modifier = Modifier)
 }
 
 
 fun Modifier.moveTo(
-    x: Float,
-    y: Float
+    x: Float, y: Float
 ) = this.then(Modifier.layout { measurable, constraints ->
     val placeable = measurable.measure(constraints)
 
