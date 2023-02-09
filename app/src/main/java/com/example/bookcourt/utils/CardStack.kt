@@ -126,13 +126,10 @@ fun CardStack(
                             navController.navigate(
                                 Screens.CardInfo.route +
 
-                                        "/{title}/{authorName}/{description}" +
-                                        "/{genre}/{createdAt}" +
-                                        "/{numberOfPage}/{2/{${1}}/{shopOwner}/{buyUri}"
-//                                        "/${item.name}/${item.author}" +
-//                                        "/${item.description}/${item.genre}" +
-//                                        "/${item.createdAt}/${item.numberOfPage}" +
-//                                        "/${item.rate}/${item.price}/${item.shop_owner}/${item.buy_uri}"
+                                        "/${item.name}/${item.author}" +
+                                        "/${item.description}/${item.genre}" +
+                                        "/${item.createdAt}/${item.numberOfPage}" +
+                                        "/${item.rate}/${item.price}/${item.shop_owner}/${item.buy_uri}"
                             )
                         }, item, navController, viewModel
                 )

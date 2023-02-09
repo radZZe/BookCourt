@@ -83,7 +83,7 @@ fun NavigationGraph(
                 type = NavType.StringType
             },
             navArgument("rate"){
-                type = NavType.StringType
+                type = NavType.IntType
             },
             navArgument("price"){
                 type = NavType.IntType
@@ -102,7 +102,7 @@ fun NavigationGraph(
             val genre = it.arguments?.getString("genre")?:"unset"
             val createdAt = it.arguments?.getString("createdAt")?:"unset"
             val numberOfPage = it.arguments?.getString("numberOfPage")?:"unset"
-            val rate = it.arguments?.getString("rate")?:"0"
+            val rate = it.arguments?.getInt("rate")?:0
             val price = it.arguments?.getInt("price")?:0
             val shopOwner = it.arguments?.getString("shopOwner")?:"unset"
             val buyUri = it.arguments?.getString("buyUri")?:"unset"
@@ -112,7 +112,7 @@ fun NavigationGraph(
                 description,
                 createdAt,
                 numberOfPage,
-                rate.toInt(),
+                rate,
                 "Danull",
                 genre,
                 "Danull",
