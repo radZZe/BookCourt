@@ -21,16 +21,17 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.bookcourt.R
 import com.example.bookcourt.models.Book
+import com.example.bookcourt.models.BookInfo
 import com.example.bookcourt.ui.theme.Brown
 import com.example.bookcourt.utils.BottomBarScreen
 
 @Composable
-fun CardInfoScreen(navController: NavController, book: Book) {
+fun CardInfoScreen(navController: NavController, book: BookInfo) {
     BookInfoCard(book, navController)
 }
 
 @Composable
-fun BookInfoCard(book: Book, navController: NavController) {
+fun BookInfoCard(book: BookInfo, navController: NavController) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -97,7 +98,7 @@ fun BookInfoCard(book: Book, navController: NavController) {
 }
 
 @Composable
-fun CardStat(book: Book) {
+fun CardStat(book: BookInfo) {
     Box(
         Modifier
             .fillMaxWidth()
