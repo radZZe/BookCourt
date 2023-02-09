@@ -1,12 +1,17 @@
 package com.example.bookcourt.ui.statistics
 
+import StatisticsScreenRequest.AMOUNT_OF_BOOKS
+import StatisticsScreenRequest.FAVORITE_AUTHORS
+import StatisticsScreenRequest.FAVORITE_GENRES
 import android.content.Context
 import android.content.Intent
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookcourt.R
 import com.example.bookcourt.data.repositories.DataStoreRepository
+import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.readBooksList
 import com.example.bookcourt.data.repositories.NetworkRepository
 import com.example.bookcourt.models.Statistics
 import com.example.bookcourt.models.User
@@ -29,6 +34,8 @@ class StatisticsViewModel @Inject constructor(
 ) : ViewModel() {
 
     val user = mutableStateOf<User?>(null)
+    val booksAmount = dataStoreRepository.getPref(readBooksList)
+    var currentScreen = mutableStateOf(AMOUNT_OF_BOOKS)
 
     private suspend fun getTopGenres(): List<String> {
         val genresList = mutableListOf("Отсутствует","Отсутствует","Отсутствует")
@@ -115,5 +122,15 @@ class StatisticsViewModel @Inject constructor(
         }
         val shareIntent = Intent.createChooser(sendIntent, null)
         context.startActivity(shareIntent)
+    }
+
+    fun changeScreen() {
+        if (currentScreen.value == AMOUNT_OF_BOOKS) {
+            currentScreen.value = FAVORITE_GENRES
+        } else if (currentScreen.value == FAVORITE_GENRES) {
+            currentScreen.value = FAVORITE_AUTHORS
+        } else {
+            currentScreen.value = AMOUNT_OF_BOOKS
+        }
     }
 }

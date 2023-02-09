@@ -32,6 +32,8 @@ class DataStoreRepository(val context: Context) {
         val savedFavoriteGenres: Preferences.Key<String> = stringPreferencesKey("favorite_genres")
         val savedWantToReadList: Preferences.Key<String> = stringPreferencesKey("want_to_read_genres")
         val dislikedGenresList: Preferences.Key<String> = stringPreferencesKey("disliked_genres")
+
+        val readBooksList: Preferences.Key<String> = stringPreferencesKey("read_books")
     }
 
     suspend fun setPref(prefValue: Boolean, prefKey: Preferences.Key<Boolean>) {

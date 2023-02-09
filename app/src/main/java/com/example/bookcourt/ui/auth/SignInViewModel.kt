@@ -5,10 +5,12 @@ import android.location.Address
 import android.location.Geocoder
 import android.location.Location
 import android.os.Build
+import android.util.Patterns
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookcourt.data.repositories.DataStoreRepository
@@ -24,6 +26,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.io.IOException
 import java.util.*
+import java.util.regex.Pattern
 import javax.inject.Inject
 
 
@@ -58,16 +61,16 @@ class SignInViewModel @Inject constructor(
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun editPrefs() {
-        viewModelScope.launch {
-            var value = "AB" + name + phoneNumber
-            var UUID = hashing.getHash(value.toByteArray(), "SHA256")
-            metricRep.sendUserData(name, surname, phoneNumber, UUID)
-            dataStoreRepository.setPref(surname, savedSurname)
-            dataStoreRepository.setPref(name, savedName)
-            dataStoreRepository.setPref(phoneNumber, savedPhoneNumber)
-            dataStoreRepository.setPref(isRememberMe, isRemembered)
-            dataStoreRepository.setPref(UUID, uuid)
-        }
+            viewModelScope.launch {
+                var value = "AB" + name + phoneNumber
+                var UUID = hashing.getHash(value.toByteArray(), "SHA256")
+                metricRep.sendUserData(name, surname, phoneNumber, UUID)
+                dataStoreRepository.setPref(surname, savedSurname)
+                dataStoreRepository.setPref(name, savedName)
+                dataStoreRepository.setPref(phoneNumber, savedPhoneNumber)
+                dataStoreRepository.setPref(isRememberMe, isRemembered)
+                dataStoreRepository.setPref(UUID, uuid)
+            }
 
     }
 
@@ -87,6 +90,12 @@ class SignInViewModel @Inject constructor(
 
         }
 
+    }
+
+    fun isValidPhone() : Boolean {
+        val pattern = Pattern.compile("^((8|\\+7)[\\- ]?)?(\\(?\\d{3}\\)?[\\- ]?)?[\\d\\- ]{7,10}\$")
+        return pattern.matcher(phoneNumber).matches()
+//        return Patterns.PHONE.matcher(phoneNumber).matches()
     }
 
 //    private fun askPermission() {

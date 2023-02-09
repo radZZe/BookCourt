@@ -38,6 +38,7 @@ import androidx.navigation.NavController
 import com.example.bookcourt.R
 import com.example.bookcourt.models.Book
 import com.example.bookcourt.ui.BookCardImage
+import com.example.bookcourt.ui.theme.Gilroy
 import com.example.bookcourt.ui.getWantedBooks
 import kotlin.math.roundToInt
 
@@ -58,41 +59,46 @@ fun CardStack(
     viewModel: CardStackViewModel = hiltViewModel(),
     navController: NavController
 ) {
-    var i by remember {
-        mutableStateOf(items.size - 1)
+    val readBooksList = viewModel.readBooks.collectAsState(initial = "")
+    val validBooks = items.filter { book ->
+        book.name !in readBooksList.value
     }
-    if (i != -1) viewModel.currentItem.value = items[i]
+    var i by remember {
+        mutableStateOf(validBooks.size - 1)
+    }
+    if (i != -1) viewModel.currentItem.value = validBooks[i]
 
     if (i == -1) {
         onEmptyStack()
     }
 
-
     cardStackController.onSwipeLeft = {
-        viewModel.dislikeBook(items[i].genre)
-        onSwipeLeft(items[i])
+        viewModel.dislikeBook(validBooks[i].genre)
+        viewModel.readBooks(validBooks[i].name)
+        onSwipeLeft(validBooks[i])
         i--
-        if (i != -1) viewModel.changeCurrentItem(items[i])
+        if (i != -1) viewModel.changeCurrentItem(validBooks[i])
     }
 
     cardStackController.onSwipeRight = {
-        viewModel.likeBook(items[i].genre)
-        onSwipeRight(items[i])
+        viewModel.likeBook(validBooks[i].genre)
+        viewModel.readBooks(validBooks[i].name)
+        onSwipeRight(validBooks[i])
         i--
-        if (i != -1) viewModel.changeCurrentItem(items[i])
+        if (i != -1) viewModel.changeCurrentItem(validBooks[i])
     }
 
     cardStackController.onSwipeUp = {
-        viewModel.wantToRead(items[i].name)
-        onSwipeUp(items[i])
+        viewModel.wantToRead(validBooks[i].name)
+        onSwipeUp(validBooks[i])
         i--
-        if (i != -1) viewModel.changeCurrentItem(items[i])
+        if (i != -1) viewModel.changeCurrentItem(validBooks[i])
     }
 
     cardStackController.onSwipeDown = {
-        onSwipeDown(items[i])
+        onSwipeDown(validBooks[i])
         i--
-        if (i != -1) viewModel.changeCurrentItem(items[i])
+        if (i != -1) viewModel.changeCurrentItem(validBooks[i])
     }
     ConstraintLayout(
         modifier = modifier
@@ -102,39 +108,43 @@ fun CardStack(
     ) {
         val stack = createRef()
 
-        Box(modifier = modifier
-            .constrainAs(stack) {
-                top.linkTo(parent.top)
-            }
-            .fillMaxHeight()) {
-            items.forEachIndexed { index, item ->
-                BookCard(
-                    modifier = Modifier
-                        .draggableStack(
-                            controller = cardStackController,
-                            thresholdConfig = thresholdConfig,
-                        )
-                        .moveTo(
-                            x = if (index == i) cardStackController.offsetX.value else 0f,
-                            y = if (index == i) cardStackController.offsetY.value else 0f
-                        )
-                        .visible(visible = index == i || index == i - 1)
-                        .graphicsLayer(
-                            rotationZ = if (index == i) cardStackController.rotation.value else 0f,
-                        )
-                        .clickable {
-                            navController.navigate(
-                                Screens.CardInfo.route +
-
-                                        "/${item.name}/${item.author}" +
-                                        "/${item.description}/${item.genre}" +
-                                        "/${item.createdAt}/${item.numberOfPage}" +
-                                        "/${item.rate}/${item.price}/${item.shop_owner}/${item.buy_uri}"
+        Box(
+            modifier = modifier
+                .constrainAs(stack) {
+                    top.linkTo(parent.top)
+                }
+                .fillMaxHeight()
+        ) {
+            validBooks.forEachIndexed { index, item ->
+//                if (item.name !in readBooksList.value) {
+                    BookCard(
+                        modifier = Modifier
+                            .draggableStack(
+                                controller = cardStackController,
+                                thresholdConfig = thresholdConfig,
                             )
-                        }, item, navController, viewModel
-                )
-
-
+                            .moveTo(
+                                x = if (index == i) cardStackController.offsetX.value else 0f,
+                                y = if (index == i) cardStackController.offsetY.value else 0f
+                            )
+                            .visible(visible = index == i || index == i - 1)
+                            .graphicsLayer(
+                                rotationZ = if (index == i) cardStackController.rotation.value else 0f,
+                            )
+                            .clickable {
+                                navController.navigate(
+                                    Screens.CardInfo.route +
+                                            "/${item.name}/${item.author}/${item.description}/${item.genre}"
+                                            + "/${item.createdAt}/${item.numberOfPage}/${item.rate}"
+                                )
+                            },
+                        item,
+                        navController,
+                        viewModel
+                    )
+//                } else {
+//                    i--
+//                }
             }
 
         }
@@ -157,6 +167,7 @@ fun BookCard(
         0.0f to Color.Transparent, 0.8f to Color.Transparent
     )
     var brush = Brush.verticalGradient(colorStops = colorStopsNull)
+
     when (item.onSwipeDirection.value) {
         DIRECTION_RIGHT -> {
             val colorStopsRight = arrayOf(
@@ -299,10 +310,118 @@ fun BookCard(
 
 
         }
-        Box(
-            modifier = Modifier
-                .zIndex(2f)
-                .background(brush)
+
+        Box(modifier = Modifier
+            .zIndex(2f)
+            .background(brush),
+            contentAlignment = Alignment.Center
+        ) {
+            when (item.onSwipeDirection.value) {
+                DIRECTION_TOP -> {
+                    Text(
+                        text = "Хочу прочитать",
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = Gilroy,
+                        color = Color.White
+                    )
+                }
+                DIRECTION_BOTTOM -> {
+                    Text(
+                        text = "Пропустить",
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = Gilroy,
+                        color = Color.White
+                    )
+                }
+                DIRECTION_RIGHT -> {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_like),
+                        contentDescription = "contextIcon",
+                        tint = Color.Green,
+                        modifier = Modifier.size(100.dp)
+                    )
+                }
+                DIRECTION_LEFT -> {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_dislike),
+                        contentDescription = "contextIcon",
+                        tint = Color.Red,
+                        modifier = Modifier.size(100.dp)
+                    )
+                }
+                else -> {}
+            }
+        }
+    }
+
+}
+
+
+@Composable
+fun BookCardTest(
+    modifier: Modifier = Modifier,
+
+    ) {
+    var item = Book(
+        name = "test",
+        author = "test",
+        description = "test",
+        createdAt = "test",
+        numberOfPage = "test",
+        rate = 1,
+        owner = "test",
+        genre = "test",
+        image = "https://cv6.litres.ru/pub/c/elektronnaya-kniga/cover_415/36628165-ray-dalio-principy-zhizn-i-rabota.webp",
+        onSwipeDirection = remember {
+            mutableStateOf(DIRECTION_TOP)
+        }
+    )
+    var colorStopsNull = arrayOf(
+        0.0f to Color.Transparent,
+        0.8f to Color.Transparent
+    )
+    var brush = Brush.verticalGradient(colorStops = colorStopsNull)
+    when (item.onSwipeDirection.value) {
+        DIRECTION_RIGHT -> {
+            val colorStopsRight = arrayOf(
+                0.0f to Color(0.3f, 0.55f, 0.21f, 0.75f),
+                0.8f to Color.Transparent
+            )
+            brush = Brush.horizontalGradient(colorStops = colorStopsRight)
+        }
+        DIRECTION_LEFT -> {
+            val colorStopsLeft = arrayOf(
+                0.0f to Color(1f, 0.31f, 0.31f, 0.75f),
+                0.8f to Color.Transparent
+            )
+            brush = Brush.horizontalGradient(colorStops = colorStopsLeft)
+        }
+        DIRECTION_TOP -> { // Note the block
+            val colorStopsTop = arrayOf(
+                0.1f to Color(1f, 0.6f, 0f, 0.75f),
+                0.8f to Color.Transparent
+            )
+            brush = Brush.verticalGradient(colorStops = colorStopsTop)
+        }
+        DIRECTION_BOTTOM -> {
+            val colorStopsBottom = arrayOf(
+                0.0f to Color(0.3f, 0f, 0.41f, 0.75f),
+                0.1f to Color.Transparent
+            )
+
+            brush = Brush.verticalGradient(colorStops = colorStopsBottom)
+        }
+        else -> {
+            brush = Brush.verticalGradient(colorStops = colorStopsNull)
+        }
+    }
+    val listColors = listOf(Color(0.3f, 0f, 0.41f, 0.75f), Color.Transparent)
+    val customBrush = Brush.verticalGradient(
+        colorStops = arrayOf(
+            0.0f to Color(0.3f, 0f, 0.41f, 0.75f),
+            0.5f to Color.Transparent
         )
     }
 
@@ -332,6 +451,10 @@ fun Modifier.visible(
         layout(0, 0) {}
     }
 })
+
+fun skip() {
+
+}
 
 
 const val DIRECTION_LEFT = "direction_left"

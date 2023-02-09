@@ -23,28 +23,33 @@ import com.example.bookcourt.R
 import com.example.bookcourt.models.Book
 import com.example.bookcourt.ui.theme.Brown
 import com.example.bookcourt.utils.BottomBarScreen
-import com.example.bookcourt.utils.Screens
 
 @Composable
 fun CardInfoScreen(navController: NavController, book: Book) {
-    BookInfoCard(book,navController)
+    BookInfoCard(book, navController)
 }
 
 @Composable
-fun BookInfoCard(book: Book,navController: NavController) {
+fun BookInfoCard(book: Book, navController: NavController) {
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .clickable {
+                navController.popBackStack()
+                navController.navigate(BottomBarScreen.Recomendations.route)
+            }
     ) {
 
         Box {
             Column(
-                modifier = Modifier.padding(top = 28.dp, start = 15.dp, end = 15.dp)
+                modifier = Modifier
+                    .padding(top = 28.dp, start = 15.dp, end = 15.dp)
             ) {
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
+//                Row(
+//                    horizontalArrangement = Arrangement.SpaceBetween,
+//                    verticalAlignment = Alignment.CenterVertically,
+//                    modifier = Modifier.fillMaxWidth()
+//                ) {
                     Text(
                         text = book.name,
                         fontSize = 20.sp,
@@ -55,15 +60,15 @@ fun BookInfoCard(book: Book,navController: NavController) {
                             )
                         ),
                     )
-                    Icon(painter = painterResource(id = R.drawable.close_square),
-                        contentDescription = "",
-                        tint = Brown,
-                        modifier = Modifier
-                            .size(18.dp)
-                            .clickable {
-                                navController.popBackStack()
-                            })
-                }
+//                    Icon(painter = painterResource(id = R.drawable.close_square),
+//                        contentDescription = "",
+//                        tint = Brown,
+//                        modifier = Modifier
+//                            .size(18.dp)
+//                            .clickable {
+//                                navController.popBackStack()
+//                            })
+//                }
                 Text(
                     text = book.author, fontSize = 16.sp,
                     fontFamily = FontFamily(Font(R.font.manrope_medium, weight = FontWeight.W600)),

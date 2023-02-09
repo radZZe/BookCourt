@@ -8,10 +8,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookcourt.data.repositories.DataStoreRepository
+import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.readBooksList
 import com.example.bookcourt.data.repositories.MetricsRepository
 import com.example.bookcourt.models.Book
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -30,6 +32,8 @@ class CardStackViewModel @Inject constructor(
     var direction = mutableStateOf<String?>(null)
 
     var currentItem :MutableState<Book?> = mutableStateOf<Book?>(null)
+
+    val readBooks = dataStoreRepository.getPref(readBooksList)
 
     fun changeCurrentItem(item:Book){
         currentItem.value = item
@@ -126,6 +130,22 @@ class CardStackViewModel @Inject constructor(
             genres.add(bookTitle)
             dataStoreRepository.setPref(fromList(genres),DataStoreRepository.savedWantToReadList)
             Log.d("Danull","Want to read: $genres")
+        }
+    }
+
+    fun readBooks(bookTitle: String){
+        viewModelScope.launch(Dispatchers.IO) {
+            var books = arrayListOf<String>()
+            val readBooks =
+                withContext(Dispatchers.Default) {
+                    dataStoreRepository.getPref(readBooksList)
+                }.first()
+            if (readBooks.isNotBlank()){
+                books = toList(readBooks)
+            }
+            books.add(bookTitle)
+            dataStoreRepository.setPref(fromList(books), readBooksList)
+            Log.d("Danull","Read: $books")
         }
     }
 

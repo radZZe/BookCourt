@@ -34,3 +34,10 @@ val Gilroy = FontFamily(
     Font(R.font.gilroy_medium),
     Font(R.font.gilroy_bold, weight = FontWeight.Bold)
 )
+
+val Manrope = FontFamily(
+    Font(R.font.manrope_light, weight = FontWeight.Light),
+    Font(R.font.manrope_regular),
+    Font(R.font.manrope_bold, weight = FontWeight.Bold),
+    Font(R.font.manrope_extrabold, weight = FontWeight.ExtraBold),
+)
