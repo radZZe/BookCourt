@@ -116,7 +116,6 @@ fun CardStack(
                 .fillMaxHeight()
         ) {
             validBooks.forEachIndexed { index, item ->
-//                if (item.name !in readBooksList.value) {
                     BookCard(
                         modifier = Modifier
                             .draggableStack(
@@ -142,9 +141,6 @@ fun CardStack(
                         navController,
                         viewModel
                     )
-//                } else {
-//                    i--
-//                }
             }
 
         }
@@ -359,73 +355,7 @@ fun BookCard(
 }
 
 
-@Composable
-fun BookCardTest(
-    modifier: Modifier = Modifier,
 
-    ) {
-    var item = Book(
-        name = "test",
-        author = "test",
-        description = "test",
-        createdAt = "test",
-        numberOfPage = "test",
-        rate = 1,
-        owner = "test",
-        genre = "test",
-        image = "https://cv6.litres.ru/pub/c/elektronnaya-kniga/cover_415/36628165-ray-dalio-principy-zhizn-i-rabota.webp",
-        onSwipeDirection = remember {
-            mutableStateOf(DIRECTION_TOP)
-        }
-    )
-    var colorStopsNull = arrayOf(
-        0.0f to Color.Transparent,
-        0.8f to Color.Transparent
-    )
-    var brush = Brush.verticalGradient(colorStops = colorStopsNull)
-    when (item.onSwipeDirection.value) {
-        DIRECTION_RIGHT -> {
-            val colorStopsRight = arrayOf(
-                0.0f to Color(0.3f, 0.55f, 0.21f, 0.75f),
-                0.8f to Color.Transparent
-            )
-            brush = Brush.horizontalGradient(colorStops = colorStopsRight)
-        }
-        DIRECTION_LEFT -> {
-            val colorStopsLeft = arrayOf(
-                0.0f to Color(1f, 0.31f, 0.31f, 0.75f),
-                0.8f to Color.Transparent
-            )
-            brush = Brush.horizontalGradient(colorStops = colorStopsLeft)
-        }
-        DIRECTION_TOP -> { // Note the block
-            val colorStopsTop = arrayOf(
-                0.1f to Color(1f, 0.6f, 0f, 0.75f),
-                0.8f to Color.Transparent
-            )
-            brush = Brush.verticalGradient(colorStops = colorStopsTop)
-        }
-        DIRECTION_BOTTOM -> {
-            val colorStopsBottom = arrayOf(
-                0.0f to Color(0.3f, 0f, 0.41f, 0.75f),
-                0.1f to Color.Transparent
-            )
-
-            brush = Brush.verticalGradient(colorStops = colorStopsBottom)
-        }
-        else -> {
-            brush = Brush.verticalGradient(colorStops = colorStopsNull)
-        }
-    }
-    val listColors = listOf(Color(0.3f, 0f, 0.41f, 0.75f), Color.Transparent)
-    val customBrush = Brush.verticalGradient(
-        colorStops = arrayOf(
-            0.0f to Color(0.3f, 0f, 0.41f, 0.75f),
-            0.5f to Color.Transparent
-        )
-    }
-
-}
 
 
 fun Modifier.moveTo(

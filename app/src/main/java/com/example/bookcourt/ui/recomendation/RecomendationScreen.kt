@@ -65,7 +65,7 @@ fun RecomendationContent(
     }
     var isEmpty = viewModel.isEmpty.value
 
-    ShowTutor(viewModel = viewModel)
+//    ShowTutor(viewModel = viewModel)
 
     val cardStackController = rememberCardStackController()
     Column(Modifier.padding(20.dp)) {
