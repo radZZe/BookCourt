@@ -1,61 +1,38 @@
 [
+
   {
     "data": {
-      "author": "Test author",
-      "createdAt": "1992",
-      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip",
+      "author": "Сильвен Тессон",
+      "createdAt": "2021",
+      "description": "Книга французского путешественника и писателя Сильвена Тессона удостоена премии Ренодо в 2019 году.\nОна посвящена экспедиции в Тибет, которую он совершил вместе с Венсаном Мюнье, знаменитым фотографом, снискавшим всемирную известность благодаря уникальным снимкам животных. Цель экспедиции — выследить и заснять снежного барса, «пантеру горных снегов». Заповедное плато Чангтан на высоте свыше 5000 метров, температура ниже 30 градусов по Цельсию, тяжелые рюкзаки, пешие переходы, долгие часы в неподвижном ожидании зверей, которые вот-вот должны появиться… или не появиться… долгожданная чашка горячего чая по вечерам — вот будни героев книги. Ими движет любовь к миру природы, она питает их дух и дает силы, вдохновение, радость.\nФильм по книге вошел в программу 74-го Каннского фестиваля 6-17 июля этого года. Режиссер фильма Мари Амиге была участником экспедиции. И теперь у нас будет возможность буквально увидеть то, о чем писал Сильвен Тессон.",
       "genre": "Комедия",
-      "image": "https://cv6.litres.ru/pub/c/elektronnaya-kniga/cover_415/36628165-ray-dalio-principy-zhizn-i-rabota.webp",
+      "image": "https://i0.wp.com/igraslov.store/wp-content/uploads/2023/02/24c468ca-1139-4bc7-b5b5-9757543c62a2_d294c85e-f1e9-43f9-b69e-134e03136f17.jpeg?fit=361%2C575&ssl=1",
       "loadingAt": "1672919896",
-      "name": "Test name",
-      "numberOfPage": "143",
+      "name": "Снежная пантера",
+      "numberOfPage": "158",
       "owner": "b9786ae1-4efb-46c4-a493-cb948cb80103",
-      "rate": 5
+      "rate": 5,
+      "price": 1140,
+      "shop_owner": "Игра слов",
+      "buy_uri": "https://igraslov.store/product/tesson-s-snezhnaya-pantera-tekst-tverd/"
     },
-    "id": "94001f0-e0f1-4166-b06f-818956c145bf"
+    "id": "f94001f0-e0f1-4166-b06f-818956c145bf"
   },
   {
     "data": {
-      "author": "Test author1",
-      "createdAt": "1392",
-      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip",
+      "author": "Жан-Мишель Генассия",
+      "createdAt": "2019",
+      "description": "Русские читатели познакомились с этим автором, когда Ж.-М. Генассия опубликовал свою первую книгу «Клуб неисправимых оптимистов», которой французские лицеисты присудили свою Гонкуровскую премию. За Клубом последовали «Удивительная жизнь Эрнесто Че», «Обмани-Смерть», «Вальс деревьев и неба», укрепившие его репутацию великолепного рассказчика. В его новом романе «О влиянии Дэвида Боуи на судьбы юных созданий» рассказывается забавная, трогательная и почти неправдоподобная история. Главный герой книги – Поль, подросток, обожающий музыку, по вечерам он импровизирует на фортепиано в ночном клубе. В остальном вроде бы все как у всех: школа, взросление, проблемы. Вот только семья не совсем обычная: у Поля две матери, отца он и в глаза не видел, а одноклассник и лучший друг Поля заверяет, что по уши влюблен в него. Словом, не жизнь, а минное поле! И Поль еще не знает, куда его заведут поиски отца и причем тут легендарный андрогин Дэвид Боуи!",
       "genre": "Комедия",
-      "image": "https://cv6.litres.ru/pub/c/elektronnaya-kniga/cover_415/36628165-ray-dalio-principy-zhizn-i-rabota.webp",
+      "image": "https://i0.wp.com/igraslov.store/wp-content/uploads/2022/04/4044e37e-6c74-4818-aed4-cedc412bf0ee_2ee00c90-4cd5-49b3-bdea-5ff5fe591f80.jpg?fit=368%2C700&ssl=1",
       "loadingAt": "1672919896",
-      "name": "Test name1",
-      "numberOfPage": "123",
+      "name": "О влиянии Дэвида Боуи на судьбы юных созданий",
+      "numberOfPage": "320",
       "owner": "b9786ae1-4efb-46c4-a493-cb948cb80103",
-      "rate": 5
-    },
-    "id": "890b9b88-4bf9-46f3-a4df-9c584c188423"
-  },
-  {
-    "data": {
-      "author": "Test author2",
-      "createdAt": "1322",
-      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip",
-      "genre": "Комедия",
-      "image": "https://cv6.litres.ru/pub/c/elektronnaya-kniga/cover_415/36628165-ray-dalio-principy-zhizn-i-rabota.webp",
-      "loadingAt": "1672919896",
-      "name": "Test name2",
-      "numberOfPage": "143",
-      "owner": "b9786ae1-4efb-46c4-a493-cb948cb80103",
-      "rate": 5
-    },
-    "id": "e8302cd0-c6c7-4f03-b896-005e6728eaee"
-  },
-  {
-    "data": {
-      "author": "Test author3",
-      "createdAt": "1211",
-      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip",
-      "genre": "Комедия",
-      "image": "https://cv6.litres.ru/pub/c/elektronnaya-kniga/cover_415/36628165-ray-dalio-principy-zhizn-i-rabota.webp",
-      "loadingAt": "1672919896",
-      "name": "Test name3",
-      "numberOfPage": "122",
-      "owner": "b9786ae1-4efb-46c4-a493-cb948cb80103",
-      "rate": 5
+      "rate": 5,
+      "price": 1140,
+      "shop_owner": "Игра слов",
+      "buy_uri": "https://igraslov.store/product/genassiya-zh-m-o-vliyanii-devida-boui-na-sudby-yunyh-sozdanij-azbuka-inostranka-tverd/"
     },
     "id": "f94001f0-e0f1-4166-b06f-818956c145bf"
   }

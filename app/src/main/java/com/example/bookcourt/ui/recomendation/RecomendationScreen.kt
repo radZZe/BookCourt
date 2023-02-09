@@ -31,6 +31,8 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Size
 import com.example.bookcourt.R
+import com.example.bookcourt.ui.recomendation.Notification
+import com.example.bookcourt.ui.recomendation.NotificationMessage
 import com.example.bookcourt.ui.recomendation.RecomendationViewModel
 import com.example.bookcourt.ui.theme.CustomButton
 import com.example.bookcourt.ui.theme.TutorialGreeting
@@ -124,6 +126,14 @@ fun BookCardImage(uri: String) {
         if (painter.state is AsyncImagePainter.State.Loading) {
             CircularProgressIndicator()
         }
+        Row(modifier = Modifier.zIndex(1f).fillMaxSize(), horizontalArrangement = Arrangement.End) {
+            NotificationMessage(Modifier.padding(top=20.dp))
+            Notification(count = 5,
+                Modifier
+//                    .align(Alignment.TopEnd)
+                    .padding(top = 100.dp)
+                    .zIndex(1f))
+        }
 
         Image(
             painter = painter,
@@ -131,7 +141,7 @@ fun BookCardImage(uri: String) {
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .fillMaxSize()
-                .zIndex(1f)
+                .zIndex(0f)
         )
 
     }

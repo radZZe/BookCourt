@@ -19,7 +19,10 @@ data class BookRemote(
             data.owner,
             data.genre,
             data.image,
-            mutableStateOf(null)
+            mutableStateOf(null),
+            price = data.price,
+            shop_owner = data.shop_owner,
+            buy_uri = data.buy_uri,
         )
     }
 }
@@ -36,4 +39,7 @@ data class BookData(
     val genre: String,
     val image: String,
     val loadingAt: String,
+    val price: Int,
+    val shop_owner: String,
+    val buy_uri: String
 )
