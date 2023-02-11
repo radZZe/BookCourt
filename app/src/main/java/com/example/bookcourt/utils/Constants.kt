@@ -1,6 +1,7 @@
 package com.example.bookcourt.utils
 
 object Constants {
+    const val OTHER_CITY = "Другой"
     val cities = listOf(
         "Хабаровск",
         "Владивосток",
@@ -9,7 +10,10 @@ object Constants {
         "Санкт-Петербург",
         "Тюмень",
         "Казань",
-        "Краснодар"
+        "Уссурийск",
+        "Краснодар",
+        OTHER_CITY
     )
+
 }
 
