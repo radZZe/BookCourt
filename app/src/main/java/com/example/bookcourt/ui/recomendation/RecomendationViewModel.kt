@@ -43,7 +43,8 @@ class RecomendationViewModel @Inject constructor(
     //    var allBooks = mutableStateOf<MutableList<Book>?>(null)
     var dataIsReady by mutableStateOf(false)
     private var _allBooks = mutableStateListOf<Book>()
-    var validBooks = mutableStateListOf<Book>()
+    private var _validBooks = mutableStateListOf<Book>()
+    val validBooks:List<Book> = _validBooks
     val allBooks: List<Book> = _allBooks
 //    var readBooks = dataStoreRepository.getPref(readBooksList)
 //    val isEmpty = mutableStateOf(false)
@@ -93,8 +94,10 @@ class RecomendationViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             val jobUserId = async { dataStoreRepository.getPref(DataStoreRepository.uuid) }
             val userId = jobUserId.await()
-
-            val jobUser = async { userRepository.getUserById(userId.first()) }
+            val jobUserIdValue = async{userId.first()}
+            val id = jobUserIdValue.await()
+            var test = 5;
+            val jobUser = async { userRepository.getUserById(id) }
             val user = jobUser.await()
             val readBooks = user.readBooksList
 
@@ -107,13 +110,12 @@ class RecomendationViewModel @Inject constructor(
             _allBooks.addAll(allBooksItems)
 
             if (readBooks.isEmpty()) {
-                validBooks = _allBooks
+                _validBooks.addAll(_allBooks)
             } else {
-                for (book in allBooks!!) {
-                    if (book !in readBooks) {
-                        validBooks!!.add(book)
-                    }
+                var items = _allBooks.filter {
+                    it !in readBooks
                 }
+                _validBooks.addAll(items)
             }
             dataIsReady = true
         }

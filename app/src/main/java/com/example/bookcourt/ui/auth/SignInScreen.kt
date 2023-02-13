@@ -44,26 +44,34 @@ import com.google.android.gms.location.LocationServices
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun SignInScreen(navController: NavController, mViewModel: SignInViewModel) {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.auth_background),
-            contentDescription = "Background",
-            contentScale = ContentScale.Crop,
+    // после прожатия кнопки показывать прогресс бар
+    var dataIsReady = mViewModel.dataIsReady
+    if(dataIsReady){
+        navController.popBackStack()
+        navController.navigate(route = BottomBarScreen.Recomendations.route)
+    }else{
+        Box(
+            contentAlignment = Alignment.Center,
             modifier = Modifier.fillMaxSize()
-        )
-        Image(
-            painter = painterResource(id = R.drawable.auth_background_alpha),
-            contentDescription = "Background",
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .fillMaxSize()
-                .alpha(0.2f)
-        )
-        AuthFields(navController, mViewModel)
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.auth_background),
+                contentDescription = "Background",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
+            Image(
+                painter = painterResource(id = R.drawable.auth_background_alpha),
+                contentDescription = "Background",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .alpha(0.2f)
+            )
+            AuthFields(navController, mViewModel)
+        }
     }
+
 }
 
 
@@ -123,11 +131,11 @@ fun AuthFields(navController: NavController, mViewModel: SignInViewModel) {
                     .padding(top = 12.dp, bottom = 12.dp)
                     .clickable {
                         if (mViewModel.isValidPhone()) {
+                            mViewModel.editPrefs()
                             mViewModel.saveUser()
                             mViewModel.onCheckedChanged()
-                            mViewModel.editPrefs()
-                            navController.popBackStack()
-                            navController.navigate(route = BottomBarScreen.Recomendations.route)
+//                            navController.popBackStack()
+//                            navController.navigate(route = BottomBarScreen.Recomendations.route)
                         } else {
                             validationState.value = false
                         }

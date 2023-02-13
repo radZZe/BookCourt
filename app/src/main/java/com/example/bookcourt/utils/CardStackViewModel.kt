@@ -82,8 +82,8 @@ class CardStackViewModel @Inject constructor(
         readBooksList: List<Book>,
         wantToReadList: List<Book>
     ): User {
-        user.readBooksList = readBooksList
-        user.wantToRead = wantToReadList
+        user.readBooksList.addAll(readBooksList)
+        user.wantToRead.addAll(wantToReadList)
         return user
     }
 

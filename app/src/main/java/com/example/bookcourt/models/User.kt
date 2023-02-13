@@ -14,8 +14,8 @@ data class User(
     val surname:String,
     val phone: String,
     val city: String,
-    var readBooksList: List<Book>,
-    var wantToRead: List<Book>,
+    var readBooksList: MutableList<Book>,
+    var wantToRead: MutableList<Book>,
 //    @Embedded
 //    @Contextual
 //    var statistics: UserStatistics,

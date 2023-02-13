@@ -38,6 +38,7 @@ class SignInViewModel @Inject constructor(
     private val userRepository: UserRepository
 ) : ViewModel() {
 
+    var dataIsReady by mutableStateOf(false)
     var name by mutableStateOf("")
     var surname by mutableStateOf("")
     var phoneNumber by mutableStateOf("+7")
@@ -66,16 +67,19 @@ class SignInViewModel @Inject constructor(
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun editPrefs() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
 //            var value = "AB" + name + phoneNumber
             var UUID = hashing.getHash("AB$name$phoneNumber".toByteArray(), "SHA256")
             metricRep.sendUserData(name, surname, phoneNumber, UUID)
 //            dataStoreRepository.setPref(surname, savedSurname)
 //            dataStoreRepository.setPref(name, savedName)
 //            dataStoreRepository.setPref(phoneNumber, savedPhoneNumber)
-            dataStoreRepository.setPref(isRememberMe, isRemembered)
-            dataStoreRepository.setPref(city, savedCity)
-            dataStoreRepository.setPref(UUID, uuid)
+            val job1 = async{dataStoreRepository.setPref(isRememberMe, isRemembered)}
+            job1.await()
+            val job2 = async{dataStoreRepository.setPref(city, savedCity)}
+            job2.await()
+            val job = async { dataStoreRepository.setPref(UUID, uuid) }
+            job.await()
         }
 
     }
@@ -89,12 +93,12 @@ class SignInViewModel @Inject constructor(
                 surname = surname,
                 phone = phoneNumber,
                 city = city,
-                readBooksList = listOf(),
-                wantToRead = listOf()
+                readBooksList = mutableListOf(),
+                wantToRead = mutableListOf()
             )
             val job = async { userRepository.addUser(user) }
             job.await()
-            var test = "jopa"
+            dataIsReady = true
         }
     }
 

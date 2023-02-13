@@ -64,7 +64,7 @@ fun RecomendationContent(
 //    val cardStackController = rememberCardStackController()
     if (viewModel.dataIsReady) {
         Column(Modifier.padding(20.dp)) {
-            if (viewModel.allBooks.isNotEmpty()) {
+            if (viewModel.validBooks.isNotEmpty()) {
                 CardStack(
                     modifier = Modifier.fillMaxSize(),
                     itemsRaw = viewModel.validBooks,
@@ -73,19 +73,19 @@ fun RecomendationContent(
                     },
 //                    cardStackController = cardStackController,
                     onSwipeLeft = {
-                        viewModel.deleteElementFromAllBooks(it)
+                        //viewModel.deleteElementFromAllBooks(it)
                         viewModel.metricSwipeLeft(it)
                     },
                     onSwipeRight = {
-                        viewModel.deleteElementFromAllBooks(it)
+                        //viewModel.deleteElementFromAllBooks(it)
                         viewModel.metricSwipeRight(it)
                     },
                     onSwipeUp = {
-                        viewModel.deleteElementFromAllBooks(it)
+                        //viewModel.deleteElementFromAllBooks(it)
                         viewModel.metricSwipeTop(it)
                     },
                     onSwipeDown = {
-                        viewModel.deleteElementFromAllBooks(it)
+                        //viewModel.deleteElementFromAllBooks(it)
                         viewModel.metricSwipeDown(it)
                     },
                     navController = navController
