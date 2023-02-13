@@ -52,13 +52,19 @@ fun RecomendationContent(
     viewModel: RecomendationViewModel = hiltViewModel()
 ) {
 
-    val bookJson = viewModel.allBooks
+//    val bookJson = viewModel.allBooks
+    val books = viewModel.validBooks
     var context = LocalContext.current
 
     LaunchedEffect(key1 = Unit) {
-        if(bookJson.value==null){
+//        if(bookJson.value==null){
+//            viewModel.getAllBooks(context)
+//        }else if(bookJson.value!!.isEmpty()){
+//            viewModel.getAllBooks(context)
+//        }
+        if(books==null){
             viewModel.getAllBooks(context)
-        }else if(bookJson.value!!.isEmpty()){
+        }else if(books!!.isEmpty()){
             viewModel.getAllBooks(context)
         }
 
@@ -70,27 +76,29 @@ fun RecomendationContent(
     val cardStackController = rememberCardStackController()
     Column(Modifier.padding(20.dp)) {
         if (!isEmpty) {
-            if (bookJson.value != null) {
+//            if (bookJson.value != null) {
+            if (books != null) {
                 CardStack(
                     modifier = Modifier.fillMaxSize(),
-                    items = bookJson.value!!,
+//                    items = bookJson.value!!,
+                    items = books!!,
                     onEmptyStack = {
                         viewModel.isEmpty.value = true
                     }, cardStackController = cardStackController,
                     onSwipeLeft = {
-                        viewModel.allBooks.value?.remove(it)
+                        viewModel.allBooks?.remove(it)
                         viewModel.metricSwipeLeft(it)
                     },
                     onSwipeRight = {
-                        viewModel.allBooks.value?.remove(it)
+                        viewModel.allBooks?.remove(it)
                         viewModel.metricSwipeRight(it)
                     },
                     onSwipeUp = {
-                        viewModel.allBooks.value?.remove(it)
+                        viewModel.allBooks?.remove(it)
                         viewModel.metricSwipeTop(it)
                     },
                     onSwipeDown = {
-                        viewModel.allBooks.value?.remove(it)
+                        viewModel.allBooks?.remove(it)
                         viewModel.metricSwipeDown(it)
                     },
                     navController = navController
@@ -103,7 +111,7 @@ fun RecomendationContent(
         } else {
             if (!viewModel.isScreenChanged){
                 navController.popBackStack()
-                navController.navigate(route = Screens.Statistics.route)
+                navController.navigate(route = Screens.StatisticsRead.route)
                 viewModel.isScreenChanged = true
             }
         }
@@ -151,7 +159,7 @@ fun BookCardImage(uri: String) {
 
 
 //@Composable
-//fun ShowTutor(viewModel: RecomendationViewModel) {
+//fun ShowTutor(viewModel: RecomendationViewModel) { // dead feature
 //    val tutorState = viewModel.tutorState.collectAsState(initial = true)
 //    AnimatedVisibility(
 //        visible = !tutorState.value,

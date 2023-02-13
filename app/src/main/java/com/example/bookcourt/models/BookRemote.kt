@@ -9,20 +9,22 @@ data class BookRemote(
     val data: BookData,
 ) {
     fun toBook(): Book {
-        return Book(
-            data.name,
-            data.author,
-            data.description,
-            data.createdAt,
-            data.numberOfPage,
-            data.rate,
-            data.owner,
-            data.genre,
-            data.image,
-            mutableStateOf(null),
+        val bookInfo = BookInfo(
+            title = data.name,
+            author = data.author,
+            description = data.description,
+            numberOfPages = data.numberOfPage,
+            rate = data.rate,
+            genre = data.genre,
+            image = data.image,
             price = data.price,
-            shop_owner = data.shop_owner,
-            buy_uri = data.buy_uri,
+        )
+        return Book(
+            bookId = null,
+            bookInfo = bookInfo,
+            onSwipeDirection = null,
+            shopOwner = data.shop_owner,
+            buyUri = data.buy_uri,
         )
     }
 }

@@ -126,7 +126,11 @@ fun TutorialGreeting(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
             ) {
-                CustomButton(text = "Хорошо", color = BrightOlive, textColor = Color.White) { onCLick() }
+                CustomButton(
+                    text = "Хорошо",
+                    color = BrightOlive,
+                    textColor = Color.White
+                ) { onCLick() }
             }
         }
     }
@@ -158,7 +162,12 @@ fun CustomCheckBox(
 }
 
 @Composable
-fun CustomButton(text: String, textColor: Color = LightBrown, color: Color = Brown, onCLick: () -> Unit = {}) {
+fun CustomButton(
+    text: String,
+    textColor: Color = LightBrown,
+    color: Color = Brown,
+    onCLick: () -> Unit = {}
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -174,10 +183,15 @@ fun CustomButton(text: String, textColor: Color = LightBrown, color: Color = Bro
 
 
 @Composable
-fun AutoCompleteTextField(label: String, placeholder: String) {
+fun AutoCompleteTextField(
+    label: String,
+    placeholder: String,
+    value: String,
+    onTFValueChange: (String) -> Unit
+) {
 
     var textFieldValue by remember {
-        mutableStateOf("")
+        mutableStateOf(value)
     }
 
     val heightTextFields by remember {
@@ -218,7 +232,8 @@ fun AutoCompleteTextField(label: String, placeholder: String) {
     TextField(
         value = textFieldValue,
         onValueChange = {
-            textFieldValue = it
+            onTFValueChange(it)
+//            textFieldValue = it
             expanded = true
         },
         modifier = Modifier
@@ -273,7 +288,9 @@ fun AutoCompleteTextField(label: String, placeholder: String) {
 //                .width(textFieldsSize.width.dp),
         ) {
             LazyColumn(
-                modifier = Modifier.heightIn(max = 150.dp).zIndex(2f)
+                modifier = Modifier
+                    .heightIn(max = 150.dp)
+                    .zIndex(2f)
             ) {
                 if (textFieldValue.isNotEmpty()) {
                     items(
@@ -283,9 +300,10 @@ fun AutoCompleteTextField(label: String, placeholder: String) {
                                 .contains("others")
                         }
                             .sorted()
-                    ) { 
+                    ) {
                         CityItem(title = it) { title ->
                             textFieldValue = title
+                            onTFValueChange(title)
                             expanded = false
                         }
                     }
@@ -295,6 +313,7 @@ fun AutoCompleteTextField(label: String, placeholder: String) {
                     ) {
                         CityItem(title = it) { title ->
                             textFieldValue = title
+                            onTFValueChange(title)
                             expanded = false
                         }
                     }

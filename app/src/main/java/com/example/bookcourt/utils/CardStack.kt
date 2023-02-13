@@ -39,7 +39,7 @@ import com.example.bookcourt.R
 import com.example.bookcourt.models.Book
 import com.example.bookcourt.ui.BookCardImage
 import com.example.bookcourt.ui.theme.Gilroy
-import com.example.bookcourt.ui.getWantedBooks
+import com.example.bookcourt.ui.theme.Manrope
 import kotlin.math.roundToInt
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -59,11 +59,10 @@ fun CardStack(
     viewModel: CardStackViewModel = hiltViewModel(),
     navController: NavController
 ) {
-    val readBooksList = viewModel.readBooks.collectAsState(initial = "")
+//    val readBooksList = viewModel.readBooks.collectAsState(initial = "")
     var i by remember {
         mutableStateOf(items.size - 1)
     }
-
 
     if (i != -1) viewModel.currentItem.value = items[i]
 
@@ -71,24 +70,43 @@ fun CardStack(
         onEmptyStack()
     }
 
+    LaunchedEffect(key1 = Unit) {
+        viewModel.getReadBooks()
+    }
+
     cardStackController.onSwipeLeft = {
-        viewModel.dislikeBook(items[i].genre)
-        viewModel.readBooks(items[i].name)
+
+//        viewModel.dislikeBook(items[i].genre)
+//        viewModel.readBooks(items[i].name)
+
+//        viewModel.readBooks.value!!.add(items[i])
+        viewModel.readBooks.add(items[i])
         onSwipeLeft(items[i])
+        viewModel.updateUserStatistic()
         i--
         if (i != -1) viewModel.changeCurrentItem(items[i])
     }
 
     cardStackController.onSwipeRight = {
-        viewModel.likeBook(items[i].genre)
-        viewModel.readBooks(items[i].name)
+
+//        viewModel.likeBook(items[i].genre)
+//        viewModel.readBooks(items[i].name)
+
+//        viewModel.readBooks.value!!.add(items[i])
+        viewModel.readBooks.add(items[i])
         onSwipeRight(items[i])
+        viewModel.updateUserStatistic()
         i--
         if (i != -1) viewModel.changeCurrentItem(items[i])
     }
 
     cardStackController.onSwipeUp = {
-        viewModel.wantToRead(items[i].name)
+
+//        viewModel.wantToRead(items[i].name)
+
+//        viewModel.wantToRead.value!!.add(items[i])
+        viewModel.wantToRead.add(items[i])
+        viewModel.updateUserStatistic()
         onSwipeUp(items[i])
         i--
         if (i != -1) viewModel.changeCurrentItem(items[i])
@@ -132,8 +150,8 @@ fun CardStack(
                             .clickable {
                                 navController.navigate(
                                     Screens.CardInfo.route +
-                                            "/${item.name}/${item.author}/${item.description}/${item.genre}"
-                                            + "/${item.numberOfPage}/${item.rate}/${item.price}"
+                                            "/${item.bookInfo.title}/${item.bookInfo.author}/${item.bookInfo.description}/${item.bookInfo.genre}"
+                                            + "/${item.bookInfo.numberOfPages}/${item.bookInfo.rate}/${item.bookInfo.price}"
                                 )
                             },
                         item,
@@ -163,7 +181,7 @@ fun BookCard(
     )
     var brush = Brush.verticalGradient(colorStops = colorStopsNull)
 
-    when (item.onSwipeDirection.value) {
+    when (item.onSwipeDirection) {
         DIRECTION_RIGHT -> {
             val colorStopsRight = arrayOf(
                 0.0f to Color(0.3f, 0.55f, 0.21f, 0.75f), 0.8f to Color.Transparent
@@ -220,7 +238,7 @@ fun BookCard(
                     .background(brush)
             ) {
                 Box(modifier = Modifier.wrapContentSize()) {
-                    BookCardImage(uri = item.image)
+                    BookCardImage(uri = item.bookInfo.image)
                 }
 
                 Column(
@@ -230,7 +248,7 @@ fun BookCard(
                     verticalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = item.name,
+                        text = item.bookInfo.title,
                         color = Color.White,
                         fontSize = 20.sp,
                         fontFamily = FontFamily(
@@ -243,7 +261,7 @@ fun BookCard(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = item.author,
+                        text = item.bookInfo.author,
                         color = Color(0xFFFFFDFF),
                         fontSize = 16.sp,
                         fontFamily = FontFamily(
@@ -270,7 +288,7 @@ fun BookCard(
                                 modifier = Modifier.padding(
                                     start = 10.dp, end = 10.dp, top = 4.dp, bottom = 4.dp
                                 ),
-                                text = item.genre,
+                                text = item.bookInfo.genre,
                                 color = Color(0xFFFFFFFF),
                                 fontSize = 16.sp,
                                 fontFamily = FontFamily(
@@ -287,7 +305,7 @@ fun BookCard(
                             .clickable {
                                 val sendIntent: Intent = Intent(
                                     Intent.ACTION_VIEW, Uri.parse(
-                                        item.buy_uri
+                                        item.buyUri
                                     )
                                 )
                                 val webIntent = Intent.createChooser(sendIntent, null)
@@ -311,40 +329,115 @@ fun BookCard(
             .background(brush),
             contentAlignment = Alignment.Center
         ) {
-            when (item.onSwipeDirection.value) {
+            when (item.onSwipeDirection) {
                 DIRECTION_TOP -> {
-                    Text(
-                        text = "Хочу прочитать",
-                        fontSize = 28.sp,
-                        fontWeight = FontWeight.Bold,
-                        fontFamily = Gilroy,
-                        color = Color.White
-                    )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(bottom = 90.dp),
+                        contentAlignment = Alignment.BottomCenter
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .wrapContentSize()
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(Color.White),
+                            contentAlignment = Alignment.BottomCenter
+                        ) {
+                            Text(
+                                text = "WANT IT",
+                                fontSize = 28.sp,
+                                fontWeight = FontWeight.Bold,
+                                fontFamily = Manrope,
+                                color = Color(0xFFE39C64),
+                                modifier = Modifier
+                                    .padding(horizontal = 20.dp, vertical = 6.dp)
+                            )
+                        }
+                    }
+
                 }
+
                 DIRECTION_BOTTOM -> {
-                    Text(
-                        text = "Пропустить",
-                        fontSize = 28.sp,
-                        fontWeight = FontWeight.Bold,
-                        fontFamily = Gilroy,
-                        color = Color.White
-                    )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(top = 90.dp),
+                        contentAlignment = Alignment.TopCenter
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .wrapContentSize()
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(Color.Black),
+                            contentAlignment = Alignment.TopCenter
+                        ) {
+                            Text(
+                                text = "SKIP",
+                                fontSize = 28.sp,
+                                fontWeight = FontWeight.Bold,
+                                fontFamily = Manrope,
+                                color = Color.White,
+                                modifier = Modifier
+                                    .padding(horizontal = 20.dp, vertical = 6.dp)
+                            )
+                        }
+                    }
                 }
+
                 DIRECTION_RIGHT -> {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_like),
-                        contentDescription = "contextIcon",
-                        tint = Color.Green,
-                        modifier = Modifier.size(100.dp)
-                    )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(start = 40.dp),
+                        contentAlignment = Alignment.CenterStart
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .wrapContentSize()
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(Color.Green),
+                            contentAlignment = Alignment.TopCenter
+                        ) {
+                            Text(
+                                text = "LIKE",
+                                fontSize = 28.sp,
+                                fontWeight = FontWeight.Bold,
+                                fontFamily = Manrope,
+                                color = Color.Black,
+                                modifier = Modifier
+                                    .padding(horizontal = 20.dp, vertical = 6.dp)
+                            )
+                        }
+                    }
+
                 }
                 DIRECTION_LEFT -> {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_dislike),
-                        contentDescription = "contextIcon",
-                        tint = Color.Red,
-                        modifier = Modifier.size(100.dp)
-                    )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(end = 40.dp),
+                        contentAlignment = Alignment.CenterEnd
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .wrapContentSize()
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(Color.Red),
+                            contentAlignment = Alignment.TopCenter
+                        ) {
+                            Text(
+                                text = "DISLIKE",
+                                fontSize = 28.sp,
+                                fontWeight = FontWeight.Bold,
+                                fontFamily = Manrope,
+                                color = Color.White,
+                                modifier = Modifier
+                                    .padding(horizontal = 20.dp, vertical = 6.dp)
+                            )
+                        }
+                    }
+
                 }
                 else -> {}
             }
@@ -352,10 +445,6 @@ fun BookCard(
     }
 
 }
-
-
-
-
 
 fun Modifier.moveTo(
     x: Float, y: Float
@@ -380,11 +469,6 @@ fun Modifier.visible(
         layout(0, 0) {}
     }
 })
-
-fun skip() {
-
-}
-
 
 const val DIRECTION_LEFT = "direction_left"
 const val DIRECTION_RIGHT = "direction_right"

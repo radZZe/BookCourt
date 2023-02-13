@@ -1,21 +1,19 @@
 package com.example.bookcourt.ui.graphs
 
-import StatisticsScreen
+import com.example.bookcourt.ui.statistics.FavoriteAuthorsStats
+import com.example.bookcourt.ui.statistics.FavoriteGenresStats
+import com.example.bookcourt.ui.statistics.ReadBooksStats
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.bookcourt.models.Book
 import com.example.bookcourt.models.BookInfo
 import com.example.bookcourt.ui.CardInfoScreen
-import com.example.bookcourt.ui.ProfileScreen
+//import com.example.bookcourt.ui.ProfileScreen
 import com.example.bookcourt.ui.RecomendationScreen
 import com.example.bookcourt.ui.auth.SignInScreen
 import com.example.bookcourt.ui.auth.SignInViewModel
@@ -39,9 +37,9 @@ fun NavigationGraph(
         composable(BottomBarScreen.Library.route) {
 //            LibraryScreen()
         }
-        composable(BottomBarScreen.Profile.route) {
-            ProfileScreen()
-        }
+//        composable(BottomBarScreen.Profile.route) {
+//            ProfileScreen()
+//        }
         composable(BottomBarScreen.Recomendations.route) {
             RecomendationScreen(navController)
         }
@@ -99,20 +97,27 @@ fun NavigationGraph(
             val rate = it.arguments?.getInt("rate")?:0
             val price = it.arguments?.getInt("price")?:0
             val book = BookInfo(
-                name = title,
+//                bookId = "0",
+                title = title,
                 author = authorName,
                 description,
                 numberOfPage,
                 rate,
                 genre,
                 price,
-
+                image = ""
             )
             CardInfoScreen(navController,book)
         }
 
-        composable(Screens.Statistics.route) {
-            StatisticsScreen(navController = navController, statisticsViewModel)
+        composable(Screens.StatisticsRead.route) {
+            ReadBooksStats(navController = navController, statisticsViewModel)
+        }
+        composable(Screens.StatisticsFavGenres.route) {
+            FavoriteGenresStats(navController = navController, statisticsViewModel)
+        }
+        composable(Screens.StatisticsFavAuthors.route) {
+            FavoriteAuthorsStats(navController = navController, statisticsViewModel)
         }
     }
 }

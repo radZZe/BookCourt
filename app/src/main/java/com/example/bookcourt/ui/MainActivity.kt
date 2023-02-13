@@ -23,7 +23,7 @@ import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKey
 import com.example.bookcourt.data.BackgroundService
 import com.example.bookcourt.ui.auth.SignInViewModel
 import com.example.bookcourt.ui.graphs.NavigationGraph
-import com.example.bookcourt.ui.profile.ProfileViewModel
+//import com.example.bookcourt.ui.profile.ProfileViewModel
 import com.example.bookcourt.ui.statistics.StatisticsViewModel
 import com.example.bookcourt.ui.theme.BookCourtTheme
 import com.example.bookcourt.utils.Screens

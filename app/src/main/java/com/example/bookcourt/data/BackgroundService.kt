@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import com.example.bookcourt.models.Metric
 import com.example.bookcourt.models.UserDataMetric
-import com.example.bookcourt.models.UserRemote
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
