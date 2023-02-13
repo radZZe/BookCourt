@@ -16,6 +16,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -26,18 +27,19 @@ import com.example.bookcourt.ui.theme.Brown
 import com.example.bookcourt.utils.BottomBarScreen
 
 @Composable
-fun CardInfoScreen(navController: NavController, book: BookInfo) {
-    BookInfoCard(book, navController)
+fun CardInfoScreen(navController: NavController, book: BookInfo,onClick:()->Unit,modifier: Modifier) {
+    BookInfoCard(book, navController,onClick,modifier)
 }
 
 @Composable
-fun BookInfoCard(book: BookInfo, navController: NavController) {
+fun BookInfoCard(book: BookInfo, navController: NavController,onClick: () -> Unit,modifier: Modifier) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .clickable {
-                navController.popBackStack()
-                navController.navigate(BottomBarScreen.Recomendations.route)
+//                navController.popBackStack()
+//                navController.navigate(BottomBarScreen.Recomendations.route)
+                onClick()
             }
     ) {
 
@@ -52,7 +54,7 @@ fun BookInfoCard(book: BookInfo, navController: NavController) {
 //                    modifier = Modifier.fillMaxWidth()
 //                ) {
                     Text(
-                        text = book.name,
+                        text = book.title,
                         fontSize = 20.sp,
                         fontFamily = FontFamily(
                             Font(
@@ -60,6 +62,8 @@ fun BookInfoCard(book: BookInfo, navController: NavController) {
                                 weight = FontWeight.W600
                             )
                         ),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
 //                    Icon(painter = painterResource(id = R.drawable.close_square),
 //                        contentDescription = "",
@@ -207,7 +211,7 @@ fun CardStat(book: BookInfo) {
                     modifier = Modifier
                 )
                 Text(
-                    text = book.numberOfPage, fontSize = 14.sp,
+                    text = book.numberOfPages, fontSize = 14.sp,
                     fontFamily = FontFamily(
                         Font(
                             R.font.manrope_semibold,

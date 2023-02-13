@@ -133,7 +133,11 @@ fun TutorialGreeting(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
             ) {
-                CustomButton(text = "Хорошо", color = BrightOlive, textColor = Color.White) { onCLick() }
+                CustomButton(
+                    text = "Хорошо",
+                    color = BrightOlive,
+                    textColor = Color.White
+                ) { onCLick() }
             }
         }
     }
@@ -165,7 +169,12 @@ fun CustomCheckBox(
 }
 
 @Composable
-fun CustomButton(text: String, textColor: Color = LightBrown, color: Color = Brown, onCLick: () -> Unit = {}) {
+fun CustomButton(
+    text: String,
+    textColor: Color = LightBrown,
+    color: Color = Brown,
+    onCLick: () -> Unit = {}
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -180,10 +189,15 @@ fun CustomButton(text: String, textColor: Color = LightBrown, color: Color = Bro
 }
 
 @Composable
-fun AutoCompleteTextField(label: String, placeholder: String) {
+fun AutoCompleteTextField(
+    label: String,
+    placeholder: String,
+    value: String,
+    onTFValueChange: (String) -> Unit
+) {
 
     var textFieldValue by remember {
-        mutableStateOf("")
+        mutableStateOf(value)
     }
 
     var isAvailable by remember {
@@ -239,6 +253,9 @@ fun AutoCompleteTextField(label: String, placeholder: String) {
         onValueChange = {
             textFieldValue = it
             //expanded = true
+            onTFValueChange(it)
+//            textFieldValue = it
+            expanded = true
         },
         modifier = Modifier
             .fillMaxWidth()

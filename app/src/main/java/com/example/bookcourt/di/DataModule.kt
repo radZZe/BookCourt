@@ -2,9 +2,13 @@ package com.example.bookcourt.di
 
 import android.app.Application
 import android.text.BoringLayout.Metrics
+import androidx.room.Room
 import com.example.bookcourt.data.BackgroundService
 import com.example.bookcourt.data.repositories.DataStoreRepository
 import com.example.bookcourt.data.repositories.MetricsRepository
+import com.example.bookcourt.data.repositories.UserRepositoryImpl
+import com.example.bookcourt.data.room.UserDatabase
+import com.example.bookcourt.data.room.UserRepository
 import com.example.bookcourt.models.Metric
 import com.example.bookcourt.utils.Hashing
 import dagger.Module
@@ -40,5 +44,21 @@ class DataModule {
     @Provides
     fun provideHashing():Hashing{
         return Hashing
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserDatabase(application: Application) : UserDatabase {
+        return Room.databaseBuilder(
+            application,
+            UserDatabase::class.java,
+            "user_database"
+        ).build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserRepository(db: UserDatabase) : UserRepository {
+        return UserRepositoryImpl(db.userDao())
     }
 }

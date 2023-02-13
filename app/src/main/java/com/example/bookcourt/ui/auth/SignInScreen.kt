@@ -109,7 +109,11 @@ fun AuthFields(navController: NavController, mViewModel: SignInViewModel) {
                 visualTransformation = PhoneNumberVisualTransformation()
             ) { mViewModel.onPhoneChanged(it) }
             Spacer(modifier = Modifier.height(18.dp))
-            AutoCompleteTextField("Город", "Начните вводить свой город...")
+            AutoCompleteTextField(
+                "Город",
+                "Начните вводить свой город...",
+                mViewModel.city
+            ) { mViewModel.onCityChanged(it) }
             Spacer(modifier = Modifier.height(36.dp))
             Box(
                 modifier = Modifier
@@ -119,10 +123,11 @@ fun AuthFields(navController: NavController, mViewModel: SignInViewModel) {
                     .padding(top = 12.dp, bottom = 12.dp)
                     .clickable {
                         if (mViewModel.isValidPhone()) {
-                            navController.popBackStack()
-                            navController.navigate(route = BottomBarScreen.Recomendations.route)
+                            mViewModel.saveUser()
                             mViewModel.onCheckedChanged()
                             mViewModel.editPrefs()
+                            navController.popBackStack()
+                            navController.navigate(route = BottomBarScreen.Recomendations.route)
                         } else {
                             validationState.value = false
                         }
@@ -331,7 +336,7 @@ fun SimpleAlertDialog(state: MutableState<Boolean>) {
         confirmButton = {
             TextButton(
                 onClick = {
-                          state.value = true
+                    state.value = true
                 },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(15.dp),
