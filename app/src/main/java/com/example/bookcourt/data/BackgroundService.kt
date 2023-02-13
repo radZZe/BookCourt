@@ -7,6 +7,7 @@ import com.example.bookcourt.models.UserDataMetric
 import com.example.bookcourt.models.UserRemote
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType
@@ -27,8 +28,8 @@ class BackgroundService @Inject constructor(
 
         stack.value.add(metric)
 //         Реализацию в комментариях используйте для тестов другая реализация еще не готова
-        var body = Json.encodeToString(serializer = Metric.serializer(),
-            metric
+        var body = Json.encodeToString(serializer = ListSerializer(Metric.serializer()),
+            listOf(metric)
         )
         Log.d("MetricUserData", body)
 

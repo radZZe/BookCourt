@@ -4,10 +4,9 @@ import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookcourt.data.repositories.DataStoreRepository
@@ -34,61 +33,88 @@ import javax.inject.Inject
 class RecomendationViewModel @Inject constructor(
     val repository: NetworkRepository,
     private val dataStoreRepository: DataStoreRepository,
-    private val metricRep:MetricsRepository
+    private val metricRep: MetricsRepository
 ) : ViewModel() {
 
-    var allBooks = mutableStateOf<MutableList<Book>?>(null)
-    var readBooks = dataStoreRepository.getPref(readBooksList)
-    val isEmpty = mutableStateOf(false)
-    val tutorState = dataStoreRepository.getBoolPref(isTutorChecked)
-    var isScreenChanged = false //bullshit
+    //    var allBooks = mutableStateOf<MutableList<Book>?>(null)
+    var dataIsReady by mutableStateOf(false)
+    private var _allBooks = mutableStateListOf<Book>()
+    val allBooks: List<Book> = _allBooks
+//    var readBooks = dataStoreRepository.getPref(readBooksList)
+//    val isEmpty = mutableStateOf(false)
+//    val tutorState = dataStoreRepository.getBoolPref(isTutorChecked)
+//    var isScreenChanged = false //bullshit
+    var isFirstDataLoading by mutableStateOf(true)
+    var stateNotificationDisplay = false;
+
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun metricSwipeLeft(book:Book){
-        var userAction = UserAction(action = "Не понравилась книга { название:${book.name} автор: ${book.author}} ") // добавить сюда id книги
+    fun metricSwipeLeft(book: Book) {
+        var userAction =
+            UserAction(action = "Не понравилась книга { название:${book.name} автор: ${book.author}} ") // добавить сюда id книги
         viewModelScope.launch {
             metricRep.onAction(userAction)
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun metricSwipeRight(book:Book){
-        var userAction = UserAction(action = "Понравилась книга { название:${book.name} автор: ${book.author}} ") // добавить сюда id книги
+    fun metricSwipeRight(book: Book) {
+        var userAction =
+            UserAction(action = "Понравилась книга { название:${book.name} автор: ${book.author}} ") // добавить сюда id книги
         viewModelScope.launch {
             metricRep.onAction(userAction)
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun metricSwipeTop(book: Book){
-        var userAction = UserAction(action = "Добавил в хочу прочесть книгу { название:${book.name} автор: ${book.author}} ") // добавить сюда id книги
+    fun metricSwipeTop(book: Book) {
+        var userAction =
+            UserAction(action = "Добавил в хочу прочесть книгу { название:${book.name} автор: ${book.author}} ") // добавить сюда id книги
         viewModelScope.launch {
             metricRep.onAction(userAction)
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun metricSwipeDown(book: Book){
-        var userAction = UserAction(action = "Пропустил книгу { название:${book.name} автор: ${book.author}} ") // добавить сюда id книги
+    fun metricSwipeDown(book: Book) {
+        var userAction =
+            UserAction(action = "Пропустил книгу { название:${book.name} автор: ${book.author}} ") // добавить сюда id книги
         viewModelScope.launch {
             metricRep.onAction(userAction)
         }
     }
 
     fun getAllBooks(context: Context) {
-        val jobMain = viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             val job = async { repository.getAllBooks(context)!! }
             val json = job.await()
-            val data = Json.decodeFromString<MutableList<BookRemote>>("""$json""")
-            allBooks.value = data.map {
+            var data = Json.decodeFromString<MutableList<BookRemote>>("""$json""")
+//            val job2 = async {
+//                dataStoreRepository.getPref(readBooksList).collect { string ->
+//                    data.filter {
+//                        it.toBook().name !in string
+//                    }
+//
+//                }
+//            }
+//            job2.await()
+            var items = data.map{
                 it.toBook()
-            } as MutableList<Book>
-            readBooks.collect{ data ->
-                allBooks.value = allBooks.value!!.filter{
-                    it.name !in data
-                } as MutableList<Book>
             }
+            _allBooks.addAll(items)
+            dataIsReady = true
+
+
         }
+
+    }
+
+    fun addElementToAllBooks(element: Book) {
+        _allBooks.add(element)
+    }
+
+    fun deleteElementFromAllBooks(element: Book) {
+        _allBooks.remove(element)
     }
 
 //    private var tutorStateBool by mutableStateOf(false)

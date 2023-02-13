@@ -51,68 +51,89 @@ fun RecomendationContent(
     navController: NavController,
     viewModel: RecomendationViewModel = hiltViewModel()
 ) {
-
-    val bookJson = viewModel.allBooks
     var context = LocalContext.current
-
     LaunchedEffect(key1 = Unit) {
-        if(bookJson.value==null){
+        if (viewModel.isFirstDataLoading && viewModel.allBooks.isEmpty()) {
             viewModel.getAllBooks(context)
-        }else if(bookJson.value!!.isEmpty()){
-            viewModel.getAllBooks(context)
+            viewModel.isFirstDataLoading = false
         }
-
     }
-    var isEmpty = viewModel.isEmpty.value
+
+//    var isEmpty = viewModel.isEmpty.value
 
 //    ShowTutor(viewModel = viewModel)
 
-    val cardStackController = rememberCardStackController()
-    Column(Modifier.padding(20.dp)) {
-        if (!isEmpty) {
-            if (bookJson.value != null) {
+//    val cardStackController = rememberCardStackController()
+    if (viewModel.dataIsReady) {
+        Column(Modifier.padding(20.dp)) {
+            if (viewModel.allBooks.isNotEmpty()) {
                 CardStack(
                     modifier = Modifier.fillMaxSize(),
-                    items = bookJson.value!!,
+                    itemsRaw = viewModel.allBooks,
                     onEmptyStack = {
-                        viewModel.isEmpty.value = true
-                    }, cardStackController = cardStackController,
+//                    viewModel.isEmpty.value = true
+                    },
+//                    cardStackController = cardStackController,
                     onSwipeLeft = {
-                        viewModel.allBooks.value?.remove(it)
+                        viewModel.deleteElementFromAllBooks(it)
                         viewModel.metricSwipeLeft(it)
                     },
                     onSwipeRight = {
-                        viewModel.allBooks.value?.remove(it)
+                        viewModel.deleteElementFromAllBooks(it)
                         viewModel.metricSwipeRight(it)
                     },
                     onSwipeUp = {
-                        viewModel.allBooks.value?.remove(it)
+                        viewModel.deleteElementFromAllBooks(it)
                         viewModel.metricSwipeTop(it)
                     },
                     onSwipeDown = {
-                        viewModel.allBooks.value?.remove(it)
+                        viewModel.deleteElementFromAllBooks(it)
                         viewModel.metricSwipeDown(it)
                     },
                     navController = navController
                 )
             } else {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(start = 24.dp, end = 24.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CustomButton(text = "Посмотреть статистику") {
+                        navController.popBackStack()
+                        navController.navigate(route = Screens.Statistics.route)
+                    }
                 }
+//                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+//                    CircularProgressIndicator()
+//                }
             }
-        } else {
-            if (!viewModel.isScreenChanged){
-                navController.popBackStack()
-                navController.navigate(route = Screens.Statistics.route)
-                viewModel.isScreenChanged = true
-            }
+
+        }
+    } else {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
         }
     }
+
 }
 
 
 @Composable
-fun BookCardImage(uri: String) {
+fun BookCardImage(
+    uri: String,
+    limitSwipeValue: Int,
+    counter:Int,
+    viewModel: CardStackViewModel,
+    isNotificationDisplay: Boolean,
+    navController: NavController
+) {
+
+    if (counter == limitSwipeValue) {
+        viewModel.countEqualToLimit()
+        // TODO
+        // здесь нужно обновлять лимитное значение количества свайпов
+    }
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -128,13 +149,29 @@ fun BookCardImage(uri: String) {
         if (painter.state is AsyncImagePainter.State.Loading) {
             CircularProgressIndicator()
         }
-        Row(modifier = Modifier.zIndex(1f).fillMaxSize(), horizontalArrangement = Arrangement.End) {
-            NotificationMessage(Modifier.padding(top=20.dp))
-            Notification(count = 5,
+        Row(
+            modifier = Modifier
+                .zIndex(1f)
+                .fillMaxSize(), horizontalArrangement = Arrangement.End
+        ) {
+            if (isNotificationDisplay) {
+                NotificationMessage(Modifier.padding(top = 20.dp), counter,onClick = {
+                    navController.popBackStack()
+                    navController.navigate(route = Screens.Statistics.route)
+                })
+                viewModel.countEqualToLimit()
+            }
+            Notification(
+                count = counter,
                 Modifier
 //                    .align(Alignment.TopEnd)
                     .padding(top = 100.dp)
-                    .zIndex(1f))
+                    .zIndex(1f),
+                onClick = {
+                    navController.popBackStack()
+                    navController.navigate(route = Screens.Statistics.route)
+                }
+            )
         }
 
         Image(
