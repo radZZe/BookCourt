@@ -104,10 +104,10 @@ class RecomendationViewModel @Inject constructor(
             val allBooksItems = data.map {
                 it.toBook()
             }
-            allBooks.addAll(allBooksItems)
+            _allBooks.addAll(allBooksItems)
 
             if (readBooks.isEmpty()) {
-                validBooks = allBooks
+                validBooks = _allBooks
             } else {
                 for (book in allBooks!!) {
                     if (book !in readBooks) {
@@ -115,10 +115,7 @@ class RecomendationViewModel @Inject constructor(
                     }
                 }
             }
-            _allBooks.addAll(items)
             dataIsReady = true
-
-
         }
 
     }

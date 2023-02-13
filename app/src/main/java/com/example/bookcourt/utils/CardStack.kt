@@ -43,7 +43,6 @@ import com.example.bookcourt.ui.BookCardImage
 import com.example.bookcourt.ui.CardInfoScreen
 import com.example.bookcourt.ui.theme.Gilroy
 import com.example.bookcourt.ui.theme.Manrope
-import com.example.bookcourt.ui.getWantedBooks
 import com.example.bookcourt.ui.theme.CustomButton
 import kotlin.math.roundToInt
 
@@ -122,7 +121,7 @@ fun CardStack(
         ) {
             CustomButton(text = "Посмотреть статистику") {
                 navController.popBackStack()
-                navController.navigate(route = Screens.Statistics.route)
+                navController.navigate(route = Screens.StatisticsRead.route)
             }
         }
     }
@@ -222,7 +221,7 @@ fun BookCard(
 
     cardStackController.onSwipeRight = {
 
-       // viewModel.likeBook(item.genre)
+        // viewModel.likeBook(item.genre)
         //viewModel.readBooks(item.name)
         //onSwipeRight(item)
         viewModel.readBooks.add(item)
@@ -299,18 +298,23 @@ fun BookCard(
 
     if (viewModel.isBookInfoDisplay.value) {
         var book = BookInfo(
-            name = item.name,
-            author = item.author,
-            description = item.description,
-            numberOfPage = item.numberOfPage,
-            rate = item.rate,
-            genre = item.genre,
-            price = item.price
+            title = item.bookInfo.title,
+            author = item.bookInfo.author,
+            description = item.bookInfo.description,
+            numberOfPages = item.bookInfo.numberOfPages,
+            rate = item.bookInfo.rate,
+            genre = item.bookInfo.genre,
+            price = item.bookInfo.price,
+            image = item.bookInfo.image
         )
-        CardInfoScreen(navController = navController, book = book, onClick = {
-            viewModel.isBookInfoDisplay.value = false
-        },
-            modifier = Modifier.visible(visible = index == i))
+        CardInfoScreen(
+            navController = navController,
+            book = book,
+            onClick = {
+                viewModel.isBookInfoDisplay.value = false
+            },
+            modifier = Modifier.visible(visible = index == i)
+        )
     } else {
         Card(
             backgroundColor = Color.Transparent,
@@ -369,8 +373,14 @@ fun BookCard(
                             .padding(top = 30.dp, bottom = 20.dp, start = 20.dp, end = 20.dp),
                         verticalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                            Column(verticalArrangement = Arrangement.SpaceAround, modifier = Modifier.fillMaxWidth(0.7f)) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Column(
+                                verticalArrangement = Arrangement.SpaceAround,
+                                modifier = Modifier.fillMaxWidth(0.7f)
+                            ) {
                                 Text(
                                     text = item.bookInfo.title,
                                     color = Color.White,
@@ -411,7 +421,9 @@ fun BookCard(
                             Image(
                                 painter = painterResource(id = R.drawable.igra_slov_logo),
                                 contentDescription = "Logo image",
-                                modifier = Modifier.size(70.dp).clip(CircleShape)
+                                modifier = Modifier
+                                    .size(70.dp)
+                                    .clip(CircleShape)
                             )
                         }
                         Box(
@@ -422,7 +434,7 @@ fun BookCard(
                                 .clickable {
                                     val sendIntent: Intent = Intent(
                                         Intent.ACTION_VIEW, Uri.parse(
-                                            item.buy_uri
+                                            item.buyUri
                                         )
                                     )
                                     val webIntent = Intent.createChooser(sendIntent, null)
@@ -443,123 +455,126 @@ fun BookCard(
 
             }
 
-        Box(modifier = Modifier
-            .zIndex(2f)
-            .background(brush),
-            contentAlignment = Alignment.Center
-        ) {
-            when (item.onSwipeDirection) {
-                DIRECTION_TOP -> {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(bottom = 90.dp),
-                        contentAlignment = Alignment.BottomCenter
-                    ) {
+            Box(
+                modifier = Modifier
+                    .zIndex(2f)
+                    .background(brush),
+                contentAlignment = Alignment.Center
+            ) {
+                when (item.onSwipeDirection) {
+                    DIRECTION_TOP -> {
                         Box(
                             modifier = Modifier
-                                .wrapContentSize()
-                                .clip(RoundedCornerShape(10.dp))
-                                .background(Color.White),
+                                .fillMaxSize()
+                                .padding(bottom = 90.dp),
                             contentAlignment = Alignment.BottomCenter
                         ) {
-                            Text(
-                                text = "WANT IT",
-                                fontSize = 28.sp,
-                                fontWeight = FontWeight.Bold,
-                                fontFamily = Manrope,
-                                color = Color(0xFFE39C64),
+                            Box(
                                 modifier = Modifier
-                                    .padding(horizontal = 20.dp, vertical = 6.dp)
-                            )
+                                    .wrapContentSize()
+                                    .clip(RoundedCornerShape(10.dp))
+                                    .background(Color.White),
+                                contentAlignment = Alignment.BottomCenter
+                            ) {
+                                Text(
+                                    text = "WANT IT",
+                                    fontSize = 28.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    fontFamily = Manrope,
+                                    color = Color(0xFFE39C64),
+                                    modifier = Modifier
+                                        .padding(horizontal = 20.dp, vertical = 6.dp)
+                                )
+                            }
+                        }
+
+                    }
+
+                    DIRECTION_BOTTOM -> {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(top = 90.dp),
+                            contentAlignment = Alignment.TopCenter
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .wrapContentSize()
+                                    .clip(RoundedCornerShape(10.dp))
+                                    .background(Color.Black),
+                                contentAlignment = Alignment.TopCenter
+                            ) {
+                                Text(
+                                    text = "SKIP",
+                                    fontSize = 28.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    fontFamily = Manrope,
+                                    color = Color.White,
+                                    modifier = Modifier
+                                        .padding(horizontal = 20.dp, vertical = 6.dp)
+                                )
+                            }
                         }
                     }
 
-                }
-
-                DIRECTION_BOTTOM -> {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(top = 90.dp),
-                        contentAlignment = Alignment.TopCenter
-                    ) {
+                    DIRECTION_RIGHT -> {
                         Box(
                             modifier = Modifier
-                                .wrapContentSize()
-                                .clip(RoundedCornerShape(10.dp))
-                                .background(Color.Black),
-                            contentAlignment = Alignment.TopCenter
+                                .fillMaxSize()
+                                .padding(start = 40.dp),
+                            contentAlignment = Alignment.CenterStart
                         ) {
-                            Text(
-                                text = "SKIP",
-                                fontSize = 28.sp,
-                                fontWeight = FontWeight.Bold,
-                                fontFamily = Manrope,
-                                color = Color.White,
+                            Box(
                                 modifier = Modifier
-                                    .padding(horizontal = 20.dp, vertical = 6.dp)
-                            )
+                                    .wrapContentSize()
+                                    .clip(RoundedCornerShape(10.dp))
+                                    .background(Color.Green),
+                                contentAlignment = Alignment.TopCenter
+                            ) {
+                                Text(
+                                    text = "LIKE",
+                                    fontSize = 28.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    fontFamily = Manrope,
+                                    color = Color.Black,
+                                    modifier = Modifier
+                                        .padding(horizontal = 20.dp, vertical = 6.dp)
+                                )
+                            }
                         }
-                    }
-                }
 
-                DIRECTION_RIGHT -> {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(start = 40.dp),
-                        contentAlignment = Alignment.CenterStart
-                    ) {
+                    }
+                    DIRECTION_LEFT -> {
                         Box(
                             modifier = Modifier
-                                .wrapContentSize()
-                                .clip(RoundedCornerShape(10.dp))
-                                .background(Color.Green),
-                            contentAlignment = Alignment.TopCenter
+                                .fillMaxSize()
+                                .padding(end = 40.dp),
+                            contentAlignment = Alignment.CenterEnd
                         ) {
-                            Text(
-                                text = "LIKE",
-                                fontSize = 28.sp,
-                                fontWeight = FontWeight.Bold,
-                                fontFamily = Manrope,
-                                color = Color.Black,
+                            Box(
                                 modifier = Modifier
-                                    .padding(horizontal = 20.dp, vertical = 6.dp)
-                            )
-                        }
-                    }
-
-                }
-                DIRECTION_LEFT -> {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(end = 40.dp),
-                        contentAlignment = Alignment.CenterEnd
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .wrapContentSize()
-                                .clip(RoundedCornerShape(10.dp))
-                                .background(Color.Red),
-                            contentAlignment = Alignment.TopCenter
-                        ) {
-                            Text(
-                                text = "DISLIKE",
-                                fontSize = 28.sp,
-                                fontWeight = FontWeight.Bold,
-                                fontFamily = Manrope,
-                                color = Color.White,
-                                modifier = Modifier
-                                    .padding(horizontal = 20.dp, vertical = 6.dp)
-                            )
+                                    .wrapContentSize()
+                                    .clip(RoundedCornerShape(10.dp))
+                                    .background(Color.Red),
+                                contentAlignment = Alignment.TopCenter
+                            ) {
+                                Text(
+                                    text = "DISLIKE",
+                                    fontSize = 28.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    fontFamily = Manrope,
+                                    color = Color.White,
+                                    modifier = Modifier
+                                        .padding(horizontal = 20.dp, vertical = 6.dp)
+                                )
+                            }
                         }
                     }
                 }
             }
         }
     }
+
 
 }
 

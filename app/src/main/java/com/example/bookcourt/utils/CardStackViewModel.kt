@@ -88,7 +88,7 @@ class CardStackViewModel @Inject constructor(
     }
 
     fun changeCurrentItem(item: Book) {
-        currentItem.value = item
+        currentItem?.value = item
     }
 
     fun changeDirection(newDirection:String?,item: MutableState<Book>?){
