@@ -23,6 +23,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
@@ -32,6 +33,7 @@ import androidx.navigation.NavController
 import com.example.bookcourt.R
 import com.example.bookcourt.ui.theme.*
 import com.example.bookcourt.utils.BottomBarScreen
+import com.example.bookcourt.utils.PhoneNumberVisualTransformation
 import com.example.bookcourt.utils.isPermanentlyDenied
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
@@ -89,19 +91,22 @@ fun AuthFields(navController: NavController, mViewModel: SignInViewModel) {
                 contentDescription = "Lead App Icon",
                 modifier = Modifier.size(100.dp)
             )
-            TextBlock("Имя", "Введите ваше имя", mViewModel.name) { mViewModel.onNameChanged(it) }
+            TextBlock("Имя", "Введите ваше имя", mViewModel.name,
+                visualTransformation = VisualTransformation.None) { mViewModel.onNameChanged(it) }
             Spacer(modifier = Modifier.height(18.dp))
             TextBlock(
                 "Фамилия",
                 "Введите вашу фамилию",
-                mViewModel.surname
+                mViewModel.surname,
+                visualTransformation = VisualTransformation.None
             ) { mViewModel.onSurnameChanged(it) }
             Spacer(modifier = Modifier.height(18.dp))
             TextBlock(
                 "Телефон",
                 "Введите номер телефона",
                 mViewModel.phoneNumber,
-                keyboardType = KeyboardType.Phone
+                keyboardType = KeyboardType.Phone,
+                visualTransformation = PhoneNumberVisualTransformation()
             ) { mViewModel.onPhoneChanged(it) }
             Spacer(modifier = Modifier.height(18.dp))
             AutoCompleteTextField(
@@ -150,6 +155,7 @@ fun TextBlock(
     placeholder: String,
     value: String,
     keyboardType: KeyboardType = KeyboardType.Text,
+    visualTransformation:VisualTransformation,
     onValueChange: (String) -> Unit
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
@@ -162,6 +168,7 @@ fun TextBlock(
         Spacer(modifier = Modifier.height(10.dp))
         TextField(
             value = value,
+            visualTransformation = visualTransformation,
             onValueChange = { onValueChange(it) },
             modifier = Modifier
                 .fillMaxWidth(),

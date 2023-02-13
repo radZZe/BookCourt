@@ -40,7 +40,7 @@ class SignInViewModel @Inject constructor(
 
     var name by mutableStateOf("")
     var surname by mutableStateOf("")
-    var phoneNumber by mutableStateOf("")
+    var phoneNumber by mutableStateOf("+7")
     var isRememberMe by mutableStateOf(false)
     var city by mutableStateOf("")
 
