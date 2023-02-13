@@ -108,7 +108,7 @@ fun NavigationGraph(
                 price,
 
             )
-            CardInfoScreen(navController,book)
+//            CardInfoScreen(navController,book)
         }
 
         composable(Screens.Statistics.route) {

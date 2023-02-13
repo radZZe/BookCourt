@@ -10,9 +10,11 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Scaffold
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
@@ -24,6 +26,7 @@ import com.example.bookcourt.data.BackgroundService
 import com.example.bookcourt.ui.auth.SignInViewModel
 import com.example.bookcourt.ui.graphs.NavigationGraph
 import com.example.bookcourt.ui.profile.ProfileViewModel
+import com.example.bookcourt.ui.recomendation.RecomendationViewModel
 import com.example.bookcourt.ui.statistics.StatisticsViewModel
 import com.example.bookcourt.ui.theme.BookCourtTheme
 import com.example.bookcourt.utils.Screens
@@ -38,6 +41,7 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var bgService: BackgroundService
 
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,6 +52,10 @@ class MainActivity : ComponentActivity() {
                 val splashScreenViewModel: SplashViewModel by viewModels()
                 val signInScreenViewModel: SignInViewModel by viewModels()
                 val statisticsViewModel: StatisticsViewModel by viewModels()
+                val recomendationViewmodel: RecomendationViewModel by viewModels()
+                var context = LocalContext.current
+//                recomendationViewmodel.getAllBooks(context)
+
                 Scaffold(
 //                    bottomBar = { com.example.bookcourt.utils.BottomNavigation(navController = navController) }
                 ) {

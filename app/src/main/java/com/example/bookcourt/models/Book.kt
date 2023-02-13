@@ -11,7 +11,8 @@ data class Book(
     val owner:String,
     val genre:String,
     val image:String,
-    val onSwipeDirection:MutableState<String?>,
+//    val onSwipeDirection:MutableState<String?>,
+    var onSwipeDirection:String?,
     val price: Int,
     val shop_owner: String,
     val buy_uri: String

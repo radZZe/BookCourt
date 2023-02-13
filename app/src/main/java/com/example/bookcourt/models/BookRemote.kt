@@ -19,7 +19,7 @@ data class BookRemote(
             data.owner,
             data.genre,
             data.image,
-            mutableStateOf(null),
+            null,
             price = data.price,
             shop_owner = data.shop_owner,
             buy_uri = data.buy_uri,

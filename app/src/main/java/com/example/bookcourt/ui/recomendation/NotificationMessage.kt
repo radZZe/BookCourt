@@ -2,6 +2,7 @@ package com.example.bookcourt.ui.recomendation
 
 import android.app.Notification
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
@@ -13,8 +14,8 @@ import androidx.compose.ui.unit.dp
 import com.example.bookcourt.utils.TriangleEdgeShape
 
 @Composable
-fun NotificationMessage(modifier: Modifier) {
-    Row(modifier.height(IntrinsicSize.Max)) {
+fun NotificationMessage(modifier: Modifier,count:Int,onClick:()->Unit) {
+    Row(modifier.height(IntrinsicSize.Max).clickable { onClick() }) {
         Column(
             modifier = Modifier.background(
                 color = Color(0xFFD9D9D9),
@@ -22,7 +23,7 @@ fun NotificationMessage(modifier: Modifier) {
             ).fillMaxWidth(0.8f)
         ) {
             Text( modifier = Modifier.padding(5.dp),
-                text = "Ух ты! Ты просвайпал уже 3 книги. Теперь можно посмотреть интересную статистику ;)\n" +
+                text = "Ух ты! Ты просвайпал уже $count книг. Теперь можно посмотреть интересную статистику ;)\n" +
                         "Когда захочешь - просто нажми на меня!"
             )
         }
