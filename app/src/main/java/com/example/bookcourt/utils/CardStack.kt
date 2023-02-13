@@ -9,6 +9,7 @@ import android.os.Build
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -37,9 +38,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.bookcourt.R
 import com.example.bookcourt.models.Book
+import com.example.bookcourt.models.BookInfo
 import com.example.bookcourt.ui.BookCardImage
+import com.example.bookcourt.ui.CardInfoScreen
 import com.example.bookcourt.ui.theme.Gilroy
 import com.example.bookcourt.ui.theme.Manrope
+import com.example.bookcourt.ui.getWantedBooks
+import com.example.bookcourt.ui.theme.CustomButton
 import kotlin.math.roundToInt
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -47,7 +52,7 @@ import kotlin.math.roundToInt
 @Composable
 fun CardStack(
     modifier: Modifier = Modifier,
-    items: List<Book>,
+    itemsRaw: List<Book>,
     thresholdConfig: (Float, Float) -> ThresholdConfig = { _, _ -> FractionalThreshold(0.2f) },
     velocityThreshold: Dp = 125.dp,
     onSwipeLeft: (item: Book) -> Unit = {},
@@ -55,126 +60,198 @@ fun CardStack(
     onSwipeUp: (item: Book) -> Unit = {},
     onSwipeDown: (item: Book) -> Unit = {},
     onEmptyStack: () -> Unit = {},
-    cardStackController: CardStackController,
+//    cardStackController: CardStackController,
     viewModel: CardStackViewModel = hiltViewModel(),
     navController: NavController
 ) {
-//    val readBooksList = viewModel.readBooks.collectAsState(initial = "")
-    var i by remember {
-        mutableStateOf(items.size - 1)
+    fun rand(start: Int, end: Int): Int {
+        require(start <= end) { "Illegal Argument" }
+        return (start..end).random()
     }
 
-    if (i != -1) viewModel.currentItem.value = items[i]
+    var start = 4
+    var end = 12;
+    var limitSwipeValue = 4
+    var isEmpty = viewModel.isEmpty
 
-    if (i == -1) {
-        onEmptyStack()
-    }
 
-    LaunchedEffect(key1 = Unit) {
-        viewModel.getReadBooks()
-    }
-
-    cardStackController.onSwipeLeft = {
-
-//        viewModel.dislikeBook(items[i].genre)
-//        viewModel.readBooks(items[i].name)
-
-//        viewModel.readBooks.value!!.add(items[i])
-        viewModel.readBooks.add(items[i])
-        onSwipeLeft(items[i])
-        viewModel.updateUserStatistic()
-        i--
-        if (i != -1) viewModel.changeCurrentItem(items[i])
-    }
-
-    cardStackController.onSwipeRight = {
-
-//        viewModel.likeBook(items[i].genre)
-//        viewModel.readBooks(items[i].name)
-
-//        viewModel.readBooks.value!!.add(items[i])
-        viewModel.readBooks.add(items[i])
-        onSwipeRight(items[i])
-        viewModel.updateUserStatistic()
-        i--
-        if (i != -1) viewModel.changeCurrentItem(items[i])
-    }
-
-    cardStackController.onSwipeUp = {
-
-//        viewModel.wantToRead(items[i].name)
-
-//        viewModel.wantToRead.value!!.add(items[i])
-        viewModel.wantToRead.add(items[i])
-        viewModel.updateUserStatistic()
-        onSwipeUp(items[i])
-        i--
-        if (i != -1) viewModel.changeCurrentItem(items[i])
-    }
-
-    cardStackController.onSwipeDown = {
-        onSwipeDown(items[i])
-        i--
-        if (i != -1) viewModel.changeCurrentItem(items[i])
-    }
-    ConstraintLayout(
-        modifier = modifier
-            .fillMaxWidth()
-            .fillMaxHeight(0.75f)
-            .padding(0.dp)
-    ) {
-        val stack = createRef()
-
-        Box(
+    if (!isEmpty) {
+        viewModel.allBooks = itemsRaw.map {
+            mutableStateOf(it)
+        }
+        viewModel.currentItem = viewModel.allBooks.last()
+        viewModel.i = viewModel.allBooks.size - 1
+        var items = viewModel.allBooks
+        ConstraintLayout(
             modifier = modifier
-                .constrainAs(stack) {
-                    top.linkTo(parent.top)
-                }
-                .fillMaxHeight()
+                .fillMaxWidth()
+                .fillMaxHeight(0.75f)
+                .padding(0.dp)
         ) {
-            items.forEachIndexed { index, item ->
-                    BookCard(
-                        modifier = Modifier
-                            .draggableStack(
-                                controller = cardStackController,
-                                thresholdConfig = thresholdConfig,
-                            )
-                            .moveTo(
-                                x = if (index == i) cardStackController.offsetX.value else 0f,
-                                y = if (index == i) cardStackController.offsetY.value else 0f
-                            )
-                            .visible(visible = index == i || index == i - 1)
-                            .graphicsLayer(
-                                rotationZ = if (index == i) cardStackController.rotation.value else 0f,
-                            )
-                            .clickable {
-                                navController.navigate(
-                                    Screens.CardInfo.route +
-                                            "/${item.bookInfo.title}/${item.bookInfo.author}/${item.bookInfo.description}/${item.bookInfo.genre}"
-                                            + "/${item.bookInfo.numberOfPages}/${item.bookInfo.rate}/${item.bookInfo.price}"
-                                )
-                            },
-                        item,
-                        navController,
-                        viewModel
-                    )
-            }
+            val stack = createRef()
 
+            Box(
+                modifier = modifier
+                    .constrainAs(stack) {
+                        top.linkTo(parent.top)
+                    }
+                    .fillMaxHeight()
+            ) {
+                items.forEachIndexed { index, item ->
+                    BookCard(
+                        item,
+                        viewModel,
+                        limitSwipeValue,
+                        index,
+                        onSwipeLeft,
+                        onSwipeRight,
+                        onSwipeUp,
+                        onSwipeDown,
+                        thresholdConfig,
+                        navController
+                    )
+                }
+            }
+        }
+    } else {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(start = 24.dp, end = 24.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            CustomButton(text = "Посмотреть статистику") {
+                navController.popBackStack()
+                navController.navigate(route = Screens.Statistics.route)
+            }
         }
     }
+
+
+//    var i by remember {
+//        mutableStateOf(items.size - 1)
+//    }
+
+//    if (i != -1) viewModel.changeCurrentItem(items[i].value)
+
+//    if (viewModel.i == -1) {
+//        onEmptyStack()
+//    }
+
+//
+//    if(!isEmpty){
+//        ConstraintLayout(
+//            modifier = modifier
+//                .fillMaxWidth()
+//                .fillMaxHeight(0.75f)
+//                .padding(0.dp)
+//        ) {
+//            val stack = createRef()
+//
+//            Box(
+//                modifier = modifier
+//                    .constrainAs(stack) {
+//                        top.linkTo(parent.top)
+//                    }
+//                    .fillMaxHeight()
+//            ) {
+//                items.forEachIndexed { index, item ->
+//                    BookCard(
+//                        item,
+//                        viewModel,
+//                        limitSwipeValue,
+//                        index,
+//                        onSwipeLeft,
+//                        onSwipeRight,
+//                        onSwipeUp,
+//                        onSwipeDown,
+//                        thresholdConfig,
+//                        navController
+//                    )
+//                }
+//            }
+//        }
+//    }else{
+//        Box(
+//            modifier = Modifier
+//                .fillMaxSize()
+//                .padding(start = 24.dp, end = 24.dp),
+//            contentAlignment = Alignment.Center
+//        ) {
+//            CustomButton(text = "Посмотреть статистику") {
+//                navController.popBackStack()
+//                navController.navigate(route = Screens.Statistics.route)
+//            }
+//        }
+//    }
 
 
 }
 
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun BookCard(
-    modifier: Modifier = Modifier,
-    item: Book,
-    navController: NavController,
-    viewModel: CardStackViewModel
+    itemRaw: MutableState<Book>,
+    viewModel: CardStackViewModel,
+    limitSwipeValue: Int,
+    index: Int,
+    onSwipeLeft: (item: Book) -> Unit = {},
+    onSwipeRight: (item: Book) -> Unit = {},
+    onSwipeUp: (item: Book) -> Unit = {},
+    onSwipeDown: (item: Book) -> Unit = {},
+    thresholdConfig: (Float, Float) -> ThresholdConfig = { _, _ -> FractionalThreshold(0.2f) },
+    navController: NavController
 ) {
 
+    var item = itemRaw.value
+    var i = viewModel.i
+    val cardStackController = rememberCardStackController()
+    cardStackController.onSwipeLeft = {
+
+        //viewModel.dislikeBook(item.genre)
+        //viewModel.readBooks(item.name)
+        //onSwipeLeft(item)
+        viewModel.readBooks.add(item)
+        onSwipeLeft(item)
+        viewModel.updateUserStatistic()
+        viewModel.i--
+        if (i != -1) viewModel.changeCurrentItem()
+        viewModel.counter++
+    }
+
+    cardStackController.onSwipeRight = {
+
+       // viewModel.likeBook(item.genre)
+        //viewModel.readBooks(item.name)
+        //onSwipeRight(item)
+        viewModel.readBooks.add(item)
+        onSwipeRight(item)
+        viewModel.updateUserStatistic()
+        viewModel.i--
+        if (i != -1) viewModel.changeCurrentItem()
+        viewModel.counter++
+    }
+
+    cardStackController.onSwipeUp = {
+
+        //viewModel.wantToRead(item.name)
+        //onSwipeUp(item)
+        viewModel.wantToRead.add(item)
+        viewModel.updateUserStatistic()
+        onSwipeUp(item)
+        viewModel.i--
+        if (i != -1) viewModel.changeCurrentItem()
+        viewModel.counter++
+    }
+
+    cardStackController.onSwipeDown = {
+
+        onSwipeDown(item)
+        viewModel.i--
+        if (i != -1) viewModel.changeCurrentItem()
+        viewModel.counter++
+    }
     val context = LocalContext.current
     var colorStopsNull = arrayOf(
         0.0f to Color.Transparent, 0.8f to Color.Transparent
@@ -220,109 +297,151 @@ fun BookCard(
         )
     )
 
-    Card(
-        backgroundColor = Color.Transparent,
-        elevation = 5.dp,
-        shape = RoundedCornerShape(20.dp),
-        modifier = modifier.fillMaxSize()
-    ) {
-        Box(
+    if (viewModel.isBookInfoDisplay.value) {
+        var book = BookInfo(
+            name = item.name,
+            author = item.author,
+            description = item.description,
+            numberOfPage = item.numberOfPage,
+            rate = item.rate,
+            genre = item.genre,
+            price = item.price
+        )
+        CardInfoScreen(navController = navController, book = book, onClick = {
+            viewModel.isBookInfoDisplay.value = false
+        },
+            modifier = Modifier.visible(visible = index == i))
+    } else {
+        Card(
+            backgroundColor = Color.Transparent,
+            elevation = 5.dp,
+            shape = RoundedCornerShape(20.dp),
             modifier = Modifier
+
+                .draggableStack(
+                    controller = cardStackController,
+                    thresholdConfig = thresholdConfig,
+                )
+                .moveTo(
+                    x = if (index == i) cardStackController.offsetX.value else 0f,
+                    y = if (index == i) cardStackController.offsetY.value else 0f
+                )
+                .visible(visible = index == i || index == i - 1)
+                .graphicsLayer(
+                    rotationZ = if (index == i) cardStackController.rotation.value else 0f,
+                )
+                .clickable {
+//                    navController.navigate(
+//                        Screens.CardInfo.route +
+//                                "/${item.name}/${item.author}/${item.description}/${item.genre}"
+//                                + "/${item.numberOfPage}/${item.rate}/${item.price}"
+//                    )
+                    viewModel.isBookInfoDisplay.value = true
+                }
                 .fillMaxSize()
-                .background(darkGradient)
-                .clip(RoundedCornerShape(topStart = 23.dp, topEnd = 23.dp))
         ) {
-            Column(
+            Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(brush)
+                    .background(darkGradient)
+                    .clip(RoundedCornerShape(topStart = 23.dp, topEnd = 23.dp))
             ) {
-                Box(modifier = Modifier.wrapContentSize()) {
-                    BookCardImage(uri = item.bookInfo.image)
-                }
-
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(top = 50.dp, bottom = 20.dp, start = 20.dp, end = 20.dp),
-                    verticalArrangement = Arrangement.SpaceBetween
+                        .background(brush)
                 ) {
-                    Text(
-                        text = item.bookInfo.title,
-                        color = Color.White,
-                        fontSize = 20.sp,
-                        fontFamily = FontFamily(
-                            Font(
-                                R.font.manrope_extrabold, weight = FontWeight.W600
-                            )
-                        ),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = item.bookInfo.author,
-                        color = Color(0xFFFFFDFF),
-                        fontSize = 16.sp,
-                        fontFamily = FontFamily(
-                            Font(
-                                R.font.manrope_medium, weight = FontWeight.W600
-                            )
+                    Box(modifier = Modifier.wrapContentSize()) {
+                        BookCardImage(
+                            uri = item.bookInfo.image,
+                            limitSwipeValue,
+                            counter = if (index == viewModel.i - 1 || index == viewModel.i) {
+                                viewModel.counter
+                            } else 0,
+                            viewModel,
+                            viewModel.isNotificationDisplay.value,
+                            navController
                         )
-                    )
-                    Spacer(modifier = Modifier.height(12.dp))
-                    Row(
-                        modifier = Modifier.fillMaxSize(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                    }
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(top = 30.dp, bottom = 20.dp, start = 20.dp, end = 20.dp),
+                        verticalArrangement = Arrangement.SpaceBetween
                     ) {
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                            Column(verticalArrangement = Arrangement.SpaceAround, modifier = Modifier.fillMaxWidth(0.7f)) {
+                                Text(
+                                    text = item.bookInfo.title,
+                                    color = Color.White,
+                                    fontSize = 19.sp,
+                                    fontFamily = FontFamily(
+                                        Font(
+                                            R.font.manrope_extrabold, weight = FontWeight.W600
+                                        )
+                                    ),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                                Spacer(modifier = Modifier.size(5.dp))
+                                Text(
+                                    text = item.bookInfo.author,
+                                    color = Color(0xFFA3A3A3),
+                                    fontSize = 16.sp,
+                                    fontFamily = FontFamily(
+                                        Font(
+                                            R.font.manrope_medium, weight = FontWeight.W600
+                                        )
+                                    )
+                                )
+                                Spacer(modifier = Modifier.size(5.dp))
+                                Text(
+                                    modifier = Modifier,
+                                    text = item.bookInfo.genre,
+                                    color = Color(0xFFFFFFFF),
+                                    fontSize = 14.sp,
+                                    fontFamily = FontFamily(
+                                        Font(
+                                            R.font.manrope_medium, weight = FontWeight.W600
+                                        )
+                                    )
+                                )
+
+                            }
+                            Image(
+                                painter = painterResource(id = R.drawable.igra_slov_logo),
+                                contentDescription = "Logo image",
+                                modifier = Modifier.size(70.dp).clip(CircleShape)
+                            )
+                        }
                         Box(
                             modifier = Modifier
+                                .fillMaxWidth()
                                 .clip(RoundedCornerShape(50.dp))
-                                .background(color = Color(0xFF8BB298))
-                                .padding(),
-                            Alignment.Center,
-
-                            ) {
-                            Text(
-                                modifier = Modifier.padding(
-                                    start = 10.dp, end = 10.dp, top = 4.dp, bottom = 4.dp
-                                ),
-                                text = item.bookInfo.genre,
-                                color = Color(0xFFFFFFFF),
-                                fontSize = 16.sp,
-                                fontFamily = FontFamily(
-                                    Font(
-                                        R.font.manrope_medium, weight = FontWeight.W600
+                                .background(Color(0xFF8BB298))
+                                .clickable {
+                                    val sendIntent: Intent = Intent(
+                                        Intent.ACTION_VIEW, Uri.parse(
+                                            item.buy_uri
+                                        )
                                     )
-                                )
-                            )
-
-                        }
-                        Box(modifier = Modifier
-                            .clip(RoundedCornerShape(50.dp))
-                            .background(Color(0xFF483936))
-                            .clickable {
-                                val sendIntent: Intent = Intent(
-                                    Intent.ACTION_VIEW, Uri.parse(
-                                        item.buyUri
-                                    )
-                                )
-                                val webIntent = Intent.createChooser(sendIntent, null)
-                                context.startActivity(webIntent)
-                            }) {
+                                    val webIntent = Intent.createChooser(sendIntent, null)
+                                    context.startActivity(webIntent)
+                                },
+                            contentAlignment = Alignment.Center
+                        ) {
                             Text(
                                 modifier = Modifier.padding(10.dp), text = "Купить", color = Color(
-                                    0xFFB2AC8B
+                                    0xFFFFFFFF
                                 )
                             )
                         }
+
                     }
                 }
+
+
             }
-
-
-        }
 
         Box(modifier = Modifier
             .zIndex(2f)
@@ -437,9 +556,7 @@ fun BookCard(
                             )
                         }
                     }
-
                 }
-                else -> {}
             }
         }
     }

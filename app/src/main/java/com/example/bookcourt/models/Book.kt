@@ -9,15 +9,4 @@ data class Book(
     var onSwipeDirection: String?,
     val shopOwner: String,
     val buyUri: String
-)
-
-//    val name:String,
-//    val author:String,
-//    val description:String,
-//    val createdAt:String,
-//    val numberOfPage:String,
-//    val rate:Int,
-//    val owner:String,
-//    val price: Int,
-//    val genre:String,
-//    val image:String,
+    )

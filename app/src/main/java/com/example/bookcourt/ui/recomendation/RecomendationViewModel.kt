@@ -5,6 +5,8 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.*
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookcourt.data.repositories.DataStoreRepository
@@ -38,10 +40,18 @@ class RecomendationViewModel @Inject constructor(
     private val userRepository: UserRepository
 ) : ViewModel() {
 
-    var allBooks = mutableStateListOf<Book>()
+    //    var allBooks = mutableStateOf<MutableList<Book>?>(null)
+    var dataIsReady by mutableStateOf(false)
+    private var _allBooks = mutableStateListOf<Book>()
     var validBooks = mutableStateListOf<Book>()
-    val isEmpty = mutableStateOf(false)
-    var isScreenChanged = false //bullshit
+    val allBooks: List<Book> = _allBooks
+//    var readBooks = dataStoreRepository.getPref(readBooksList)
+//    val isEmpty = mutableStateOf(false)
+//    val tutorState = dataStoreRepository.getBoolPref(isTutorChecked)
+//    var isScreenChanged = false //bullshit
+    var isFirstDataLoading by mutableStateOf(true)
+    var stateNotificationDisplay = false;
+
 
 //    private val userId = dataStoreRepository.getPref(DataStoreRepository.uuid)
 
@@ -81,7 +91,6 @@ class RecomendationViewModel @Inject constructor(
 
     fun getAllBooks(context: Context) {
         viewModelScope.launch(Dispatchers.IO) {
-
             val jobUserId = async { dataStoreRepository.getPref(DataStoreRepository.uuid) }
             val userId = jobUserId.await()
 
@@ -106,7 +115,20 @@ class RecomendationViewModel @Inject constructor(
                     }
                 }
             }
+            _allBooks.addAll(items)
+            dataIsReady = true
+
+
         }
+
+    }
+
+    fun addElementToAllBooks(element: Book) {
+        _allBooks.add(element)
+    }
+
+    fun deleteElementFromAllBooks(element: Book) {
+        _allBooks.remove(element)
     }
 
 

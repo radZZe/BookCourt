@@ -2,6 +2,7 @@ package com.example.bookcourt.ui.recomendation
 
 import android.app.Notification
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -18,8 +19,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 
 @Composable
-fun Notification(count:Int,modifier: Modifier){
-    Box(modifier =modifier){
+fun Notification(count:Int,modifier: Modifier,onClick:()->Unit){
+    Box(modifier =modifier.clickable { onClick() }){
         Box(modifier = Modifier
             .clip(CircleShape)
             .background(Color.Red)
