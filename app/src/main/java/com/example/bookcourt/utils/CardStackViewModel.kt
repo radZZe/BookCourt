@@ -1,5 +1,7 @@
 package com.example.bookcourt.utils
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import android.util.Log
 import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Brush
@@ -7,26 +9,25 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookcourt.data.repositories.DataStoreRepository
-import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.readBooksList
 import com.example.bookcourt.data.repositories.MetricsRepository
+import com.example.bookcourt.data.room.UserRepository
 import com.example.bookcourt.models.Book
+import com.example.bookcourt.models.User
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.encodeToJsonElement
 import javax.inject.Inject
 
 @HiltViewModel
 class CardStackViewModel @Inject constructor(
     val dataStoreRepository: DataStoreRepository,
-    private val metricRep:MetricsRepository
+    private val metricRep: MetricsRepository,
+    private val userRepository: UserRepository
 ) : ViewModel() {
+    private val userId = dataStoreRepository.getPref(DataStoreRepository.uuid)
 
     //state flags
     var isEmpty by mutableStateOf(false)
@@ -39,6 +40,8 @@ class CardStackViewModel @Inject constructor(
     var counter by mutableStateOf(0)
 
     var currentItem = if(allBooks.isNotEmpty()) allBooks[i] else null //КОСТЫЛЬ
+    var readBooks = mutableListOf<Book>()
+    var wantToRead = mutableListOf<Book>()
 
 
     fun changeCurrentItem(){
@@ -54,115 +57,41 @@ class CardStackViewModel @Inject constructor(
         isNotificationDisplay.value = !isNotificationDisplay.value
     }
 
+    
 
-    fun likeBook(genre:String){
+    fun getReadBooks() {
         viewModelScope.launch(Dispatchers.IO) {
-            val likedBooks =
-                withContext(Dispatchers.Default) {
-                    dataStoreRepository.getIntPref(DataStoreRepository.savedLikedBooksCnt)
-                }.first()+1
-            val favoriteGenres =
-                withContext(Dispatchers.Default) {
-                    dataStoreRepository.getPref(DataStoreRepository.savedFavoriteGenres)
-                }.first()
-            val genres = generateFavoriteGenres(favoriteGenres,genre)
-            dataStoreRepository.setPref(fromMap(genres),DataStoreRepository.savedFavoriteGenres)
-            Log.d("Danull","Liked books cnt: $likedBooks")
-            dataStoreRepository.setPref(likedBooks,DataStoreRepository.savedLikedBooksCnt)
-            Log.d("Danull","favorite genres: ${genres.entries}")
+            val job = async { userRepository.getUserById(userId.first()) }
+//            currentUser = user
+            var user = job.await()
+            readBooks = user.readBooksList as MutableList<Book>
+            wantToRead = user.wantToRead as MutableList<Book>
         }
     }
 
-    private fun generateFavoriteGenres(favoriteGenres:String,genre: String):Map<String,Int>{
-        if (favoriteGenres.isNotBlank()){
-            var genres = toMap(favoriteGenres)
-            val cnt = genres.getOrElse(genre){
-                genres[genre] = 0
-               0
-            }
-            genres[genre] = cnt+1
-            genres = genres.toList().sortedBy {
-                it.second
-            }.asReversed().toMap().toMutableMap()
-            return genres
-        }
-        else{
-          return mapOf(genre to 1)
-        }
-
-    }
-
-    private fun toMap(value:String):MutableMap<String,Int>{
-        return Json.decodeFromString(value)
-    }
-
-    private fun fromMap(map:Map<String,Int>):String{
-        return   Json.encodeToJsonElement(map).toString()
-    }
-
-    private fun toList(value:String):ArrayList<String>{
-        return Json.decodeFromString(value)
-    }
-
-    private fun fromList(list: List<String>):String{
-        return   Json.encodeToJsonElement(list).toString()
-    }
-
-    fun dislikeBook(genre: String){
+    fun updateUserStatistic() {
         viewModelScope.launch(Dispatchers.IO) {
-            var genres = arrayListOf<String>()
-            val savedGenres =
-                withContext(Dispatchers.Default) {
-                    dataStoreRepository.getPref(DataStoreRepository.dislikedGenresList)
-                }.first()
-            val dislikedBooksCnt =  withContext(Dispatchers.Default) {
-                dataStoreRepository.getIntPref(DataStoreRepository.savedDislikedBooksCnt)
-            }.first() + 1
-            if (savedGenres.isNotBlank()){
-                genres = toList(savedGenres)
-            }
-            genres.add(genre)
-            dataStoreRepository.setPref(fromList(genres),DataStoreRepository.dislikedGenresList)
-            dataStoreRepository.setPref(dislikedBooksCnt,DataStoreRepository.savedDislikedBooksCnt)
-            Log.d("Danull","Disliked: $genres")
-            Log.d("Danull","Disliked cnt : $dislikedBooksCnt")
+            val currentUser = userRepository.getUserById(userId.first())
+            val updatedUser = updateUserLists(currentUser, readBooks, wantToRead)
+            userRepository.updateUser(updatedUser)
         }
     }
 
-    fun wantToRead(bookTitle: String){  //REFACTOR
-        viewModelScope.launch(Dispatchers.IO) {
-            var genres = arrayListOf<String>()
-            val savedGenres =
-                withContext(Dispatchers.Default) {
-                    dataStoreRepository.getPref(DataStoreRepository.savedWantToReadList)
-                }.first()
-            if (savedGenres.isNotBlank()){
-                genres = toList(savedGenres)
-            }
-            genres.add(bookTitle)
-            dataStoreRepository.setPref(fromList(genres),DataStoreRepository.savedWantToReadList)
-            Log.d("Danull","Want to read: $genres")
-        }
+    private suspend fun updateUserLists(
+        user: User,
+        readBooksList: List<Book>,
+        wantToReadList: List<Book>
+    ): User {
+        user.readBooksList = readBooksList
+        user.wantToRead = wantToReadList
+        return user
     }
 
-    fun readBooks(bookTitle: String){
-        viewModelScope.launch(Dispatchers.IO) {
-            var books = arrayListOf<String>()
-            val readBooks =
-                withContext(Dispatchers.Default) {
-                    dataStoreRepository.getPref(readBooksList)
-                }.first()
-            if (readBooks.isNotBlank()){
-                books = toList(readBooks)
-            }
-            books.add(bookTitle)
-            dataStoreRepository.setPref(fromList(books), readBooksList)
-            Log.d("Danull","Read: $books")
-        }
+    fun changeCurrentItem(item: Book) {
+        currentItem.value = item
     }
 
     fun changeDirection(newDirection:String?,item: MutableState<Book>?){
-//        allBooks.last().value.onSwipeDirection.value = newDirection
         if(item != null){
             item.value.onSwipeDirection = newDirection
         }

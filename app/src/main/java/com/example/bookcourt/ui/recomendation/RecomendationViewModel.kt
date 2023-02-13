@@ -14,9 +14,12 @@ import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKey
 import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.readBooksList
 import com.example.bookcourt.data.repositories.MetricsRepository
 import com.example.bookcourt.data.repositories.NetworkRepository
+import com.example.bookcourt.data.room.UserRepository
 import com.example.bookcourt.models.Book
 import com.example.bookcourt.models.BookRemote
+import com.example.bookcourt.models.User
 import com.example.bookcourt.models.UserAction
+import com.example.bookcourt.utils.Converters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -33,12 +36,14 @@ import javax.inject.Inject
 class RecomendationViewModel @Inject constructor(
     val repository: NetworkRepository,
     private val dataStoreRepository: DataStoreRepository,
-    private val metricRep: MetricsRepository
+    private val metricRep:MetricsRepository,
+    private val userRepository: UserRepository
 ) : ViewModel() {
 
     //    var allBooks = mutableStateOf<MutableList<Book>?>(null)
     var dataIsReady by mutableStateOf(false)
     private var _allBooks = mutableStateListOf<Book>()
+    var validBooks = mutableStateListOf<Book>()
     val allBooks: List<Book> = _allBooks
 //    var readBooks = dataStoreRepository.getPref(readBooksList)
 //    val isEmpty = mutableStateOf(false)
@@ -48,37 +53,37 @@ class RecomendationViewModel @Inject constructor(
     var stateNotificationDisplay = false;
 
 
+//    private val userId = dataStoreRepository.getPref(DataStoreRepository.uuid)
+
+//    val tutorState = dataStoreRepository.getBoolPref(isTutorChecked) // dead feature
+
     @RequiresApi(Build.VERSION_CODES.O)
-    fun metricSwipeLeft(book: Book) {
-        var userAction =
-            UserAction(action = "Не понравилась книга { название:${book.name} автор: ${book.author}} ") // добавить сюда id книги
+    fun metricSwipeLeft(book:Book){
+        var userAction = UserAction(action = "Не понравилась книга { название:${book.bookInfo.title} автор: ${book.bookInfo.author}} ") // добавить сюда id книги
         viewModelScope.launch {
             metricRep.onAction(userAction)
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun metricSwipeRight(book: Book) {
-        var userAction =
-            UserAction(action = "Понравилась книга { название:${book.name} автор: ${book.author}} ") // добавить сюда id книги
+    fun metricSwipeRight(book:Book){
+        var userAction = UserAction(action = "Понравилась книга { название:${book.bookInfo.title} автор: ${book.bookInfo.author}} ") // добавить сюда id книги
         viewModelScope.launch {
             metricRep.onAction(userAction)
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun metricSwipeTop(book: Book) {
-        var userAction =
-            UserAction(action = "Добавил в хочу прочесть книгу { название:${book.name} автор: ${book.author}} ") // добавить сюда id книги
+    fun metricSwipeTop(book: Book){
+        var userAction = UserAction(action = "Добавил в хочу прочесть книгу { название:${book.bookInfo.title} автор: ${book.bookInfo.author}} ") // добавить сюда id книги
         viewModelScope.launch {
             metricRep.onAction(userAction)
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun metricSwipeDown(book: Book) {
-        var userAction =
-            UserAction(action = "Пропустил книгу { название:${book.name} автор: ${book.author}} ") // добавить сюда id книги
+    fun metricSwipeDown(book: Book){
+        var userAction = UserAction(action = "Пропустил книгу { название:${book.bookInfo.title} автор: ${book.bookInfo.author}} ") // добавить сюда id книги
         viewModelScope.launch {
             metricRep.onAction(userAction)
         }
@@ -86,20 +91,29 @@ class RecomendationViewModel @Inject constructor(
 
     fun getAllBooks(context: Context) {
         viewModelScope.launch(Dispatchers.IO) {
+            val jobUserId = async { dataStoreRepository.getPref(DataStoreRepository.uuid) }
+            val userId = jobUserId.await()
+
+            val jobUser = async { userRepository.getUserById(userId.first()) }
+            val user = jobUser.await()
+            val readBooks = user.readBooksList
+
             val job = async { repository.getAllBooks(context)!! }
             val json = job.await()
-            var data = Json.decodeFromString<MutableList<BookRemote>>("""$json""")
-//            val job2 = async {
-//                dataStoreRepository.getPref(readBooksList).collect { string ->
-//                    data.filter {
-//                        it.toBook().name !in string
-//                    }
-//
-//                }
-//            }
-//            job2.await()
-            var items = data.map{
+            val data = Json.decodeFromString<MutableList<BookRemote>>("""$json""")
+            val allBooksItems = data.map {
                 it.toBook()
+            }
+            allBooks.addAll(allBooksItems)
+
+            if (readBooks.isEmpty()) {
+                validBooks = allBooks
+            } else {
+                for (book in allBooks!!) {
+                    if (book !in readBooks) {
+                        validBooks!!.add(book)
+                    }
+                }
             }
             _allBooks.addAll(items)
             dataIsReady = true
@@ -116,6 +130,8 @@ class RecomendationViewModel @Inject constructor(
     fun deleteElementFromAllBooks(element: Book) {
         _allBooks.remove(element)
     }
+
+
 
 //    private var tutorStateBool by mutableStateOf(false)
 

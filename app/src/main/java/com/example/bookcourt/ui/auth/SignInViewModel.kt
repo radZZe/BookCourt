@@ -5,24 +5,24 @@ import android.location.Address
 import android.location.Geocoder
 import android.location.Location
 import android.os.Build
-import android.util.Patterns
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookcourt.data.repositories.DataStoreRepository
 import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.isRemembered
 import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.savedCity
-import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.savedName
-import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.savedPhoneNumber
-import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.savedSurname
 import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.uuid
 import com.example.bookcourt.data.repositories.MetricsRepository
+import com.example.bookcourt.data.room.UserRepository
+import com.example.bookcourt.models.User
+import com.example.bookcourt.models.UserStatistics
 import com.example.bookcourt.utils.Hashing
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.io.IOException
 import java.util.*
@@ -34,14 +34,15 @@ import javax.inject.Inject
 class SignInViewModel @Inject constructor(
     private val dataStoreRepository: DataStoreRepository,
     private val metricRep: MetricsRepository,
-    private val hashing: Hashing
+    private val hashing: Hashing,
+    private val userRepository: UserRepository
 ) : ViewModel() {
 
     var name by mutableStateOf("")
     var surname by mutableStateOf("")
     var phoneNumber by mutableStateOf("")
     var isRememberMe by mutableStateOf(false)
-
+    var city by mutableStateOf("")
 
     fun onCheckedChanged() {
         isRememberMe = !isRememberMe
@@ -59,19 +60,42 @@ class SignInViewModel @Inject constructor(
         phoneNumber = newText
     }
 
+    fun onCityChanged(newText: String) {
+        city = newText
+    }
+
     @RequiresApi(Build.VERSION_CODES.O)
     fun editPrefs() {
-            viewModelScope.launch {
-                var value = "AB" + name + phoneNumber
-                var UUID = hashing.getHash(value.toByteArray(), "SHA256")
-                metricRep.sendUserData(name, surname, phoneNumber, UUID)
-                dataStoreRepository.setPref(surname, savedSurname)
-                dataStoreRepository.setPref(name, savedName)
-                dataStoreRepository.setPref(phoneNumber, savedPhoneNumber)
-                dataStoreRepository.setPref(isRememberMe, isRemembered)
-                dataStoreRepository.setPref(UUID, uuid)
-            }
+        viewModelScope.launch {
+//            var value = "AB" + name + phoneNumber
+            var UUID = hashing.getHash("AB$name$phoneNumber".toByteArray(), "SHA256")
+            metricRep.sendUserData(name, surname, phoneNumber, UUID)
+//            dataStoreRepository.setPref(surname, savedSurname)
+//            dataStoreRepository.setPref(name, savedName)
+//            dataStoreRepository.setPref(phoneNumber, savedPhoneNumber)
+            dataStoreRepository.setPref(isRememberMe, isRemembered)
+            dataStoreRepository.setPref(city, savedCity)
+            dataStoreRepository.setPref(UUID, uuid)
+        }
 
+    }
+
+    fun saveUser() {
+        viewModelScope.launch(Dispatchers.IO) {
+            var UUID = hashing.getHash("AB$name$phoneNumber".toByteArray(), "SHA256")
+            val user = User(
+                uid = UUID,
+                name = name,
+                surname = surname,
+                phone = phoneNumber,
+                city = city,
+                readBooksList = listOf(),
+                wantToRead = listOf()
+            )
+            val job = async { userRepository.addUser(user) }
+            job.await()
+            var test = "jopa"
+        }
     }
 
     fun getCity(context: Context, location: Location?) {
@@ -92,8 +116,9 @@ class SignInViewModel @Inject constructor(
 
     }
 
-    fun isValidPhone() : Boolean {
-        val pattern = Pattern.compile("^((8|\\+7)[\\- ]?)?(\\(?\\d{3}\\)?[\\- ]?)?[\\d\\- ]{7,10}\$")
+    fun isValidPhone(): Boolean {
+        val pattern =
+            Pattern.compile("^((8|\\+7)[\\- ]?)?(\\(?\\d{3}\\)?[\\- ]?)?[\\d\\- ]{7,10}\$")
         return pattern.matcher(phoneNumber).matches()
 //        return Patterns.PHONE.matcher(phoneNumber).matches()
     }

@@ -60,9 +60,7 @@ fun RecomendationContent(
     }
 
 //    var isEmpty = viewModel.isEmpty.value
-
 //    ShowTutor(viewModel = viewModel)
-
 //    val cardStackController = rememberCardStackController()
     if (viewModel.dataIsReady) {
         Column(Modifier.padding(20.dp)) {
@@ -188,7 +186,7 @@ fun BookCardImage(
 
 
 //@Composable
-//fun ShowTutor(viewModel: RecomendationViewModel) {
+//fun ShowTutor(viewModel: RecomendationViewModel) { // dead feature
 //    val tutorState = viewModel.tutorState.collectAsState(initial = true)
 //    AnimatedVisibility(
 //        visible = !tutorState.value,

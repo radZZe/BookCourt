@@ -54,7 +54,7 @@ fun BookInfoCard(book: BookInfo, navController: NavController,onClick: () -> Uni
 //                    modifier = Modifier.fillMaxWidth()
 //                ) {
                     Text(
-                        text = book.name,
+                        text = book.title,
                         fontSize = 20.sp,
                         fontFamily = FontFamily(
                             Font(
@@ -211,7 +211,7 @@ fun CardStat(book: BookInfo) {
                     modifier = Modifier
                 )
                 Text(
-                    text = book.numberOfPage, fontSize = 14.sp,
+                    text = book.numberOfPages, fontSize = 14.sp,
                     fontFamily = FontFamily(
                         Font(
                             R.font.manrope_semibold,

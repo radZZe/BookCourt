@@ -42,6 +42,7 @@ import com.example.bookcourt.models.BookInfo
 import com.example.bookcourt.ui.BookCardImage
 import com.example.bookcourt.ui.CardInfoScreen
 import com.example.bookcourt.ui.theme.Gilroy
+import com.example.bookcourt.ui.theme.Manrope
 import com.example.bookcourt.ui.getWantedBooks
 import com.example.bookcourt.ui.theme.CustomButton
 import kotlin.math.roundToInt
@@ -208,9 +209,12 @@ fun BookCard(
     val cardStackController = rememberCardStackController()
     cardStackController.onSwipeLeft = {
 
-        viewModel.dislikeBook(item.genre)
-        viewModel.readBooks(item.name)
+        //viewModel.dislikeBook(item.genre)
+        //viewModel.readBooks(item.name)
+        //onSwipeLeft(item)
+        viewModel.readBooks.add(item)
         onSwipeLeft(item)
+        viewModel.updateUserStatistic()
         viewModel.i--
         if (i != -1) viewModel.changeCurrentItem()
         viewModel.counter++
@@ -218,9 +222,12 @@ fun BookCard(
 
     cardStackController.onSwipeRight = {
 
-        viewModel.likeBook(item.genre)
-        viewModel.readBooks(item.name)
+       // viewModel.likeBook(item.genre)
+        //viewModel.readBooks(item.name)
+        //onSwipeRight(item)
+        viewModel.readBooks.add(item)
         onSwipeRight(item)
+        viewModel.updateUserStatistic()
         viewModel.i--
         if (i != -1) viewModel.changeCurrentItem()
         viewModel.counter++
@@ -228,7 +235,10 @@ fun BookCard(
 
     cardStackController.onSwipeUp = {
 
-        viewModel.wantToRead(item.name)
+        //viewModel.wantToRead(item.name)
+        //onSwipeUp(item)
+        viewModel.wantToRead.add(item)
+        viewModel.updateUserStatistic()
         onSwipeUp(item)
         viewModel.i--
         if (i != -1) viewModel.changeCurrentItem()
@@ -343,7 +353,7 @@ fun BookCard(
                 ) {
                     Box(modifier = Modifier.wrapContentSize()) {
                         BookCardImage(
-                            uri = item.image,
+                            uri = item.bookInfo.image,
                             limitSwipeValue,
                             counter = if (index == viewModel.i - 1 || index == viewModel.i) {
                                 viewModel.counter
@@ -362,7 +372,7 @@ fun BookCard(
                         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                             Column(verticalArrangement = Arrangement.SpaceAround, modifier = Modifier.fillMaxWidth(0.7f)) {
                                 Text(
-                                    text = item.name,
+                                    text = item.bookInfo.title,
                                     color = Color.White,
                                     fontSize = 19.sp,
                                     fontFamily = FontFamily(
@@ -375,7 +385,7 @@ fun BookCard(
                                 )
                                 Spacer(modifier = Modifier.size(5.dp))
                                 Text(
-                                    text = item.author,
+                                    text = item.bookInfo.author,
                                     color = Color(0xFFA3A3A3),
                                     fontSize = 16.sp,
                                     fontFamily = FontFamily(
@@ -387,7 +397,7 @@ fun BookCard(
                                 Spacer(modifier = Modifier.size(5.dp))
                                 Text(
                                     modifier = Modifier,
-                                    text = item.genre,
+                                    text = item.bookInfo.genre,
                                     color = Color(0xFFFFFFFF),
                                     fontSize = 14.sp,
                                     fontFamily = FontFamily(
@@ -433,55 +443,125 @@ fun BookCard(
 
             }
 
-            Box(
-                modifier = Modifier
-                    .zIndex(2f)
-                    .background(brush),
-                contentAlignment = Alignment.Center
-            ) {
-                when (item.onSwipeDirection) {
-                    DIRECTION_TOP -> {
-                        Text(
-                            text = "Хочу прочитать",
-                            fontSize = 28.sp,
-                            fontWeight = FontWeight.Bold,
-                            fontFamily = Gilroy,
-                            color = Color.White
-                        )
+        Box(modifier = Modifier
+            .zIndex(2f)
+            .background(brush),
+            contentAlignment = Alignment.Center
+        ) {
+            when (item.onSwipeDirection) {
+                DIRECTION_TOP -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(bottom = 90.dp),
+                        contentAlignment = Alignment.BottomCenter
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .wrapContentSize()
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(Color.White),
+                            contentAlignment = Alignment.BottomCenter
+                        ) {
+                            Text(
+                                text = "WANT IT",
+                                fontSize = 28.sp,
+                                fontWeight = FontWeight.Bold,
+                                fontFamily = Manrope,
+                                color = Color(0xFFE39C64),
+                                modifier = Modifier
+                                    .padding(horizontal = 20.dp, vertical = 6.dp)
+                            )
+                        }
                     }
-                    DIRECTION_BOTTOM -> {
-                        Text(
-                            text = "Пропустить",
-                            fontSize = 28.sp,
-                            fontWeight = FontWeight.Bold,
-                            fontFamily = Gilroy,
-                            color = Color.White
-                        )
+
+                }
+
+                DIRECTION_BOTTOM -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(top = 90.dp),
+                        contentAlignment = Alignment.TopCenter
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .wrapContentSize()
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(Color.Black),
+                            contentAlignment = Alignment.TopCenter
+                        ) {
+                            Text(
+                                text = "SKIP",
+                                fontSize = 28.sp,
+                                fontWeight = FontWeight.Bold,
+                                fontFamily = Manrope,
+                                color = Color.White,
+                                modifier = Modifier
+                                    .padding(horizontal = 20.dp, vertical = 6.dp)
+                            )
+                        }
                     }
-                    DIRECTION_RIGHT -> {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_like),
-                            contentDescription = "contextIcon",
-                            tint = Color.Green,
-                            modifier = Modifier.size(100.dp)
-                        )
+                }
+
+                DIRECTION_RIGHT -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(start = 40.dp),
+                        contentAlignment = Alignment.CenterStart
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .wrapContentSize()
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(Color.Green),
+                            contentAlignment = Alignment.TopCenter
+                        ) {
+                            Text(
+                                text = "LIKE",
+                                fontSize = 28.sp,
+                                fontWeight = FontWeight.Bold,
+                                fontFamily = Manrope,
+                                color = Color.Black,
+                                modifier = Modifier
+                                    .padding(horizontal = 20.dp, vertical = 6.dp)
+                            )
+                        }
                     }
-                    DIRECTION_LEFT -> {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_dislike),
-                            contentDescription = "contextIcon",
-                            tint = Color.Red,
-                            modifier = Modifier.size(100.dp)
-                        )
+
+                }
+                DIRECTION_LEFT -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(end = 40.dp),
+                        contentAlignment = Alignment.CenterEnd
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .wrapContentSize()
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(Color.Red),
+                            contentAlignment = Alignment.TopCenter
+                        ) {
+                            Text(
+                                text = "DISLIKE",
+                                fontSize = 28.sp,
+                                fontWeight = FontWeight.Bold,
+                                fontFamily = Manrope,
+                                color = Color.White,
+                                modifier = Modifier
+                                    .padding(horizontal = 20.dp, vertical = 6.dp)
+                            )
+                        }
                     }
-                    else -> {}
                 }
             }
         }
     }
 
 }
-
 
 fun Modifier.moveTo(
     x: Float, y: Float
