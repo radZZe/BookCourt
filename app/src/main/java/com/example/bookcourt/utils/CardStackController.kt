@@ -246,10 +246,10 @@ fun Modifier.draggableStack(
                     )
                 }
 
-                if (controller.offsetY.value <= -controller.thresholdY + 300) {
+                if (controller.offsetY.value <= -controller.thresholdY + 200) {
                     controller.swipeUp()
                     controller.viewModel.changeDirection(null, controller.viewModel.currentItem)
-                } else if (controller.offsetY.value >= controller.thresholdY - 300) {
+                } else if (controller.offsetY.value >= controller.thresholdY - 200) {
                     controller.swipeDown()
                     controller.viewModel.changeDirection(null, controller.viewModel.currentItem)
                 } else if (controller.offsetX.value <= -controller.thresholdX + 200) {
@@ -271,12 +271,12 @@ fun Modifier.draggableStack(
 
 
 
-                        if (controller.offsetY.value <= -controller.thresholdY+300) {
+                        if (controller.offsetY.value <= -controller.thresholdY+200) {
                             controller.viewModel.changeDirection(
                                 DIRECTION_TOP,
                                 controller.viewModel.currentItem
                             )
-                        } else if (controller.offsetY.value >= controller.thresholdY-300) {
+                        } else if (controller.offsetY.value >= controller.thresholdY-200) {
                             controller.viewModel.changeDirection(
                                 DIRECTION_BOTTOM,
                                 controller.viewModel.currentItem

@@ -32,7 +32,7 @@ import com.example.bookcourt.utils.BottomBarScreen
 import com.example.bookcourt.utils.Screens
 
 @Composable
-fun FavoriteAuthorsStats(navController: NavController, mViewModel: StatisticsViewModel) {
+fun FavoriteAuthorsStats(navController: NavController, mViewModel: StatisticsViewModel = hiltViewModel()) {
     val topAuthors = mViewModel.getTopAuthors()
     LaunchedEffect(key1 = Unit) {
         mViewModel.getUserStats()

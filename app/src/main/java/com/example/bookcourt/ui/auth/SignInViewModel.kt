@@ -22,10 +22,7 @@ import com.example.bookcourt.models.UserStatistics
 import com.example.bookcourt.utils.BottomBarScreen
 import com.example.bookcourt.utils.Hashing
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import java.io.IOException
 import java.util.*
 import java.util.regex.Pattern
