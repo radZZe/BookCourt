@@ -7,10 +7,12 @@ import android.location.Location
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.movableContentWithReceiverOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
 import com.example.bookcourt.data.repositories.DataStoreRepository
 import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.isRemembered
 import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.savedCity
@@ -19,11 +21,13 @@ import com.example.bookcourt.data.repositories.MetricsRepository
 import com.example.bookcourt.data.room.UserRepository
 import com.example.bookcourt.models.User
 import com.example.bookcourt.models.UserStatistics
+import com.example.bookcourt.utils.BottomBarScreen
 import com.example.bookcourt.utils.Hashing
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.util.*
 import java.util.regex.Pattern
@@ -65,26 +69,24 @@ class SignInViewModel @Inject constructor(
         city = newText
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+
     fun editPrefs() {
         viewModelScope.launch(Dispatchers.IO) {
 //            var value = "AB" + name + phoneNumber
             var UUID = hashing.getHash("AB$name$phoneNumber".toByteArray(), "SHA256")
-            metricRep.sendUserData(name, surname, phoneNumber, UUID)
+            var test = 5
+//            metricRep.sendUserData(name, surname, phoneNumber, UUID)
 //            dataStoreRepository.setPref(surname, savedSurname)
 //            dataStoreRepository.setPref(name, savedName)
 //            dataStoreRepository.setPref(phoneNumber, savedPhoneNumber)
-            val job1 = async{dataStoreRepository.setPref(isRememberMe, isRemembered)}
-            job1.await()
-            val job2 = async{dataStoreRepository.setPref(city, savedCity)}
-            job2.await()
-            val job = async { dataStoreRepository.setPref(UUID, uuid) }
-            job.await()
+            dataStoreRepository.setPref(isRememberMe, isRemembered)
+            dataStoreRepository.setPref(city, savedCity)
+            dataStoreRepository.setPref(UUID, uuid)
         }
 
     }
 
-    fun saveUser() {
+    fun saveUser(navController:NavController) {
         viewModelScope.launch(Dispatchers.IO) {
             var UUID = hashing.getHash("AB$name$phoneNumber".toByteArray(), "SHA256")
             val user = User(
@@ -98,7 +100,13 @@ class SignInViewModel @Inject constructor(
             )
             val job = async { userRepository.addUser(user) }
             job.await()
-            dataIsReady = true
+//            dataIsReady = true
+            withContext(Dispatchers.Main){
+                navController.popBackStack()
+                navController.navigate(route = BottomBarScreen.Recomendations.route)
+            }
+//            navController.popBackStack()
+//            navController.navigate(route = BottomBarScreen.Recomendations.route)
         }
     }
 

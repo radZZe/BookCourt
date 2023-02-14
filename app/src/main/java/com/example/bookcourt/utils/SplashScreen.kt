@@ -19,16 +19,21 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.example.bookcourt.R
+import com.example.bookcourt.ui.recomendation.RecomendationViewModel
 import com.example.bookcourt.ui.theme.Brown
 import com.example.bookcourt.ui.theme.Gilroy
 import com.example.bookcourt.ui.theme.LightBrown
 import kotlinx.coroutines.delay
 
 @Composable
-fun SplashScreen(navController: NavController, mViewModel: SplashViewModel) {
+fun SplashScreen(
+    navController: NavController,
+    mViewModel: SplashViewModel = hiltViewModel()
+) {
     var startAnimation by remember {
         mutableStateOf(false)
     }

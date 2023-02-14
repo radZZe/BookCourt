@@ -29,9 +29,6 @@ import kotlinx.serialization.json.Json
 @Composable
 fun NavigationGraph(
     navController: NavHostController,
-    splashScreenViewModel: SplashViewModel,
-    signInScreenViewModel: SignInViewModel,
-    statisticsViewModel: StatisticsViewModel
 ) {
     NavHost(navController, startDestination = Screens.Splash.route) {
         composable(BottomBarScreen.Library.route) {
@@ -53,10 +50,10 @@ fun NavigationGraph(
 //            CartScreen()
         }
         composable(Screens.SignIn.route) {
-            SignInScreen(navController = navController, mViewModel = signInScreenViewModel)
+            SignInScreen(navController = navController)
         }
         composable(Screens.Splash.route) {
-            SplashScreen(navController = navController, mViewModel = splashScreenViewModel)
+            SplashScreen(navController = navController)
         }
         composable(Screens.CardInfo.route+
                 "/{title}/{authorName}/{description}" +
@@ -111,13 +108,13 @@ fun NavigationGraph(
         }
 
         composable(Screens.StatisticsRead.route) {
-            ReadBooksStats(navController = navController, statisticsViewModel)
+            ReadBooksStats(navController = navController)
         }
         composable(Screens.StatisticsFavGenres.route) {
-            FavoriteGenresStats(navController = navController, statisticsViewModel)
+            FavoriteGenresStats(navController = navController)
         }
         composable(Screens.StatisticsFavAuthors.route) {
-            FavoriteAuthorsStats(navController = navController, statisticsViewModel)
+            FavoriteAuthorsStats(navController = navController)
         }
     }
 }

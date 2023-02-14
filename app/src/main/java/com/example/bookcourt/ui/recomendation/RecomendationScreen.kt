@@ -53,9 +53,8 @@ fun RecomendationContent(
 ) {
     var context = LocalContext.current
     LaunchedEffect(key1 = Unit) {
-        if (viewModel.isFirstDataLoading && viewModel.allBooks.isEmpty()) {
+        if (viewModel.isFirstDataLoading && viewModel.validBooks.isEmpty()) {
             viewModel.getAllBooks(context)
-            viewModel.isFirstDataLoading = false
         }
     }
 

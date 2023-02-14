@@ -27,6 +27,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.navigation.NavController
@@ -34,6 +35,7 @@ import com.example.bookcourt.R
 import com.example.bookcourt.ui.theme.*
 import com.example.bookcourt.utils.BottomBarScreen
 import com.example.bookcourt.utils.PhoneNumberVisualTransformation
+import com.example.bookcourt.utils.SplashViewModel
 import com.example.bookcourt.utils.isPermanentlyDenied
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
@@ -41,15 +43,18 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 
 
-@RequiresApi(Build.VERSION_CODES.O)
+
 @Composable
-fun SignInScreen(navController: NavController, mViewModel: SignInViewModel) {
+fun SignInScreen(
+    navController: NavController,
+    mViewModel: SignInViewModel = hiltViewModel()
+) {
     // после прожатия кнопки показывать прогресс бар
-    var dataIsReady = mViewModel.dataIsReady
-    if(dataIsReady){
-        navController.popBackStack()
-        navController.navigate(route = BottomBarScreen.Recomendations.route)
-    }else{
+//    var dataIsReady = mViewModel.dataIsReady
+//    if(dataIsReady){
+//        navController.popBackStack()
+//        navController.navigate(route = BottomBarScreen.Recomendations.route)
+//    }else{
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier.fillMaxSize()
@@ -72,7 +77,7 @@ fun SignInScreen(navController: NavController, mViewModel: SignInViewModel) {
         }
     }
 
-}
+//}
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -132,10 +137,8 @@ fun AuthFields(navController: NavController, mViewModel: SignInViewModel) {
                     .clickable {
                         if (mViewModel.isValidPhone()) {
                             mViewModel.editPrefs()
-                            mViewModel.saveUser()
                             mViewModel.onCheckedChanged()
-//                            navController.popBackStack()
-//                            navController.navigate(route = BottomBarScreen.Recomendations.route)
+                            mViewModel.saveUser(navController)
                         } else {
                             validationState.value = false
                         }
@@ -206,69 +209,6 @@ fun TextBlock(
 }
 
 
-@RequiresApi(Build.VERSION_CODES.O)
-@Composable
-fun SignInScreenOld(navController: NavController, mViewModel: SignInViewModel) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White),
-    ) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            TextField(
-                value = mViewModel.name,
-                onValueChange = { mViewModel.onNameChanged(it) },
-                colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = Color.Gray,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    disabledIndicatorColor = Color.Transparent
-                )
-            )
-            Spacer(modifier = Modifier.height(10.dp))
-            TextField(
-                value = mViewModel.surname,
-                onValueChange = { mViewModel.onSurnameChanged(it) },
-                colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = Color.Gray,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    disabledIndicatorColor = Color.Transparent
-                )
-            )
-            Spacer(modifier = Modifier.height(10.dp))
-            TextField(
-                value = mViewModel.phoneNumber,
-                onValueChange = { mViewModel.onPhoneChanged(it) },
-                colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = Color.Gray,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    disabledIndicatorColor = Color.Transparent
-                )
-            )
-            CustomCheckBox(
-                text = "Запомнить меня",
-                value = mViewModel.isRememberMe,
-                onCheckedChange = { mViewModel.onCheckedChanged() }
-            )
-            Button(onClick = {
-                navController.popBackStack()
-                navController.navigate(route = BottomBarScreen.Recomendations.route)
-                mViewModel.editPrefs()
-            }) { }
-            Button(onClick = {
-                navController.popBackStack()
-                navController.navigate(route = BottomBarScreen.Recomendations.route)
-                mViewModel.editPrefs()
-            }) { }
-        }
-    }
-}
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable

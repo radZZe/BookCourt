@@ -48,12 +48,12 @@ class MainActivity : ComponentActivity() {
         setContent {
             BookCourtTheme {
                 val navController: NavHostController = rememberNavController()
-                val splashScreenViewModel: SplashViewModel by viewModels()
-                val signInScreenViewModel: SignInViewModel by viewModels()
-                val statisticsViewModel: StatisticsViewModel by viewModels()
-                val recomendationViewmodel: RecomendationViewModel by viewModels()
-                var context = LocalContext.current
-//                recomendationViewmodel.getAllBooks(context)
+//                val splashScreenViewModel: SplashViewModel by viewModels()
+//                val signInScreenViewModel: SignInViewModel by viewModels()
+//                val statisticsViewModel: StatisticsViewModel by viewModels()
+//                val recomendationViewmodel: RecomendationViewModel by viewModels()
+//                var context = LocalContext.current
+////                recomendationViewmodel.getAllBooks(context)
 
                 Scaffold(
 //                    bottomBar = { com.example.bookcourt.utils.BottomNavigation(navController = navController) }
@@ -61,7 +61,7 @@ class MainActivity : ComponentActivity() {
                     Column(
                         modifier = Modifier.fillMaxSize(),
                     ) {
-                        NavigationGraph(navController, splashScreenViewModel, signInScreenViewModel, statisticsViewModel)
+                        NavigationGraph(navController)
                     }
                 }
             }
