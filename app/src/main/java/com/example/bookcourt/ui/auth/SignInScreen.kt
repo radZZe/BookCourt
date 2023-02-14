@@ -27,6 +27,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.navigation.NavController
@@ -34,6 +35,7 @@ import com.example.bookcourt.R
 import com.example.bookcourt.ui.theme.*
 import com.example.bookcourt.utils.BottomBarScreen
 import com.example.bookcourt.utils.PhoneNumberVisualTransformation
+import com.example.bookcourt.utils.SplashViewModel
 import com.example.bookcourt.utils.isPermanentlyDenied
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
@@ -42,13 +44,16 @@ import com.google.android.gms.location.LocationServices
 
 
 @Composable
-fun SignInScreen(navController: NavController, mViewModel: SignInViewModel) {
+fun SignInScreen(
+    navController: NavController,
+    mViewModel: SignInViewModel = hiltViewModel()
+) {
     // после прожатия кнопки показывать прогресс бар
-    var dataIsReady = mViewModel.dataIsReady
-    if(dataIsReady){
-        navController.popBackStack()
-        navController.navigate(route = BottomBarScreen.Recomendations.route)
-    }else{
+//    var dataIsReady = mViewModel.dataIsReady
+//    if(dataIsReady){
+//        navController.popBackStack()
+//        navController.navigate(route = BottomBarScreen.Recomendations.route)
+//    }else{
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier.fillMaxSize()
@@ -71,7 +76,7 @@ fun SignInScreen(navController: NavController, mViewModel: SignInViewModel) {
         }
     }
 
-}
+//}
 
 @Composable
 fun AuthFields(navController: NavController, mViewModel: SignInViewModel) {
@@ -128,10 +133,9 @@ fun AuthFields(navController: NavController, mViewModel: SignInViewModel) {
                     .padding(top = 12.dp, bottom = 12.dp)
                     .clickable {
                         if (mViewModel.isValidPhone()) {
-                            mViewModel.saveUser()
+                            mViewModel.editPrefs()
                             mViewModel.onCheckedChanged()
-//                            navController.popBackStack()
-//                            navController.navigate(route = BottomBarScreen.Recomendations.route)
+                            mViewModel.saveUser(navController)
                         } else {
                             validationState.value = false
                         }

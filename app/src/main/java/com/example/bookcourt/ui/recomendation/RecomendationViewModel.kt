@@ -36,14 +36,10 @@ class RecomendationViewModel @Inject constructor(
 
     //    var allBooks = mutableStateOf<MutableList<Book>?>(null)
     var dataIsReady by mutableStateOf(false)
-    private var _allBooks = mutableStateListOf<Book>()
+//    private var _allBooks = mutableStateListOf<Book>()
     private var _validBooks = mutableStateListOf<Book>()
-    val validBooks: List<Book> = _validBooks
-    val allBooks: List<Book> = _allBooks
-    lateinit var data: MutableList<BookRemote>
-    lateinit var user: User
-
-    //    var readBooks = dataStoreRepository.getPref(readBooksList)
+    val validBooks:List<Book> = _validBooks
+//    var readBooks = dataStoreRepository.getPref(readBooksList)
 //    val isEmpty = mutableStateOf(false)
 //    val tutorState = dataStoreRepository.getBoolPref(isTutorChecked)
 //    var isScreenChanged = false //bullshit
@@ -54,39 +50,47 @@ class RecomendationViewModel @Inject constructor(
 
     fun getAllBooks(context: Context) {
         viewModelScope.launch(Dispatchers.IO) {
-//            val uid = async { dataStoreRepository.getPref(uuid).first() }
-            val uid = dataStoreRepository.getString34(uuid)
-            val user = async { userRepository.getUserById(uid!!) }
-            val allBooks = repository.getAllBooks(context)
-            data = Json.decodeFromString<MutableList<BookRemote>>("""$allBooks""")
+            val jobUserId = async { dataStoreRepository.getPref(DataStoreRepository.uuid) }
+            val userId = jobUserId.await()
+            jobUserId.cancel()
+            val jobUserIdValue = async{userId.first()}
+            val id = jobUserIdValue.await()
+            jobUserIdValue.cancel()
+            var test = 5;
+            val jobUser = async { userRepository.getUserById(id) }
+            val user = jobUser.await()
+            jobUser.cancel()
 
+            val readBooks = user.readBooksList
 
-            val readBooks = user.await().readBooksList
+            val job = async { repository.getAllBooks(context)!! }
+            val json = job.await()
+            job.cancel()
+            val data = Json.decodeFromString<MutableList<BookRemote>>("""$json""")
             val allBooksItems = data.map {
                 it.toBook()
             }
 
-            _allBooks.addAll(allBooksItems)
-
             if (readBooks.isEmpty()) {
-                _validBooks.addAll(_allBooks)
+                _validBooks.addAll(allBooksItems)
             } else {
-                var items = _allBooks.filter {
+                var items = allBooksItems.filter {
                     it !in readBooks
                 }
                 _validBooks.addAll(items)
             }
+            isFirstDataLoading = false
             dataIsReady = true
         }
     }
 
-    fun addElementToAllBooks(element: Book) {
-        _allBooks.add(element)
-    }
-
-    fun deleteElementFromAllBooks(element: Book) {
-        _allBooks.remove(element)
-    }
+//    fun addElementToAllBooks(element: Book) {
+//        _allBooks.add(element)
+//    }
+//
+//    fun deleteElementFromAllBooks(element: Book) {
+//        _allBooks.remove(element)
+//    }
 
     fun metricSwipeLeft(book: Book) {
         var userAction =

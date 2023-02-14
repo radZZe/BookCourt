@@ -20,8 +20,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.bookcourt.R
+import com.example.bookcourt.ui.auth.SignInViewModel
 import com.example.bookcourt.ui.statistics.StatisticsScreenRequest.AMOUNT_OF_BOOKS
 import com.example.bookcourt.ui.statistics.StatisticsScreenRequest.FAVORITE_AUTHORS
 import com.example.bookcourt.ui.statistics.StatisticsScreenRequest.FAVORITE_GENRES
@@ -107,7 +109,7 @@ fun FavoriteAuthorsStats(navController: NavController, mViewModel: StatisticsVie
 }
 
 @Composable
-fun FavoriteGenresStats(navController: NavController, mViewModel: StatisticsViewModel) {
+fun FavoriteGenresStats(navController: NavController, mViewModel: StatisticsViewModel = hiltViewModel()) {
     LaunchedEffect(key1 = Unit) {
         mViewModel.getUserStats()
     }
@@ -144,7 +146,7 @@ fun FavoriteGenresStats(navController: NavController, mViewModel: StatisticsView
 }
 
 @Composable
-fun ReadBooksStats(navController: NavController, mViewModel: StatisticsViewModel) {
+fun ReadBooksStats(navController: NavController, mViewModel: StatisticsViewModel = hiltViewModel()) {
 //    val booksAmount = mViewModel.booksAmount.collectAsState(initial = "").value.split(" ").size
     LaunchedEffect(key1 = Unit) {
         mViewModel.getUserStats()

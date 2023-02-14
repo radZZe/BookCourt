@@ -1,6 +1,7 @@
 package com.example.bookcourt.data.repositories
 
 import android.content.Context
+import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
 import androidx.datastore.preferences.preferencesDataStore
@@ -40,12 +41,14 @@ class DataStoreRepository(val context: Context) {
         dataStore.edit { pref->
             pref[prefKey] = prefValue
         }
+        Log.d("DATASTORE","setPref отработал Bool")
     }
 
     suspend fun setPref(prefValue: String, prefKey: Preferences.Key<String>) {
         dataStore.edit { pref->
             pref[prefKey] = prefValue
         }
+        Log.d("DATASTORE","setPref отработал String ${prefValue}")
     }
 
     suspend fun setPref(prefValue: Int, prefKey: Preferences.Key<Int>) {
