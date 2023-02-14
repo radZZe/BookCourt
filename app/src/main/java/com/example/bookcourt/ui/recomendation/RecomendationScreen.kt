@@ -38,13 +38,11 @@ import com.example.bookcourt.ui.theme.CustomButton
 import com.example.bookcourt.ui.theme.TutorialGreeting
 import com.example.bookcourt.utils.*
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun RecomendationScreen(navController: NavController) {
     RecomendationContent(navController)
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun RecomendationContent(

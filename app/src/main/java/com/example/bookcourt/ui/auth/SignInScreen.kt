@@ -41,7 +41,6 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun SignInScreen(navController: NavController, mViewModel: SignInViewModel) {
     // после прожатия кнопки показывать прогресс бар
@@ -74,8 +73,6 @@ fun SignInScreen(navController: NavController, mViewModel: SignInViewModel) {
 
 }
 
-
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AuthFields(navController: NavController, mViewModel: SignInViewModel) {
     var validationState = remember { mutableStateOf(true) }
@@ -131,7 +128,6 @@ fun AuthFields(navController: NavController, mViewModel: SignInViewModel) {
                     .padding(top = 12.dp, bottom = 12.dp)
                     .clickable {
                         if (mViewModel.isValidPhone()) {
-                            mViewModel.editPrefs()
                             mViewModel.saveUser()
                             mViewModel.onCheckedChanged()
 //                            navController.popBackStack()
@@ -202,71 +198,6 @@ fun TextBlock(
                 imeAction = ImeAction.Next
             ),
         )
-    }
-}
-
-
-@RequiresApi(Build.VERSION_CODES.O)
-@Composable
-fun SignInScreenOld(navController: NavController, mViewModel: SignInViewModel) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White),
-    ) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            TextField(
-                value = mViewModel.name,
-                onValueChange = { mViewModel.onNameChanged(it) },
-                colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = Color.Gray,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    disabledIndicatorColor = Color.Transparent
-                )
-            )
-            Spacer(modifier = Modifier.height(10.dp))
-            TextField(
-                value = mViewModel.surname,
-                onValueChange = { mViewModel.onSurnameChanged(it) },
-                colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = Color.Gray,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    disabledIndicatorColor = Color.Transparent
-                )
-            )
-            Spacer(modifier = Modifier.height(10.dp))
-            TextField(
-                value = mViewModel.phoneNumber,
-                onValueChange = { mViewModel.onPhoneChanged(it) },
-                colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = Color.Gray,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    disabledIndicatorColor = Color.Transparent
-                )
-            )
-            CustomCheckBox(
-                text = "Запомнить меня",
-                value = mViewModel.isRememberMe,
-                onCheckedChange = { mViewModel.onCheckedChanged() }
-            )
-            Button(onClick = {
-                navController.popBackStack()
-                navController.navigate(route = BottomBarScreen.Recomendations.route)
-                mViewModel.editPrefs()
-            }) { }
-            Button(onClick = {
-                navController.popBackStack()
-                navController.navigate(route = BottomBarScreen.Recomendations.route)
-                mViewModel.editPrefs()
-            }) { }
-        }
     }
 }
 

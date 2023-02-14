@@ -4,8 +4,6 @@ import android.content.Context
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -18,12 +16,11 @@ import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKey
 import com.example.bookcourt.data.repositories.MetricsRepository
 import com.example.bookcourt.data.room.UserRepository
 import com.example.bookcourt.models.User
-import com.example.bookcourt.models.UserStatistics
 import com.example.bookcourt.utils.Hashing
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.io.IOException
 import java.util.*
 import java.util.regex.Pattern
@@ -65,27 +62,15 @@ class SignInViewModel @Inject constructor(
         city = newText
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun editPrefs() {
-        viewModelScope.launch(Dispatchers.IO) {
-//            var value = "AB" + name + phoneNumber
-            var UUID = hashing.getHash("AB$name$phoneNumber".toByteArray(), "SHA256")
-            metricRep.sendUserData(name, surname, phoneNumber, UUID)
-//            dataStoreRepository.setPref(surname, savedSurname)
-//            dataStoreRepository.setPref(name, savedName)
-//            dataStoreRepository.setPref(phoneNumber, savedPhoneNumber)
-            val job1 = async{dataStoreRepository.setPref(isRememberMe, isRemembered)}
-            job1.await()
-            val job2 = async{dataStoreRepository.setPref(city, savedCity)}
-            job2.await()
-            val job = async { dataStoreRepository.setPref(UUID, uuid) }
-            job.await()
-        }
-
+    private suspend fun editPrefs(UUID: String) {
+        metricRep.sendUserData(name, surname, phoneNumber, UUID)
+        dataStoreRepository.setPref(isRememberMe, isRemembered)
+        dataStoreRepository.setPref(city, savedCity)
+        dataStoreRepository.setPref(UUID, uuid)
     }
 
     fun saveUser() {
-        viewModelScope.launch(Dispatchers.IO) {
+        val job = viewModelScope.launch(Dispatchers.IO) {
             var UUID = hashing.getHash("AB$name$phoneNumber".toByteArray(), "SHA256")
             val user = User(
                 uid = UUID,
@@ -96,8 +81,11 @@ class SignInViewModel @Inject constructor(
                 readBooksList = mutableListOf(),
                 wantToRead = mutableListOf()
             )
-            val job = async { userRepository.addUser(user) }
-            job.await()
+            editPrefs(UUID)
+            userRepository.addUser(user)
+        }
+        runBlocking {
+            job.join()
             dataIsReady = true
         }
     }
@@ -124,15 +112,5 @@ class SignInViewModel @Inject constructor(
         val pattern =
             Pattern.compile("^((8|\\+7)[\\- ]?)?(\\(?\\d{3}\\)?[\\- ]?)?[\\d\\- ]{7,10}\$")
         return pattern.matcher(phoneNumber).matches()
-//        return Patterns.PHONE.matcher(phoneNumber).matches()
     }
-
-//    private fun askPermission() {
-//        ActivityCompat.requestPermissions(MainActivity.context)
-//    }
-//    fun signIn(onSuccess: () -> Unit) {
-//        if (isRememberMe) {
-//            editPrefs()
-//        }
-//    }
 }

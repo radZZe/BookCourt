@@ -28,7 +28,6 @@ class StatisticsViewModel @Inject constructor(
 
     val readBooks = mutableStateOf<MutableList<Book>?>(null)
     val wantToRead = mutableStateOf<MutableList<Book>?>(null)
-    lateinit var favGenresList: List<String>
 
     fun getUserStats() {
         val job = viewModelScope.launch(Dispatchers.IO) {
@@ -38,9 +37,8 @@ class StatisticsViewModel @Inject constructor(
         }
         runBlocking {
             job.join()
-            user.value?.let { getTopGenres(it) }
+            user.value?.let { getTopGenres() }
         }
-
     }
 
     suspend fun getReadBooksList(user: User) {
@@ -51,9 +49,9 @@ class StatisticsViewModel @Inject constructor(
         wantToRead.value = user.wantToRead as MutableList<Book>?
     }
 
-    fun getTopGenres(user: User): List<String> {
+    fun getTopGenres(): Map<String, Int> {
         var topGenreMap = mutableMapOf<String, Int>()
-        for (book in user.readBooksList) {
+        for (book in user.value!!.readBooksList) {
             if (topGenreMap.containsKey(book.bookInfo.genre)) {
                 var count = topGenreMap[book.bookInfo.genre]!!
                 topGenreMap[book.bookInfo.genre] = (count + 1)
@@ -61,8 +59,20 @@ class StatisticsViewModel @Inject constructor(
                 topGenreMap[book.bookInfo.genre] = 1
             }
         }
-        topGenreMap.toList().sortedByDescending { (_, value) -> value }.toMap()
-        return topGenreMap.keys.toList()
+        return topGenreMap.toList().sortedByDescending { (_, value) -> value }.toMap()
+    }
+
+    fun getTopAuthors(): Map<String, Int> {
+        var topGenreMap = mutableMapOf<String, Int>()
+        for (book in user.value!!.readBooksList) {
+            if (topGenreMap.containsKey(book.bookInfo.author)) {
+                var count = topGenreMap[book.bookInfo.author]!!
+                topGenreMap[book.bookInfo.author] = (count + 1)
+            } else {
+                topGenreMap[book.bookInfo.author] = 1
+            }
+        }
+        return topGenreMap.toList().sortedByDescending { (_, value) -> value }.toMap()
     }
 
 }
