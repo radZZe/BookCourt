@@ -8,6 +8,7 @@ import com.example.bookcourt.data.repositories.NetworkRepository
 import com.example.bookcourt.data.room.UserRepository
 import com.example.bookcourt.models.Book
 import com.example.bookcourt.models.User
+import com.example.bookcourt.ui.statistics.StatisticsScreenRequest.AMOUNT_OF_BOOKS
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -25,6 +26,7 @@ class StatisticsViewModel @Inject constructor(
     private val userId = dataStoreRepository.getPref(DataStoreRepository.uuid)
 
     var user = mutableStateOf<User?>(null)
+    val currentScreen = mutableStateOf<String>(AMOUNT_OF_BOOKS)
 
     val readBooks = mutableStateOf<MutableList<Book>?>(null)
     val wantToRead = mutableStateOf<MutableList<Book>?>(null)
@@ -74,7 +76,6 @@ class StatisticsViewModel @Inject constructor(
         }
         return topGenreMap.toList().sortedByDescending { (_, value) -> value }.toMap()
     }
-
 }
 
 //    suspend fun getTopGenres(): List<String> {

@@ -32,11 +32,29 @@ import com.example.bookcourt.utils.BottomBarScreen
 import com.example.bookcourt.utils.Screens
 
 @Composable
-fun FavoriteAuthorsStats(navController: NavController, mViewModel: StatisticsViewModel = hiltViewModel()) {
-    val topAuthors = mViewModel.getTopAuthors()
+fun Stats(navController: NavController, mViewModel: StatisticsViewModel = hiltViewModel()) {
     LaunchedEffect(key1 = Unit) {
         mViewModel.getUserStats()
     }
+    when (mViewModel.currentScreen.value) {
+        AMOUNT_OF_BOOKS -> {
+            ReadBooksStats(navController = navController)
+        }
+        FAVORITE_AUTHORS -> {
+            FavoriteAuthorsStats(navController = navController)
+        }
+        else -> {
+            FavoriteGenresStats(navController = navController)
+        }
+    }
+}
+
+@Composable
+fun FavoriteAuthorsStats(navController: NavController, mViewModel: StatisticsViewModel = hiltViewModel()) {
+//    LaunchedEffect(key1 = Unit) {
+//        mViewModel.getUserStats()
+//    }
+    val topAuthors = mViewModel.getTopAuthors()
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
@@ -45,8 +63,9 @@ fun FavoriteAuthorsStats(navController: NavController, mViewModel: StatisticsVie
             .clip(RoundedCornerShape(60.dp))
             .background(Color(0xFFA39C9A))
             .clickable {
-                navController.popBackStack()
-                navController.navigate(Screens.StatisticsFavGenres.route)
+                mViewModel.currentScreen.value = FAVORITE_GENRES
+//                navController.popBackStack()
+//                navController.navigate(Screens.StatisticsFavGenres.route)
             }
     ) {
         Image(
@@ -110,9 +129,9 @@ fun FavoriteAuthorsStats(navController: NavController, mViewModel: StatisticsVie
 
 @Composable
 fun FavoriteGenresStats(navController: NavController, mViewModel: StatisticsViewModel = hiltViewModel()) {
-    LaunchedEffect(key1 = Unit) {
-        mViewModel.getUserStats()
-    }
+//    LaunchedEffect(key1 = Unit) {
+//        mViewModel.getUserStats()
+//    }
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
@@ -121,8 +140,9 @@ fun FavoriteGenresStats(navController: NavController, mViewModel: StatisticsView
             .clip(RoundedCornerShape(60.dp))
             .background(Color(0xFF524E4E))
             .clickable {
-                navController.popBackStack()
-                navController.navigate(Screens.StatisticsRead.route)
+                mViewModel.currentScreen.value = AMOUNT_OF_BOOKS
+//                navController.popBackStack()
+//                navController.navigate(Screens.StatisticsRead.route)
             }
     ) {
         Column(
@@ -148,9 +168,9 @@ fun FavoriteGenresStats(navController: NavController, mViewModel: StatisticsView
 @Composable
 fun ReadBooksStats(navController: NavController, mViewModel: StatisticsViewModel = hiltViewModel()) {
 //    val booksAmount = mViewModel.booksAmount.collectAsState(initial = "").value.split(" ").size
-    LaunchedEffect(key1 = Unit) {
-        mViewModel.getUserStats()
-    }
+//    LaunchedEffect(key1 = Unit) {
+//        mViewModel.getUserStats()
+//    }
     val booksAmount = mViewModel.readBooks.value?.size
     val string = if (booksAmount == 1) "книга" else if (booksAmount in 2..4) "книги" else "книг"
     Box(
@@ -159,8 +179,9 @@ fun ReadBooksStats(navController: NavController, mViewModel: StatisticsViewModel
             .padding(10.dp)
             .clip(RoundedCornerShape(60.dp))
             .clickable {
-                navController.popBackStack()
-                navController.navigate(Screens.StatisticsFavAuthors.route)
+                mViewModel.currentScreen.value = FAVORITE_AUTHORS
+//                navController.popBackStack()
+//                navController.navigate(Screens.StatisticsFavAuthors.route)
             }
     ) {
         Column(
@@ -656,76 +677,6 @@ fun ShelfWall(modifier: Modifier) {
 }
 
 @Composable
-fun Genres(mViewModel: StatisticsViewModel) {
-    val genresMap = mViewModel.getTopGenres()
-    var top1 = ""
-    var top2 = ""
-    var top3 = ""
-    if (genresMap.keys.toList().size >= 3) {
-        top1 = genresMap.keys.toList()[0]
-        top2 = genresMap.keys.toList()[1]
-        top3 = genresMap.keys.toList()[2]
-    } else if (genresMap.keys.toList().size >= 2) {
-        top1 = genresMap.keys.toList()[0]
-        top2 = genresMap.keys.toList()[1]
-    } else if (genresMap.keys.toList().size >= 1) {
-        top1 = genresMap.keys.toList()[0]
-    } else {
-        top1 = "Пусто..."
-    }
-    Column(
-        modifier = Modifier
-            .wrapContentHeight()
-            .fillMaxWidth()
-            .padding(10.dp),
-        horizontalAlignment = Alignment.End
-    ) {
-        Text(
-            text = top1,
-            fontFamily = Manrope,
-            fontWeight = FontWeight.ExtraBold,
-            color = Color.White,
-            fontSize = 28.sp,
-            modifier = Modifier.padding(bottom = 52.dp)
-        )
-        Text(
-            text = top2,
-            fontFamily = Manrope,
-            fontWeight = FontWeight.ExtraBold,
-            color = Color.White,
-            fontSize = 28.sp,
-            modifier = Modifier.padding(bottom = 52.dp)
-        )
-        Text(
-            text = top3,
-            fontFamily = Manrope,
-            fontWeight = FontWeight.ExtraBold,
-            color = Color.White,
-            fontSize = 28.sp,
-            modifier = Modifier.padding(bottom = 22.dp)
-        )
-    }
-}
-
-//@Composable
-//fun bookGenre(genre: String, books: Int) {
-//    Box(modifier = Modifier
-//        .wrapContentHeight()
-//        .fillMaxWidth()
-//    ) {
-//        DisplayBooks(books = books, modifier = Modifier)
-//        Text(
-//            text = genre,
-//            fontFamily = Manrope,
-//            fontWeight = FontWeight.ExtraBold,
-//            color = Color.White,
-//            fontSize = 28.sp,
-//            modifier = Modifier.padding(bottom = 52.dp)
-//        )
-//    }
-//}
-
-@Composable
 fun DisplayGenresShelves(mViewModel: StatisticsViewModel) {
     val genresMap = mViewModel.getTopGenres()
     var top1Genre = ""
@@ -841,8 +792,6 @@ fun DisplayGenresShelves(mViewModel: StatisticsViewModel) {
             )
         }
     }
-//        Genres(mViewModel)
-
 }
 
 @Composable

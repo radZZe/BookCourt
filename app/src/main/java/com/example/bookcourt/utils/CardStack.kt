@@ -46,7 +46,6 @@ import com.example.bookcourt.ui.theme.Manrope
 import com.example.bookcourt.ui.theme.CustomButton
 import kotlin.math.roundToInt
 
-@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun CardStack(
@@ -121,7 +120,7 @@ fun CardStack(
         ) {
             CustomButton(text = "Посмотреть статистику") {
                 navController.popBackStack()
-                navController.navigate(route = Screens.StatisticsRead.route)
+                navController.navigate(route = Screens.Stats.route)
             }
         }
     }

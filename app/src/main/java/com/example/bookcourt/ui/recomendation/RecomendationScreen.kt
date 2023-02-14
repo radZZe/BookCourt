@@ -96,7 +96,7 @@ fun RecomendationContent(
                 ) {
                     CustomButton(text = "Посмотреть статистику") {
                         navController.popBackStack()
-                        navController.navigate(route = Screens.StatisticsRead.route)
+                        navController.navigate(route = Screens.Stats.route)
                     }
                 }
 //                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -164,7 +164,8 @@ fun BookCardImage(
                     .zIndex(1f),
                 onClick = {
                     navController.popBackStack()
-                    navController.navigate(route = Screens.StatisticsRead.route)
+//                    navController.navigate(route = Screens.StatisticsRead.route)
+                    navController.navigate(route = Screens.Stats.route)
                 }
             )
         }
