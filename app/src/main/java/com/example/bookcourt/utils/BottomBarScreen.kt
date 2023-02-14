@@ -13,6 +13,7 @@ sealed class Screens(
     object StatisticsRead : Screens(route = "STATS_READ", title = "STATS")
     object StatisticsFavGenres : Screens(route = "STATS_GENRES", title = "STATS")
     object StatisticsFavAuthors : Screens(route = "STATS_AUTHORS", title = "STATS")
+    object Stats : Screens(route = "STATS", title = "STATS")
 }
 
 sealed class BottomBarScreen(

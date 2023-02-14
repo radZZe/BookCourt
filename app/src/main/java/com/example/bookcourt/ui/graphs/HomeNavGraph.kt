@@ -1,8 +1,5 @@
 package com.example.bookcourt.ui.graphs
 
-import com.example.bookcourt.ui.statistics.FavoriteAuthorsStats
-import com.example.bookcourt.ui.statistics.FavoriteGenresStats
-import com.example.bookcourt.ui.statistics.ReadBooksStats
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
@@ -17,7 +14,7 @@ import com.example.bookcourt.ui.CardInfoScreen
 import com.example.bookcourt.ui.RecomendationScreen
 import com.example.bookcourt.ui.auth.SignInScreen
 import com.example.bookcourt.ui.auth.SignInViewModel
-import com.example.bookcourt.ui.statistics.StatisticsViewModel
+import com.example.bookcourt.ui.statistics.*
 import com.example.bookcourt.utils.BottomBarScreen
 import com.example.bookcourt.utils.Screens
 import com.example.bookcourt.utils.SplashScreen
@@ -107,14 +104,17 @@ fun NavigationGraph(
 //            CardInfoScreen(navController,book)
         }
 
-        composable(Screens.StatisticsRead.route) {
-            ReadBooksStats(navController = navController)
-        }
-        composable(Screens.StatisticsFavGenres.route) {
-            FavoriteGenresStats(navController = navController)
-        }
-        composable(Screens.StatisticsFavAuthors.route) {
-            FavoriteAuthorsStats(navController = navController)
+//        composable(Screens.StatisticsRead.route) {
+//            ReadBooksStats(navController = navController)
+//        }
+//        composable(Screens.StatisticsFavGenres.route) {
+//            FavoriteGenresStats(navController = navController)
+//        }
+//        composable(Screens.StatisticsFavAuthors.route) {
+//            FavoriteAuthorsStats(navController = navController)
+//        }
+        composable(Screens.Stats.route) {
+            Stats(navController = navController)
         }
     }
 }

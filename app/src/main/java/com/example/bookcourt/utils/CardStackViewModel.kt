@@ -39,7 +39,7 @@ class CardStackViewModel @Inject constructor(
     var direction = mutableStateOf<String?>(null)
     var counter by mutableStateOf(0)
 
-    var currentItem = if(allBooks.isNotEmpty()) allBooks[i] else null //КОСТЫЛЬ
+    var currentItem = if(allBooks.isNotEmpty()) allBooks[i] else null //КОСТЫЛЬ - че орешь?
     var readBooks = mutableListOf<Book>()
     var wantToRead = mutableListOf<Book>()
 
@@ -84,6 +84,8 @@ class CardStackViewModel @Inject constructor(
     ): User {
         user.readBooksList.addAll(readBooksList)
         user.wantToRead.addAll(wantToReadList)
+        readBooks.clear()
+        wantToRead.clear()
         return user
     }
 
