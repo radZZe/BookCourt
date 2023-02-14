@@ -43,7 +43,6 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 
 
-
 @Composable
 fun SignInScreen(
     navController: NavController,
@@ -79,8 +78,6 @@ fun SignInScreen(
 
 //}
 
-
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AuthFields(navController: NavController, mViewModel: SignInViewModel) {
     var validationState = remember { mutableStateOf(true) }
@@ -207,8 +204,6 @@ fun TextBlock(
         )
     }
 }
-
-
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable

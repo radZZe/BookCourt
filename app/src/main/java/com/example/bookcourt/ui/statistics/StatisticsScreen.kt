@@ -1,8 +1,5 @@
 package com.example.bookcourt.ui.statistics
 
-import com.example.bookcourt.ui.statistics.StatisticsScreenRequest.AMOUNT_OF_BOOKS
-import com.example.bookcourt.ui.statistics.StatisticsScreenRequest.FAVORITE_AUTHORS
-import com.example.bookcourt.ui.statistics.StatisticsScreenRequest.FAVORITE_GENRES
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -11,7 +8,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,12 +24,16 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.bookcourt.R
 import com.example.bookcourt.ui.auth.SignInViewModel
+import com.example.bookcourt.ui.statistics.StatisticsScreenRequest.AMOUNT_OF_BOOKS
+import com.example.bookcourt.ui.statistics.StatisticsScreenRequest.FAVORITE_AUTHORS
+import com.example.bookcourt.ui.statistics.StatisticsScreenRequest.FAVORITE_GENRES
 import com.example.bookcourt.ui.theme.*
 import com.example.bookcourt.utils.BottomBarScreen
 import com.example.bookcourt.utils.Screens
 
 @Composable
-fun FavoriteAuthorsStats(navController: NavController, mViewModel: StatisticsViewModel = hiltViewModel()) {
+fun FavoriteAuthorsStats(navController: NavController, mViewModel: StatisticsViewModel) {
+    val topAuthors = mViewModel.getTopAuthors()
     LaunchedEffect(key1 = Unit) {
         mViewModel.getUserStats()
     }
@@ -68,6 +70,39 @@ fun FavoriteAuthorsStats(navController: NavController, mViewModel: StatisticsVie
                 fontSize = 32.sp,
                 modifier = Modifier.padding(start = 45.dp)
             )
+            if (topAuthors.size >= 3) {
+                Column(modifier = Modifier
+                    .wrapContentHeight()
+                    .fillMaxWidth()) {
+                    Text(
+                        text = topAuthors.keys.toList()[0],
+                        fontFamily = Manrope,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = Color.White,
+                        fontSize = 26.sp,
+                        modifier = Modifier.padding(start = 45.dp)
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = topAuthors.keys.toList()[1],
+                        fontFamily = Manrope,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = Color.White,
+                        fontSize = 26.sp,
+                        modifier = Modifier.padding(start = 45.dp)
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = topAuthors.keys.toList()[2],
+                        fontFamily = Manrope,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = Color.White,
+                        fontSize = 26.sp,
+                        modifier = Modifier.padding(start = 45.dp)
+                    )
+                }
+            }
+
             ShareApp(textColor = Color.White)
         }
     }
@@ -177,10 +212,13 @@ fun ReadBooksStats(navController: NavController, mViewModel: StatisticsViewModel
                     BookShelves(booksAmount = booksAmount)
                 } else {
                     BookShelves(booksAmount = 12)
-                    BookShelf(booksAmount = booksAmount - 12)
+                    if (booksAmount - 12 >= 10) {
+                        BookShelf(booksAmount = 10)
+                    } else {
+                        BookShelf(booksAmount = booksAmount - 12)
+                    }
                 }
             }
-
             ShareApp(TextBrown)
         }
     }
@@ -188,7 +226,6 @@ fun ReadBooksStats(navController: NavController, mViewModel: StatisticsViewModel
 
 @Composable
 fun TopBar(navController: NavController, rq: String) {
-
     Column(
         modifier = Modifier
             .wrapContentHeight()
@@ -410,65 +447,7 @@ fun DisplayBooks(books: Int, modifier: Modifier) {
         listOf(Color(0xFF9C4C43), Color(0xFF351C18)),
         listOf(Color(0xFF004963), Color(0xFF233237)),
         listOf(Color(0xFF89905A), Color(0xFF2E3527)),
-        listOf(Color(0xFFE39C64), Color(0xFF6E3B14)),
-        listOf(Color(0xFF9C4C43), Color(0xFF351C18)),
-        listOf(Color(0xFF004963), Color(0xFF233237)),
-        listOf(Color(0xFF89905A), Color(0xFF2E3527)),
-        listOf(Color(0xFFE39C64), Color(0xFF6E3B14)),
-        listOf(Color(0xFF9C4C43), Color(0xFF351C18)),
-        listOf(Color(0xFF004963), Color(0xFF233237)),
-        listOf(Color(0xFF89905A), Color(0xFF2E3527)),
-        listOf(Color(0xFFE39C64), Color(0xFF6E3B14)),
-        listOf(Color(0xFF9C4C43), Color(0xFF351C18)),
-        listOf(Color(0xFF004963), Color(0xFF233237)),
-        listOf(Color(0xFF89905A), Color(0xFF2E3527)),
-        listOf(Color(0xFFE39C64), Color(0xFF6E3B14)),
-        listOf(Color(0xFF9C4C43), Color(0xFF351C18)),
-        listOf(Color(0xFF004963), Color(0xFF233237)),
-        listOf(Color(0xFF89905A), Color(0xFF2E3527)),
-        listOf(Color(0xFFE39C64), Color(0xFF6E3B14)),
-        listOf(Color(0xFF9C4C43), Color(0xFF351C18)),
-        listOf(Color(0xFF004963), Color(0xFF233237)),
-        listOf(Color(0xFF89905A), Color(0xFF2E3527)),
-        listOf(Color(0xFFE39C64), Color(0xFF6E3B14)),
-        listOf(Color(0xFF9C4C43), Color(0xFF351C18)),
-        listOf(Color(0xFF004963), Color(0xFF233237)),
-        listOf(Color(0xFF89905A), Color(0xFF2E3527)),
-        listOf(Color(0xFFE39C64), Color(0xFF6E3B14)),
-        listOf(Color(0xFF9C4C43), Color(0xFF351C18)),
-        listOf(Color(0xFF004963), Color(0xFF233237)),
-        listOf(Color(0xFF89905A), Color(0xFF2E3527)),
-        listOf(Color(0xFFE39C64), Color(0xFF6E3B14)),
-        listOf(Color(0xFF9C4C43), Color(0xFF351C18)),
-        listOf(Color(0xFF004963), Color(0xFF233237)),
-        listOf(Color(0xFF89905A), Color(0xFF2E3527)),
-        listOf(Color(0xFFE39C64), Color(0xFF6E3B14)),
-        listOf(Color(0xFF9C4C43), Color(0xFF351C18)),
-        listOf(Color(0xFF004963), Color(0xFF233237)),
-        listOf(Color(0xFF89905A), Color(0xFF2E3527)),
-        listOf(Color(0xFFE39C64), Color(0xFF6E3B14)),
-        listOf(Color(0xFF9C4C43), Color(0xFF351C18)),
-        listOf(Color(0xFF004963), Color(0xFF233237)),
-        listOf(Color(0xFF89905A), Color(0xFF2E3527)),
-        listOf(Color(0xFFE39C64), Color(0xFF6E3B14)),
-        listOf(Color(0xFF9C4C43), Color(0xFF351C18)),
-        listOf(Color(0xFF004963), Color(0xFF233237)),
-        listOf(Color(0xFF89905A), Color(0xFF2E3527)),
-        listOf(Color(0xFFE39C64), Color(0xFF6E3B14)),
-        listOf(Color(0xFF9C4C43), Color(0xFF351C18)),
-        listOf(Color(0xFF004963), Color(0xFF233237)),
-        listOf(Color(0xFF89905A), Color(0xFF2E3527)),
-        listOf(Color(0xFFE39C64), Color(0xFF6E3B14)),
-        listOf(Color(0xFF9C4C43), Color(0xFF351C18)),
-        listOf(Color(0xFF004963), Color(0xFF233237)),
-        listOf(Color(0xFF89905A), Color(0xFF2E3527)),
-        listOf(Color(0xFFE39C64), Color(0xFF6E3B14)),
-        listOf(Color(0xFF9C4C43), Color(0xFF351C18)),
-        listOf(Color(0xFF004963), Color(0xFF233237)),
-        listOf(Color(0xFF89905A), Color(0xFF2E3527)),
-        listOf(Color(0xFFE39C64), Color(0xFF6E3B14)),
-        listOf(Color(0xFF9C4C43), Color(0xFF351C18)),
-        listOf(Color(0xFF004963), Color(0xFF233237)),
+        listOf(Color(0xFFE39C64), Color(0xFF6E3B14))
     )
     Row(
         modifier = modifier,
@@ -664,8 +643,8 @@ fun ShelfWall(modifier: Modifier) {
             path = Path().apply {
                 moveTo(wallWidth, wall3DHeight)
                 lineTo(wallWidth, height)
-                lineTo(width, wallHeight + 30)
-                lineTo(width, 30f)
+                lineTo(width, wallHeight + 104)
+                lineTo(width, 104f)
                 close()
             }
             drawPath(
@@ -677,7 +656,23 @@ fun ShelfWall(modifier: Modifier) {
 }
 
 @Composable
-fun Genres() {
+fun Genres(mViewModel: StatisticsViewModel) {
+    val genresMap = mViewModel.getTopGenres()
+    var top1 = ""
+    var top2 = ""
+    var top3 = ""
+    if (genresMap.keys.toList().size >= 3) {
+        top1 = genresMap.keys.toList()[0]
+        top2 = genresMap.keys.toList()[1]
+        top3 = genresMap.keys.toList()[2]
+    } else if (genresMap.keys.toList().size >= 2) {
+        top1 = genresMap.keys.toList()[0]
+        top2 = genresMap.keys.toList()[1]
+    } else if (genresMap.keys.toList().size >= 1) {
+        top1 = genresMap.keys.toList()[0]
+    } else {
+        top1 = "Пусто..."
+    }
     Column(
         modifier = Modifier
             .wrapContentHeight()
@@ -685,9 +680,8 @@ fun Genres() {
             .padding(10.dp),
         horizontalAlignment = Alignment.End
     ) {
-
         Text(
-            text = "Комедия",
+            text = top1,
             fontFamily = Manrope,
             fontWeight = FontWeight.ExtraBold,
             color = Color.White,
@@ -695,7 +689,7 @@ fun Genres() {
             modifier = Modifier.padding(bottom = 52.dp)
         )
         Text(
-            text = "Трагедия",
+            text = top2,
             fontFamily = Manrope,
             fontWeight = FontWeight.ExtraBold,
             color = Color.White,
@@ -703,7 +697,7 @@ fun Genres() {
             modifier = Modifier.padding(bottom = 52.dp)
         )
         Text(
-            text = "Драма",
+            text = top3,
             fontFamily = Manrope,
             fontWeight = FontWeight.ExtraBold,
             color = Color.White,
@@ -713,45 +707,142 @@ fun Genres() {
     }
 }
 
+//@Composable
+//fun bookGenre(genre: String, books: Int) {
+//    Box(modifier = Modifier
+//        .wrapContentHeight()
+//        .fillMaxWidth()
+//    ) {
+//        DisplayBooks(books = books, modifier = Modifier)
+//        Text(
+//            text = genre,
+//            fontFamily = Manrope,
+//            fontWeight = FontWeight.ExtraBold,
+//            color = Color.White,
+//            fontSize = 28.sp,
+//            modifier = Modifier.padding(bottom = 52.dp)
+//        )
+//    }
+//}
+
 @Composable
 fun DisplayGenresShelves(mViewModel: StatisticsViewModel) {
+    val genresMap = mViewModel.getTopGenres()
+    var top1Genre = ""
+    var top1Books = 0
+    var top2Genre = ""
+    var top2Books = 0
+    var top3Genre = ""
+    var top3Books = 0
+    if (genresMap.keys.toList().size >= 3) {
+        top1Genre = genresMap.keys.toList()[0]
+        top1Books = genresMap.values.toList()[0]
+        top2Genre = genresMap.keys.toList()[1]
+        top2Books = genresMap.values.toList()[1]
+        top3Genre = genresMap.keys.toList()[2]
+        top3Books = genresMap.values.toList()[2]
+    } else if (genresMap.keys.toList().size >= 2) {
+        top1Genre = genresMap.keys.toList()[0]
+        top1Books = genresMap.values.toList()[0]
+        top2Genre = genresMap.keys.toList()[1]
+        top2Books = genresMap.values.toList()[1]
+    } else if (genresMap.keys.toList().size >= 1) {
+        top1Genre = genresMap.keys.toList()[0]
+        top1Books = genresMap.values.toList()[0]
+    } else {
+        top1Genre = "Пусто..."
+    }
+    if (top1Books >= 10) {
+        top1Books = 9
+    }
+    if (top2Books >= 10) {
+        top2Books = 9
+    }
+    if (top3Books >= 10) {
+        top3Books = 9
+    }
     Box(
         modifier = Modifier.wrapContentSize(),
         contentAlignment = Alignment.BottomStart
     ) {
+        ShelfDeck(
+            modifier = Modifier
+                .padding(start = 40.dp)
+                .fillMaxWidth()
+                .height(30.dp)
+        )
+        ShelfWall(
+            modifier = Modifier
+                .padding(start = 40.dp)
+                .width(60.dp)
+                .height(200.dp)
+        )
+        Box(
+            contentAlignment = Alignment.BottomEnd,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            DisplayBooks(books = top1Books, modifier = Modifier.padding(bottom = 6.dp))
+            Text(
+                text = top1Genre,
+                fontFamily = Manrope,
+                fontWeight = FontWeight.ExtraBold,
+                color = Color.White,
+                fontSize = 28.sp,
+                modifier = Modifier.padding(bottom = 10.dp)
+            )
+        }
+
 
         ShelfDeck(
             modifier = Modifier
-                .padding(start = 40.dp)
+                .padding(start = 40.dp, bottom = 140.dp)
                 .fillMaxWidth()
                 .height(30.dp)
         )
         ShelfWall(
             modifier = Modifier
-                .padding(start = 40.dp)
+                .padding(start = 40.dp, bottom = 140.dp)
                 .width(60.dp)
-                .height(120.dp)
+                .height(200.dp)
         )
+        Box(
+            contentAlignment = Alignment.BottomEnd,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            DisplayBooks(books = top2Books, modifier = Modifier.padding(bottom = 146.dp))
+            Text(
+                text = top2Genre,
+                fontFamily = Manrope,
+                fontWeight = FontWeight.ExtraBold,
+                color = Color.White,
+                fontSize = 28.sp,
+                modifier = Modifier.padding(bottom = 150.dp)
+            )
+        }
+
         ShelfDeck(
             modifier = Modifier
-                .padding(start = 40.dp, bottom = 90.dp)
+                .padding(start = 40.dp, bottom = 280.dp)
                 .fillMaxWidth()
                 .height(30.dp)
         )
-        ShelfWall(
-            modifier = Modifier
-                .padding(start = 40.dp, bottom = 90.dp)
-                .width(60.dp)
-                .height(120.dp)
-        )
-        ShelfDeck(
-            modifier = Modifier
-                .padding(start = 40.dp, bottom = 180.dp)
-                .fillMaxWidth()
-                .height(30.dp)
-        )
-        Genres()
+        Box(
+            contentAlignment = Alignment.BottomEnd,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            DisplayBooks(books = top3Books, modifier = Modifier.padding(bottom = 286.dp))
+            Text(
+                text = top3Genre,
+                fontFamily = Manrope,
+                fontWeight = FontWeight.ExtraBold,
+                color = Color.White,
+                fontSize = 28.sp,
+                modifier = Modifier.padding(bottom = 290.dp)
+            )
+        }
     }
+//        Genres(mViewModel)
+
 }
 
 @Composable
@@ -779,10 +870,8 @@ fun LongDeck(modifier: Modifier) {
     }
 }
 
-
 object StatisticsScreenRequest {
     val AMOUNT_OF_BOOKS = "AMOUNT_OF_BOOKS_RQ"
     val FAVORITE_GENRES = "FAVORITE_GENRES_RQ"
     val FAVORITE_AUTHORS = "FAVORITE_AUTHORS_RQ"
 }
-

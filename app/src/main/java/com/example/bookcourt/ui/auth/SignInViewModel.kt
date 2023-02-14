@@ -4,8 +4,6 @@ import android.content.Context
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.movableContentWithReceiverOf
 import androidx.compose.runtime.mutableStateOf
@@ -25,9 +23,9 @@ import com.example.bookcourt.utils.BottomBarScreen
 import com.example.bookcourt.utils.Hashing
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.runBlocking
 import java.io.IOException
 import java.util.*
 import java.util.regex.Pattern
@@ -132,15 +130,5 @@ class SignInViewModel @Inject constructor(
         val pattern =
             Pattern.compile("^((8|\\+7)[\\- ]?)?(\\(?\\d{3}\\)?[\\- ]?)?[\\d\\- ]{7,10}\$")
         return pattern.matcher(phoneNumber).matches()
-//        return Patterns.PHONE.matcher(phoneNumber).matches()
     }
-
-//    private fun askPermission() {
-//        ActivityCompat.requestPermissions(MainActivity.context)
-//    }
-//    fun signIn(onSuccess: () -> Unit) {
-//        if (isRememberMe) {
-//            editPrefs()
-//        }
-//    }
 }

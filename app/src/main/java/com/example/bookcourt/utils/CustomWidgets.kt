@@ -264,8 +264,6 @@ fun AutoCompleteTextField(
                 indication = rememberRipple(bounded = true),
                 onClick = { expanded = !expanded }
             )
-
-
             .onGloballyPositioned {
                 textFieldsSize = it.size.toSize()
             }
