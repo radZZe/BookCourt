@@ -301,6 +301,7 @@ fun AutoCompleteTextField(
                 isAvailable = false
                 focusManager.clearFocus()
                 isClearIconBtnVisible = false
+                textFieldValue = ""
             }
         }
     )
@@ -315,27 +316,41 @@ fun AutoCompleteTextField(
                     .heightIn(max = 150.dp)
                     .zIndex(2f)
             ) {
+
+
+
                     items(
-                        cities/*.filter {
-                            it.lowercase()
-                                .contains(textFieldValue.lowercase()) || it.lowercase()
-                                .contains("others")
-                        }
-                        */
-                            .sorted().also {
-                                Collections.swap(it,it.indexOf(OTHER_CITY),it.lastIndex)
+                        if (isAvailable){
+                            cities.apply {
+                                filterNot {
+                                    it.contains(OTHER_CITY)
+                                }
+                                filter {
+                                    it.lowercase()
+                                        .contains(textFieldValue.lowercase()) || it.lowercase()
+                                        .contains("others")
+                                }
+                                    sorted()
                             }
+                        }
+                        else{
+                            cities.sorted().also {
+                                    Collections.swap(it,it.indexOf(OTHER_CITY),it.lastIndex)
+                            }
+                        }
+
                     ) {
                         CityItem(title = it) { title ->
                             if (title== OTHER_CITY){
                                 isAvailable = true
-                                isClearIconBtnVisible = true
+                               // isClearIconBtnVisible = true
                                 focusRequester.requestFocus()
                                 textFieldValue = ""
                             }
                             else{
                                 textFieldValue = title
                             }
+                            isClearIconBtnVisible = true
                             expanded = false
                         }
                         if (isAvailable){
@@ -359,8 +374,6 @@ fun ClearIconBtn(isVisible:Boolean, onClick:()->Unit) {
             )
         }
     }
-
-
 }
 
 @Composable

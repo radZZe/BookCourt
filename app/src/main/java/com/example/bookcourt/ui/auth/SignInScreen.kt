@@ -33,10 +33,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.navigation.NavController
 import com.example.bookcourt.R
 import com.example.bookcourt.ui.theme.*
-import com.example.bookcourt.utils.BottomBarScreen
-import com.example.bookcourt.utils.PhoneNumberVisualTransformation
-import com.example.bookcourt.utils.SplashViewModel
-import com.example.bookcourt.utils.isPermanentlyDenied
+import com.example.bookcourt.utils.*
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -117,7 +114,12 @@ fun AuthFields(navController: NavController, mViewModel: SignInViewModel) {
                 mViewModel.phoneNumber,
                 keyboardType = KeyboardType.Phone,
                 visualTransformation = PhoneNumberVisualTransformation()
-            ) { mViewModel.onPhoneChanged(it) }
+            ) {
+                if(it.length<=12){
+                    mViewModel.onPhoneChanged(it)
+                }
+
+            }
             Spacer(modifier = Modifier.height(18.dp))
             AutoCompleteTextField(
                 "Город",
