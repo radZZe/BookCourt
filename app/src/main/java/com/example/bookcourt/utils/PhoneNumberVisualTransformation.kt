@@ -1,87 +1,55 @@
 package com.example.bookcourt.utils
 
-import android.telephony.PhoneNumberUtils
-import android.text.Selection
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
-import com.google.i18n.phonenumbers.PhoneNumberUtil
-import java.util.*
 
-class PhoneNumberVisualTransformation(
-    countryCode: String = Locale.getDefault().country
-) : VisualTransformation
-{
-
-    private val phoneNumberFormatter = PhoneNumberUtil.getInstance().getAsYouTypeFormatter(countryCode)
-
+const val mask = "+7 (xxx) xxx-xx-xx"
+class PhoneNumberVisualTransformation:VisualTransformation {
     override fun filter(text: AnnotatedString): TransformedText {
-        val transformation = reformat(text, Selection.getSelectionEnd(text))
+        val trimmed =
+            if (text.text.length >= 12) text.text.substring(0..11) else text.text
 
-        return TransformedText(AnnotatedString(transformation.formatted ?: ""), object :
-            OffsetMapping {
-            override fun originalToTransformed(offset: Int): Int {
-                return transformation.originalToTransformed[offset]
-            }
-            override fun transformedToOriginal(offset: Int): Int {
-                return transformation.transformedToOriginal[offset]
-            }
-        })
-    }
-
-    private fun reformat(s: CharSequence, cursor: Int): Transformation {
-        phoneNumberFormatter.clear()
-
-        val curIndex = cursor - 1
-        var formatted: String? = null
-        var lastNonSeparator = 0.toChar()
-        var hasCursor = false
-
-        s.forEachIndexed { index, char ->
-            if (PhoneNumberUtils.isNonSeparator(char)) {
-                if (lastNonSeparator.code != 0) {
-                    formatted = getFormattedNumber(lastNonSeparator, hasCursor)
-                    hasCursor = false
+        val annotatedString = AnnotatedString.Builder().run {
+            for (i in trimmed.indices) {
+                append(trimmed[i])
+                if (i == 1) {
+                    append(" (")
                 }
-                lastNonSeparator = char
+                if (i==4){
+                    append(") ")
+                }
+                if (i==7||i==9){
+                    append("-")
+                }
             }
-            if (index == curIndex) {
-                hasCursor = true
-            }
+            pushStyle(SpanStyle(color = Color.LightGray))
+            append(mask.takeLast(mask.length - length))
+            toAnnotatedString()
         }
 
-        if (lastNonSeparator.code != 0) {
-            formatted = getFormattedNumber(lastNonSeparator, hasCursor)
-        }
-        val originalToTransformed = mutableListOf<Int>()
-        val transformedToOriginal = mutableListOf<Int>()
-        var specialCharsCount = 0
-        formatted?.forEachIndexed { index, char ->
-            if (!PhoneNumberUtils.isNonSeparator(char)) {
-                specialCharsCount++
-            } else {
-                originalToTransformed.add(index)
+        val phoneNumberOffsetTranslator = object : OffsetMapping {
+            override fun originalToTransformed(offset: Int): Int {
+                if (offset <= 1) return offset
+                if (offset <= 4) return offset + 2
+                if (offset <= 7) return offset + 4
+                if (offset <= 9) return offset + 5
+                if (offset <= 12) return offset + 6
+                return 18
             }
-            transformedToOriginal.add(index - specialCharsCount)
-        }
-        originalToTransformed.add(originalToTransformed.maxOrNull()?.plus(1) ?: 0)
-        transformedToOriginal.add(transformedToOriginal.maxOrNull()?.plus(1) ?: 0)
 
-        return Transformation(formatted, originalToTransformed, transformedToOriginal)
+            override fun transformedToOriginal(offset: Int): Int {
+                if (offset <= 1) return offset
+                if (offset <= 4) return offset - 2
+                if (offset <= 7) return offset - 4
+                if (offset <= 9) return offset - 5
+                if (offset <= 12) return offset - 6
+                return 12
+            }
+        }
+        return TransformedText(annotatedString, phoneNumberOffsetTranslator)
     }
-
-    private fun getFormattedNumber(lastNonSeparator: Char, hasCursor: Boolean): String? {
-        return if (hasCursor) {
-            phoneNumberFormatter.inputDigitAndRememberPosition(lastNonSeparator)
-        } else {
-            phoneNumberFormatter.inputDigit(lastNonSeparator)
-        }
-    }
-
-    private data class Transformation(
-        val formatted: String?,
-        val originalToTransformed: List<Int>,
-        val transformedToOriginal: List<Int>
-    )
 }
