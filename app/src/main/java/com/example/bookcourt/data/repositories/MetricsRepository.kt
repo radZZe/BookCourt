@@ -1,15 +1,16 @@
 package com.example.bookcourt.data.repositories
 
+import android.content.Context
 import android.os.Build
+import android.provider.Settings
 import androidx.annotation.RequiresApi
 import androidx.compose.ui.platform.LocalContext
 import com.example.bookcourt.data.BackgroundService
 import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.uuid
-import com.example.bookcourt.models.AppSessionLength
-import com.example.bookcourt.models.Metric
-import com.example.bookcourt.models.UserAction
-import com.example.bookcourt.models.UserDataMetric
+import com.example.bookcourt.models.*
+import com.example.bookcourt.utils.Constants
 import com.example.bookcourt.utils.Hashing
+import com.example.bookcourt.utils.MetricType
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -100,10 +101,28 @@ class MetricsRepository @Inject constructor(
         }
     }
 
-    override suspend fun getOS(): String  = "android version: "+Build.VERSION.SDK_INT.toString()
     override suspend fun detectShare() {
         TODO("Not yet implemented")
     }
+
+    override suspend fun sendDeviceMetrics(context: Context) {
+        val deviceId = Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
+        val os =  "android version: "+Build.VERSION.RELEASE
+        val device = getDeviceModel()
+        val uuid = dataStoreRepository.getPref(uuid).collect().toString()
+        var json = Json.encodeToString(serializer = DeviceMetric.serializer(),
+            DeviceMetric(deviceId,device,os)
+        )
+        val metric = Metric(
+            type = MetricType.DEVICE_INFO ,
+            UUID = uuid,
+            GUID = deviceId,
+            data = json,
+            date =LocalDate.now().toString()
+        )
+        bgService.sendMetric(metric)
+    }
+
 }
 
 const val USER_DATA_TYPE ="userData"
