@@ -127,66 +127,6 @@ fun CardStack(
             }
         }
     }
-
-
-//    var i by remember {
-//        mutableStateOf(items.size - 1)
-//    }
-
-//    if (i != -1) viewModel.changeCurrentItem(items[i].value)
-
-//    if (viewModel.i == -1) {
-//        onEmptyStack()
-//    }
-
-//
-//    if(!isEmpty){
-//        ConstraintLayout(
-//            modifier = modifier
-//                .fillMaxWidth()
-//                .fillMaxHeight(0.75f)
-//                .padding(0.dp)
-//        ) {
-//            val stack = createRef()
-//
-//            Box(
-//                modifier = modifier
-//                    .constrainAs(stack) {
-//                        top.linkTo(parent.top)
-//                    }
-//                    .fillMaxHeight()
-//            ) {
-//                items.forEachIndexed { index, item ->
-//                    BookCard(
-//                        item,
-//                        viewModel,
-//                        limitSwipeValue,
-//                        index,
-//                        onSwipeLeft,
-//                        onSwipeRight,
-//                        onSwipeUp,
-//                        onSwipeDown,
-//                        thresholdConfig,
-//                        navController
-//                    )
-//                }
-//            }
-//        }
-//    }else{
-//        Box(
-//            modifier = Modifier
-//                .fillMaxSize()
-//                .padding(start = 24.dp, end = 24.dp),
-//            contentAlignment = Alignment.Center
-//        ) {
-//            CustomButton(text = "Посмотреть статистику") {
-//                navController.popBackStack()
-//                navController.navigate(route = Screens.Statistics.route)
-//            }
-//        }
-//    }
-
-
 }
 
 
