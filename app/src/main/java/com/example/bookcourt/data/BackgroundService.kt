@@ -1,11 +1,11 @@
 package com.example.bookcourt.data
 
 import android.util.Log
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import com.example.bookcourt.models.Metric
 import com.example.bookcourt.models.UserDataMetric
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
@@ -19,42 +19,30 @@ import javax.inject.Inject
 class BackgroundService @Inject constructor(
     private val client: OkHttpClient
 ) {
+//
+//    var stack = mutableStateListOf<Metric>()
+//
 
-    var stack = mutableStateOf(mutableListOf<Metric>())
+    fun sendMetric(metric: Metric) {
+        GlobalScope.launch(Dispatchers.IO) {
+            delay(1000)
+            var body = Json.encodeToString(
+                serializer = Metric.serializer(),
+                metric
+            )
+            var mediaType = "application/json".toMediaTypeOrNull();
+            var requestBody = RequestBody.create(
+                mediaType,
+                body
+            )
+            val request: Request = Request.Builder()
+                .url("https://bookcourttest-ee89c-default-rtdb.asia-southeast1.firebasedatabase.app/testMetric.json")
+                .method("POST", requestBody)
+                .addHeader("Content-Type", "application/json")
+                .build()
+            val response = client.newCall(request).execute()
+            Log.d("clientOk", response.code.toString())
 
-    fun addToStack(metric: Metric){
-
-
-        stack.value.add(metric)
-//         Реализацию в комментариях используйте для тестов другая реализация еще не готова
-        var body = Json.encodeToString(serializer = ListSerializer(Metric.serializer()),
-            listOf(metric)
-        )
-        Log.d("MetricUserData", body)
-
-    }
-
-
-    fun job(){
-//        GlobalScope.launch {
-//            stack.value.forEach{ metric ->
-//                var body = Json.encodeToString(serializer = Metric.serializer(),
-//                    metric
-//                )
-//                var mediaType = "application/json".toMediaTypeOrNull();
-//                var requestBody = RequestBody.create(
-//                    mediaType,
-//                    body
-//                )
-//                val request: Request = Request.Builder()
-//                    .url("https://bookcourttest-ee89c-default-rtdb.asia-southeast1.firebasedatabase.app/testMetric.json")
-//                    .method("GET", requestBody)
-//                    .addHeader("Content-Type", "application/json")
-//                    .build()
-//                val response = client.newCall(request).execute()
-//                Log.d("clientOk",response.code.toString())
-//                stack.value.remove(metric)
-//            }
-//        }
+        }
     }
 }
