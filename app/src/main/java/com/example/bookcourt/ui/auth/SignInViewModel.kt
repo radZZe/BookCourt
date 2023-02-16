@@ -37,12 +37,13 @@ class SignInViewModel @Inject constructor(
     private val userRepository: UserRepository
 ) : ViewModel() {
 
-    var dataIsReady by mutableStateOf(false)
     var name by mutableStateOf("")
     var surname by mutableStateOf("")
     var phoneNumber by mutableStateOf("+7")
     var isRememberMe by mutableStateOf(false)
     var city by mutableStateOf("")
+
+    var sessionTime = System.currentTimeMillis().toInt()
 
     fun onCheckedChanged() {
         isRememberMe = !isRememberMe
@@ -64,26 +65,15 @@ class SignInViewModel @Inject constructor(
         city = newText
     }
 
-
-    fun editPrefs() {
-        viewModelScope.launch(Dispatchers.IO) {
-//            var value = "AB" + name + phoneNumber
-            var UUID = hashing.getHash("AB$name$phoneNumber".toByteArray(), "SHA256")
-            var test = 5
-//            metricRep.sendUserData(name, surname, phoneNumber, UUID)
-//            dataStoreRepository.setPref(surname, savedSurname)
-//            dataStoreRepository.setPref(name, savedName)
-//            dataStoreRepository.setPref(phoneNumber, savedPhoneNumber)
+    private suspend fun editPrefs(UUID: String) {
             dataStoreRepository.setPref(isRememberMe, isRemembered)
             dataStoreRepository.setPref(city, savedCity)
             dataStoreRepository.setPref(UUID, uuid)
-        }
-
     }
 
     fun saveUser(navController:NavController) {
         viewModelScope.launch(Dispatchers.IO) {
-            var UUID = hashing.getHash("AB$name$phoneNumber".toByteArray(), "SHA256")
+            val UUID = hashing.getHash("AB$name$phoneNumber".toByteArray(), "SHA256")
             val user = User(
                 uid = UUID,
                 name = name,
@@ -93,15 +83,14 @@ class SignInViewModel @Inject constructor(
                 readBooksList = mutableListOf(),
                 wantToRead = mutableListOf()
             )
+            editPrefs(UUID)
             val job = async { userRepository.addUser(user) }
             job.await()
-//            dataIsReady = true
             withContext(Dispatchers.Main){
+                sessionTime = System.currentTimeMillis().toInt() - sessionTime
                 navController.popBackStack()
                 navController.navigate(route = BottomBarScreen.Recomendations.route)
             }
-//            navController.popBackStack()
-//            navController.navigate(route = BottomBarScreen.Recomendations.route)
         }
     }
 

@@ -39,6 +39,7 @@ import androidx.navigation.NavController
 import com.example.bookcourt.R
 import com.example.bookcourt.models.Book
 import com.example.bookcourt.models.BookInfo
+import com.example.bookcourt.models.User
 import com.example.bookcourt.ui.BookCardImage
 import com.example.bookcourt.ui.CardInfoScreen
 import com.example.bookcourt.ui.theme.Gilroy
@@ -49,6 +50,7 @@ import kotlin.math.roundToInt
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun CardStack(
+    user: User,
     modifier: Modifier = Modifier,
     itemsRaw: List<Book>,
     thresholdConfig: (Float, Float) -> ThresholdConfig = { _, _ -> FractionalThreshold(0.2f) },
@@ -97,6 +99,7 @@ fun CardStack(
             ) {
                 items.forEachIndexed { index, item ->
                     BookCard(
+                        user,
                         item,
                         viewModel,
                         limitSwipeValue,
@@ -190,6 +193,7 @@ fun CardStack(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun BookCard(
+    user: User,
     itemRaw: MutableState<Book>,
     viewModel: CardStackViewModel,
     limitSwipeValue: Int,
@@ -210,9 +214,12 @@ fun BookCard(
         //viewModel.dislikeBook(item.genre)
         //viewModel.readBooks(item.name)
         //onSwipeLeft(item)
-        viewModel.readBooks.add(item)
+
+//        viewModel.readBooks.add(item)
+        user.readBooksList.add(item)
         onSwipeLeft(item)
-        viewModel.updateUserStatistic()
+        viewModel.updateUserStatistic(user)
+
         viewModel.i--
         if (i != -1) viewModel.changeCurrentItem()
         viewModel.counter++
@@ -223,9 +230,11 @@ fun BookCard(
         // viewModel.likeBook(item.genre)
         //viewModel.readBooks(item.name)
         //onSwipeRight(item)
-        viewModel.readBooks.add(item)
+
+//        viewModel.readBooks.add(item)
         onSwipeRight(item)
-        viewModel.updateUserStatistic()
+        user.readBooksList.add(item)
+        viewModel.updateUserStatistic(user)
         viewModel.i--
         if (i != -1) viewModel.changeCurrentItem()
         viewModel.counter++
@@ -235,8 +244,10 @@ fun BookCard(
 
         //viewModel.wantToRead(item.name)
         //onSwipeUp(item)
-        viewModel.wantToRead.add(item)
-        viewModel.updateUserStatistic()
+
+//        viewModel.wantToRead.add(item)
+        user.wantToRead.add(item)
+        viewModel.updateUserStatistic(user)
         onSwipeUp(item)
         viewModel.i--
         if (i != -1) viewModel.changeCurrentItem()
@@ -307,7 +318,6 @@ fun BookCard(
             image = item.bookInfo.image
         )
         CardInfoScreen(
-            navController = navController,
             book = book,
             onClick = {
                 viewModel.isBookInfoDisplay.value = false

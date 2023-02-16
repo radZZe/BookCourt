@@ -21,18 +21,19 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 @HiltViewModel
 class RecomendationViewModel @Inject constructor(
-    val repository: NetworkRepository,
+    val networkRepository: NetworkRepository,
     private val dataStoreRepository: DataStoreRepository,
     private val metricRep: MetricsRepository,
     private val userRepository: UserRepository
 ) : ViewModel() {
+
+    lateinit var user : User
 
     //    var allBooks = mutableStateOf<MutableList<Book>?>(null)
     var dataIsReady by mutableStateOf(false)
@@ -50,35 +51,37 @@ class RecomendationViewModel @Inject constructor(
 
     fun getAllBooks(context: Context) {
         viewModelScope.launch(Dispatchers.IO) {
-            val jobUserId = async { dataStoreRepository.getPref(DataStoreRepository.uuid) }
-            val userId = jobUserId.await()
-            jobUserId.cancel()
-            val jobUserIdValue = async{userId.first()}
-            val id = jobUserIdValue.await()
-            jobUserIdValue.cancel()
-            var test = 5;
-            val jobUser = async { userRepository.getUserById(id) }
-            val user = jobUser.await()
-            jobUser.cancel()
+            val userId = dataStoreRepository.getPref(uuid)
+            user = userRepository.getUserById(userId.first())
+
+//            val jobUserId = async { dataStoreRepository.getPref(DataStoreRepository.uuid) }
+//            val userId = jobUserId.await()
+//            jobUserId.cancel()
+//            val jobUserIdValue = async{ userId.first() }
+//            val id = jobUserIdValue.await()
+//            jobUserIdValue.cancel()
+//            val jobUser = async { userRepository.getUserById(id) }
+//            val user = jobUser.await()
+//            jobUser.cancel()
 
             val readBooks = user.readBooksList
 
-            val job = async { repository.getAllBooks(context)!! }
+            val job = async { networkRepository.getAllBooks(context)!! }
             val json = job.await()
             job.cancel()
-            val data = Json.decodeFromString<MutableList<BookRemote>>("""$json""")
-            val allBooksItems = data.map {
-                it.toBook()
-            }
 
+            val data = Json.decodeFromString<MutableList<BookRemote>>("""$json""")
+
+            val allBooksItems = data.map { it.toBook() }
             if (readBooks.isEmpty()) {
                 _validBooks.addAll(allBooksItems)
             } else {
-                var items = allBooksItems.filter {
-                    it !in readBooks
+                var items = allBooksItems.filter { book ->
+                    book !in readBooks
                 }
                 _validBooks.addAll(items)
             }
+
             isFirstDataLoading = false
             dataIsReady = true
         }

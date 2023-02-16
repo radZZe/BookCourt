@@ -10,10 +10,8 @@ sealed class Screens(
     object SignIn : Screens(route = "SIGN_IN", title = "SIGN_IN")
     object Splash : Screens(route = "SPLASH", title = "SPLASH")
     object CardInfo : Screens(route = "CARD_INFO", title = "CARD_INFO")
-    object StatisticsRead : Screens(route = "STATS_READ", title = "STATS")
-    object StatisticsFavGenres : Screens(route = "STATS_GENRES", title = "STATS")
-    object StatisticsFavAuthors : Screens(route = "STATS_AUTHORS", title = "STATS")
     object Stats : Screens(route = "STATS", title = "STATS")
+
 }
 
 sealed class BottomBarScreen(

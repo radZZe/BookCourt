@@ -133,7 +133,6 @@ fun AuthFields(navController: NavController, mViewModel: SignInViewModel) {
                     .padding(top = 12.dp, bottom = 12.dp)
                     .clickable {
                         if (mViewModel.isValidPhone()) {
-                            mViewModel.editPrefs()
                             mViewModel.onCheckedChanged()
                             mViewModel.saveUser(navController)
                         } else {
