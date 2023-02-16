@@ -1,5 +1,6 @@
 package com.example.bookcourt.data.repositories
 
+import android.content.Context
 import com.example.bookcourt.models.Book
 import com.example.bookcourt.models.UserAction
 
@@ -27,9 +28,8 @@ interface MetricsRepositoryInterface {
 
     suspend fun getDeviceModel(): String
 
-    suspend fun getOS(): String
-
     suspend fun detectShare()
 
+    suspend fun sendDeviceMetrics(context: Context)
 
 }
