@@ -1,13 +1,15 @@
 package com.example.bookcourt.ui.statistics
 
+import android.graphics.Point
+import android.view.Display
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -16,20 +18,47 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.bookcourt.R
-import com.example.bookcourt.ui.auth.SignInViewModel
 import com.example.bookcourt.ui.statistics.StatisticsScreenRequest.AMOUNT_OF_BOOKS
 import com.example.bookcourt.ui.statistics.StatisticsScreenRequest.FAVORITE_AUTHORS
 import com.example.bookcourt.ui.statistics.StatisticsScreenRequest.FAVORITE_GENRES
 import com.example.bookcourt.ui.theme.*
 import com.example.bookcourt.utils.BottomBarScreen
-import com.example.bookcourt.utils.Screens
+
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun SwipableStats(navController: NavController) {
+    val swipeableState = rememberSwipeableState(initialValue = 0)
+    val sizePx = with(LocalDensity.current) {
+        300.dp.toPx()
+    }
+    val anchors = mapOf (
+        0f to 0,
+        sizePx to 1,
+        sizePx * 2 to 2
+    )
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .swipeable(
+                state = swipeableState,
+                anchors = anchors,
+                thresholds = { _, _ -> FractionalThreshold(0.3f) },
+                orientation = Orientation.Horizontal
+            )
+    ) {
+        ReadBooksStats(navController)
+    }
+}
 
 @Composable
 fun Stats(navController: NavController, mViewModel: StatisticsViewModel = hiltViewModel()) {
@@ -51,9 +80,6 @@ fun Stats(navController: NavController, mViewModel: StatisticsViewModel = hiltVi
 
 @Composable
 fun FavoriteAuthorsStats(navController: NavController, mViewModel: StatisticsViewModel = hiltViewModel()) {
-//    LaunchedEffect(key1 = Unit) {
-//        mViewModel.getUserStats()
-//    }
     val topAuthors = mViewModel.getTopAuthors()
     Box(
         contentAlignment = Alignment.Center,
@@ -64,14 +90,12 @@ fun FavoriteAuthorsStats(navController: NavController, mViewModel: StatisticsVie
             .background(Color(0xFFA39C9A))
             .clickable {
                 mViewModel.currentScreen.value = FAVORITE_GENRES
-//                navController.popBackStack()
-//                navController.navigate(Screens.StatisticsFavGenres.route)
             }
     ) {
         Image(
             painter = painterResource(id = R.drawable.authors_bg),
             contentDescription = "Background",
-            contentScale = ContentScale.Fit,
+            contentScale = ContentScale.Crop,
             modifier = Modifier
                 .fillMaxSize()
         )
@@ -120,8 +144,16 @@ fun FavoriteAuthorsStats(navController: NavController, mViewModel: StatisticsVie
                         modifier = Modifier.padding(start = 45.dp)
                     )
                 }
+            } else {
+                Text(
+                    text = "Недостаточно данных",
+                    fontFamily = Manrope,
+                    fontWeight = FontWeight.ExtraBold,
+                    color = Color.White,
+                    fontSize = 26.sp,
+                    modifier = Modifier.padding(start = 45.dp)
+                )
             }
-
             ShareApp(textColor = Color.White)
         }
     }
@@ -129,9 +161,6 @@ fun FavoriteAuthorsStats(navController: NavController, mViewModel: StatisticsVie
 
 @Composable
 fun FavoriteGenresStats(navController: NavController, mViewModel: StatisticsViewModel = hiltViewModel()) {
-//    LaunchedEffect(key1 = Unit) {
-//        mViewModel.getUserStats()
-//    }
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
@@ -141,8 +170,6 @@ fun FavoriteGenresStats(navController: NavController, mViewModel: StatisticsView
             .background(Color(0xFF524E4E))
             .clickable {
                 mViewModel.currentScreen.value = AMOUNT_OF_BOOKS
-//                navController.popBackStack()
-//                navController.navigate(Screens.StatisticsRead.route)
             }
     ) {
         Column(
@@ -167,10 +194,6 @@ fun FavoriteGenresStats(navController: NavController, mViewModel: StatisticsView
 
 @Composable
 fun ReadBooksStats(navController: NavController, mViewModel: StatisticsViewModel = hiltViewModel()) {
-//    val booksAmount = mViewModel.booksAmount.collectAsState(initial = "").value.split(" ").size
-//    LaunchedEffect(key1 = Unit) {
-//        mViewModel.getUserStats()
-//    }
     val booksAmount = mViewModel.readBooks.value?.size
     val string = if (booksAmount == 1) "книга" else if (booksAmount in 2..4) "книги" else "книг"
     Box(
@@ -180,8 +203,6 @@ fun ReadBooksStats(navController: NavController, mViewModel: StatisticsViewModel
             .clip(RoundedCornerShape(60.dp))
             .clickable {
                 mViewModel.currentScreen.value = FAVORITE_AUTHORS
-//                navController.popBackStack()
-//                navController.navigate(Screens.StatisticsFavAuthors.route)
             }
     ) {
         Column(
@@ -252,98 +273,102 @@ fun TopBar(navController: NavController, rq: String) {
             .wrapContentHeight()
             .fillMaxWidth()
     ) {
-        if (rq == AMOUNT_OF_BOOKS) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(20.dp),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Box(
+        when (rq) {
+            AMOUNT_OF_BOOKS -> {
+                Row(
                     modifier = Modifier
-                        .width(50.dp)
-                        .height(6.dp)
-                        .clip(RoundedCornerShape(10.dp))
-                        .background(Grey)
-                )
-                Spacer(modifier = Modifier.width(6.dp))
-                Box(
-                    modifier = Modifier
-                        .width(50.dp)
-                        .height(6.dp)
-                        .clip(RoundedCornerShape(10.dp))
-                        .background(Color.White)
-                )
-                Spacer(modifier = Modifier.width(6.dp))
-                Box(
-                    modifier = Modifier
-                        .width(50.dp)
-                        .height(6.dp)
-                        .clip(RoundedCornerShape(10.dp))
-                        .background(Color.White)
-                )
+                        .fillMaxWidth()
+                        .padding(20.dp),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .width(50.dp)
+                            .height(6.dp)
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(Grey)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Box(
+                        modifier = Modifier
+                            .width(50.dp)
+                            .height(6.dp)
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(Color.White)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Box(
+                        modifier = Modifier
+                            .width(50.dp)
+                            .height(6.dp)
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(Color.White)
+                    )
+                }
             }
-        } else if (rq == FAVORITE_AUTHORS) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(20.dp),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Box(
+            FAVORITE_AUTHORS -> {
+                Row(
                     modifier = Modifier
-                        .width(50.dp)
-                        .height(6.dp)
-                        .clip(RoundedCornerShape(10.dp))
-                        .background(Color.White)
-                )
-                Spacer(modifier = Modifier.width(6.dp))
-                Box(
-                    modifier = Modifier
-                        .width(50.dp)
-                        .height(6.dp)
-                        .clip(RoundedCornerShape(10.dp))
-                        .background(Grey)
-                )
-                Spacer(modifier = Modifier.width(6.dp))
-                Box(
-                    modifier = Modifier
-                        .width(50.dp)
-                        .height(6.dp)
-                        .clip(RoundedCornerShape(10.dp))
-                        .background(Color.White)
-                )
+                        .fillMaxWidth()
+                        .padding(20.dp),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .width(50.dp)
+                            .height(6.dp)
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(Color.White)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Box(
+                        modifier = Modifier
+                            .width(50.dp)
+                            .height(6.dp)
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(Grey)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Box(
+                        modifier = Modifier
+                            .width(50.dp)
+                            .height(6.dp)
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(Color.White)
+                    )
+                }
             }
-        } else {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(20.dp),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Box(
+            else -> {
+                Row(
                     modifier = Modifier
-                        .width(50.dp)
-                        .height(6.dp)
-                        .clip(RoundedCornerShape(10.dp))
-                        .background(Color.White)
-                )
-                Spacer(modifier = Modifier.width(6.dp))
-                Box(
-                    modifier = Modifier
-                        .width(50.dp)
-                        .height(6.dp)
-                        .clip(RoundedCornerShape(10.dp))
-                        .background(Color.White)
-                )
-                Spacer(modifier = Modifier.width(6.dp))
-                Box(
-                    modifier = Modifier
-                        .width(50.dp)
-                        .height(6.dp)
-                        .clip(RoundedCornerShape(10.dp))
-                        .background(Grey)
-                )
+                        .fillMaxWidth()
+                        .padding(20.dp),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .width(50.dp)
+                            .height(6.dp)
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(Color.White)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Box(
+                        modifier = Modifier
+                            .width(50.dp)
+                            .height(6.dp)
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(Color.White)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Box(
+                        modifier = Modifier
+                            .width(50.dp)
+                            .height(6.dp)
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(Grey)
+                    )
+                }
             }
         }
 
@@ -647,7 +672,6 @@ fun ShelfWall(modifier: Modifier) {
             val wallWidth = width / 3
             val wallHeight = height / 6 * 4
             val wall3DHeight = height - wallHeight
-            val wall3DWidth = wallWidth * 2
 
             var path = Path().apply {
                 moveTo(0f, wall3DHeight)
@@ -664,7 +688,7 @@ fun ShelfWall(modifier: Modifier) {
             path = Path().apply {
                 moveTo(wallWidth, wall3DHeight)
                 lineTo(wallWidth, height)
-                lineTo(width, wallHeight + 104)
+                lineTo(width, wallHeight + 96)
                 lineTo(width, 104f)
                 close()
             }
@@ -697,7 +721,7 @@ fun DisplayGenresShelves(mViewModel: StatisticsViewModel) {
         top1Books = genresMap.values.toList()[0]
         top2Genre = genresMap.keys.toList()[1]
         top2Books = genresMap.values.toList()[1]
-    } else if (genresMap.keys.toList().size >= 1) {
+    } else if (genresMap.keys.toList().isNotEmpty()) {
         top1Genre = genresMap.keys.toList()[0]
         top1Books = genresMap.values.toList()[0]
     } else {
@@ -804,7 +828,7 @@ fun LongDeck(modifier: Modifier) {
             val width = size.width
             val height = size.height
 
-            var path = Path().apply {
+            val path = Path().apply {
                 moveTo(0f, 0f)
                 lineTo(0f, height)
                 lineTo(width, height)
@@ -820,7 +844,7 @@ fun LongDeck(modifier: Modifier) {
 }
 
 object StatisticsScreenRequest {
-    val AMOUNT_OF_BOOKS = "AMOUNT_OF_BOOKS_RQ"
-    val FAVORITE_GENRES = "FAVORITE_GENRES_RQ"
-    val FAVORITE_AUTHORS = "FAVORITE_AUTHORS_RQ"
+    const val AMOUNT_OF_BOOKS = "AMOUNT_OF_BOOKS_RQ"
+    const val FAVORITE_GENRES = "FAVORITE_GENRES_RQ"
+    const val FAVORITE_AUTHORS = "FAVORITE_AUTHORS_RQ"
 }

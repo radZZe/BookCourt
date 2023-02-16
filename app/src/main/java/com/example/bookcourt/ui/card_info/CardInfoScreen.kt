@@ -3,7 +3,9 @@ package com.example.bookcourt.ui
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -27,22 +29,19 @@ import com.example.bookcourt.ui.theme.Brown
 import com.example.bookcourt.utils.BottomBarScreen
 
 @Composable
-fun CardInfoScreen(navController: NavController, book: BookInfo,onClick:()->Unit,modifier: Modifier) {
-    BookInfoCard(book, navController,onClick,modifier)
+fun CardInfoScreen(book: BookInfo,onClick:()->Unit,modifier: Modifier) {
+    BookInfoCard(book,onClick,modifier)
 }
 
 @Composable
-fun BookInfoCard(book: BookInfo, navController: NavController,onClick: () -> Unit,modifier: Modifier) {
+fun BookInfoCard(book: BookInfo,onClick: () -> Unit,modifier: Modifier) {
     Box(
         modifier = modifier
             .fillMaxSize()
             .clickable {
-//                navController.popBackStack()
-//                navController.navigate(BottomBarScreen.Recomendations.route)
                 onClick()
             }
     ) {
-
         Box {
             Column(
                 modifier = Modifier
@@ -96,6 +95,7 @@ fun BookInfoCard(book: BookInfo, navController: NavController,onClick: () -> Uni
                 modifier = Modifier
                     .padding(top = 220.dp, end = 15.dp, start = 15.dp)
                     .fillMaxWidth()
+                    .verticalScroll(rememberScrollState(), reverseScrolling = false)
             )
         }
     }

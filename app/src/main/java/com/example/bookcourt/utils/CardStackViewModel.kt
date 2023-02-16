@@ -59,35 +59,36 @@ class CardStackViewModel @Inject constructor(
 
     
 
-    fun getReadBooks() {
-        viewModelScope.launch(Dispatchers.IO) {
-            val job = async { userRepository.getUserById(userId.first()) }
+//    fun getReadBooks() {
+//        viewModelScope.launch(Dispatchers.IO) {
+//            val job = async { userRepository.getUserById(userId.first()) }
 //            currentUser = user
-            var user = job.await()
-            readBooks = user.readBooksList as MutableList<Book>
-            wantToRead = user.wantToRead as MutableList<Book>
-        }
-    }
+//            var user = job.await()
+//            readBooks = user.readBooksList as MutableList<Book>
+//            wantToRead = user.wantToRead as MutableList<Book>
+//        }
+//    }
 
-    fun updateUserStatistic() {
+    fun updateUserStatistic(user: User) {
         viewModelScope.launch(Dispatchers.IO) {
-            val currentUser = userRepository.getUserById(userId.first())
-            val updatedUser = updateUserLists(currentUser, readBooks, wantToRead)
-            userRepository.updateUser(updatedUser)
+//            val currentUser = userRepository.getUserById(userId.first())
+//            val updatedUser = updateUserLists(currentUser, readBooks, wantToRead)
+//            userRepository.updateUser(updatedUser)
+            userRepository.updateUser(user)
         }
     }
 
-    private suspend fun updateUserLists(
-        user: User,
-        readBooksList: List<Book>,
-        wantToReadList: List<Book>
-    ): User {
-        user.readBooksList.addAll(readBooksList)
-        user.wantToRead.addAll(wantToReadList)
-        readBooks.clear()
-        wantToRead.clear()
-        return user
-    }
+//    private suspend fun updateUserLists(
+//        user: User,
+//        readBooksList: List<Book>,
+//        wantToReadList: List<Book>
+//    ): User {
+//        user.readBooksList.addAll(readBooksList)
+//        user.wantToRead.addAll(wantToReadList)
+//        readBooks.clear()
+//        wantToRead.clear()
+//        return user
+//    }
 
     fun changeCurrentItem(item: Book) {
         currentItem?.value = item
@@ -97,6 +98,5 @@ class CardStackViewModel @Inject constructor(
         if(item != null){
             item.value.onSwipeDirection = newDirection
         }
-
     }
 }

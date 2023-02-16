@@ -63,6 +63,7 @@ fun RecomendationContent(
         Column(Modifier.padding(20.dp)) {
             if (viewModel.validBooks.isNotEmpty()) {
                 CardStack(
+                    user = viewModel.user,
                     modifier = Modifier.fillMaxSize(),
                     itemsRaw = viewModel.validBooks,
                     onEmptyStack = {
@@ -95,7 +96,7 @@ fun RecomendationContent(
                     contentAlignment = Alignment.Center
                 ) {
                     CustomButton(text = "Посмотреть статистику") {
-                        navController.popBackStack()
+//                        navController.popBackStack()
                         navController.navigate(route = Screens.Stats.route)
                     }
                 }
@@ -151,8 +152,8 @@ fun BookCardImage(
         ) {
             if (isNotificationDisplay) {
                 NotificationMessage(Modifier.padding(top = 20.dp), counter,onClick = {
-                    navController.popBackStack()
-                    navController.navigate(route = Screens.StatisticsRead.route)
+//                    navController.popBackStack()
+                    navController.navigate(route = Screens.Stats.route)
                 })
                 viewModel.countEqualToLimit()
             }
@@ -163,8 +164,7 @@ fun BookCardImage(
                     .padding(top = 100.dp)
                     .zIndex(1f),
                 onClick = {
-                    navController.popBackStack()
-//                    navController.navigate(route = Screens.StatisticsRead.route)
+//                    navController.popBackStack()
                     navController.navigate(route = Screens.Stats.route)
                 }
             )
