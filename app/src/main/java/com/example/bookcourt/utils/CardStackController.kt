@@ -1,5 +1,6 @@
 package com.example.bookcourt.utils
 
+import android.util.Log
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -8,6 +9,7 @@ import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.SwipeableDefaults
 import androidx.compose.material.ThresholdConfig
+import androidx.compose.material.swipeable
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -35,6 +37,8 @@ open class CardStackController(
     internal val animationSpec: AnimationSpec<Float> = SwipeableDefaults.AnimationSpec,
     val viewModel: CardStackViewModel
 ) {
+
+    var isChangedState = false
     val right = Offset(screenWidth, 0f)
     val left = Offset(-screenWidth, 0f)
     val center = Offset(0f, 0f)
@@ -175,6 +179,7 @@ open class CardStackController(
 
     fun returnCenter() {
         scope.apply {
+            isChangedState = false
             viewModel.changeDirection(null, viewModel.currentItem)
             launch {
                 offsetX.animateTo(center.x, animationSpec)
@@ -219,14 +224,15 @@ fun rememberCardStackController(
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
+
+
+@OptIn(ExperimentalMaterialApi::class)
 fun Modifier.draggableStack(
     controller: CardStackController,
     thresholdConfig: (Float, Float) -> ThresholdConfig,
 ): Modifier = composed {
+
     val density = LocalDensity.current
-
-
     val thresholds = { a: Float, b: Float ->
         with(thresholdConfig(a, b)) {
             density.computeThreshold(a, b)
@@ -248,16 +254,16 @@ fun Modifier.draggableStack(
 
                 if (controller.offsetY.value <= -controller.thresholdY + 200) {
                     controller.swipeUp()
-                    controller.viewModel.changeDirection(null, controller.viewModel.currentItem)
+
                 } else if (controller.offsetY.value >= controller.thresholdY - 200) {
                     controller.swipeDown()
-                    controller.viewModel.changeDirection(null, controller.viewModel.currentItem)
-                } else if (controller.offsetX.value <= -controller.thresholdX + 200) {
+
+                } else if (controller.offsetX.value <= -controller.thresholdX + 100) {
                     controller.swipeLeft()
-                    controller.viewModel.changeDirection(null, controller.viewModel.currentItem)
-                } else if (controller.offsetX.value >= controller.thresholdX - 200) {
+
+                } else if (controller.offsetX.value >= controller.thresholdX - 100) {
                     controller.swipeRight()
-                    controller.viewModel.changeDirection(null, controller.viewModel.currentItem)
+
                 } else {
                     controller.returnCenter()
                 }
@@ -266,12 +272,17 @@ fun Modifier.draggableStack(
             onDrag = { change, dragAmount ->
                 controller.scope.apply {
                     launch(Dispatchers.Default) {
-                        controller.offsetX.snapTo(controller.offsetX.value + dragAmount.x)
-                        controller.offsetY.snapTo(controller.offsetY.value + dragAmount.y)
-
-
+                        var percentShiftX = abs(controller.offsetX.value)/(controller.right.x/100)
+                        var percentShiftY = abs(controller.offsetY.value)/(controller.top.y/100)
+                        if((percentShiftX>=percentShiftY) && abs(dragAmount.x) > abs(dragAmount.y)
+                                    ||((percentShiftX>percentShiftY) && abs(dragAmount.x) < abs(dragAmount.y))){
+                            controller.offsetX.snapTo(controller.offsetX.value + dragAmount.x)
+                        }else{
+                            controller.offsetY.snapTo(controller.offsetY.value + dragAmount.y)
+                        }
 
                         if (controller.offsetY.value <= -controller.thresholdY+200) {
+                            controller.isChangedState = true
                             controller.viewModel.changeDirection(
                                 DIRECTION_TOP,
                                 controller.viewModel.currentItem
@@ -281,17 +292,17 @@ fun Modifier.draggableStack(
                                 DIRECTION_BOTTOM,
                                 controller.viewModel.currentItem
                             )
-                        } else if (controller.offsetX.value <= -controller.thresholdX+200) {
+                        } else if (controller.offsetX.value <= -controller.thresholdX+100) {
                             controller.viewModel.changeDirection(
                                 DIRECTION_LEFT,
                                 controller.viewModel.currentItem
                             )
-                        } else if (controller.offsetX.value >= controller.thresholdX-200) {
+                        } else if (controller.offsetX.value >= controller.thresholdX-100) {
                             controller.viewModel.changeDirection(
                                 DIRECTION_RIGHT,
                                 controller.viewModel.currentItem
                             )
-                        } else {
+                        } else  {
                             controller.viewModel.changeDirection(
                                 null,
                                 controller.viewModel.currentItem
@@ -323,7 +334,7 @@ fun Modifier.draggableStack(
             },
             onDragCancel = {
                 controller.returnCenter()
-            }
+            },
         )
     }
 }

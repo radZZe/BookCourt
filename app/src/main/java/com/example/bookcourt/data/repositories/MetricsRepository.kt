@@ -10,8 +10,6 @@ import com.example.bookcourt.models.*
 import com.example.bookcourt.utils.Constants
 import com.example.bookcourt.utils.Hashing
 import com.example.bookcourt.utils.MetricType
-import com.example.bookcourt.utils.Hashing
-import com.example.bookcourt.utils.MetricType
 import com.example.bookcourt.utils.MetricType.SKIP_BOOK
 import com.example.bookcourt.utils.MetricType.DISLIKE_BOOK
 import kotlinx.coroutines.coroutineScope
