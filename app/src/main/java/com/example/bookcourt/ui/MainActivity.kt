@@ -59,24 +59,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
-//    override fun onStart() {
-//        super.onStart()
-//        mViewModel.getStartSessionTime()
-//    }
-
-//    @RequiresApi(Build.VERSION_CODES.O)
-//    override fun onStop() {
-//        super.onStop()
-//        mViewModel.setSessionLengthTime()
-//    }
-
-//    @RequiresApi(Build.VERSION_CODES.O)
-//    override fun onDestroy() {
-//        super.onDestroy()
-//        mViewModel.setSessionLengthTime()
-//    }
-
 }
 
 

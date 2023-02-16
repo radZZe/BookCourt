@@ -1,6 +1,7 @@
 package com.example.bookcourt.data.repositories
 
 import android.content.Context
+import com.example.bookcourt.models.Book
 import com.example.bookcourt.models.UserAction
 
 interface MetricsRepositoryInterface {
@@ -11,7 +12,7 @@ interface MetricsRepositoryInterface {
 
     suspend fun onClick(objectType:String)
 
-    suspend fun onSwipe(direction:String)
+    suspend fun onSwipe(book: Book,direction:String)
 
     suspend fun onStartScreen()
 

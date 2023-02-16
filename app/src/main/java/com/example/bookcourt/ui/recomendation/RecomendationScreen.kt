@@ -56,9 +56,6 @@ fun RecomendationContent(
         }
     }
 
-//    var isEmpty = viewModel.isEmpty.value
-//    ShowTutor(viewModel = viewModel)
-//    val cardStackController = rememberCardStackController()
     if (viewModel.dataIsReady) {
         Column(Modifier.padding(20.dp)) {
             if (viewModel.validBooks.isNotEmpty()) {
@@ -67,23 +64,17 @@ fun RecomendationContent(
                     modifier = Modifier.fillMaxSize(),
                     itemsRaw = viewModel.validBooks,
                     onEmptyStack = {
-//                    viewModel.isEmpty.value = true
                     },
-//                    cardStackController = cardStackController,
                     onSwipeLeft = {
-                        //viewModel.deleteElementFromAllBooks(it)
                         viewModel.metricSwipeLeft(it)
                     },
                     onSwipeRight = {
-                        //viewModel.deleteElementFromAllBooks(it)
                         viewModel.metricSwipeRight(it)
                     },
                     onSwipeUp = {
-                        //viewModel.deleteElementFromAllBooks(it)
                         viewModel.metricSwipeTop(it)
                     },
                     onSwipeDown = {
-                        //viewModel.deleteElementFromAllBooks(it)
                         viewModel.metricSwipeDown(it)
                     },
                     navController = navController
@@ -96,13 +87,9 @@ fun RecomendationContent(
                     contentAlignment = Alignment.Center
                 ) {
                     CustomButton(text = "Посмотреть статистику") {
-//                        navController.popBackStack()
                         navController.navigate(route = Screens.Stats.route)
                     }
                 }
-//                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-//                    CircularProgressIndicator()
-//                }
             }
 
         }
@@ -181,42 +168,6 @@ fun BookCardImage(
 
     }
 }
-
-
-//@Composable
-//fun ShowTutor(viewModel: RecomendationViewModel) { // dead feature
-//    val tutorState = viewModel.tutorState.collectAsState(initial = true)
-//    AnimatedVisibility(
-//        visible = !tutorState.value,
-//        modifier = Modifier.zIndex(1f),
-//        enter = fadeIn(),
-//        exit = fadeOut()
-//    ) {
-//        Box(
-//            modifier = Modifier
-//                .fillMaxSize()
-//                .alpha(0.55f)
-//                .background(Color.Black)
-//        )
-//    }
-//    Column(
-//        verticalArrangement = Arrangement.Center,
-//        modifier = Modifier
-//            .zIndex(2f)
-//            .fillMaxSize()
-//    ) {
-//        AnimatedVisibility(
-//            visible = !tutorState.value,
-//            enter = fadeIn(),
-//            exit = fadeOut()
-//        ) {
-//            TutorialGreeting {
-//                viewModel.editTutorState()
-//            }
-//        }
-//    }
-//
-//}
 
 
 
