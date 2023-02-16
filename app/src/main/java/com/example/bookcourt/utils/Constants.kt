@@ -17,15 +17,15 @@ object Constants {
 }
 
 object MetricType {
-    const val SWIPE_UP = "Swipe Up"
-    const val SWIPE_DOWN = "Swipe Down"
-    const val SWIPE_LEFT = "Swipe Left"
-    const val SWIPE_RIGHT = "Swipe Right"
-    const val APP_TIME = "App Time"
-    const val SESSION_TIME = "Session Time"
-    const val DEVICE_INFO = "Device Info"
+    const val WANT_TO_READ_BOOK = "Want_to_read_book"
+    const val SKIP_BOOK = "skip_book"
+    const val DISLIKE_BOOK = "dislike_book"
+    const val LIKE_BOOK = "like_book"
+    const val APP_TIME = "App_Time"
+    const val SESSION_TIME = "Session_Time"
+    const val DEVICE_INFO = "Device_Info"
     const val LOCATION = "Location"
     const val CLICK = "Click"
-    const val USER_INFO = "User Info"
+    const val USER_INFO = "User_Info"
 }
 

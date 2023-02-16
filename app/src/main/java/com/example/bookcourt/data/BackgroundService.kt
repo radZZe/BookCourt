@@ -19,12 +19,7 @@ import javax.inject.Inject
 class BackgroundService @Inject constructor(
     private val client: OkHttpClient
 ) {
-//
-//    var stack = mutableStateListOf<Metric>()
-//
-
-    fun sendMetric(metric: Metric) {
-        GlobalScope.launch(Dispatchers.IO) {
+    suspend fun sendMetric(metric: Metric) {
             delay(1000)
             var body = Json.encodeToString(
                 serializer = Metric.serializer(),
@@ -40,9 +35,9 @@ class BackgroundService @Inject constructor(
                 .method("POST", requestBody)
                 .addHeader("Content-Type", "application/json")
                 .build()
+            // это для тестов
             val response = client.newCall(request).execute()
             Log.d("clientOk", response.code.toString())
 
-        }
     }
 }
