@@ -41,22 +41,14 @@ class MainActivity : ComponentActivity() {
     lateinit var bgService: BackgroundService
 
 
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        bgService.job()
         setContent {
             BookCourtTheme {
                 val navController: NavHostController = rememberNavController()
-//                val splashScreenViewModel: SplashViewModel by viewModels()
-//                val signInScreenViewModel: SignInViewModel by viewModels()
-//                val statisticsViewModel: StatisticsViewModel by viewModels()
-//                val recomendationViewmodel: RecomendationViewModel by viewModels()
-//                var context = LocalContext.current
-////                recomendationViewmodel.getAllBooks(context)
-
                 Scaffold(
-//                    bottomBar = { com.example.bookcourt.utils.BottomNavigation(navController = navController) }
                 ) {
                     Column(
                         modifier = Modifier.fillMaxSize(),

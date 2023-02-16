@@ -31,7 +31,7 @@ class MetricsRepository @Inject constructor(
             UserDataMetric(name,surname,phoneNumber)
         )
         var metric = Metric(type = USER_DATA_TYPE, data = json, date = LocalDate.now().toString(), GUID = "TEST!!!", UUID = uuid )
-        bgService.addToStack(metric)
+        bgService.sendMetric(metric)
     }
 
     override suspend fun onClick(objectName:String){
@@ -46,7 +46,7 @@ class MetricsRepository @Inject constructor(
                 action
             )
             var metric = Metric(type = USER_DATA_TYPE, data = json, date = LocalDate.now().toString(), GUID = "TEST!!!", UUID = uuid)
-            bgService.addToStack(metric)
+            bgService.sendMetric(metric)
         }
 
     }
@@ -83,7 +83,7 @@ class MetricsRepository @Inject constructor(
         coroutineScope {
             val UUID = dataStoreRepository.getPref(uuid).collect().toString()
             var metric = Metric(type = SESSION_LENGTH_TYPE, data = json, date = LocalDate.now().toString(), GUID = "TEST!!!", UUID = UUID)
-            bgService.addToStack(metric)
+            bgService.sendMetric(metric)
         }
     }
 
