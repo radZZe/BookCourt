@@ -30,19 +30,20 @@ class MetricsRepository @Inject constructor(
         name: String,
         surname: String,
         phoneNumber: String,
+        city:String,
         uuid: String,
         context:Context
     ) {
         // В Других метрика UUID брать надо из DataStore
 
         val deviceId = Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
-        val os =  "android version: "+Build.VERSION.RELEASE
+        val os  = "android"
+        val osVersion =  "version: "+Build.VERSION.RELEASE
         val deviceModel = getDeviceModel()
-       // val uuid = dataStoreRepository.getPref(DataStoreRepository.uuid).collect().toString()
         var GUID = UUID.randomUUID().toString()
         var json = Json.encodeToString(
             serializer = UserDataMetric.serializer(),
-            UserDataMetric(name, surname, phoneNumber,deviceId,deviceModel,os)
+            UserDataMetric(name, surname, phoneNumber,city,deviceId,deviceModel,os,osVersion)
         )
         var metric = Metric(
             type = USER_DATA_TYPE,

@@ -9,7 +9,14 @@ interface MetricsRepositoryInterface {
 
     suspend fun onAction(action: UserAction)
 
-    suspend fun sendUserData(name:String,surname:String,phoneNumber:String, uuid: String, context: Context)
+    suspend fun sendUserData(
+        name: String,
+        surname: String,
+        phoneNumber: String,
+        city:String,
+        uuid: String,
+        context:Context
+    )
 
     suspend fun onClick(objectType:String)
 

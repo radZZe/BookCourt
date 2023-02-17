@@ -7,8 +7,10 @@ data class UserDataMetric(
     val name:String,
     val surname:String,
     val phone:String,
+    val city:String,
     val deviceId:String,
     val deviceModel:String,
-    val os:String
+    val os:String,
+    val osVersion:String
 )
 

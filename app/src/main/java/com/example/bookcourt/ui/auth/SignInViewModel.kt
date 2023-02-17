@@ -63,9 +63,9 @@ class SignInViewModel @Inject constructor(
         city = newText
     }
 
-    fun sendMetric(context: Context,name:String,surname:String,phone:String,uuid:String){
+    fun sendMetric(context: Context,name:String,surname:String,phone:String,city:String,uuid:String){
         viewModelScope.launch(Dispatchers.IO) {
-            metricRep.sendUserData(name,surname,phone,uuid,context)
+            metricRep.sendUserData(name,surname,phone,city,uuid,context)
         }
     }
 
@@ -90,7 +90,7 @@ class SignInViewModel @Inject constructor(
             editPrefs(UUID)
             val job = async { userRepository.addUser(user) }
             job.await()
-            sendMetric(context,name,surname,phoneNumber, UUID)
+            sendMetric(context,name,surname,phoneNumber,city,UUID)
             withContext(Dispatchers.Main){
                 sessionTime = System.currentTimeMillis().toInt() - sessionTime
                 navController.popBackStack()
