@@ -3,8 +3,6 @@ package com.example.bookcourt.ui.auth
 import android.Manifest
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.content.pm.PackageManager.PERMISSION_GRANTED
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -77,6 +75,7 @@ fun SignInScreen(
 
 @Composable
 fun AuthFields(navController: NavController, mViewModel: SignInViewModel) {
+    val context = LocalContext.current
     var validationState = remember { mutableStateOf(true) }
     Box(
         modifier = Modifier
@@ -136,7 +135,7 @@ fun AuthFields(navController: NavController, mViewModel: SignInViewModel) {
                     .clickable {
                         if (mViewModel.isValidPhone()) {
                             mViewModel.onCheckedChanged()
-                            mViewModel.saveUser(navController)
+                            mViewModel.saveUser(navController,context)
                         } else {
                             validationState.value = false
                         }
