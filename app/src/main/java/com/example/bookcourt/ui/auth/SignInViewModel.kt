@@ -63,10 +63,8 @@ class SignInViewModel @Inject constructor(
         city = newText
     }
 
-    fun sendMetric(context: Context,name:String,surname:String,phone:String,city:String,uuid:String){
-        viewModelScope.launch(Dispatchers.IO) {
+    suspend fun sendMetric(context: Context,name:String,surname:String,phone:String,city:String,uuid:String){
             metricRep.sendUserData(name,surname,phone,city,uuid,context)
-        }
     }
 
     private suspend fun editPrefs(UUID: String) {

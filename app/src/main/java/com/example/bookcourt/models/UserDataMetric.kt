@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 data class UserDataMetric(
     val name:String,
     val surname:String,
-    val phone:String,
+    val phonenumber:String,
     val city:String,
     val deviceId:String,
     val deviceModel:String,
