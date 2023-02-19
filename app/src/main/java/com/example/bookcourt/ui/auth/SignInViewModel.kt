@@ -5,7 +5,6 @@ import android.location.Address
 import android.location.Geocoder
 import android.location.Location
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.movableContentWithReceiverOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
@@ -18,7 +17,6 @@ import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKey
 import com.example.bookcourt.data.repositories.MetricsRepository
 import com.example.bookcourt.data.room.UserRepository
 import com.example.bookcourt.models.User
-import com.example.bookcourt.models.UserStatistics
 import com.example.bookcourt.utils.BottomBarScreen
 import com.example.bookcourt.utils.Hashing
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -65,13 +63,19 @@ class SignInViewModel @Inject constructor(
         city = newText
     }
 
+    fun sendMetric(context: Context,name:String,surname:String,phone:String,city:String,uuid:String){
+        viewModelScope.launch(Dispatchers.IO) {
+            metricRep.sendUserData(name,surname,phone,city,uuid,context)
+        }
+    }
+
     private suspend fun editPrefs(UUID: String) {
             dataStoreRepository.setPref(isRememberMe, isRemembered)
             dataStoreRepository.setPref(city, savedCity)
             dataStoreRepository.setPref(UUID, uuid)
     }
 
-    fun saveUser(navController:NavController) {
+    fun saveUser(navController: NavController,context:Context) {
         viewModelScope.launch(Dispatchers.IO) {
             val UUID = hashing.getHash("AB$name$phoneNumber".toByteArray(), "SHA256")
             val user = User(
@@ -86,6 +90,7 @@ class SignInViewModel @Inject constructor(
             editPrefs(UUID)
             val job = async { userRepository.addUser(user) }
             job.await()
+            sendMetric(context,name,surname,phoneNumber,city,UUID)
             withContext(Dispatchers.Main){
                 sessionTime = System.currentTimeMillis().toInt() - sessionTime
                 navController.popBackStack()

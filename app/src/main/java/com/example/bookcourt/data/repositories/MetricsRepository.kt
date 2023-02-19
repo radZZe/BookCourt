@@ -3,11 +3,11 @@ package com.example.bookcourt.data.repositories
 import android.content.Context
 import android.os.Build
 import android.provider.Settings
+import android.util.Log
 import androidx.annotation.RequiresApi
 import com.example.bookcourt.data.BackgroundService
 import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.uuid
 import com.example.bookcourt.models.*
-import com.example.bookcourt.utils.Constants
 import com.example.bookcourt.utils.Hashing
 import com.example.bookcourt.utils.MetricType
 import com.example.bookcourt.utils.MetricType.SKIP_BOOK
@@ -30,13 +30,20 @@ class MetricsRepository @Inject constructor(
         name: String,
         surname: String,
         phoneNumber: String,
-        uuid: String
+        city:String,
+        uuid: String,
+        context:Context
     ) {
         // В Других метрика UUID брать надо из DataStore
+
+        val deviceId = Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
+        val os  = "android"
+        val osVersion =  "version: "+Build.VERSION.RELEASE
+        val deviceModel = getDeviceModel()
         var GUID = UUID.randomUUID().toString()
         var json = Json.encodeToString(
             serializer = UserDataMetric.serializer(),
-            UserDataMetric(name, surname, phoneNumber)
+            UserDataMetric(name, surname, phoneNumber,city,deviceId,deviceModel,os,osVersion)
         )
         var metric = Metric(
             type = USER_DATA_TYPE,
@@ -188,23 +195,6 @@ class MetricsRepository @Inject constructor(
         TODO("Not yet implemented")
     }
 
-    override suspend fun sendDeviceMetrics(context: Context) {
-        val deviceId = Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
-        val os =  "android version: "+Build.VERSION.RELEASE
-        val device = getDeviceModel()
-        val uuid = dataStoreRepository.getPref(uuid).collect().toString()
-        var json = Json.encodeToString(serializer = DeviceMetric.serializer(),
-            DeviceMetric(deviceId,device,os)
-        )
-        val metric = Metric(
-            type = MetricType.DEVICE_INFO ,
-            UUID = uuid,
-            GUID = deviceId,
-            data = json,
-            date =LocalDate.now().toString()
-        )
-        bgService.sendMetric(metric)
-    }
 
 }
 
