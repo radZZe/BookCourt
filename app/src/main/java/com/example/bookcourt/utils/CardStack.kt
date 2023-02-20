@@ -322,15 +322,13 @@ fun BookCard(
                 ) {
                     Box(modifier = Modifier.wrapContentSize()) {
                         BookCardImage(
-                            user = user,
                             uri = item.bookInfo.image,
-                            limitSwipeValue,
+                            limitSwipeValue = limitSwipeValue,
                             counter = if (index == viewModel.i - 1 || index == viewModel.i) {
                                 viewModel.counter
                             } else 0,
-                            viewModel,
-
-                            viewModel.isNotificationDisplay.value,
+                            viewModel = viewModel,
+//                            counter = viewModel.isNotificationDisplay.value,
 //                            onClick = onClick(ClickMetric(
 //                                Buttons.STATS_NOTIFICATION, BottomBarScreen.Recomendations.route
 //                            )),
@@ -341,7 +339,7 @@ fun BookCard(
                                     )
                                 )
                             },
-                            navController
+                            navController = navController
                         )
                     }
                     Column(
@@ -582,7 +580,6 @@ fun Modifier.visible(
     }
 })
 
-
 @Composable
 fun BookCardImage(
     uri: String,
@@ -623,7 +620,7 @@ fun BookCardImage(
             if (viewModel.isFirstNotification.value) {
                 NotificationMessage(Modifier.padding(top = 20.dp), counter,onClick = {
 //                    navController.popBackStack()
-                    navController.navigate(route = Screens.Stats.route)
+                    navController.navigate(route = Screens.Statistics.route)
                 })
                 viewModel.countEqualToLimit()
             }
@@ -641,7 +638,7 @@ fun BookCardImage(
                         )
                     )
 //                    navController.popBackStack()
-                    navController.navigate(route = Screens.Stats.route)
+                    navController.navigate(route = Screens.Statistics.route)
                 }
             )
         }

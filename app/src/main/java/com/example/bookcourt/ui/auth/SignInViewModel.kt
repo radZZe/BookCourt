@@ -19,8 +19,7 @@ import com.example.bookcourt.data.room.UserRepository
 import com.example.bookcourt.models.ClickMetric
 import com.example.bookcourt.models.User
 import com.example.bookcourt.models.UserStatistics
-import com.example.bookcourt.utils.BottomBarScreen
-import com.example.bookcourt.utils.Hashing
+import com.example.bookcourt.utils.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import java.io.IOException

@@ -14,6 +14,7 @@ import com.example.bookcourt.data.repositories.NetworkRepository
 import com.example.bookcourt.data.room.UserRepository
 import com.example.bookcourt.models.Book
 import com.example.bookcourt.models.BookRemote
+import com.example.bookcourt.models.ClickMetric
 import com.example.bookcourt.models.User
 import com.example.bookcourt.utils.MetricType
 import com.example.bookcourt.utils.MetricType.SKIP_BOOK
@@ -37,8 +38,6 @@ class RecomendationViewModel @Inject constructor(
 
     lateinit var user : User
 
-    var dataIsReady by mutableStateOf(false)
-
     private var _validBooks = mutableStateListOf<Book>()
     var dataIsReady by mutableStateOf(false)
     val validBooks:List<Book> = _validBooks
@@ -56,8 +55,8 @@ class RecomendationViewModel @Inject constructor(
             job.cancel()
 
             val data = Json.decodeFromString<MutableList<BookRemote>>("""$json""")
-
             val allBooksItems = data.map { it.toBook() }
+
             if (readBooks.isEmpty()) {
                 _validBooks.addAll(allBooksItems)
             } else {
@@ -66,7 +65,6 @@ class RecomendationViewModel @Inject constructor(
                 }
                 _validBooks.addAll(items)
             }
-
             isFirstDataLoading = false
             dataIsReady = true
         }
