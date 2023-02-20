@@ -19,6 +19,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.*
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
@@ -36,12 +37,17 @@ import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import coil.compose.AsyncImagePainter
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
+import coil.size.Size
 import com.example.bookcourt.R
 import com.example.bookcourt.models.Book
 import com.example.bookcourt.models.BookInfo
 import com.example.bookcourt.models.User
-import com.example.bookcourt.ui.BookCardImage
 import com.example.bookcourt.ui.CardInfoScreen
+import com.example.bookcourt.ui.recomendation.Notification
+import com.example.bookcourt.ui.recomendation.NotificationMessage
 import com.example.bookcourt.ui.theme.Gilroy
 import com.example.bookcourt.ui.theme.Manrope
 import com.example.bookcourt.ui.theme.CustomButton
@@ -64,14 +70,7 @@ fun CardStack(
     viewModel: CardStackViewModel = hiltViewModel(),
     navController: NavController
 ) {
-    fun rand(start: Int, end: Int): Int {
-        require(start <= end) { "Illegal Argument" }
-        return (start..end).random()
-    }
-
-    var start = 4
-    var end = 12;
-    var limitSwipeValue = 4
+    var limitSwipeValue = 3
     var isEmpty = viewModel.isEmpty
 
 
@@ -312,7 +311,6 @@ fun BookCard(
                                 viewModel.counter
                             } else 0,
                             viewModel,
-                            viewModel.isNotificationDisplay.value,
                             navController
                         )
                     }
@@ -550,6 +548,75 @@ fun Modifier.visible(
         layout(0, 0) {}
     }
 })
+
+
+@Composable
+fun BookCardImage(
+    uri: String,
+    limitSwipeValue: Int,
+    counter:Int,
+    viewModel: CardStackViewModel,
+    navController: NavController
+) {
+
+    val isNotificationDisplay = viewModel.isNotificationDisplay.collectAsState(initial = "")
+    if (counter == limitSwipeValue && isNotificationDisplay.value == false) {
+        viewModel.countEqualToLimit()
+    }
+    if(counter==limitSwipeValue+1){
+        viewModel.isFirstNotification.value = false
+    }
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(0.7f), contentAlignment = Alignment.Center
+    ) {
+        val painter = rememberAsyncImagePainter(
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(uri)
+                .size(Size.ORIGINAL)
+                .build(),
+        )
+
+        if (painter.state is AsyncImagePainter.State.Loading) {
+            CircularProgressIndicator()
+        }
+        Row(
+            modifier = Modifier
+                .zIndex(1f)
+                .fillMaxSize(), horizontalArrangement = Arrangement.End
+        ) {
+            if (viewModel.isFirstNotification.value) {
+                NotificationMessage(Modifier.padding(top = 20.dp), counter,onClick = {
+//                    navController.popBackStack()
+                    navController.navigate(route = Screens.Stats.route)
+                })
+                viewModel.countEqualToLimit()
+            }
+            Notification(
+                count = counter,
+                Modifier
+//                    .align(Alignment.TopEnd)
+                    .padding(top = 100.dp)
+                    .zIndex(1f),
+                onClick = {
+//                    navController.popBackStack()
+                    navController.navigate(route = Screens.Stats.route)
+                }
+            )
+        }
+
+        Image(
+            painter = painter,
+            contentDescription = stringResource(R.string.book_image),
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .fillMaxSize()
+                .zIndex(0f)
+        )
+
+    }
+}
 
 const val DIRECTION_LEFT = "direction_left"
 const val DIRECTION_RIGHT = "direction_right"
