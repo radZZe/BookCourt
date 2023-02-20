@@ -102,72 +102,7 @@ fun RecomendationContent(
 }
 
 
-@Composable
-fun BookCardImage(
-    uri: String,
-    limitSwipeValue: Int,
-    counter:Int,
-    viewModel: CardStackViewModel,
-    isNotificationDisplay: Boolean,
-    navController: NavController
-) {
 
-    if (counter == limitSwipeValue) {
-        viewModel.countEqualToLimit()
-        // TODO
-        // здесь нужно обновлять лимитное значение количества свайпов
-    }
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight(0.7f), contentAlignment = Alignment.Center
-    ) {
-        val painter = rememberAsyncImagePainter(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(uri)
-                .size(Size.ORIGINAL) // Set the target size to load the image at.
-                .build(),
-        )
-
-        if (painter.state is AsyncImagePainter.State.Loading) {
-            CircularProgressIndicator()
-        }
-        Row(
-            modifier = Modifier
-                .zIndex(1f)
-                .fillMaxSize(), horizontalArrangement = Arrangement.End
-        ) {
-            if (isNotificationDisplay) {
-                NotificationMessage(Modifier.padding(top = 20.dp), counter,onClick = {
-//                    navController.popBackStack()
-                    navController.navigate(route = Screens.Stats.route)
-                })
-                viewModel.countEqualToLimit()
-            }
-            Notification(
-                count = counter,
-                Modifier
-//                    .align(Alignment.TopEnd)
-                    .padding(top = 100.dp)
-                    .zIndex(1f),
-                onClick = {
-//                    navController.popBackStack()
-                    navController.navigate(route = Screens.Stats.route)
-                }
-            )
-        }
-
-        Image(
-            painter = painter,
-            contentDescription = stringResource(R.string.book_image),
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .fillMaxSize()
-                .zIndex(0f)
-        )
-
-    }
-}
 
 
 
