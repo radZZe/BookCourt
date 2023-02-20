@@ -623,7 +623,7 @@ fun BookCardImage(
         ) {
             if (viewModel.isFirstNotification.value) {
                 NotificationMessage(Modifier.padding(top = 20.dp), counter,onClick = {
-//                    navController.popBackStack()
+                   navController.popBackStack()
                     navController.navigate(route = Screens.Statistics.route)
                 })
                 viewModel.countEqualToLimit()
@@ -642,7 +642,7 @@ fun BookCardImage(
                         )
                     )
                     sessionTimer()
-//                    navController.popBackStack()
+                   navController.popBackStack()
                     navController.navigate(route = Screens.Statistics.route)
                 }
             )
