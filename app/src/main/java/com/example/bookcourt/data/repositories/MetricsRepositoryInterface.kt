@@ -1,5 +1,6 @@
 package com.example.bookcourt.data.repositories
 
+import com.example.bookcourt.models.ClickMetric
 import com.example.bookcourt.models.UserAction
 
 interface MetricsRepositoryInterface {
@@ -8,7 +9,7 @@ interface MetricsRepositoryInterface {
 
     suspend fun sendUserData(name:String,surname:String,phoneNumber:String,uuid: String)
 
-    suspend fun onClick(objectType:String)
+    suspend fun onClick(clickMetric: ClickMetric)
 
     suspend fun onSwipe(direction:String)
 
@@ -22,7 +23,7 @@ interface MetricsRepositoryInterface {
 
     suspend fun screenTime()
 
-    suspend fun appTime(sessionTime: Int)
+    suspend fun appTime(sessionTime: Int, type: String)
 
     suspend fun getDeviceModel(): String
 

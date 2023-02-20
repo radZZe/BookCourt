@@ -12,10 +12,7 @@ import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKey
 import com.example.bookcourt.data.repositories.MetricsRepository
 import com.example.bookcourt.data.repositories.NetworkRepository
 import com.example.bookcourt.data.room.UserRepository
-import com.example.bookcourt.models.Book
-import com.example.bookcourt.models.BookRemote
-import com.example.bookcourt.models.User
-import com.example.bookcourt.models.UserAction
+import com.example.bookcourt.models.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -27,26 +24,20 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RecomendationViewModel @Inject constructor(
-    val networkRepository: NetworkRepository,
+    private val networkRepository: NetworkRepository,
     private val dataStoreRepository: DataStoreRepository,
     private val metricRep: MetricsRepository,
     private val userRepository: UserRepository
 ) : ViewModel() {
 
     lateinit var user : User
-
-    //    var allBooks = mutableStateOf<MutableList<Book>?>(null)
-    var dataIsReady by mutableStateOf(false)
-//    private var _allBooks = mutableStateListOf<Book>()
     private var _validBooks = mutableStateListOf<Book>()
+    var dataIsReady by mutableStateOf(false)
     val validBooks:List<Book> = _validBooks
-//    var readBooks = dataStoreRepository.getPref(readBooksList)
-//    val isEmpty = mutableStateOf(false)
-//    val tutorState = dataStoreRepository.getBoolPref(isTutorChecked)
-//    var isScreenChanged = false //bullshit
     var isFirstDataLoading by mutableStateOf(true)
     var stateNotificationDisplay = false;
 
+//    var isScreenChanged = false //bullshit
 //    val tutorState = dataStoreRepository.getBoolPref(isTutorChecked) // dead feature
 
     fun getAllBooks(context: Context) {
@@ -64,7 +55,7 @@ class RecomendationViewModel @Inject constructor(
 //            val user = jobUser.await()
 //            jobUser.cancel()
 
-            val readBooks = user.readBooksList
+            val readBooks = user.readBooksList.map { it.bookInfo }
 
             val job = async { networkRepository.getAllBooks(context)!! }
             val json = job.await()
@@ -77,7 +68,7 @@ class RecomendationViewModel @Inject constructor(
                 _validBooks.addAll(allBooksItems)
             } else {
                 var items = allBooksItems.filter { book ->
-                    book !in readBooks
+                    book.bookInfo !in readBooks
                 }
                 _validBooks.addAll(items)
             }
@@ -126,6 +117,13 @@ class RecomendationViewModel @Inject constructor(
             metricRep.onAction(userAction)
         }
     }
+
+    fun metricClick(clickMetric: ClickMetric) {
+        viewModelScope.launch(Dispatchers.IO) {
+            metricRep.onClick(clickMetric)
+        }
+    }
+
 //    private var tutorStateBool by mutableStateOf(false)
 
 //    fun editTutorState() {

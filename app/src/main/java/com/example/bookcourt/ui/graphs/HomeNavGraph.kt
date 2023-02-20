@@ -11,8 +11,7 @@ import androidx.navigation.navArgument
 import com.example.bookcourt.models.BookInfo
 import com.example.bookcourt.ui.RecomendationScreen
 import com.example.bookcourt.ui.auth.SignInScreen
-import com.example.bookcourt.ui.statistics.Stats
-import com.example.bookcourt.ui.statistics.SwipableStats
+import com.example.bookcourt.ui.statistics.Statistics
 import com.example.bookcourt.utils.BottomBarScreen
 import com.example.bookcourt.utils.Screens
 import com.example.bookcourt.utils.SplashScreen
@@ -29,7 +28,7 @@ fun NavigationGraph(
 //        composable(BottomBarScreen.Profile.route) {
 //            ProfileScreen()
 //        }
-        composable(BottomBarScreen.Recomendations.route) {
+        composable(Screens.Recommendation.route) {
             RecomendationScreen(navController)
         }
         composable(BottomBarScreen.ReadBook.route) {
@@ -99,8 +98,8 @@ fun NavigationGraph(
             )
 //            CardInfoScreen(navController,book)
         }
-        composable(Screens.Stats.route) {
-            Stats(navController = navController)
+        composable(Screens.Statistics.route) {
+            Statistics(navController = navController)
 //            SwipableStats(navController = navController)
         }
     }

@@ -1,13 +1,9 @@
 package com.example.bookcourt.ui.statistics
 
-import android.graphics.Point
-import android.view.Display
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -18,50 +14,30 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.bookcourt.R
+import com.example.bookcourt.models.ClickMetric
 import com.example.bookcourt.ui.statistics.StatisticsScreenRequest.AMOUNT_OF_BOOKS
 import com.example.bookcourt.ui.statistics.StatisticsScreenRequest.FAVORITE_AUTHORS
 import com.example.bookcourt.ui.statistics.StatisticsScreenRequest.FAVORITE_GENRES
 import com.example.bookcourt.ui.theme.*
 import com.example.bookcourt.utils.BottomBarScreen
+import com.example.bookcourt.utils.Buttons
+import com.example.bookcourt.utils.Screens
 
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun SwipableStats(navController: NavController) {
-    val swipeableState = rememberSwipeableState(initialValue = 0)
-    val sizePx = with(LocalDensity.current) {
-        300.dp.toPx()
-    }
-    val anchors = mapOf (
-        0f to 0,
-        sizePx to 1,
-        sizePx * 2 to 2
-    )
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .swipeable(
-                state = swipeableState,
-                anchors = anchors,
-                thresholds = { _, _ -> FractionalThreshold(0.3f) },
-                orientation = Orientation.Horizontal
-            )
-    ) {
-        ReadBooksStats(navController)
-    }
+    
 }
 
 @Composable
-fun Stats(navController: NavController, mViewModel: StatisticsViewModel = hiltViewModel()) {
+fun Statistics(navController: NavController, mViewModel: StatisticsViewModel = hiltViewModel()) {
     LaunchedEffect(key1 = Unit) {
         mViewModel.getUserStats()
     }
@@ -79,7 +55,10 @@ fun Stats(navController: NavController, mViewModel: StatisticsViewModel = hiltVi
 }
 
 @Composable
-fun FavoriteAuthorsStats(navController: NavController, mViewModel: StatisticsViewModel = hiltViewModel()) {
+private fun FavoriteAuthorsStats(
+    navController: NavController,
+    mViewModel: StatisticsViewModel = hiltViewModel()
+) {
     val topAuthors = mViewModel.getTopAuthors()
     Box(
         contentAlignment = Alignment.Center,
@@ -89,6 +68,12 @@ fun FavoriteAuthorsStats(navController: NavController, mViewModel: StatisticsVie
             .clip(RoundedCornerShape(60.dp))
             .background(Color(0xFFA39C9A))
             .clickable {
+                mViewModel.sendOnClickMetric(
+                    ClickMetric(
+                        Buttons.SWAP_STAT,
+                        Screens.Statistics.route
+                    )
+                )
                 mViewModel.currentScreen.value = FAVORITE_GENRES
             }
     ) {
@@ -114,9 +99,11 @@ fun FavoriteAuthorsStats(navController: NavController, mViewModel: StatisticsVie
                 modifier = Modifier.padding(start = 45.dp)
             )
             if (topAuthors.size >= 3) {
-                Column(modifier = Modifier
-                    .wrapContentHeight()
-                    .fillMaxWidth()) {
+                Column(
+                    modifier = Modifier
+                        .wrapContentHeight()
+                        .fillMaxWidth()
+                ) {
                     Text(
                         text = topAuthors.keys.toList()[0],
                         fontFamily = Manrope,
@@ -160,7 +147,10 @@ fun FavoriteAuthorsStats(navController: NavController, mViewModel: StatisticsVie
 }
 
 @Composable
-fun FavoriteGenresStats(navController: NavController, mViewModel: StatisticsViewModel = hiltViewModel()) {
+private fun FavoriteGenresStats(
+    navController: NavController,
+    mViewModel: StatisticsViewModel = hiltViewModel()
+) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
@@ -169,6 +159,12 @@ fun FavoriteGenresStats(navController: NavController, mViewModel: StatisticsView
             .clip(RoundedCornerShape(60.dp))
             .background(Color(0xFF524E4E))
             .clickable {
+                mViewModel.sendOnClickMetric(
+                    ClickMetric(
+                        Buttons.SWAP_STAT,
+                        Screens.Statistics.route
+                    )
+                )
                 mViewModel.currentScreen.value = AMOUNT_OF_BOOKS
             }
     ) {
@@ -193,7 +189,10 @@ fun FavoriteGenresStats(navController: NavController, mViewModel: StatisticsView
 }
 
 @Composable
-fun ReadBooksStats(navController: NavController, mViewModel: StatisticsViewModel = hiltViewModel()) {
+private fun ReadBooksStats(
+    navController: NavController,
+    mViewModel: StatisticsViewModel = hiltViewModel()
+) {
     val booksAmount = mViewModel.readBooks.value?.size
     val string = if (booksAmount == 1) "книга" else if (booksAmount in 2..4) "книги" else "книг"
     Box(
@@ -202,6 +201,12 @@ fun ReadBooksStats(navController: NavController, mViewModel: StatisticsViewModel
             .padding(10.dp)
             .clip(RoundedCornerShape(60.dp))
             .clickable {
+                mViewModel.sendOnClickMetric(
+                    ClickMetric(
+                        Buttons.SWAP_STAT,
+                        Screens.Statistics.route
+                    )
+                )
                 mViewModel.currentScreen.value = FAVORITE_AUTHORS
             }
     ) {
@@ -267,7 +272,11 @@ fun ReadBooksStats(navController: NavController, mViewModel: StatisticsViewModel
 }
 
 @Composable
-fun TopBar(navController: NavController, rq: String) {
+private fun TopBar(
+    navController: NavController,
+    rq: String,
+    mViewModel: StatisticsViewModel = hiltViewModel()
+) {
     Column(
         modifier = Modifier
             .wrapContentHeight()
@@ -385,16 +394,23 @@ fun TopBar(navController: NavController, rq: String) {
                 modifier = Modifier
                     .size(26.dp)
                     .clickable {
+                        mViewModel.sendOnClickMetric(
+                            ClickMetric(
+                                Buttons.CLOSE,
+                                Screens.Statistics.route
+                            )
+                        )
                         navController.popBackStack()
-                        navController.navigate(route = BottomBarScreen.Recomendations.route)
+                        navController.navigate(route = Screens.Recommendation.route)
                     }
+
             )
         }
     }
 }
 
 @Composable
-fun BookShelf(booksAmount: Int) {
+private fun BookShelf(booksAmount: Int) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -412,7 +428,7 @@ fun BookShelf(booksAmount: Int) {
 }
 
 @Composable
-fun BookShelves(booksAmount: Int) {
+private fun BookShelves(booksAmount: Int) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -433,7 +449,7 @@ fun BookShelves(booksAmount: Int) {
 }
 
 @Composable
-fun ShareApp(textColor: Color) {
+private fun ShareApp(textColor: Color) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -466,7 +482,7 @@ fun ShareApp(textColor: Color) {
 }
 
 @Composable
-fun DisplayBooks(books: Int, modifier: Modifier) {
+private fun DisplayBooks(books: Int, modifier: Modifier) {
     val colors = listOf<List<Color>>(
         listOf(Color(0xFF89905A), Color(0xFF2E3527)),
         listOf(Color(0xFFE39C64), Color(0xFF6E3B14)),
@@ -509,16 +525,11 @@ fun DisplayBooks(books: Int, modifier: Modifier) {
                 shadowColor = colors[i][1]
             )
         }
-//        DrawShadow(
-//            modifier = Modifier
-//                .height(80.dp)
-//                .width(30.dp)
-//        )
     }
 }
 
 @Composable
-fun DrawBook(modifier: Modifier, color: Color, shadowColor: Color) {
+private fun DrawBook(modifier: Modifier, color: Color, shadowColor: Color) {
     Box(
         modifier = modifier,
         contentAlignment = Alignment.Center
@@ -584,7 +595,7 @@ fun DrawBook(modifier: Modifier, color: Color, shadowColor: Color) {
 }
 
 @Composable
-fun DrawShelf(modifier: Modifier) {
+private fun DrawShelf(modifier: Modifier) {
     Box(
         modifier = modifier,
         contentAlignment = Alignment.Center
@@ -623,7 +634,7 @@ fun DrawShelf(modifier: Modifier) {
 }
 
 @Composable
-fun ShelfDeck(modifier: Modifier) {
+private fun ShelfDeck(modifier: Modifier) {
     Box(
         modifier = modifier,
         contentAlignment = Alignment.Center
@@ -661,7 +672,7 @@ fun ShelfDeck(modifier: Modifier) {
 }
 
 @Composable
-fun ShelfWall(modifier: Modifier) {
+private fun ShelfWall(modifier: Modifier) {
     Box(
         modifier = modifier,
         contentAlignment = Alignment.Center
@@ -701,7 +712,7 @@ fun ShelfWall(modifier: Modifier) {
 }
 
 @Composable
-fun DisplayGenresShelves(mViewModel: StatisticsViewModel) {
+private fun DisplayGenresShelves(mViewModel: StatisticsViewModel) {
     val genresMap = mViewModel.getTopGenres()
     var top1Genre = ""
     var top1Books = 0
@@ -819,7 +830,7 @@ fun DisplayGenresShelves(mViewModel: StatisticsViewModel) {
 }
 
 @Composable
-fun LongDeck(modifier: Modifier) {
+private fun LongDeck(modifier: Modifier) {
     Box(
         modifier = modifier,
         contentAlignment = Alignment.Center
@@ -848,3 +859,4 @@ object StatisticsScreenRequest {
     const val FAVORITE_GENRES = "FAVORITE_GENRES_RQ"
     const val FAVORITE_AUTHORS = "FAVORITE_AUTHORS_RQ"
 }
+

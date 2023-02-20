@@ -254,7 +254,6 @@ fun AutoCompleteTextField(
             textFieldValue = it
             //expanded = true
             onTFValueChange(it)
-//            textFieldValue = it
             expanded = true
         },
         modifier = Modifier
@@ -316,9 +315,6 @@ fun AutoCompleteTextField(
                     .heightIn(max = 150.dp)
                     .zIndex(2f)
             ) {
-
-
-
                     items(
                         if (isAvailable){
                             cities.apply {
@@ -341,13 +337,14 @@ fun AutoCompleteTextField(
 
                     ) {
                         CityItem(title = it) { title ->
-                            if (title== OTHER_CITY){
+                            if (title == OTHER_CITY){
                                 isAvailable = true
                                // isClearIconBtnVisible = true
                                 focusRequester.requestFocus()
                                 textFieldValue = ""
                             }
                             else{
+                                onTFValueChange(title)
                                 textFieldValue = title
                             }
                             isClearIconBtnVisible = true
@@ -366,7 +363,7 @@ fun AutoCompleteTextField(
 fun ClearIconBtn(isVisible:Boolean, onClick:()->Unit) {
     if (isVisible){
         IconButton(
-            onClick = {onClick()},
+            onClick = { onClick() },
         ) {
             Icon(
                 imageVector = Icons.Rounded.Close,

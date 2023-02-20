@@ -39,6 +39,7 @@ import androidx.navigation.NavController
 import com.example.bookcourt.R
 import com.example.bookcourt.models.Book
 import com.example.bookcourt.models.BookInfo
+import com.example.bookcourt.models.ClickMetric
 import com.example.bookcourt.models.User
 import com.example.bookcourt.ui.BookCardImage
 import com.example.bookcourt.ui.CardInfoScreen
@@ -59,6 +60,7 @@ fun CardStack(
     onSwipeRight: (item: Book) -> Unit = {},
     onSwipeUp: (item: Book) -> Unit = {},
     onSwipeDown: (item: Book) -> Unit = {},
+    onClick: (clickMetric: ClickMetric) -> Unit = {},
     onEmptyStack: () -> Unit = {},
 //    cardStackController: CardStackController,
     viewModel: CardStackViewModel = hiltViewModel(),
@@ -108,6 +110,7 @@ fun CardStack(
                         onSwipeRight,
                         onSwipeUp,
                         onSwipeDown,
+                        { onClick(it) },
                         thresholdConfig,
                         navController
                     )
@@ -122,8 +125,9 @@ fun CardStack(
             contentAlignment = Alignment.Center
         ) {
             CustomButton(text = "Посмотреть статистику") {
-                navController.popBackStack()
-                navController.navigate(route = Screens.Stats.route)
+//                viewModel.updateUserStatistic(user)
+//                navController.popBackStack()
+                navController.navigate(route = Screens.Statistics.route)
             }
         }
     }
@@ -202,6 +206,7 @@ fun BookCard(
     onSwipeRight: (item: Book) -> Unit = {},
     onSwipeUp: (item: Book) -> Unit = {},
     onSwipeDown: (item: Book) -> Unit = {},
+    onClick: (clickMetric: ClickMetric) -> Unit = {},
     thresholdConfig: (Float, Float) -> ThresholdConfig = { _, _ -> FractionalThreshold(0.2f) },
     navController: NavController
 ) {
@@ -216,6 +221,7 @@ fun BookCard(
         //onSwipeLeft(item)
 
 //        viewModel.readBooks.add(item)
+        item.onSwipeDirection = DIRECTION_LEFT
         user.readBooksList.add(item)
         onSwipeLeft(item)
         viewModel.updateUserStatistic(user)
@@ -233,6 +239,7 @@ fun BookCard(
 
 //        viewModel.readBooks.add(item)
         onSwipeRight(item)
+        item.onSwipeDirection = DIRECTION_RIGHT
         user.readBooksList.add(item)
         viewModel.updateUserStatistic(user)
         viewModel.i--
@@ -246,6 +253,7 @@ fun BookCard(
         //onSwipeUp(item)
 
 //        viewModel.wantToRead.add(item)
+        item.onSwipeDirection = DIRECTION_TOP
         user.wantToRead.add(item)
         viewModel.updateUserStatistic(user)
         onSwipeUp(item)
@@ -320,6 +328,11 @@ fun BookCard(
         CardInfoScreen(
             book = book,
             onClick = {
+                onClick(
+                    ClickMetric(
+                        Buttons.BOOK_CARD, Screens.Recommendation.route
+                    )
+                )
                 viewModel.isBookInfoDisplay.value = false
             },
             modifier = Modifier.visible(visible = index == i)
@@ -330,7 +343,6 @@ fun BookCard(
             elevation = 5.dp,
             shape = RoundedCornerShape(20.dp),
             modifier = Modifier
-
                 .draggableStack(
                     controller = cardStackController,
                     thresholdConfig = thresholdConfig,
@@ -349,6 +361,11 @@ fun BookCard(
 //                                "/${item.name}/${item.author}/${item.description}/${item.genre}"
 //                                + "/${item.numberOfPage}/${item.rate}/${item.price}"
 //                    )
+                    onClick(
+                        ClickMetric(
+                            Buttons.BOOK_CARD, Screens.Recommendation.route
+                        )
+                    )
                     viewModel.isBookInfoDisplay.value = true
                 }
                 .fillMaxSize()
@@ -366,6 +383,7 @@ fun BookCard(
                 ) {
                     Box(modifier = Modifier.wrapContentSize()) {
                         BookCardImage(
+                            user = user,
                             uri = item.bookInfo.image,
                             limitSwipeValue,
                             counter = if (index == viewModel.i - 1 || index == viewModel.i) {
@@ -373,6 +391,16 @@ fun BookCard(
                             } else 0,
                             viewModel,
                             viewModel.isNotificationDisplay.value,
+//                            onClick = onClick(ClickMetric(
+//                                Buttons.STATS_NOTIFICATION, BottomBarScreen.Recomendations.route
+//                            )),
+                            onClick = {
+                                onClick(
+                                    ClickMetric(
+                                        Buttons.STATS_NOTIFICATION, Screens.Recommendation.route
+                                    )
+                                )
+                            },
                             navController
                         )
                     }
@@ -441,6 +469,11 @@ fun BookCard(
                                 .clip(RoundedCornerShape(50.dp))
                                 .background(Color(0xFF8BB298))
                                 .clickable {
+                                    onClick(
+                                        ClickMetric(
+                                            Buttons.BUY_BOOK, Screens.Recommendation.route
+                                        )
+                                    )
                                     val sendIntent: Intent = Intent(
                                         Intent.ACTION_VIEW, Uri.parse(
                                             item.buyUri
@@ -457,11 +490,8 @@ fun BookCard(
                                 )
                             )
                         }
-
                     }
                 }
-
-
             }
 
             Box(
@@ -553,6 +583,7 @@ fun BookCard(
                         }
 
                     }
+
                     DIRECTION_LEFT -> {
                         Box(
                             modifier = Modifier

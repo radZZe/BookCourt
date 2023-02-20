@@ -31,6 +31,8 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Size
 import com.example.bookcourt.R
+import com.example.bookcourt.models.ClickMetric
+import com.example.bookcourt.models.User
 import com.example.bookcourt.ui.recomendation.Notification
 import com.example.bookcourt.ui.recomendation.NotificationMessage
 import com.example.bookcourt.ui.recomendation.RecomendationViewModel
@@ -86,6 +88,9 @@ fun RecomendationContent(
                         //viewModel.deleteElementFromAllBooks(it)
                         viewModel.metricSwipeDown(it)
                     },
+                    onClick = {
+                        viewModel.metricClick(it)
+                    },
                     navController = navController
                 )
             } else {
@@ -97,7 +102,13 @@ fun RecomendationContent(
                 ) {
                     CustomButton(text = "Посмотреть статистику") {
 //                        navController.popBackStack()
-                        navController.navigate(route = Screens.Stats.route)
+                        viewModel.metricClick(
+                            ClickMetric(
+                                Buttons.OPEN_STATS,
+                                Screens.Recommendation.route
+                            )
+                        )
+                        navController.navigate(route = Screens.Statistics.route)
                     }
                 }
 //                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -117,11 +128,13 @@ fun RecomendationContent(
 
 @Composable
 fun BookCardImage(
+    user: User,
     uri: String,
     limitSwipeValue: Int,
     counter:Int,
     viewModel: CardStackViewModel,
     isNotificationDisplay: Boolean,
+    onClick: (clickMetric: ClickMetric) -> Unit = {},
     navController: NavController
 ) {
 
@@ -153,7 +166,7 @@ fun BookCardImage(
             if (isNotificationDisplay) {
                 NotificationMessage(Modifier.padding(top = 20.dp), counter,onClick = {
 //                    navController.popBackStack()
-                    navController.navigate(route = Screens.Stats.route)
+                    navController.navigate(route = Screens.Statistics.route)
                 })
                 viewModel.countEqualToLimit()
             }
@@ -165,7 +178,14 @@ fun BookCardImage(
                     .zIndex(1f),
                 onClick = {
 //                    navController.popBackStack()
-                    navController.navigate(route = Screens.Stats.route)
+                    onClick(
+                        ClickMetric(
+                            Buttons.STATS_NOTIFICATION,
+                            Screens.Recommendation.route
+                        )
+                    )
+//                    viewModel.updateUserStatistic(user)
+                    navController.navigate(route = Screens.Statistics.route)
                 }
             )
         }

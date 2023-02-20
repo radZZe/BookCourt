@@ -40,9 +40,8 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var bgService: BackgroundService
 
-
-
-    @RequiresApi(Build.VERSION_CODES.O)
+    private val mViewModel: MainActivityViewModel by viewModels()
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -60,22 +59,15 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-//    override fun onStart() {
-//        super.onStart()
-//        mViewModel.getStartSessionTime()
-//    }
+    override fun onStart() {
+        super.onStart()
+        mViewModel.startTimer()
+    }
 
-//    @RequiresApi(Build.VERSION_CODES.O)
-//    override fun onStop() {
-//        super.onStop()
-//        mViewModel.setSessionLengthTime()
-//    }
-
-//    @RequiresApi(Build.VERSION_CODES.O)
-//    override fun onDestroy() {
-//        super.onDestroy()
-//        mViewModel.setSessionLengthTime()
-//    }
+    override fun onStop() {
+        super.onStop()
+        mViewModel.sendMetric()
+    }
 
 }
 

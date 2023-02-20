@@ -49,7 +49,7 @@ fun SplashScreen(
         delay(2000)
         if (rememberState.value == true) {
             navController.popBackStack()
-            navController.navigate(route = BottomBarScreen.Recomendations.route)
+            navController.navigate(route = Screens.Recommendation.route)
         } else {
             navController.popBackStack()
             navController.navigate(route = Screens.SignIn.route)

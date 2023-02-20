@@ -10,3 +10,7 @@ data class Book(
     val shopOwner: String,
     val buyUri: String
     )
+
+fun compareBookTitles(book1: Book, book2: Book) : Boolean {
+    return book1.bookInfo.title == book2.bookInfo.title
+}

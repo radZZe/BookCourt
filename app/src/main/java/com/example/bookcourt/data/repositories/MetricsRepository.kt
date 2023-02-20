@@ -1,18 +1,16 @@
 package com.example.bookcourt.data.repositories
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.compose.ui.platform.LocalContext
 import com.example.bookcourt.data.BackgroundService
 import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.uuid
-import com.example.bookcourt.models.AppSessionLength
-import com.example.bookcourt.models.Metric
-import com.example.bookcourt.models.UserAction
-import com.example.bookcourt.models.UserDataMetric
+import com.example.bookcourt.models.*
 import com.example.bookcourt.utils.Hashing
+import com.example.bookcourt.utils.MetricType
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.first
 import kotlinx.serialization.json.Json
 import java.time.LocalDate
 import java.util.*
@@ -34,8 +32,18 @@ class MetricsRepository @Inject constructor(
         bgService.sendMetric(metric)
     }
 
-    override suspend fun onClick(objectName:String){
-
+    override suspend fun onClick(clickMetric: ClickMetric){
+        val GUID = UUID.randomUUID().toString()
+        val uid = dataStoreRepository.getPref(uuid).first()
+        val json = Json.encodeToString(serializer = ClickMetric.serializer(), clickMetric)
+        val metric = Metric(
+            type = MetricType.CLICK,
+            data = json,
+            date = LocalDate.now().toString(),
+            GUID = GUID,
+            UUID = uid
+        )
+        bgService.sendMetric(metric)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -75,14 +83,20 @@ class MetricsRepository @Inject constructor(
         TODO("Not yet implemented")
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    override suspend fun appTime(sessionTime: Int) {
-        var json = Json.encodeToString(serializer = AppSessionLength.serializer(),
-            AppSessionLength(sessionTime)
+    override suspend fun appTime(sessionTime: Int, type: String) {
+        val GUID = UUID.randomUUID().toString()
+        var json = Json.encodeToString(serializer = SessionTime.serializer(),
+            SessionTime(sessionTime)
         )
         coroutineScope {
-            val UUID = dataStoreRepository.getPref(uuid).collect().toString()
-            var metric = Metric(type = SESSION_LENGTH_TYPE, data = json, date = LocalDate.now().toString(), GUID = "TEST!!!", UUID = UUID)
+            val uid = dataStoreRepository.getPref(uuid).first()
+            val metric = Metric(
+                type = type,
+                data = json,
+                date = LocalDate.now().toString(),
+                GUID = GUID,
+                UUID = uid
+            )
             bgService.sendMetric(metric)
         }
     }
@@ -101,6 +115,7 @@ class MetricsRepository @Inject constructor(
     }
 
     override suspend fun getOS(): String  = "android version: "+Build.VERSION.SDK_INT.toString()
+
     override suspend fun detectShare() {
         TODO("Not yet implemented")
     }

@@ -4,9 +4,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookcourt.data.repositories.DataStoreRepository
+import com.example.bookcourt.data.repositories.MetricsRepository
 import com.example.bookcourt.data.repositories.NetworkRepository
 import com.example.bookcourt.data.room.UserRepository
 import com.example.bookcourt.models.Book
+import com.example.bookcourt.models.ClickMetric
 import com.example.bookcourt.models.User
 import com.example.bookcourt.ui.statistics.StatisticsScreenRequest.AMOUNT_OF_BOOKS
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,9 +21,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class StatisticsViewModel @Inject constructor(
-    val repository: NetworkRepository,
+    val networkRepository: NetworkRepository,
     private val userRepository: UserRepository,
-    val dataStoreRepository: DataStoreRepository
+    val dataStoreRepository: DataStoreRepository,
+    private val metricsRepository: MetricsRepository
 ) : ViewModel() {
     private val userId = dataStoreRepository.getPref(DataStoreRepository.uuid)
 
@@ -74,6 +77,12 @@ class StatisticsViewModel @Inject constructor(
             }
         }
         return topGenreMap.toList().sortedByDescending { (_, value) -> value }.toMap()
+    }
+
+    fun sendOnClickMetric(clickMetric: ClickMetric) {
+        viewModelScope.launch(Dispatchers.IO) {
+            metricsRepository.onClick(clickMetric)
+        }
     }
 
 }
