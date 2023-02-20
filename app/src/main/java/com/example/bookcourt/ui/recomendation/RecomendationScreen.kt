@@ -82,6 +82,7 @@ fun RecomendationContent(
                     onClick = {
                         viewModel.metricClick(it)
                     },
+                    sessionTimer = { viewModel.metricScreenTime() },
                     navController = navController
                 )
             } else {
@@ -99,8 +100,8 @@ fun RecomendationContent(
                                 Screens.Recommendation.route
                             )
                         )
+                        viewModel.metricScreenTime()
                         navController.navigate(route = Screens.Statistics.route)
-
                     }
                 }
             }

@@ -71,6 +71,7 @@ class MetricsRepository @Inject constructor(
             UUID = uid
         )
         bgService.sendMetric(metric)
+        Log.d("Screen", metric.data.toString())
     }
 
     override suspend fun onSwipe(book: Book, direction: String) {
@@ -187,6 +188,7 @@ override suspend fun appTime(sessionTime: Int, type: String) {
                 UUID = uid
             )
             bgService.sendMetric(metric)
+            Log.d("Screen", metric.data.toString())
         }
     }
 
