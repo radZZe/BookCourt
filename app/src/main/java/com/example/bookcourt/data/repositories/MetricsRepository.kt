@@ -10,6 +10,9 @@ import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKey
 import com.example.bookcourt.models.*
 import com.example.bookcourt.utils.Hashing
 import com.example.bookcourt.utils.MetricType
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
 import com.example.bookcourt.utils.MetricType.SKIP_BOOK
 import com.example.bookcourt.utils.MetricType.DISLIKE_BOOK
 import kotlinx.coroutines.coroutineScope
@@ -55,8 +58,19 @@ class MetricsRepository @Inject constructor(
         bgService.sendMetric(metric)
     }
 
-    override suspend fun onClick(objectName: String) {
 
+    override suspend fun onClick(clickMetric: ClickMetric){
+        val GUID = UUID.randomUUID().toString()
+        val uid = dataStoreRepository.getPref(uuid).first()
+        val json = Json.encodeToString(serializer = ClickMetric.serializer(), clickMetric)
+        val metric = Metric(
+            type = MetricType.CLICK,
+            data = json,
+            date = LocalDate.now().toString(),
+            GUID = GUID,
+            UUID = uid
+        )
+        bgService.sendMetric(metric)
     }
 
     override suspend fun onSwipe(book: Book, direction: String) {
@@ -158,20 +172,19 @@ class MetricsRepository @Inject constructor(
         TODO("Not yet implemented")
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    override suspend fun appTime(sessionTime: Int) {
-        var json = Json.encodeToString(
-            serializer = AppSessionLength.serializer(),
-            AppSessionLength(sessionTime)
+override suspend fun appTime(sessionTime: Int, type: String) {
+        val GUID = UUID.randomUUID().toString()
+        var json = Json.encodeToString(serializer = SessionTime.serializer(),
+            SessionTime(sessionTime)
         )
         coroutineScope {
-            val UUID = dataStoreRepository.getPref(uuid).collect().toString()
-            var metric = Metric(
-                type = SESSION_LENGTH_TYPE,
+            val uid = dataStoreRepository.getPref(uuid).first()
+            val metric = Metric(
+                type = type,
                 data = json,
                 date = LocalDate.now().toString(),
-                GUID = "TEST!!!",
-                UUID = UUID
+                GUID = GUID,
+                UUID = uid
             )
             bgService.sendMetric(metric)
         }
@@ -189,6 +202,7 @@ class MetricsRepository @Inject constructor(
             "$manufacturer $model"
         }
     }
+
 
     //override suspend fun getOS(): String = "android version: " + Build.VERSION.SDK_INT.toString()
     override suspend fun detectShare() {

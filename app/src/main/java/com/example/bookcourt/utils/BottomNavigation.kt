@@ -28,7 +28,7 @@ fun BottomNavigation(navController: NavController) {
     val items = listOf(
         BottomBarScreen.Library,
         BottomBarScreen.Profile,
-        BottomBarScreen.Recomendations,
+//        BottomBarScreen.Recomendations,
         BottomBarScreen.ReadBook,
         BottomBarScreen.AddBook,
         BottomBarScreen.Cart,

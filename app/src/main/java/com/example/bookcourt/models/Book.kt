@@ -9,7 +9,7 @@ data class Book(
     var onSwipeDirection: String?,
     val shopOwner: String,
     val buyUri: String
-    ){
+){
     fun toBookMetric():BookMetric{
         return BookMetric(
             bookId = this.bookId,

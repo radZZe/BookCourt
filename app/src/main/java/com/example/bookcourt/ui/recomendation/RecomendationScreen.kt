@@ -31,6 +31,8 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Size
 import com.example.bookcourt.R
+import com.example.bookcourt.models.ClickMetric
+import com.example.bookcourt.models.User
 import com.example.bookcourt.ui.recomendation.Notification
 import com.example.bookcourt.ui.recomendation.NotificationMessage
 import com.example.bookcourt.ui.recomendation.RecomendationViewModel
@@ -77,6 +79,9 @@ fun RecomendationContent(
                     onSwipeDown = {
                         viewModel.metricSwipeDown(it)
                     },
+                    onClick = {
+                        viewModel.metricClick(it)
+                    },
                     navController = navController
                 )
             } else {
@@ -87,7 +92,15 @@ fun RecomendationContent(
                     contentAlignment = Alignment.Center
                 ) {
                     CustomButton(text = "Посмотреть статистику") {
-                        navController.navigate(route = Screens.Stats.route)
+//                        navController.popBackStack()
+                        viewModel.metricClick(
+                            ClickMetric(
+                                Buttons.OPEN_STATS,
+                                Screens.Recommendation.route
+                            )
+                        )
+                        navController.navigate(route = Screens.Statistics.route)
+
                     }
                 }
             }

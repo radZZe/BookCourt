@@ -41,8 +41,8 @@ class CardStackViewModel @Inject constructor(
     var counter by mutableStateOf(0)
 
     var currentItem = if(allBooks.isNotEmpty()) allBooks[i] else null //КОСТЫЛЬ - че орешь?
-    var readBooks = mutableListOf<Book>()
-    var wantToRead = mutableListOf<Book>()
+//    var readBooks = mutableListOf<Book>()
+//    var wantToRead = mutableListOf<Book>()
 
 
     fun changeCurrentItem(){

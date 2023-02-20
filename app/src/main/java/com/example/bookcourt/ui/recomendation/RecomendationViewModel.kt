@@ -29,24 +29,27 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RecomendationViewModel @Inject constructor(
-    val networkRepository: NetworkRepository,
+    private val networkRepository: NetworkRepository,
     private val dataStoreRepository: DataStoreRepository,
     private val metricRep: MetricsRepository,
     private val userRepository: UserRepository
 ) : ViewModel() {
 
     lateinit var user : User
+
     var dataIsReady by mutableStateOf(false)
+
     private var _validBooks = mutableStateListOf<Book>()
+    var dataIsReady by mutableStateOf(false)
     val validBooks:List<Book> = _validBooks
     var isFirstDataLoading by mutableStateOf(true)
-
 
     fun getAllBooks(context: Context) {
         viewModelScope.launch(Dispatchers.IO) {
             val userId = dataStoreRepository.getPref(uuid)
             user = userRepository.getUserById(userId.first())
-            val readBooks = user.readBooksList
+
+            val readBooks = user.readBooksList.map { it.bookInfo }
 
             val job = async { networkRepository.getAllBooks(context)!! }
             val json = job.await()
@@ -59,7 +62,7 @@ class RecomendationViewModel @Inject constructor(
                 _validBooks.addAll(allBooksItems)
             } else {
                 var items = allBooksItems.filter { book ->
-                    book !in readBooks
+                    book.bookInfo !in readBooks
                 }
                 _validBooks.addAll(items)
             }
@@ -91,6 +94,12 @@ class RecomendationViewModel @Inject constructor(
     fun metricSwipeDown(book: Book) {
         viewModelScope.launch(Dispatchers.IO) {
             metricRep.onSwipe(book, SKIP_BOOK)
+        }
+    }
+    
+    fun metricClick(clickMetric: ClickMetric) {
+        viewModelScope.launch(Dispatchers.IO) {
+            metricRep.onClick(clickMetric)
         }
     }
 

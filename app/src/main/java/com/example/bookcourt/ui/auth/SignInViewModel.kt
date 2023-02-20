@@ -16,7 +16,9 @@ import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKey
 import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.uuid
 import com.example.bookcourt.data.repositories.MetricsRepository
 import com.example.bookcourt.data.room.UserRepository
+import com.example.bookcourt.models.ClickMetric
 import com.example.bookcourt.models.User
+import com.example.bookcourt.models.UserStatistics
 import com.example.bookcourt.utils.BottomBarScreen
 import com.example.bookcourt.utils.Hashing
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -63,7 +65,7 @@ class SignInViewModel @Inject constructor(
         city = newText
     }
 
-    suspend fun sendMetric(context: Context,name:String,surname:String,phone:String,city:String,uuid:String){
+    suspend fun sendUserMetric(context: Context,name:String,surname:String,phone:String,city:String,uuid:String){
             metricRep.sendUserData(name,surname,phone,city,uuid,context)
     }
 
@@ -73,7 +75,13 @@ class SignInViewModel @Inject constructor(
             dataStoreRepository.setPref(UUID, uuid)
     }
 
-    fun saveUser(navController: NavController,context:Context) {
+    private suspend fun sendMetrics() {
+        sessionTime = System.currentTimeMillis().toInt() - sessionTime
+        metricRep.appTime(sessionTime, MetricType.SCREEN_SESSION_TIME)
+        metricRep.onClick(ClickMetric(Buttons.SIGN_IN, Screens.SignIn.route))
+    }
+
+    fun saveUser(navController: NavController, context:Context) {
         viewModelScope.launch(Dispatchers.IO) {
             val UUID = hashing.getHash("AB$name$phoneNumber".toByteArray(), "SHA256")
             val user = User(
@@ -86,13 +94,13 @@ class SignInViewModel @Inject constructor(
                 wantToRead = mutableListOf()
             )
             editPrefs(UUID)
+            sendMetrics()
             val job = async { userRepository.addUser(user) }
             job.await()
-            sendMetric(context,name,surname,phoneNumber,city,UUID)
+            sendUserMetric(context,name,surname,phoneNumber,city,UUID)
             withContext(Dispatchers.Main){
-                sessionTime = System.currentTimeMillis().toInt() - sessionTime
                 navController.popBackStack()
-                navController.navigate(route = BottomBarScreen.Recomendations.route)
+                navController.navigate(route = Screens.Recommendation.route)
             }
         }
     }
