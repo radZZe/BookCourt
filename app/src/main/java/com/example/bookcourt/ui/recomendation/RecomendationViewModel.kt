@@ -12,7 +12,12 @@ import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKey
 import com.example.bookcourt.data.repositories.MetricsRepository
 import com.example.bookcourt.data.repositories.NetworkRepository
 import com.example.bookcourt.data.room.UserRepository
-import com.example.bookcourt.models.*
+import com.example.bookcourt.models.Book
+import com.example.bookcourt.models.BookRemote
+import com.example.bookcourt.models.User
+import com.example.bookcourt.utils.MetricType
+import com.example.bookcourt.utils.MetricType.SKIP_BOOK
+import com.example.bookcourt.utils.MetricType.DISLIKE_BOOK
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -31,29 +36,18 @@ class RecomendationViewModel @Inject constructor(
 ) : ViewModel() {
 
     lateinit var user : User
+
+    var dataIsReady by mutableStateOf(false)
+
     private var _validBooks = mutableStateListOf<Book>()
     var dataIsReady by mutableStateOf(false)
     val validBooks:List<Book> = _validBooks
     var isFirstDataLoading by mutableStateOf(true)
-    var stateNotificationDisplay = false;
-
-//    var isScreenChanged = false //bullshit
-//    val tutorState = dataStoreRepository.getBoolPref(isTutorChecked) // dead feature
 
     fun getAllBooks(context: Context) {
         viewModelScope.launch(Dispatchers.IO) {
             val userId = dataStoreRepository.getPref(uuid)
             user = userRepository.getUserById(userId.first())
-
-//            val jobUserId = async { dataStoreRepository.getPref(DataStoreRepository.uuid) }
-//            val userId = jobUserId.await()
-//            jobUserId.cancel()
-//            val jobUserIdValue = async{ userId.first() }
-//            val id = jobUserIdValue.await()
-//            jobUserIdValue.cancel()
-//            val jobUser = async { userRepository.getUserById(id) }
-//            val user = jobUser.await()
-//            jobUser.cancel()
 
             val readBooks = user.readBooksList.map { it.bookInfo }
 
@@ -78,59 +72,35 @@ class RecomendationViewModel @Inject constructor(
         }
     }
 
-//    fun addElementToAllBooks(element: Book) {
-//        _allBooks.add(element)
-//    }
-//
-//    fun deleteElementFromAllBooks(element: Book) {
-//        _allBooks.remove(element)
-//    }
 
     fun metricSwipeLeft(book: Book) {
-        var userAction =
-            UserAction(action = "Не понравилась книга { название:${book.bookInfo.title} автор: ${book.bookInfo.author}} ") // добавить сюда id книги
-        viewModelScope.launch {
-            metricRep.onAction(userAction)
+        viewModelScope.launch(Dispatchers.IO) {
+            metricRep.onSwipe(book,DISLIKE_BOOK)
         }
     }
 
     fun metricSwipeRight(book: Book) {
-        var userAction =
-            UserAction(action = "Понравилась книга { название:${book.bookInfo.title} автор: ${book.bookInfo.author}} ") // добавить сюда id книги
-        viewModelScope.launch {
-            metricRep.onAction(userAction)
+        viewModelScope.launch(Dispatchers.IO) {
+            metricRep.onSwipe(book, MetricType.LIKE_BOOK)
         }
     }
 
     fun metricSwipeTop(book: Book) {
-        var userAction =
-            UserAction(action = "Добавил в хочу прочесть книгу { название:${book.bookInfo.title} автор: ${book.bookInfo.author}} ") // добавить сюда id книги
-        viewModelScope.launch {
-            metricRep.onAction(userAction)
+        viewModelScope.launch(Dispatchers.IO) {
+            metricRep.onSwipe(book, MetricType.WANT_TO_READ_BOOK)
         }
     }
 
     fun metricSwipeDown(book: Book) {
-        var userAction =
-            UserAction(action = "Пропустил книгу { название:${book.bookInfo.title} автор: ${book.bookInfo.author}} ") // добавить сюда id книги
-        viewModelScope.launch {
-            metricRep.onAction(userAction)
+        viewModelScope.launch(Dispatchers.IO) {
+            metricRep.onSwipe(book, SKIP_BOOK)
         }
     }
-
+    
     fun metricClick(clickMetric: ClickMetric) {
         viewModelScope.launch(Dispatchers.IO) {
             metricRep.onClick(clickMetric)
         }
     }
-
-//    private var tutorStateBool by mutableStateOf(false)
-
-//    fun editTutorState() {
-//        tutorStateBool = true
-//        viewModelScope.launch {
-//            dataStoreRepository.setPref(tutorStateBool, isTutorChecked)
-//        }
-//    }
 
 }

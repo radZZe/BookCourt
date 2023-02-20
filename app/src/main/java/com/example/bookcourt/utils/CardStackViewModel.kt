@@ -31,7 +31,8 @@ class CardStackViewModel @Inject constructor(
 
     //state flags
     var isEmpty by mutableStateOf(false)
-    var isNotificationDisplay = mutableStateOf(false)
+    var isNotificationDisplay = dataStoreRepository.getBoolPref(DataStoreRepository.isNotificationDisplay)
+    var isFirstNotification = mutableStateOf(false)
     var isBookInfoDisplay = mutableStateOf(false)
 
     var allBooks:List<MutableState<Book>> = listOf()
@@ -54,7 +55,12 @@ class CardStackViewModel @Inject constructor(
     }
 
     fun countEqualToLimit(){
-        isNotificationDisplay.value = !isNotificationDisplay.value
+        viewModelScope.launch(Dispatchers.IO) {
+            isFirstNotification.value = true
+            dataStoreRepository.setPref(true,DataStoreRepository.isNotificationDisplay)
+
+        }
+
     }
 
     

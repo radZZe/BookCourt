@@ -342,10 +342,12 @@ fun AutoCompleteTextField(
                                // isClearIconBtnVisible = true
                                 focusRequester.requestFocus()
                                 textFieldValue = ""
+                                onTFValueChange(textFieldValue)
                             }
                             else{
                                 onTFValueChange(title)
                                 textFieldValue = title
+                                onTFValueChange(textFieldValue)
                             }
                             isClearIconBtnVisible = true
                             expanded = false

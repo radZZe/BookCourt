@@ -9,8 +9,17 @@ data class Book(
     var onSwipeDirection: String?,
     val shopOwner: String,
     val buyUri: String
-    )
-
-fun compareBookTitles(book1: Book, book2: Book) : Boolean {
-    return book1.bookInfo.title == book2.bookInfo.title
+){
+    fun toBookMetric():BookMetric{
+        return BookMetric(
+            bookId = this.bookId,
+            title = this.bookInfo.title,
+            author = this.bookInfo.author,
+            numberOfPages = this.bookInfo.numberOfPages,
+            rate = this.bookInfo.rate,
+            genre = this.bookInfo.genre,
+            price = this.bookInfo.price,
+            shopOwner = this.shopOwner
+        )
+    }
 }

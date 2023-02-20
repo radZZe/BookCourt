@@ -58,9 +58,6 @@ fun RecomendationContent(
         }
     }
 
-//    var isEmpty = viewModel.isEmpty.value
-//    ShowTutor(viewModel = viewModel)
-//    val cardStackController = rememberCardStackController()
     if (viewModel.dataIsReady) {
         Column(Modifier.padding(20.dp)) {
             if (viewModel.validBooks.isNotEmpty()) {
@@ -69,23 +66,17 @@ fun RecomendationContent(
                     modifier = Modifier.fillMaxSize(),
                     itemsRaw = viewModel.validBooks,
                     onEmptyStack = {
-//                    viewModel.isEmpty.value = true
                     },
-//                    cardStackController = cardStackController,
                     onSwipeLeft = {
-                        //viewModel.deleteElementFromAllBooks(it)
                         viewModel.metricSwipeLeft(it)
                     },
                     onSwipeRight = {
-                        //viewModel.deleteElementFromAllBooks(it)
                         viewModel.metricSwipeRight(it)
                     },
                     onSwipeUp = {
-                        //viewModel.deleteElementFromAllBooks(it)
                         viewModel.metricSwipeTop(it)
                     },
                     onSwipeDown = {
-                        //viewModel.deleteElementFromAllBooks(it)
                         viewModel.metricSwipeDown(it)
                     },
                     onClick = {
@@ -109,11 +100,9 @@ fun RecomendationContent(
                             )
                         )
                         navController.navigate(route = Screens.Statistics.route)
+
                     }
                 }
-//                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-//                    CircularProgressIndicator()
-//                }
             }
 
         }
@@ -126,117 +115,7 @@ fun RecomendationContent(
 }
 
 
-@Composable
-fun BookCardImage(
-    user: User,
-    uri: String,
-    limitSwipeValue: Int,
-    counter:Int,
-    viewModel: CardStackViewModel,
-    isNotificationDisplay: Boolean,
-    onClick: (clickMetric: ClickMetric) -> Unit = {},
-    navController: NavController
-) {
 
-    if (counter == limitSwipeValue) {
-        viewModel.countEqualToLimit()
-        // TODO
-        // здесь нужно обновлять лимитное значение количества свайпов
-    }
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight(0.7f), contentAlignment = Alignment.Center
-    ) {
-        val painter = rememberAsyncImagePainter(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(uri)
-                .size(Size.ORIGINAL) // Set the target size to load the image at.
-                .build(),
-        )
-
-        if (painter.state is AsyncImagePainter.State.Loading) {
-            CircularProgressIndicator()
-        }
-        Row(
-            modifier = Modifier
-                .zIndex(1f)
-                .fillMaxSize(), horizontalArrangement = Arrangement.End
-        ) {
-            if (isNotificationDisplay) {
-                NotificationMessage(Modifier.padding(top = 20.dp), counter,onClick = {
-//                    navController.popBackStack()
-                    navController.navigate(route = Screens.Statistics.route)
-                })
-                viewModel.countEqualToLimit()
-            }
-            Notification(
-                count = counter,
-                Modifier
-//                    .align(Alignment.TopEnd)
-                    .padding(top = 100.dp)
-                    .zIndex(1f),
-                onClick = {
-//                    navController.popBackStack()
-                    onClick(
-                        ClickMetric(
-                            Buttons.STATS_NOTIFICATION,
-                            Screens.Recommendation.route
-                        )
-                    )
-//                    viewModel.updateUserStatistic(user)
-                    navController.navigate(route = Screens.Statistics.route)
-                }
-            )
-        }
-
-        Image(
-            painter = painter,
-            contentDescription = stringResource(R.string.book_image),
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .fillMaxSize()
-                .zIndex(0f)
-        )
-
-    }
-}
-
-
-//@Composable
-//fun ShowTutor(viewModel: RecomendationViewModel) { // dead feature
-//    val tutorState = viewModel.tutorState.collectAsState(initial = true)
-//    AnimatedVisibility(
-//        visible = !tutorState.value,
-//        modifier = Modifier.zIndex(1f),
-//        enter = fadeIn(),
-//        exit = fadeOut()
-//    ) {
-//        Box(
-//            modifier = Modifier
-//                .fillMaxSize()
-//                .alpha(0.55f)
-//                .background(Color.Black)
-//        )
-//    }
-//    Column(
-//        verticalArrangement = Arrangement.Center,
-//        modifier = Modifier
-//            .zIndex(2f)
-//            .fillMaxSize()
-//    ) {
-//        AnimatedVisibility(
-//            visible = !tutorState.value,
-//            enter = fadeIn(),
-//            exit = fadeOut()
-//        ) {
-//            TutorialGreeting {
-//                viewModel.editTutorState()
-//            }
-//        }
-//    }
-//
-//}
 
 
 

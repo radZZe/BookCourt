@@ -5,7 +5,6 @@ import android.location.Address
 import android.location.Geocoder
 import android.location.Location
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.movableContentWithReceiverOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
@@ -20,7 +19,8 @@ import com.example.bookcourt.data.room.UserRepository
 import com.example.bookcourt.models.ClickMetric
 import com.example.bookcourt.models.User
 import com.example.bookcourt.models.UserStatistics
-import com.example.bookcourt.utils.*
+import com.example.bookcourt.utils.BottomBarScreen
+import com.example.bookcourt.utils.Hashing
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import java.io.IOException
@@ -65,6 +65,10 @@ class SignInViewModel @Inject constructor(
         city = newText
     }
 
+    suspend fun sendUserMetric(context: Context,name:String,surname:String,phone:String,city:String,uuid:String){
+            metricRep.sendUserData(name,surname,phone,city,uuid,context)
+    }
+
     private suspend fun editPrefs(UUID: String) {
             dataStoreRepository.setPref(isRememberMe, isRemembered)
             dataStoreRepository.setPref(city, savedCity)
@@ -77,7 +81,7 @@ class SignInViewModel @Inject constructor(
         metricRep.onClick(ClickMetric(Buttons.SIGN_IN, Screens.SignIn.route))
     }
 
-    fun saveUser(navController:NavController) {
+    fun saveUser(navController: NavController, context:Context) {
         viewModelScope.launch(Dispatchers.IO) {
             val UUID = hashing.getHash("AB$name$phoneNumber".toByteArray(), "SHA256")
             val user = User(
@@ -93,6 +97,7 @@ class SignInViewModel @Inject constructor(
             sendMetrics()
             val job = async { userRepository.addUser(user) }
             job.await()
+            sendUserMetric(context,name,surname,phoneNumber,city,UUID)
             withContext(Dispatchers.Main){
                 navController.popBackStack()
                 navController.navigate(route = Screens.Recommendation.route)
