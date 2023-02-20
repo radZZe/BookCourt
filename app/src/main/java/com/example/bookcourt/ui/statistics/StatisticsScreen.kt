@@ -2,8 +2,6 @@ package com.example.bookcourt.ui.statistics
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -26,7 +24,6 @@ import com.example.bookcourt.ui.statistics.StatisticsScreenRequest.AMOUNT_OF_BOO
 import com.example.bookcourt.ui.statistics.StatisticsScreenRequest.FAVORITE_AUTHORS
 import com.example.bookcourt.ui.statistics.StatisticsScreenRequest.FAVORITE_GENRES
 import com.example.bookcourt.ui.theme.*
-import com.example.bookcourt.utils.BottomBarScreen
 import com.example.bookcourt.utils.Buttons
 import com.example.bookcourt.utils.Screens
 
@@ -389,7 +386,7 @@ private fun TopBar(
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.close_square),
-                contentDescription = "",
+                contentDescription = "Close cross",
                 tint = Color.White,
                 modifier = Modifier
                     .size(26.dp)
@@ -400,6 +397,7 @@ private fun TopBar(
                                 Screens.Statistics.route
                             )
                         )
+                        mViewModel.metricScreenTime()
                         navController.popBackStack()
                         navController.navigate(route = Screens.Recommendation.route)
                     }

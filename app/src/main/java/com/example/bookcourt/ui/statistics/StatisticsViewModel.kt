@@ -1,5 +1,6 @@
 package com.example.bookcourt.ui.statistics
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,12 +12,12 @@ import com.example.bookcourt.models.Book
 import com.example.bookcourt.models.ClickMetric
 import com.example.bookcourt.models.User
 import com.example.bookcourt.ui.statistics.StatisticsScreenRequest.AMOUNT_OF_BOOKS
+import com.example.bookcourt.utils.MetricType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import java.util.stream.Collectors.toList
 import javax.inject.Inject
 
 @HiltViewModel
@@ -32,6 +33,7 @@ class StatisticsViewModel @Inject constructor(
     val currentScreen = mutableStateOf<String>(AMOUNT_OF_BOOKS)
     val readBooks = mutableStateOf<MutableList<Book>?>(null)
     val wantToRead = mutableStateOf<MutableList<Book>?>(null)
+    private var sessionTime = System.currentTimeMillis().toInt()
 
     fun getUserStats() {
         val job = viewModelScope.launch(Dispatchers.IO) {
@@ -83,6 +85,15 @@ class StatisticsViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             metricsRepository.onClick(clickMetric)
         }
+        Log.d("Screen", "cross clicked")
+    }
+
+    fun metricScreenTime() {
+        viewModelScope.launch(Dispatchers.IO) {
+            sessionTime = System.currentTimeMillis().toInt() - sessionTime
+            metricsRepository.appTime(sessionTime, MetricType.SCREEN_SESSION_TIME)
+        }
+        Log.d("Screen", "metric worked")
     }
 
 }

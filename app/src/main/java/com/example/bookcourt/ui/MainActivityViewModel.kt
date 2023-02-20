@@ -24,7 +24,7 @@ class MainActivityViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.Unconfined) {
             while (true) {
                 delay(1000)
-                time++
+                time += 1000
             }
         }
     }

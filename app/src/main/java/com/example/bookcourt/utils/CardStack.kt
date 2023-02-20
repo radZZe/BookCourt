@@ -68,13 +68,13 @@ fun CardStack(
     onSwipeDown: (item: Book) -> Unit = {},
     onClick: (clickMetric: ClickMetric) -> Unit = {},
     onEmptyStack: () -> Unit = {},
+    sessionTimer: () -> Unit = {},
 //    cardStackController: CardStackController,
     viewModel: CardStackViewModel = hiltViewModel(),
     navController: NavController
 ) {
     var limitSwipeValue = 3
     var isEmpty = viewModel.isEmpty
-
 
     if (!isEmpty) {
         viewModel.allBooks = itemsRaw.map {
@@ -111,6 +111,7 @@ fun CardStack(
                         onSwipeDown,
                         { onClick(it) },
                         thresholdConfig,
+                        sessionTimer,
                         navController
                     )
                 }
@@ -147,6 +148,7 @@ fun BookCard(
     onSwipeDown: (item: Book) -> Unit = {},
     onClick: (clickMetric: ClickMetric) -> Unit = {},
     thresholdConfig: (Float, Float) -> ThresholdConfig = { _, _ -> FractionalThreshold(0.2f) },
+    sessionTimer: () -> Unit = {},
     navController: NavController
 ) {
 
@@ -338,6 +340,7 @@ fun BookCard(
                                         Buttons.STATS_NOTIFICATION, Screens.Recommendation.route
                                     )
                                 )
+                                sessionTimer()
                             },
                             navController = navController
                         )
@@ -587,6 +590,7 @@ fun BookCardImage(
     counter:Int,
     viewModel: CardStackViewModel,
     onClick: (clickMetric: ClickMetric) -> Unit = {},
+    sessionTimer: () -> Unit = {},
     navController: NavController
 ) {
 
@@ -637,6 +641,7 @@ fun BookCardImage(
                             Screens.Recommendation.route
                         )
                     )
+                    sessionTimer()
 //                    navController.popBackStack()
                     navController.navigate(route = Screens.Statistics.route)
                 }

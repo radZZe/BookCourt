@@ -117,9 +117,7 @@ class SignInViewModel @Inject constructor(
             } catch (e: IOException) {
                 e.printStackTrace()
             }
-
         }
-
     }
 
     fun isValidPhone(): Boolean {

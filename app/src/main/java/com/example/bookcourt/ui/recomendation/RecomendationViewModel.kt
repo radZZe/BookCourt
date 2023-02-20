@@ -42,6 +42,7 @@ class RecomendationViewModel @Inject constructor(
     var dataIsReady by mutableStateOf(false)
     val validBooks:List<Book> = _validBooks
     var isFirstDataLoading by mutableStateOf(true)
+    private var sessionTime = System.currentTimeMillis().toInt()
 
     fun getAllBooks(context: Context) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -98,6 +99,14 @@ class RecomendationViewModel @Inject constructor(
     fun metricClick(clickMetric: ClickMetric) {
         viewModelScope.launch(Dispatchers.IO) {
             metricRep.onClick(clickMetric)
+        }
+    }
+
+    fun metricScreenTime() {
+        viewModelScope.launch(Dispatchers.IO) {
+            sessionTime = System.currentTimeMillis().toInt() - sessionTime
+            metricRep.appTime(sessionTime, MetricType.SCREEN_SESSION_TIME)
+            sessionTime = System.currentTimeMillis().toInt()
         }
     }
 
