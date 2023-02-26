@@ -1,6 +1,5 @@
 package com.example.bookcourt.models
 
-import androidx.compose.runtime.mutableStateOf
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -20,7 +19,7 @@ data class BookRemote(
             price = data.price,
         )
         return Book(
-            bookId = null,
+            isbn = null,
             bookInfo = bookInfo,
             onSwipeDirection = null,
             shopOwner = data.shop_owner,

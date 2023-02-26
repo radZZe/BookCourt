@@ -41,6 +41,7 @@ class SignInViewModel @Inject constructor(
     var phoneNumber by mutableStateOf("+7")
     var isRememberMe by mutableStateOf(false)
     var city by mutableStateOf("")
+    var isLoading by mutableStateOf(false)
 
     var sessionTime = System.currentTimeMillis().toInt()
 
@@ -81,6 +82,7 @@ class SignInViewModel @Inject constructor(
     }
 
     fun saveUser(navController: NavController, context:Context) {
+        isLoading = true
         viewModelScope.launch(Dispatchers.IO) {
             val UUID = hashing.getHash("AB$name$phoneNumber".toByteArray(), "SHA256")
             val user = User(
@@ -94,8 +96,7 @@ class SignInViewModel @Inject constructor(
             )
             editPrefs(UUID)
             sendMetrics()
-            val job = async { userRepository.addUser(user) }
-            job.await()
+            userRepository.addUser(user)
             sendUserMetric(context,name,surname,phoneNumber,city,UUID)
             withContext(Dispatchers.Main){
                 navController.popBackStack()

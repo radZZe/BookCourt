@@ -45,12 +45,7 @@ fun SignInScreen(
     navController: NavController,
     mViewModel: SignInViewModel = hiltViewModel()
 ) {
-    // после прожатия кнопки показывать прогресс бар
-//    var dataIsReady = mViewModel.dataIsReady
-//    if(dataIsReady){
-//        navController.popBackStack()
-//        navController.navigate(route = BottomBarScreen.Recomendations.route)
-//    }else{
+
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier.fillMaxSize()
@@ -72,8 +67,6 @@ fun SignInScreen(
             AuthFields(navController, mViewModel)
         }
     }
-
-//}
 
 @Composable
 fun AuthFields(navController: NavController, mViewModel: SignInViewModel) {
@@ -128,45 +121,61 @@ fun AuthFields(navController: NavController, mViewModel: SignInViewModel) {
                 mViewModel.city
             ) { mViewModel.onCityChanged(it) }
             Spacer(modifier = Modifier.height(36.dp))
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(10.dp))
-                    .background(Brown)
-                    .padding(top = 12.dp, bottom = 12.dp)
-                    .clickable {
-                        Log.d("tesuto",mViewModel.name)
-                        Log.d("tesuto",mViewModel.surname)
-                        Log.d("tesuto",mViewModel.city)
-                        if (mViewModel.name.isNotBlank()&&
-                            mViewModel.surname.isNotBlank()&&
-                            mViewModel.city.isNotBlank()
-                        ) {
-                            if (mViewModel.isValidPhone()) {
-                                mViewModel.onCheckedChanged()
-                                mViewModel.saveUser(navController, context)
+            if(mViewModel.isLoading){
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(Brown)
+                        .padding(top = 12.dp, bottom = 12.dp),
+                    Alignment.Center
+                ){
+                    CircularProgressIndicator()
+                }
+
+            }else{
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(Brown)
+                        .padding(top = 12.dp, bottom = 12.dp)
+                        .clickable {
+                            Log.d("tesuto", mViewModel.name)
+                            Log.d("tesuto", mViewModel.surname)
+                            Log.d("tesuto", mViewModel.city)
+                            if (mViewModel.name.isNotBlank() &&
+                                mViewModel.surname.isNotBlank() &&
+                                mViewModel.city.isNotBlank()
+                            ) {
+                                if (mViewModel.isValidPhone()) {
+                                    mViewModel.onCheckedChanged()
+                                    mViewModel.saveUser(navController, context)
+                                } else {
+                                    validationState.value = false
+                                }
                             } else {
-                                validationState.value = false
+                                Toast
+                                    .makeText(
+                                        context,
+                                        "Все поля должны быть заполненны",
+                                        Toast.LENGTH_SHORT
+                                    )
+                                    .show()
                             }
-                        }
-                        else{
-                            Toast.makeText(
-                                context,
-                                "Все поля должны быть заполненны",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-                    },
-                Alignment.Center
-            ) {
-                Text(
-                    text = "Войти",
-                    color = LightBrown,
-                    fontSize = 16.sp,
-                    fontFamily = Gilroy,
-                    fontWeight = FontWeight.Bold
-                )
+                        },
+                    Alignment.Center
+                ) {
+                    Text(
+                        text = "Войти",
+                        color = LightBrown,
+                        fontSize = 16.sp,
+                        fontFamily = Gilroy,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
             }
+
             if (!validationState.value) {
                 SimpleAlertDialog(validationState)
             }
