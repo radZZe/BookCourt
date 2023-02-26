@@ -8,9 +8,11 @@ data class Book(
     val shopOwner: String,
     val buyUri: String
 ){
-    fun toBookMetric():BookMetric{
+    fun toBookMetric(swipeType:String):BookMetric{
+
         return BookMetric(
             bookId = this.isbn,
+            swipeType = swipeType,
             title = this.bookInfo.title,
             author = this.bookInfo.author,
             numberOfPages = this.bookInfo.numberOfPages,

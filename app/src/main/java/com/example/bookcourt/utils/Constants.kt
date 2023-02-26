@@ -2,6 +2,7 @@ package com.example.bookcourt.utils
 
 object Constants {
     const val OTHER_CITY = "Другой"
+    const val DATE_TIME_METRIC_FORMAT = "dd-MM-yyyy HH:mm:ss"
     val cities = listOf(
         "Хабаровск",
         "Владивосток",
@@ -17,6 +18,7 @@ object Constants {
 }
 
 object MetricType {
+    const val SWIPE = "swipe"
     const val WANT_TO_READ_BOOK = "Want_to_read_book"
     const val SKIP_BOOK = "skip_book"
     const val DISLIKE_BOOK = "dislike_book"
