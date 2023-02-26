@@ -5,9 +5,6 @@ import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import android.os.Build
-import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,14 +19,12 @@ import androidx.compose.ui.graphics.*
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -47,9 +42,7 @@ import com.example.bookcourt.models.BookInfo
 import com.example.bookcourt.models.ClickMetric
 import com.example.bookcourt.models.User
 import com.example.bookcourt.ui.CardInfoScreen
-import com.example.bookcourt.ui.recomendation.Notification
-import com.example.bookcourt.ui.recomendation.NotificationMessage
-import com.example.bookcourt.ui.theme.Gilroy
+import com.example.bookcourt.ui.recomendation.*
 import com.example.bookcourt.ui.theme.Manrope
 import com.example.bookcourt.ui.theme.CustomButton
 import kotlin.math.roundToInt
@@ -125,8 +118,7 @@ fun CardStack(
             contentAlignment = Alignment.Center
         ) {
             CustomButton(text = "Посмотреть статистику") {
-//                viewModel.updateUserStatistic(user)
-//                navController.popBackStack()
+                navController.popBackStack()
                 navController.navigate(route = Screens.Statistics.route)
             }
         }
@@ -157,11 +149,6 @@ fun BookCard(
     val cardStackController = rememberCardStackController()
     cardStackController.onSwipeLeft = {
 
-        //viewModel.dislikeBook(item.genre)
-        //viewModel.readBooks(item.name)
-        //onSwipeLeft(item)
-
-//        viewModel.readBooks.add(item)
         item.onSwipeDirection = DIRECTION_LEFT
         user.readBooksList.add(item)
         onSwipeLeft(item)
@@ -173,12 +160,6 @@ fun BookCard(
     }
 
     cardStackController.onSwipeRight = {
-
-        // viewModel.likeBook(item.genre)
-        //viewModel.readBooks(item.name)
-        //onSwipeRight(item)
-
-//        viewModel.readBooks.add(item)
         onSwipeRight(item)
         item.onSwipeDirection = DIRECTION_RIGHT
         user.readBooksList.add(item)
@@ -189,11 +170,6 @@ fun BookCard(
     }
 
     cardStackController.onSwipeUp = {
-
-        //viewModel.wantToRead(item.name)
-        //onSwipeUp(item)
-
-//        viewModel.wantToRead.add(item)
         item.onSwipeDirection = DIRECTION_TOP
         user.wantToRead.add(item)
         viewModel.updateUserStatistic(user)
@@ -297,11 +273,6 @@ fun BookCard(
                     rotationZ = if (index == i) cardStackController.rotation.value else 0f,
                 )
                 .clickable {
-//                    navController.navigate(
-//                        Screens.CardInfo.route +
-//                                "/${item.name}/${item.author}/${item.description}/${item.genre}"
-//                                + "/${item.numberOfPage}/${item.rate}/${item.price}"
-//                    )
                     onClick(
                         ClickMetric(
                             Buttons.BOOK_CARD, Screens.Recommendation.route
@@ -330,10 +301,6 @@ fun BookCard(
                                 viewModel.counter
                             } else 0,
                             viewModel = viewModel,
-//                            counter = viewModel.isNotificationDisplay.value,
-//                            onClick = onClick(ClickMetric(
-//                                Buttons.STATS_NOTIFICATION, BottomBarScreen.Recomendations.route
-//                            )),
                             onClick = {
                                 onClick(
                                     ClickMetric(

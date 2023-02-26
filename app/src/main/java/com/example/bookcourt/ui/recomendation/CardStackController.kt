@@ -1,4 +1,4 @@
-package com.example.bookcourt.utils
+package com.example.bookcourt.ui.recomendation
 
 import android.util.Log
 import androidx.compose.animation.core.Animatable
@@ -24,6 +24,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.bookcourt.models.Book
+import com.example.bookcourt.utils.DIRECTION_BOTTOM
+import com.example.bookcourt.utils.DIRECTION_LEFT
+import com.example.bookcourt.utils.DIRECTION_RIGHT
+import com.example.bookcourt.utils.DIRECTION_TOP
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

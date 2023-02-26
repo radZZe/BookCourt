@@ -9,8 +9,8 @@ data class UserDataMetric(
     val phonenumber:String,
     val city:String,
     val deviceId:String,
-    val deviceModel:String,
+    val devicemodel:String,
     val os:String,
-    val osVersion:String
+    val osversion:String
 )
 

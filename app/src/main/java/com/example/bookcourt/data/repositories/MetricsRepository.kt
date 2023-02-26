@@ -11,12 +11,9 @@ import com.example.bookcourt.models.*
 import com.example.bookcourt.utils.Hashing
 import com.example.bookcourt.utils.MetricType
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import com.example.bookcourt.utils.MetricType.SKIP_BOOK
 import com.example.bookcourt.utils.MetricType.DISLIKE_BOOK
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.collect
 import kotlinx.serialization.json.Json
 import java.time.LocalDate
 import java.util.*
@@ -49,9 +46,9 @@ class MetricsRepository @Inject constructor(
             UserDataMetric(name, surname, phoneNumber,city,deviceId,deviceModel,os,osVersion)
         )
         var metric = Metric(
-            type = USER_DATA_TYPE,
-            data = json,
-            date = LocalDate.now().toString(),
+            Type = USER_DATA_TYPE,
+            Data = json,
+            Date = LocalDate.now().toString(),
             GUID = GUID,
             UUID = uuid
         )
@@ -64,14 +61,14 @@ class MetricsRepository @Inject constructor(
         val uid = dataStoreRepository.getPref(uuid).first()
         val json = Json.encodeToString(serializer = ClickMetric.serializer(), clickMetric)
         val metric = Metric(
-            type = MetricType.CLICK,
-            data = json,
-            date = LocalDate.now().toString(),
+            Type = MetricType.CLICK,
+            Data = json,
+            Date = LocalDate.now().toString(),
             GUID = GUID,
             UUID = uid
         )
         bgService.sendMetric(metric)
-        Log.d("Screen", metric.data.toString())
+        Log.d("Screen", metric.Data.toString())
     }
 
     override suspend fun onSwipe(book: Book, direction: String) {
@@ -88,9 +85,9 @@ class MetricsRepository @Inject constructor(
             when (direction) {
                 MetricType.WANT_TO_READ_BOOK -> {
                     var metric = Metric(
-                        type = MetricType.WANT_TO_READ_BOOK,
-                        data = json,
-                        date = date,
+                        Type = MetricType.WANT_TO_READ_BOOK,
+                        Data = json,
+                        Date = date,
                         GUID = GUID,
                         UUID = uuid
                     )
@@ -98,9 +95,9 @@ class MetricsRepository @Inject constructor(
                 }
                 DISLIKE_BOOK -> {
                     var metric = Metric(
-                        type = DISLIKE_BOOK,
-                        data = json,
-                        date = date,
+                        Type = DISLIKE_BOOK,
+                        Data = json,
+                        Date = date,
                         GUID = GUID,
                         UUID = uuid
                     )
@@ -108,9 +105,9 @@ class MetricsRepository @Inject constructor(
                 }
                 MetricType.LIKE_BOOK -> {
                     var metric = Metric(
-                        type = MetricType.LIKE_BOOK,
-                        data = json,
-                        date = date,
+                        Type = MetricType.LIKE_BOOK,
+                        Data = json,
+                        Date = date,
                         GUID = GUID,
                         UUID = uuid
                     )
@@ -118,9 +115,9 @@ class MetricsRepository @Inject constructor(
                 }
                 SKIP_BOOK -> {
                     var metric = Metric(
-                        type = SKIP_BOOK,
-                        data = json,
-                        date = date,
+                        Type = SKIP_BOOK,
+                        Data = json,
+                        Date = date,
                         GUID = GUID,
                         UUID = uuid
                     )
@@ -141,9 +138,9 @@ class MetricsRepository @Inject constructor(
                 action
             )
             var metric = Metric(
-                type = USER_DATA_TYPE,
-                data = json,
-                date = LocalDate.now().toString(),
+                Type = USER_DATA_TYPE,
+                Data = json,
+                Date = LocalDate.now().toString(),
                 GUID = "TEST!!!",
                 UUID = uuid
             )
@@ -181,14 +178,14 @@ override suspend fun appTime(sessionTime: Int, type: String) {
         coroutineScope {
             val uid = dataStoreRepository.getPref(uuid).first()
             val metric = Metric(
-                type = type,
-                data = json,
-                date = LocalDate.now().toString(),
+                Type = type,
+                Data = json,
+                Date = LocalDate.now().toString(),
                 GUID = GUID,
                 UUID = uid
             )
             bgService.sendMetric(metric)
-            Log.d("Screen", metric.data.toString())
+            Log.d("Screen", metric.Data.toString())
         }
     }
 

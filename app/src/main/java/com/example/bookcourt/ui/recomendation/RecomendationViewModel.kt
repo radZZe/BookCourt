@@ -1,6 +1,7 @@
 package com.example.bookcourt.ui.recomendation
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -21,11 +22,13 @@ import com.example.bookcourt.utils.MetricType.SKIP_BOOK
 import com.example.bookcourt.utils.MetricType.DISLIKE_BOOK
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
+import java.io.IOException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -39,35 +42,37 @@ class RecomendationViewModel @Inject constructor(
     lateinit var user : User
 
     private var _validBooks = mutableStateListOf<Book>()
-    var dataIsReady by mutableStateOf(false)
     val validBooks:List<Book> = _validBooks
+    var dataIsReady by mutableStateOf(false)
     var isFirstDataLoading by mutableStateOf(true)
     private var sessionTime = System.currentTimeMillis().toInt()
+    private var fetchJob: Job? = null
 
     fun getAllBooks(context: Context) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val userId = dataStoreRepository.getPref(uuid)
-            user = userRepository.getUserById(userId.first())
+        fetchJob?.cancel()
+        fetchJob = viewModelScope.launch(Dispatchers.IO) {
+            try{
+                val userId = dataStoreRepository.getPref(uuid)
+                user = userRepository.getUserById(userId.first())
+                val readBooks = user.readBooksList.map { it.bookInfo }
+                val json = networkRepository.getAllBooks(context)!!
+                val data = Json.decodeFromString<MutableList<BookRemote>>("""$json""")
+                val allBooksItems = data.map { it.toBook() }
 
-            val readBooks = user.readBooksList.map { it.bookInfo }
-
-            val job = async { networkRepository.getAllBooks(context)!! }
-            val json = job.await()
-            job.cancel()
-
-            val data = Json.decodeFromString<MutableList<BookRemote>>("""$json""")
-            val allBooksItems = data.map { it.toBook() }
-
-            if (readBooks.isEmpty()) {
-                _validBooks.addAll(allBooksItems)
-            } else {
-                var items = allBooksItems.filter { book ->
-                    book.bookInfo !in readBooks
+                if (readBooks.isEmpty()) {
+                    _validBooks.addAll(allBooksItems)
+                } else {
+                    var items = allBooksItems.filter { book ->
+                        book.bookInfo !in readBooks
+                    }
+                    _validBooks.addAll(items)
                 }
-                _validBooks.addAll(items)
+                isFirstDataLoading = false
+                dataIsReady = true
+            }catch (ioe:IOException){
+                Log.d("getAllBooks","error cause ${ioe.cause}")
             }
-            isFirstDataLoading = false
-            dataIsReady = true
+
         }
     }
 
