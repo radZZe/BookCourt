@@ -87,14 +87,14 @@ fun SplashUI(alpha: Float) {
                 .padding(bottom = 20.dp)
                 .weight(1f)
         ) {
+//            Text(
+//                text = "designed by BookCourt",
+//                fontSize = 20.sp,
+//                color = LightBrown,
+//                fontFamily = Gilroy
+//            )
             Text(
-                text = "designed by BookCourt",
-                fontSize = 20.sp,
-                color = LightBrown,
-                fontFamily = Gilroy
-            )
-            Text(
-                text = "1.0.0",
+                text = "v0.9.5",
                 fontSize = 20.sp,
                 color = LightBrown,
                 fontFamily = Gilroy
