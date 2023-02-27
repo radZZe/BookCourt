@@ -24,7 +24,7 @@ class BackgroundService @Inject constructor(
                 body
             )
             val request: Request = Request.Builder()
-                .url("http://543a-77-35-55-89.eu.ngrok.io/api/SendMetric")
+                .url("https://bookcourttest-ee89c-default-rtdb.asia-southeast1.firebasedatabase.app/metrics.json")
                 .method("POST", requestBody)
                 .addHeader("Content-Type", "application/json")
                 .build()
