@@ -297,10 +297,11 @@ fun AutoCompleteTextField(
         singleLine = true,
         trailingIcon = {
             ClearIconBtn(isClearIconBtnVisible){
+                textFieldValue = ""
+                onTFValueChange(textFieldValue)
                 isAvailable = false
                 focusManager.clearFocus()
                 isClearIconBtnVisible = false
-                textFieldValue = ""
             }
         }
     )
