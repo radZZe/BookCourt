@@ -3,7 +3,7 @@ package com.example.bookcourt.di
 import android.app.Application
 import android.text.BoringLayout.Metrics
 import androidx.room.Room
-import com.example.bookcourt.data.BackgroundService
+
 import com.example.bookcourt.data.repositories.DataStoreRepository
 import com.example.bookcourt.data.repositories.MetricsRepository
 import com.example.bookcourt.data.repositories.UserRepositoryImpl
@@ -29,16 +29,12 @@ class DataModule {
         return DataStoreRepository(application)
     }
 
-    @Provides
-    @Singleton
-    fun provideBackgroundService(client: OkHttpClient):BackgroundService{
-        return BackgroundService(client)
-    }
+
 
     @Provides
     @Singleton
-    fun provideMetrics(bgService: BackgroundService,dataStoreRepository: DataStoreRepository,hashing:Hashing):MetricsRepository{
-        return MetricsRepository(bgService,dataStoreRepository,hashing)
+    fun provideMetrics(dataStoreRepository: DataStoreRepository):MetricsRepository{
+        return MetricsRepository(dataStoreRepository)
     }
 
     @Provides

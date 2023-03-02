@@ -8,7 +8,7 @@ import java.util.UUID
 
 interface MetricsRepositoryInterface {
 
-    suspend fun onAction(action: UserAction)
+//    suspend fun onAction(action: UserAction)
 
     suspend fun sendUserData(
         name: String,
@@ -23,17 +23,7 @@ interface MetricsRepositoryInterface {
 
     suspend fun onSwipe(book: Book,direction:String)
 
-    suspend fun onStartScreen()
-
-    suspend fun onStopScreen()
-
-    suspend fun onStartApp()
-
-    suspend fun onStopApp()
-
-    suspend fun screenTime()
-
-    suspend fun appTime(sessionTime: Int, type: String)
+    suspend fun appTime(sessionTime: Int, type: String,screen:String)
 
     suspend fun getDeviceModel(): String
 

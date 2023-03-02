@@ -110,7 +110,7 @@ class RecomendationViewModel @Inject constructor(
     fun metricScreenTime() {
         viewModelScope.launch(Dispatchers.IO) {
             sessionTime = System.currentTimeMillis().toInt() - sessionTime
-            metricRep.appTime(sessionTime, MetricType.SCREEN_SESSION_TIME)
+            metricRep.appTime(sessionTime, MetricType.SCREEN_SESSION_TIME,"Recomendation")
             sessionTime = System.currentTimeMillis().toInt()
         }
     }

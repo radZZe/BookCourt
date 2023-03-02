@@ -11,14 +11,14 @@ data class Book(
     fun toBookMetric(swipeType:String):BookMetric{
 
         return BookMetric(
-            bookId = this.isbn,
+            isbn = this.isbn,
+            description = this.bookInfo.description,
             swipeType = swipeType,
             title = this.bookInfo.title,
             author = this.bookInfo.author,
             numberOfPages = this.bookInfo.numberOfPages,
-            rate = this.bookInfo.rate,
             genre = this.bookInfo.genre,
-            price = this.bookInfo.price,
+            price = this.bookInfo.price.toString(),
             shopOwner = this.shopOwner
         )
     }

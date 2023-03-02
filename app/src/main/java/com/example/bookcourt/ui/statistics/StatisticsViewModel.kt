@@ -91,7 +91,7 @@ class StatisticsViewModel @Inject constructor(
     fun metricScreenTime() {
         viewModelScope.launch(Dispatchers.IO) {
             sessionTime = System.currentTimeMillis().toInt() - sessionTime
-            metricsRepository.appTime(sessionTime, MetricType.SCREEN_SESSION_TIME)
+            metricsRepository.appTime(sessionTime, MetricType.SCREEN_SESSION_TIME,"Statistics")
         }
         Log.d("Screen", "metric worked")
     }

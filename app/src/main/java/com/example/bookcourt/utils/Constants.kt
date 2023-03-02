@@ -24,7 +24,7 @@ object MetricType {
     const val DISLIKE_BOOK = "dislike_book"
     const val LIKE_BOOK = "like_book"
     const val APP_SESSION_TIME = "App Session Time"
-    const val SCREEN_SESSION_TIME = "Screen Session Time"
+    const val SCREEN_SESSION_TIME = "Session"
     const val DEVICE_INFO = "Device_Info"
     const val LOCATION = "Location"
     const val CLICK = "Click"
@@ -39,6 +39,9 @@ object Buttons {
     const val CLOSE = "Close"
     const val STATS_NOTIFICATION = "Check Stats"
     const val SIGN_IN = "Sign In"
+}
+object AppVersion{
+    const val appVersion = "0.9.5"
 }
 
 
