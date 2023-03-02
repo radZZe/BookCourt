@@ -4,5 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class SessionTime(
-    val length: Int
+    val SessionTime: String,
+    val location :String,
+    val appversion:String
 )

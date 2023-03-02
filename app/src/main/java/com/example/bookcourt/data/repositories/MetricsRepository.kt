@@ -5,9 +5,11 @@ import android.os.Build
 import android.provider.Settings
 import android.util.Log
 import androidx.annotation.RequiresApi
-import com.example.bookcourt.data.BackgroundService
+import androidx.work.*
 import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.uuid
+import com.example.bookcourt.data.workers.SendMetricsWorker
 import com.example.bookcourt.models.*
+import com.example.bookcourt.utils.AppVersion.appVersion
 import com.example.bookcourt.utils.Constants
 import com.example.bookcourt.utils.Hashing
 import com.example.bookcourt.utils.MetricType
@@ -21,145 +23,114 @@ import java.util.*
 import javax.inject.Inject
 
 class MetricsRepository @Inject constructor(
-    private val bgService: BackgroundService,
     private val dataStoreRepository: DataStoreRepository,
-    private val hashing: Hashing
 ) : MetricsRepositoryInterface {
+
 
     @RequiresApi(Build.VERSION_CODES.O)
     override suspend fun sendUserData(
         name: String,
         surname: String,
         phoneNumber: String,
-        city:String,
+        city: String,
         uuid: String,
-        context:Context
+        context: Context
     ) {
-        // В Других метрика UUID брать надо из DataStore
 
-        val deviceId = Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
-        val os  = "android"
-        val osVersion =  "version: "+Build.VERSION.RELEASE
+        val deviceId =
+            Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
+        val os = "android"
+        val osVersion = "version: " + Build.VERSION.RELEASE
         val deviceModel = getDeviceModel()
         var GUID = UUID.randomUUID().toString()
-        var json = Json.encodeToString(
-            serializer = UserDataMetric.serializer(),
-            UserDataMetric(name, surname, phoneNumber,city,deviceId,deviceModel,os,osVersion)
-        )
         val formatter = DateTimeFormatter.ofPattern(Constants.DATE_TIME_METRIC_FORMAT)
         var date = LocalDateTime.now().format(formatter)
-        var metric = Metric(
+        var metric = UserDataMetricRemote(
             Type = USER_DATA_TYPE,
-            Data = json,
+            Data = UserDataMetric(
+                name,
+                surname,
+                phoneNumber,
+                city,
+                deviceId,
+                deviceModel,
+                os,
+                osVersion
+            ),
             Date = date,
             GUID = GUID,
             UUID = uuid
         )
-        bgService.sendMetric(metric)
+        var json = Json.encodeToString(
+            serializer = UserDataMetricRemote.serializer(),
+            metric
+        )
+        sendMetric(json)
     }
 
 
-    override suspend fun onClick(clickMetric: ClickMetric){
+    override suspend fun onClick(clickMetric: ClickMetric) {
         val GUID = UUID.randomUUID().toString()
         val uid = dataStoreRepository.getPref(uuid).first()
-        val json = Json.encodeToString(serializer = ClickMetric.serializer(), clickMetric)
         val formatter = DateTimeFormatter.ofPattern(Constants.DATE_TIME_METRIC_FORMAT)
         var date = LocalDateTime.now().format(formatter)
-        val metric = Metric(
+        val metric = ClickMetricRemote(
             Type = MetricType.CLICK,
-            Data = json,
+            Data = clickMetric,
             Date = date, //DateFormat.format("dd-MM-yyyy HH:mm:ss",LocalDate.now()),
             GUID = GUID,
             UUID = uid
         )
-        bgService.sendMetric(metric)
-        Log.d("Screen", metric.Data.toString())
+        val json = Json.encodeToString(serializer = ClickMetricRemote.serializer(), metric)
+        sendMetric(json)
     }
 
     override suspend fun onSwipe(book: Book, direction: String) {
         var GUID = UUID.randomUUID().toString()
         val formatter = DateTimeFormatter.ofPattern(Constants.DATE_TIME_METRIC_FORMAT)
         var date = LocalDateTime.now().format(formatter)
-        var bookMetric =  book.toBookMetric(direction)
+        var bookMetric = book.toBookMetric(direction)
         dataStoreRepository.getPref(uuid).collect {
             var uuid = it
-            var json = Json.encodeToString(
-                serializer = BookMetric.serializer(),
-                bookMetric
-            )
-            var metric = Metric(
+            var metric = BookMetricRemote(
                 Type = MetricType.SWIPE,
-                Data = json,
+                Data = bookMetric,
                 Date = date,
                 GUID = GUID,
                 UUID = uuid
             )
-            bgService.sendMetric(metric)
-        }
-    }
-
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    override suspend fun onAction(action: UserAction) {
-        val formatter = DateTimeFormatter.ofPattern(Constants.DATE_TIME_METRIC_FORMAT)
-        var date = LocalDateTime.now().format(formatter)
-        dataStoreRepository.getPref(uuid).collect {
-            var uuid = it
             var json = Json.encodeToString(
-                serializer = UserAction.serializer(),
-                action
+                serializer = BookMetricRemote.serializer(),
+                metric
             )
-            var metric = Metric(
-                Type = USER_DATA_TYPE,
-                Data = json,
-                Date = date,
-                GUID = "TEST!!!",
-                UUID = uuid
-            )
-            bgService.sendMetric(metric)
+            sendMetric(json)
         }
-
     }
 
 
-    override suspend fun onStartScreen() {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun onStopScreen() {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun onStartApp() {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun onStopApp() {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun screenTime() {
-        TODO("Not yet implemented")
-    }
-
-override suspend fun appTime(sessionTime: Int, type: String) {
+    override suspend fun appTime(sessionTime: Int, type: String, screen: String) {
         val GUID = UUID.randomUUID().toString()
         val formatter = DateTimeFormatter.ofPattern(Constants.DATE_TIME_METRIC_FORMAT)
         var date = LocalDateTime.now().format(formatter)
-        var json = Json.encodeToString(serializer = SessionTime.serializer(),
-            SessionTime(sessionTime)
-        )
+
         coroutineScope {
             val uid = dataStoreRepository.getPref(uuid).first()
-            val metric = Metric(
+            val metric = SessionTimeMetricRemote(
                 Type = type,
-                Data = json,
+                Data = SessionTime(
+                    (sessionTime / 1000).toString(),
+                    screen,
+                    appversion = appVersion
+                ),
                 Date = date,
                 GUID = GUID,
                 UUID = uid
             )
-            bgService.sendMetric(metric)
-            Log.d("Screen", metric.Data.toString())
+            var json = Json.encodeToString(
+                serializer = SessionTimeMetricRemote.serializer(),
+                metric
+            )
+            sendMetric(json)
         }
     }
 
@@ -180,6 +151,17 @@ override suspend fun appTime(sessionTime: Int, type: String) {
     //override suspend fun getOS(): String = "android version: " + Build.VERSION.SDK_INT.toString()
     override suspend fun detectShare() {
         TODO("Not yet implemented")
+    }
+
+    private fun sendMetric(json: String) {
+        val data = Data.Builder()
+            .putString("metricJson", json)
+            .build()
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED).build()
+        val workRequest = OneTimeWorkRequestBuilder<SendMetricsWorker>().setConstraints(constraints)
+            .setInputData(data).build()
+        WorkManager.getInstance().enqueue(workRequest)
     }
 
 

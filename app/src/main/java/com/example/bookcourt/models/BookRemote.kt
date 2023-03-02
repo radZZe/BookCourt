@@ -19,7 +19,7 @@ data class BookRemote(
             price = data.price,
         )
         return Book(
-            isbn = null,
+            isbn = this.id,
             bookInfo = bookInfo,
             onSwipeDirection = null,
             shopOwner = data.shop_owner,

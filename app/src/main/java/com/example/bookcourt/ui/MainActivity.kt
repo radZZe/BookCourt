@@ -22,7 +22,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.bookcourt.data.repositories.DataStoreRepository
 import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.startSessionTime
-import com.example.bookcourt.data.BackgroundService
 import com.example.bookcourt.ui.auth.SignInViewModel
 import com.example.bookcourt.ui.graphs.NavigationGraph
 import com.example.bookcourt.ui.recomendation.RecomendationViewModel
@@ -37,8 +36,6 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    @Inject
-    lateinit var bgService: BackgroundService
 
     private val mViewModel: MainActivityViewModel by viewModels()
     

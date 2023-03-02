@@ -77,7 +77,7 @@ class SignInViewModel @Inject constructor(
 
     private suspend fun sendMetrics() {
         sessionTime = System.currentTimeMillis().toInt() - sessionTime
-        metricRep.appTime(sessionTime, MetricType.SCREEN_SESSION_TIME)
+        metricRep.appTime(sessionTime, MetricType.SCREEN_SESSION_TIME,"Sign in")
         metricRep.onClick(ClickMetric(Buttons.SIGN_IN, Screens.SignIn.route))
     }
 
