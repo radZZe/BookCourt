@@ -42,7 +42,7 @@ class RecomendationViewModel @Inject constructor(
     lateinit var user : User
 
     private var _validBooks = mutableStateListOf<Book>()
-    val validBooks:List<Book> = _validBooks
+    val validBooks:MutableList<Book> = _validBooks
     var dataIsReady by mutableStateOf(false)
     var isFirstDataLoading by mutableStateOf(true)
     private var sessionTime = System.currentTimeMillis().toInt()

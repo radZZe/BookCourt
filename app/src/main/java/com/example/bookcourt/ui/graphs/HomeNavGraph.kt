@@ -1,12 +1,14 @@
 package com.example.bookcourt.ui.graphs
 
 import android.os.Build
+import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.bookcourt.models.BookInfo
 import com.example.bookcourt.ui.RecomendationScreen
@@ -19,7 +21,7 @@ import com.example.bookcourt.utils.SplashScreen
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NavigationGraph(
-    navController: NavHostController,
+    navController: NavHostController = rememberNavController(),
 ) {
     NavHost(navController, startDestination = Screens.Splash.route) {
         composable(BottomBarScreen.Library.route) {
@@ -29,7 +31,10 @@ fun NavigationGraph(
 //            ProfileScreen()
 //        }
         composable(Screens.Recommendation.route) {
-            RecomendationScreen(navController)
+            BackHandler(true) {}
+            RecomendationScreen(
+                onNavigateToStatistics = { navController.navigate(Screens.Statistics.route) }
+            )
         }
         composable(BottomBarScreen.ReadBook.route) {
 //            ReadBookScreen()
@@ -99,7 +104,11 @@ fun NavigationGraph(
 //            CardInfoScreen(navController,book)
         }
         composable(Screens.Statistics.route) {
+            BackHandler(true) {
+
+            }
             Statistics(navController = navController)
+
 //            SwipableStats(navController = navController)
         }
     }

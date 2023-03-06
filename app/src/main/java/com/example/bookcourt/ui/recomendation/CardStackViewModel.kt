@@ -31,12 +31,9 @@ class CardStackViewModel @Inject constructor(
 
     var allBooks:List<MutableState<Book>> = listOf()
     var i by mutableStateOf(allBooks.size - 1)
-    var direction = mutableStateOf<String?>(null)
     var counter by mutableStateOf(0)
 
-    var currentItem = if(allBooks.isNotEmpty()) allBooks[i] else null //КОСТЫЛЬ - че орешь?
-//    var readBooks = mutableListOf<Book>()
-//    var wantToRead = mutableListOf<Book>()
+    var currentItem = if(allBooks.isNotEmpty()) allBooks[i] else null
 
 
     fun changeCurrentItem(){
@@ -59,36 +56,13 @@ class CardStackViewModel @Inject constructor(
 
     
 
-//    fun getReadBooks() {
-//        viewModelScope.launch(Dispatchers.IO) {
-//            val job = async { userRepository.getUserById(userId.first()) }
-//            currentUser = user
-//            var user = job.await()
-//            readBooks = user.readBooksList as MutableList<Book>
-//            wantToRead = user.wantToRead as MutableList<Book>
-//        }
-//    }
 
     fun updateUserStatistic(user: User) {
         viewModelScope.launch(Dispatchers.IO) {
-//            val currentUser = userRepository.getUserById(userId.first())
-//            val updatedUser = updateUserLists(currentUser, readBooks, wantToRead)
-//            userRepository.updateUser(updatedUser)
             userRepository.updateUser(user)
         }
     }
 
-//    private suspend fun updateUserLists(
-//        user: User,
-//        readBooksList: List<Book>,
-//        wantToReadList: List<Book>
-//    ): User {
-//        user.readBooksList.addAll(readBooksList)
-//        user.wantToRead.addAll(wantToReadList)
-//        readBooks.clear()
-//        wantToRead.clear()
-//        return user
-//    }
 
     fun changeCurrentItem(item: Book) {
         currentItem?.value = item
