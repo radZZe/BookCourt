@@ -43,13 +43,12 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             BookCourtTheme {
-                val navController: NavHostController = rememberNavController()
                 Scaffold(
                 ) {
                     Column(
                         modifier = Modifier.fillMaxSize(),
                     ) {
-                        NavigationGraph(navController)
+                        NavigationGraph()
                     }
                 }
             }

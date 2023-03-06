@@ -64,7 +64,7 @@ fun CardStack(
     sessionTimer: () -> Unit = {},
 //    cardStackController: CardStackController,
     viewModel: CardStackViewModel = hiltViewModel(),
-    navController: NavController
+    onNavigateToStatistics:()->Unit
 ) {
     var limitSwipeValue = 3
     var isEmpty = viewModel.isEmpty
@@ -105,7 +105,7 @@ fun CardStack(
                         { onClick(it) },
                         thresholdConfig,
                         sessionTimer,
-                        navController
+                        onNavigateToStatistics
                     )
                 }
             }
@@ -118,8 +118,7 @@ fun CardStack(
             contentAlignment = Alignment.Center
         ) {
             CustomButton(text = "Посмотреть статистику") {
-                navController.popBackStack()
-                navController.navigate(route = Screens.Statistics.route)
+                onNavigateToStatistics()
             }
         }
     }
@@ -141,41 +140,36 @@ fun BookCard(
     onClick: (clickMetric: ClickMetric) -> Unit = {},
     thresholdConfig: (Float, Float) -> ThresholdConfig = { _, _ -> FractionalThreshold(0.2f) },
     sessionTimer: () -> Unit = {},
-    navController: NavController
+    onNavigateToStatistics:()->Unit
 ) {
 
     var item = itemRaw.value
     var i = viewModel.i
     val cardStackController = rememberCardStackController()
     cardStackController.onSwipeLeft = {
-
-        item.onSwipeDirection = DIRECTION_LEFT
         user.readBooksList.add(item)
         onSwipeLeft(item)
         viewModel.updateUserStatistic(user)
-
         viewModel.i--
-        if (i != -1) viewModel.changeCurrentItem()
+        viewModel.changeCurrentItem()
         viewModel.counter++
     }
 
     cardStackController.onSwipeRight = {
         onSwipeRight(item)
-        item.onSwipeDirection = DIRECTION_RIGHT
         user.readBooksList.add(item)
         viewModel.updateUserStatistic(user)
         viewModel.i--
-        if (i != -1) viewModel.changeCurrentItem()
+        viewModel.changeCurrentItem()
         viewModel.counter++
     }
 
     cardStackController.onSwipeUp = {
-        item.onSwipeDirection = DIRECTION_TOP
         user.wantToRead.add(item)
         viewModel.updateUserStatistic(user)
         onSwipeUp(item)
         viewModel.i--
-        if (i != -1) viewModel.changeCurrentItem()
+        viewModel.changeCurrentItem()
         viewModel.counter++
     }
 
@@ -183,7 +177,7 @@ fun BookCard(
 
         onSwipeDown(item)
         viewModel.i--
-        if (i != -1) viewModel.changeCurrentItem()
+        viewModel.changeCurrentItem()
         viewModel.counter++
     }
     val context = LocalContext.current
@@ -303,13 +297,11 @@ fun BookCard(
                             viewModel = viewModel,
                             onClick = {
                                 onClick(
-                                    ClickMetric(
-                                        Buttons.STATS_NOTIFICATION, Screens.Recommendation.route
-                                    )
+                                    it
                                 )
                                 sessionTimer()
                             },
-                            navController = navController
+                            onNavigateToStatistics = onNavigateToStatistics
                         )
                     }
                     Column(
@@ -558,7 +550,7 @@ fun BookCardImage(
     viewModel: CardStackViewModel,
     onClick: (clickMetric: ClickMetric) -> Unit = {},
     sessionTimer: () -> Unit = {},
-    navController: NavController
+    onNavigateToStatistics: () -> Unit
 ) {
 
     val isNotificationDisplay = viewModel.isNotificationDisplay.collectAsState(initial = "")
@@ -589,9 +581,10 @@ fun BookCardImage(
                 .fillMaxSize(), horizontalArrangement = Arrangement.End
         ) {
             if (viewModel.isFirstNotification.value) {
+                // TODO Добавить отправку метрики клик на переход в статистику
                 NotificationMessage(Modifier.padding(top = 20.dp), counter,onClick = {
-                   navController.popBackStack()
-                    navController.navigate(route = Screens.Statistics.route)
+//                   navController.popBackStack()
+                    onNavigateToStatistics()
                 })
                 viewModel.countEqualToLimit()
             }
@@ -609,8 +602,8 @@ fun BookCardImage(
                         )
                     )
                     sessionTimer()
-                   navController.popBackStack()
-                    navController.navigate(route = Screens.Statistics.route)
+//                   navController.popBackStack()
+                    onNavigateToStatistics()
                 }
             )
         }

@@ -18,14 +18,14 @@ import com.example.bookcourt.ui.theme.CustomButton
 import com.example.bookcourt.utils.*
 
 @Composable
-fun RecomendationScreen(navController: NavController) {
-    RecomendationContent(navController)
+fun RecomendationScreen(onNavigateToStatistics: () -> Unit) {
+    RecomendationContent(onNavigateToStatistics)
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun RecomendationContent(
-    navController: NavController,
+    onNavigateToStatistics: () -> Unit,
     viewModel: RecomendationViewModel = hiltViewModel()
 ) {
     var context = LocalContext.current
@@ -46,21 +46,25 @@ fun RecomendationContent(
                     },
                     onSwipeLeft = {
                         viewModel.metricSwipeLeft(it)
+                        viewModel.validBooks.remove(it)
                     },
                     onSwipeRight = {
                         viewModel.metricSwipeRight(it)
+                        viewModel.validBooks.remove(it)
                     },
                     onSwipeUp = {
                         viewModel.metricSwipeTop(it)
+                        viewModel.validBooks.remove(it)
                     },
                     onSwipeDown = {
                         viewModel.metricSwipeDown(it)
+                        viewModel.validBooks.remove(it)
                     },
                     onClick = {
                         viewModel.metricClick(it)
                     },
                     sessionTimer = { viewModel.metricScreenTime() },
-                    navController = navController
+                    onNavigateToStatistics = onNavigateToStatistics
                 )
             } else {
                 Box(
@@ -77,7 +81,8 @@ fun RecomendationContent(
                             )
                         )
                         viewModel.metricScreenTime()
-                        navController.navigate(route = Screens.Statistics.route)
+//                        navController.popBackStack()
+                        onNavigateToStatistics()
                     }
                 }
             }
