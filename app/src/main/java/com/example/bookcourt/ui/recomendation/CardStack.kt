@@ -31,16 +31,15 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Size
 import com.example.bookcourt.R
-import com.example.bookcourt.models.Book
-import com.example.bookcourt.models.BookInfo
-import com.example.bookcourt.models.ClickMetric
-import com.example.bookcourt.models.User
+import com.example.bookcourt.models.book.Book
+import com.example.bookcourt.models.book.BookInfo
+import com.example.bookcourt.models.metrics.DataClickMetric
+import com.example.bookcourt.models.user.User
 import com.example.bookcourt.ui.CardInfoScreen
 import com.example.bookcourt.ui.recomendation.*
 import com.example.bookcourt.ui.theme.Manrope
@@ -59,7 +58,7 @@ fun CardStack(
     onSwipeRight: (item: Book) -> Unit = {},
     onSwipeUp: (item: Book) -> Unit = {},
     onSwipeDown: (item: Book) -> Unit = {},
-    onClick: (clickMetric: ClickMetric) -> Unit = {},
+    onClick: (clickMetric: DataClickMetric) -> Unit = {},
     onEmptyStack: () -> Unit = {},
     sessionTimer: () -> Unit = {},
 //    cardStackController: CardStackController,
@@ -137,7 +136,7 @@ fun BookCard(
     onSwipeRight: (item: Book) -> Unit = {},
     onSwipeUp: (item: Book) -> Unit = {},
     onSwipeDown: (item: Book) -> Unit = {},
-    onClick: (clickMetric: ClickMetric) -> Unit = {},
+    onClick: (clickMetric: DataClickMetric) -> Unit = {},
     thresholdConfig: (Float, Float) -> ThresholdConfig = { _, _ -> FractionalThreshold(0.2f) },
     sessionTimer: () -> Unit = {},
     onNavigateToStatistics:()->Unit
@@ -240,7 +239,7 @@ fun BookCard(
             book = book,
             onClick = {
                 onClick(
-                    ClickMetric(
+                    DataClickMetric(
                         Buttons.BOOK_CARD, Screens.Recommendation.route
                     )
                 )
@@ -268,7 +267,7 @@ fun BookCard(
                 )
                 .clickable {
                     onClick(
-                        ClickMetric(
+                        DataClickMetric(
                             Buttons.BOOK_CARD, Screens.Recommendation.route
                         )
                     )
@@ -370,7 +369,7 @@ fun BookCard(
                                 .background(Color(0xFF8BB298))
                                 .clickable {
                                     onClick(
-                                        ClickMetric(
+                                        DataClickMetric(
                                             Buttons.BUY_BOOK, Screens.Recommendation.route
                                         )
                                     )
@@ -548,7 +547,7 @@ fun BookCardImage(
     limitSwipeValue: Int,
     counter:Int,
     viewModel: CardStackViewModel,
-    onClick: (clickMetric: ClickMetric) -> Unit = {},
+    onClick: (clickMetric: DataClickMetric) -> Unit = {},
     sessionTimer: () -> Unit = {},
     onNavigateToStatistics: () -> Unit
 ) {
@@ -596,7 +595,7 @@ fun BookCardImage(
                     .zIndex(1f),
                 onClick = {
                     onClick(
-                        ClickMetric(
+                        DataClickMetric(
                             Buttons.STATS_NOTIFICATION,
                             Screens.Recommendation.route
                         )

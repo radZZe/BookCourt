@@ -34,12 +34,12 @@ class SendMetricsWorker(context: Context, workerParams: WorkerParameters) : Work
             mediaType,
             body
         )
-        val request: Request = Request.Builder()
-            .url("https://bookcourttest-ee89c-default-rtdb.asia-southeast1.firebasedatabase.app/metrics.json")
-            .method("POST", requestBody)
-            .addHeader("Content-Type", "application/json")
-            .build()
-        val response = client.newCall(request).execute()
-        Log.d("clientOk",response.code.toString())
+//        val request: Request = Request.Builder()
+//            .url("http://cca9-77-34-189-143.eu.ngrok.io/api/SendMetric")
+//            .method("POST", requestBody)
+//            .addHeader("Content-Type", "application/json")
+//            .build()
+//        val response = client.newCall(request).execute()
+//        Log.d("clientOk",response.code.toString())
     }
 }

@@ -11,8 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
-import com.example.bookcourt.models.ClickMetric
+import com.example.bookcourt.models.metrics.DataClickMetric
 import com.example.bookcourt.ui.recomendation.RecomendationViewModel
 import com.example.bookcourt.ui.theme.CustomButton
 import com.example.bookcourt.utils.*
@@ -75,7 +74,7 @@ fun RecomendationContent(
                 ) {
                     CustomButton(text = "Посмотреть статистику") {
                         viewModel.metricClick(
-                            ClickMetric(
+                            DataClickMetric(
                                 Buttons.OPEN_STATS,
                                 Screens.Recommendation.route
                             )

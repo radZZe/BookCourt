@@ -1,10 +1,10 @@
-package com.example.bookcourt.models
+package com.example.bookcourt.models.metrics
 
 @kotlinx.serialization.Serializable
-data class UserDataMetricRemote(
+data class BookMetric(
     val UUID:String,
     val GUID:String,
     val Type:String,
-    val Data:UserDataMetric,
+    val Data: DataBookMetric,
     val Date:String,
 )

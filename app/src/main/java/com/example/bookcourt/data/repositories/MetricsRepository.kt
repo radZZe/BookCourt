@@ -3,20 +3,18 @@ package com.example.bookcourt.data.repositories
 import android.content.Context
 import android.os.Build
 import android.provider.Settings
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.work.*
 import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.uuid
 import com.example.bookcourt.data.workers.SendMetricsWorker
-import com.example.bookcourt.models.*
+import com.example.bookcourt.models.book.Book
+import com.example.bookcourt.models.metrics.*
 import com.example.bookcourt.utils.AppVersion.appVersion
 import com.example.bookcourt.utils.Constants
-import com.example.bookcourt.utils.Hashing
 import com.example.bookcourt.utils.MetricType
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.first
 import kotlinx.serialization.json.Json
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -45,9 +43,9 @@ class MetricsRepository @Inject constructor(
         var GUID = UUID.randomUUID().toString()
         val formatter = DateTimeFormatter.ofPattern(Constants.DATE_TIME_METRIC_FORMAT)
         var date = LocalDateTime.now().format(formatter)
-        var metric = UserDataMetricRemote(
+        var metric = UserInfoMetric(
             Type = USER_DATA_TYPE,
-            Data = UserDataMetric(
+            Data = DataUserInfoMetric(
                 name,
                 surname,
                 phoneNumber,
@@ -62,26 +60,26 @@ class MetricsRepository @Inject constructor(
             UUID = uuid
         )
         var json = Json.encodeToString(
-            serializer = UserDataMetricRemote.serializer(),
+            serializer = UserInfoMetric.serializer(),
             metric
         )
         sendMetric(json)
     }
 
 
-    override suspend fun onClick(clickMetric: ClickMetric) {
+    override suspend fun onClick(clickMetric: DataClickMetric) {
         val GUID = UUID.randomUUID().toString()
         val uid = dataStoreRepository.getPref(uuid).first()
         val formatter = DateTimeFormatter.ofPattern(Constants.DATE_TIME_METRIC_FORMAT)
         var date = LocalDateTime.now().format(formatter)
-        val metric = ClickMetricRemote(
+        val metric = ClickMetric(
             Type = MetricType.CLICK,
             Data = clickMetric,
             Date = date, //DateFormat.format("dd-MM-yyyy HH:mm:ss",LocalDate.now()),
             GUID = GUID,
             UUID = uid
         )
-        val json = Json.encodeToString(serializer = ClickMetricRemote.serializer(), metric)
+        val json = Json.encodeToString(serializer = ClickMetric.serializer(), metric)
         sendMetric(json)
     }
 
@@ -92,7 +90,7 @@ class MetricsRepository @Inject constructor(
         var bookMetric = book.toBookMetric(direction)
         dataStoreRepository.getPref(uuid).collect {
             var uuid = it
-            var metric = BookMetricRemote(
+            var metric = BookMetric(
                 Type = MetricType.SWIPE,
                 Data = bookMetric,
                 Date = date,
@@ -100,7 +98,7 @@ class MetricsRepository @Inject constructor(
                 UUID = uuid
             )
             var json = Json.encodeToString(
-                serializer = BookMetricRemote.serializer(),
+                serializer = BookMetric.serializer(),
                 metric
             )
             sendMetric(json)
@@ -115,9 +113,9 @@ class MetricsRepository @Inject constructor(
 
         coroutineScope {
             val uid = dataStoreRepository.getPref(uuid).first()
-            val metric = SessionTimeMetricRemote(
+            val metric = SessionMetric(
                 Type = type,
-                Data = SessionTime(
+                Data = DataSessionMetric(
                     (sessionTime / 1000).toString(),
                     screen,
                     appversion = appVersion
@@ -127,7 +125,7 @@ class MetricsRepository @Inject constructor(
                 UUID = uid
             )
             var json = Json.encodeToString(
-                serializer = SessionTimeMetricRemote.serializer(),
+                serializer = SessionMetric.serializer(),
                 metric
             )
             sendMetric(json)

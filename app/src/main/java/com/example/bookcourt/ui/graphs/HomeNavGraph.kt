@@ -10,7 +10,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.bookcourt.models.BookInfo
+import com.example.bookcourt.models.book.BookInfo
 import com.example.bookcourt.ui.RecomendationScreen
 import com.example.bookcourt.ui.auth.SignInScreen
 import com.example.bookcourt.ui.statistics.Statistics

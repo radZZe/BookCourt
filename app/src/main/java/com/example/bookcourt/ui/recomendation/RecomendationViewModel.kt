@@ -13,17 +13,16 @@ import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKey
 import com.example.bookcourt.data.repositories.MetricsRepository
 import com.example.bookcourt.data.repositories.NetworkRepository
 import com.example.bookcourt.data.room.UserRepository
-import com.example.bookcourt.models.Book
+import com.example.bookcourt.models.book.Book
 import com.example.bookcourt.models.BookRemote
-import com.example.bookcourt.models.ClickMetric
-import com.example.bookcourt.models.User
+import com.example.bookcourt.models.metrics.DataClickMetric
+import com.example.bookcourt.models.user.User
 import com.example.bookcourt.utils.MetricType
 import com.example.bookcourt.utils.MetricType.SKIP_BOOK
 import com.example.bookcourt.utils.MetricType.DISLIKE_BOOK
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
@@ -52,21 +51,9 @@ class RecomendationViewModel @Inject constructor(
         fetchJob?.cancel()
         fetchJob = viewModelScope.launch(Dispatchers.IO) {
             try{
-                val userId = dataStoreRepository.getPref(uuid)
-                user = userRepository.getUserById(userId.first())
-                val readBooks = user.readBooksList.map { it.bookInfo }
-                val json = networkRepository.getAllBooks(context)!!
-                val data = Json.decodeFromString<MutableList<BookRemote>>("""$json""")
-                val allBooksItems = data.map { it.toBook() }
-
-                if (readBooks.isEmpty()) {
-                    _validBooks.addAll(allBooksItems)
-                } else {
-                    var items = allBooksItems.filter { book ->
-                        book.bookInfo !in readBooks
-                    }
-                    _validBooks.addAll(items)
-                }
+                user = getUser()
+                val allBooksItems = convertBooksJsonToList(context)
+                booksValidation(user,allBooksItems)
                 isFirstDataLoading = false
                 dataIsReady = true
             }catch (ioe:IOException){
@@ -74,6 +61,31 @@ class RecomendationViewModel @Inject constructor(
             }
 
         }
+    }
+
+    fun booksValidation(user: User, allBooks:List<Book>){
+        val readBooks = user.readBooksList.map { it.bookInfo }
+        if (readBooks.isEmpty()) {
+            _validBooks.addAll(allBooks)
+        } else {
+            var items = allBooks.filter { book ->
+                book.bookInfo !in readBooks
+            }
+            _validBooks.addAll(items)
+        }
+    }
+
+    suspend fun convertBooksJsonToList(context: Context):List<Book>{
+        val json = networkRepository.getAllBooks(context)!!
+        val data = Json.decodeFromString<MutableList<BookRemote>>("""$json""")
+        val allBooksItems = data.map { it.toBook() }
+        return allBooksItems
+    }
+
+    suspend fun getUser(): User {
+        val userId = dataStoreRepository.getPref(uuid)
+        user = userRepository.getUserById(userId.first())
+        return user
     }
 
 
@@ -101,7 +113,7 @@ class RecomendationViewModel @Inject constructor(
         }
     }
     
-    fun metricClick(clickMetric: ClickMetric) {
+    fun metricClick(clickMetric: DataClickMetric) {
         viewModelScope.launch(Dispatchers.IO) {
             metricRep.onClick(clickMetric)
         }

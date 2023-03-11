@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.bookcourt.R
-import com.example.bookcourt.models.ClickMetric
+import com.example.bookcourt.models.metrics.DataClickMetric
 import com.example.bookcourt.ui.statistics.StatisticsScreenRequest.AMOUNT_OF_BOOKS
 import com.example.bookcourt.ui.statistics.StatisticsScreenRequest.FAVORITE_AUTHORS
 import com.example.bookcourt.ui.statistics.StatisticsScreenRequest.FAVORITE_GENRES
@@ -66,7 +66,7 @@ private fun FavoriteAuthorsStats(
             .background(Color(0xFFA39C9A))
             .clickable {
                 mViewModel.sendOnClickMetric(
-                    ClickMetric(
+                    DataClickMetric(
                         Buttons.SWAP_STAT,
                         Screens.Statistics.route
                     )
@@ -157,7 +157,7 @@ private fun FavoriteGenresStats(
             .background(Color(0xFF524E4E))
             .clickable {
                 mViewModel.sendOnClickMetric(
-                    ClickMetric(
+                    DataClickMetric(
                         Buttons.SWAP_STAT,
                         Screens.Statistics.route
                     )
@@ -199,7 +199,7 @@ private fun ReadBooksStats(
             .clip(RoundedCornerShape(60.dp))
             .clickable {
                 mViewModel.sendOnClickMetric(
-                    ClickMetric(
+                    DataClickMetric(
                         Buttons.SWAP_STAT,
                         Screens.Statistics.route
                     )
@@ -392,7 +392,7 @@ private fun TopBar(
                     .size(26.dp)
                     .clickable {
                         mViewModel.sendOnClickMetric(
-                            ClickMetric(
+                            DataClickMetric(
                                 Buttons.CLOSE,
                                 Screens.Statistics.route
                             )

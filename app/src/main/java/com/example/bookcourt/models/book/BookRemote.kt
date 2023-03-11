@@ -1,5 +1,7 @@
 package com.example.bookcourt.models
 
+import com.example.bookcourt.models.book.Book
+import com.example.bookcourt.models.book.BookInfo
 import kotlinx.serialization.Serializable
 
 @Serializable

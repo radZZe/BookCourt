@@ -16,9 +16,8 @@ import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKey
 import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.uuid
 import com.example.bookcourt.data.repositories.MetricsRepository
 import com.example.bookcourt.data.room.UserRepository
-import com.example.bookcourt.models.ClickMetric
-import com.example.bookcourt.models.User
-import com.example.bookcourt.models.UserStatistics
+import com.example.bookcourt.models.metrics.DataClickMetric
+import com.example.bookcourt.models.user.User
 import com.example.bookcourt.utils.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
@@ -78,7 +77,7 @@ class SignInViewModel @Inject constructor(
     private suspend fun sendMetrics() {
         sessionTime = System.currentTimeMillis().toInt() - sessionTime
         metricRep.appTime(sessionTime, MetricType.SCREEN_SESSION_TIME,"Sign in")
-        metricRep.onClick(ClickMetric(Buttons.SIGN_IN, Screens.SignIn.route))
+        metricRep.onClick(DataClickMetric(Buttons.SIGN_IN, Screens.SignIn.route))
     }
 
     fun saveUser(navController: NavController, context:Context) {

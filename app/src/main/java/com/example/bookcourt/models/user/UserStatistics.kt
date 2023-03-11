@@ -1,4 +1,6 @@
-package com.example.bookcourt.models
+package com.example.bookcourt.models.user
+
+import com.example.bookcourt.models.book.Book
 
 
 data class UserStatistics(

@@ -33,8 +33,8 @@
 //import androidx.hilt.navigation.compose.hiltViewModel
 //import coil.compose.AsyncImage
 //import com.example.bookcourt.R
-//import com.example.bookcourt.models.UserStatistics
-//import com.example.bookcourt.models.User
+//import com.example.bookcourt.models.user.UserStatistics
+//import com.example.bookcourt.models.user.User
 //import com.example.bookcourt.ui.profile.ProfileViewModel
 //
 //@Composable

@@ -1,6 +1,6 @@
 package com.example.bookcourt.data.room
 
-import com.example.bookcourt.models.User
+import com.example.bookcourt.models.user.User
 
 interface UserRepository {
 

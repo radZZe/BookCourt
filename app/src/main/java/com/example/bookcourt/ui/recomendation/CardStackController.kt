@@ -1,29 +1,22 @@
 package com.example.bookcourt.ui.recomendation
 
-import android.util.Log
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.gestures.detectHorizontalDragGestures
-import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.SwipeableDefaults
 import androidx.compose.material.ThresholdConfig
-import androidx.compose.material.swipeable
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.bookcourt.models.Book
 import com.example.bookcourt.utils.DIRECTION_BOTTOM
 import com.example.bookcourt.utils.DIRECTION_LEFT
 import com.example.bookcourt.utils.DIRECTION_RIGHT
@@ -42,12 +35,9 @@ open class CardStackController(
     val viewModel: CardStackViewModel
 ) {
 
-    var isChangedState = false
     val right = Offset(screenWidth, 0f)
-    val left = Offset(-screenWidth, 0f)
     val center = Offset(0f, 0f)
     val top = Offset(0f, screenHeight)
-    val bottom = Offset(0f, -screenHeight)
 
     var thresholdX = 0.0f
     var thresholdY = 0.0f
@@ -56,6 +46,9 @@ open class CardStackController(
     val offsetY = Animatable(0f)
     val rotation = Animatable(0f)
     val scale = Animatable(0.8f)
+
+    val limitValueY = 200
+    val limitValueX = 100
 
 
     var onSwipeLeft: () -> Unit = {}
@@ -183,7 +176,6 @@ open class CardStackController(
 
     fun returnCenter() {
         scope.apply {
-            isChangedState = false
             viewModel.changeDirection(null, viewModel.currentItem)
             launch {
                 offsetX.animateTo(center.x, animationSpec)
@@ -256,16 +248,16 @@ fun Modifier.draggableStack(
                     )
                 }
 
-                if (controller.offsetY.value <= -controller.thresholdY + 200) {
+                if (isTopShift(controller)) {
                     controller.swipeUp()
 
-                } else if (controller.offsetY.value >= controller.thresholdY - 200) {
+                } else if (isBottomShift(controller)) {
                     controller.swipeDown()
 
-                } else if (controller.offsetX.value <= -controller.thresholdX + 100) {
+                } else if (isLeftShift(controller)) {
                     controller.swipeLeft()
 
-                } else if (controller.offsetX.value >= controller.thresholdX - 100) {
+                } else if (isRightShift(controller)) {
                     controller.swipeRight()
 
                 } else {
@@ -276,41 +268,22 @@ fun Modifier.draggableStack(
             onDrag = { change, dragAmount ->
                 controller.scope.apply {
                     launch(Dispatchers.Default) {
-                        var percentShiftX = abs(controller.offsetX.value)/(controller.right.x/100)
-                        var percentShiftY = abs(controller.offsetY.value)/(controller.top.y/100)
-                        if((percentShiftX>=percentShiftY) && abs(dragAmount.x) > abs(dragAmount.y)
-                                    ||((percentShiftX>percentShiftY) && abs(dragAmount.x) < abs(dragAmount.y))){
+                        if(isShiftByX(controller,dragAmount)){
                             controller.offsetX.snapTo(controller.offsetX.value + dragAmount.x)
                         }else{
                             controller.offsetY.snapTo(controller.offsetY.value + dragAmount.y)
                         }
 
-                        if (controller.offsetY.value <= -controller.thresholdY+200) {
-                            controller.isChangedState = true
-                            controller.viewModel.changeDirection(
-                                DIRECTION_TOP,
-                                controller.viewModel.currentItem
-                            )
-                        } else if (controller.offsetY.value >= controller.thresholdY-200) {
-                            controller.viewModel.changeDirection(
-                                DIRECTION_BOTTOM,
-                                controller.viewModel.currentItem
-                            )
-                        } else if (controller.offsetX.value <= -controller.thresholdX+100) {
-                            controller.viewModel.changeDirection(
-                                DIRECTION_LEFT,
-                                controller.viewModel.currentItem
-                            )
-                        } else if (controller.offsetX.value >= controller.thresholdX-100) {
-                            controller.viewModel.changeDirection(
-                                DIRECTION_RIGHT,
-                                controller.viewModel.currentItem
-                            )
+                        if (isTopShift(controller)) {
+                            drawShift(controller, DIRECTION_TOP)
+                        } else if (isBottomShift(controller)) {
+                            drawShift(controller, DIRECTION_BOTTOM)
+                        } else if (isLeftShift(controller)) {
+                            drawShift(controller, DIRECTION_LEFT)
+                        } else if (isRightShift(controller)) {
+                            drawShift(controller, DIRECTION_RIGHT)
                         } else  {
-                            controller.viewModel.changeDirection(
-                                null,
-                                controller.viewModel.currentItem
-                            )
+                            drawShift(controller, null)
                         }
 
                         val targetRotation = normalize(
@@ -342,6 +315,37 @@ fun Modifier.draggableStack(
         )
     }
 }
+
+fun isTopShift(controller: CardStackController):Boolean{
+    return controller.offsetY.value <= -controller.thresholdY+controller.limitValueY
+}
+
+fun isBottomShift(controller: CardStackController):Boolean{
+    return controller.offsetY.value >= controller.thresholdY-controller.limitValueY
+}
+
+fun isLeftShift(controller: CardStackController):Boolean{
+ return controller.offsetX.value <= -controller.thresholdX+controller.limitValueX
+}
+
+fun isRightShift(controller: CardStackController):Boolean{
+    return controller.offsetX.value >= controller.thresholdX-controller.limitValueX
+}
+fun isShiftByX(controller: CardStackController,dragAmount:Offset):Boolean{
+    var percentShiftX = abs(controller.offsetX.value)/(controller.right.x/100)
+    var percentShiftY = abs(controller.offsetY.value)/(controller.top.y/100)
+    return (percentShiftX>=percentShiftY) && abs(dragAmount.x) > abs(dragAmount.y)
+            ||((percentShiftX>percentShiftY) && abs(dragAmount.x) < abs(dragAmount.y))
+}
+
+fun drawShift(controller: CardStackController,direction:String?){
+    controller.viewModel.changeDirection(
+        direction,
+        controller.viewModel.currentItem
+    )
+}
+
+
 
 private fun normalize(
     min: Float,
