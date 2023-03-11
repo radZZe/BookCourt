@@ -10,8 +10,8 @@
 //import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.savedPhoneNumber
 //import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.savedSurname
 //import com.example.bookcourt.data.repositories.NetworkRepository
-//import com.example.bookcourt.models.UserStatistics
-//import com.example.bookcourt.models.User
+//import com.example.bookcourt.models.user.UserStatistics
+//import com.example.bookcourt.models.user.User
 //import com.example.bookcourt.models.UserRemote
 //import dagger.hilt.android.lifecycle.HiltViewModel
 //import kotlinx.coroutines.Dispatchers

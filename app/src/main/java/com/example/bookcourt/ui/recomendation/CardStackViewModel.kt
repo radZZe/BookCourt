@@ -8,8 +8,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.bookcourt.data.repositories.DataStoreRepository
 import com.example.bookcourt.data.repositories.MetricsRepository
 import com.example.bookcourt.data.room.UserRepository
-import com.example.bookcourt.models.Book
-import com.example.bookcourt.models.User
+import com.example.bookcourt.models.book.Book
+import com.example.bookcourt.models.user.User
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -49,23 +49,14 @@ class CardStackViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             isFirstNotification.value = true
             dataStoreRepository.setPref(true,DataStoreRepository.isNotificationDisplay)
-
         }
 
     }
-
-    
-
 
     fun updateUserStatistic(user: User) {
         viewModelScope.launch(Dispatchers.IO) {
             userRepository.updateUser(user)
         }
-    }
-
-
-    fun changeCurrentItem(item: Book) {
-        currentItem?.value = item
     }
 
     fun changeDirection(newDirection:String?,item: MutableState<Book>?){

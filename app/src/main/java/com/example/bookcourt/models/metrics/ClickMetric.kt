@@ -1,10 +1,10 @@
-package com.example.bookcourt.models
+package com.example.bookcourt.models.metrics
 
 @kotlinx.serialization.Serializable
-data class ClickMetricRemote(
+data class ClickMetric(
     val UUID:String,
     val GUID:String,
     val Type:String,
-    val Data:ClickMetric,
+    val Data: DataClickMetric,
     val Date:String,
 )

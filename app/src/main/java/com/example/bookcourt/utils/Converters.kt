@@ -1,12 +1,10 @@
 package com.example.bookcourt.utils
 
 import androidx.room.TypeConverter
-import com.example.bookcourt.models.Book
+import com.example.bookcourt.models.book.Book
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import org.json.JSONArray
 
 
 class Converters {

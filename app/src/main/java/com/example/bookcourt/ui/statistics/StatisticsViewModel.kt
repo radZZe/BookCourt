@@ -8,9 +8,9 @@ import com.example.bookcourt.data.repositories.DataStoreRepository
 import com.example.bookcourt.data.repositories.MetricsRepository
 import com.example.bookcourt.data.repositories.NetworkRepository
 import com.example.bookcourt.data.room.UserRepository
-import com.example.bookcourt.models.Book
-import com.example.bookcourt.models.ClickMetric
-import com.example.bookcourt.models.User
+import com.example.bookcourt.models.book.Book
+import com.example.bookcourt.models.metrics.DataClickMetric
+import com.example.bookcourt.models.user.User
 import com.example.bookcourt.ui.statistics.StatisticsScreenRequest.AMOUNT_OF_BOOKS
 import com.example.bookcourt.utils.MetricType
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -81,7 +81,7 @@ class StatisticsViewModel @Inject constructor(
         return topGenreMap.toList().sortedByDescending { (_, value) -> value }.toMap()
     }
 
-    fun sendOnClickMetric(clickMetric: ClickMetric) {
+    fun sendOnClickMetric(clickMetric: DataClickMetric) {
         viewModelScope.launch(Dispatchers.IO) {
             metricsRepository.onClick(clickMetric)
         }

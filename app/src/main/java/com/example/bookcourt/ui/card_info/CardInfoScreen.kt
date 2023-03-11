@@ -6,14 +6,12 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -21,20 +19,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import com.example.bookcourt.R
-import com.example.bookcourt.models.Book
-import com.example.bookcourt.models.BookInfo
-import com.example.bookcourt.ui.theme.Brown
-import com.example.bookcourt.utils.BottomBarScreen
+import com.example.bookcourt.models.book.BookInfo
 
 @Composable
-fun CardInfoScreen(book: BookInfo,onClick:()->Unit,modifier: Modifier) {
+fun CardInfoScreen(book: BookInfo, onClick:()->Unit, modifier: Modifier) {
     BookInfoCard(book,onClick,modifier)
 }
 
 @Composable
-fun BookInfoCard(book: BookInfo,onClick: () -> Unit,modifier: Modifier) {
+fun BookInfoCard(book: BookInfo, onClick: () -> Unit, modifier: Modifier) {
     Box(
         modifier = modifier
             .fillMaxSize()

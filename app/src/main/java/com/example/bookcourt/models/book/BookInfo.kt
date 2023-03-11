@@ -1,4 +1,4 @@
-package com.example.bookcourt.models
+package com.example.bookcourt.models.book
 
 import androidx.compose.runtime.MutableState
 import kotlinx.serialization.Serializable

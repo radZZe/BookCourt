@@ -1,7 +1,7 @@
-package com.example.bookcourt.models
+package com.example.bookcourt.models.metrics
 
 @kotlinx.serialization.Serializable
-data class BookMetric(
+data class DataBookMetric(
     val isbn: String?,
     val description:String,
     val swipeType:String,

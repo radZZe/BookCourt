@@ -1,8 +1,8 @@
-package com.example.bookcourt.models
+package com.example.bookcourt.models.metrics
 
 
 @kotlinx.serialization.Serializable
-data class ClickMetric(
+data class DataClickMetric(
     val button: String,
     val screen: String
 )

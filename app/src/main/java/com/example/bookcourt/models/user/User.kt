@@ -1,9 +1,8 @@
-package com.example.bookcourt.models
+package com.example.bookcourt.models.user
 
-import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import kotlinx.serialization.Contextual
+import com.example.bookcourt.models.book.Book
 import kotlinx.serialization.Serializable
 
 @Entity(tableName = "user_table")

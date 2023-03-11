@@ -1,9 +1,9 @@
-package com.example.bookcourt.models
+package com.example.bookcourt.models.metrics
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class UserDataMetric(
+data class DataUserInfoMetric(
     val name:String,
     val surname:String,
     val phonenumber:String,
