@@ -1,5 +1,7 @@
 package com.example.bookcourt.ui.statistics
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -12,6 +14,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -21,10 +24,10 @@ import androidx.navigation.NavController
 import com.example.bookcourt.R
 import com.example.bookcourt.models.metrics.DataClickMetric
 import com.example.bookcourt.ui.statistics.StatisticsScreenRequest.AMOUNT_OF_BOOKS
-import com.example.bookcourt.ui.statistics.StatisticsScreenRequest.FAVORITE_AUTHORS
-import com.example.bookcourt.ui.statistics.StatisticsScreenRequest.FAVORITE_GENRES
+import com.example.bookcourt.ui.statistics.StatisticsScreenRequest.PARTNER
 import com.example.bookcourt.ui.theme.*
 import com.example.bookcourt.utils.Buttons
+import com.example.bookcourt.utils.Partners
 import com.example.bookcourt.utils.Screens
 
 
@@ -42,15 +45,18 @@ fun Statistics(navController: NavController, mViewModel: StatisticsViewModel = h
         AMOUNT_OF_BOOKS -> {
             ReadBooksStats(navController = navController)
         }
-        FAVORITE_AUTHORS -> {
-            FavoriteAuthorsStats(navController = navController)
+//        FAVORITE_AUTHORS -> {
+//            FavoriteAuthorsStats(navController = navController)
+//        }
+        PARTNER -> {
+           PartnerLyuteratura(navController = navController)
         }
-        else -> {
-            FavoriteGenresStats(navController = navController)
-        }
+//        else -> {
+//            FavoriteGenresStats(navController = navController)
+//        }
     }
 }
-
+/*
 @Composable
 private fun FavoriteAuthorsStats(
     navController: NavController,
@@ -143,6 +149,8 @@ private fun FavoriteAuthorsStats(
     }
 }
 
+ */
+/*
 @Composable
 private fun FavoriteGenresStats(
     navController: NavController,
@@ -185,6 +193,97 @@ private fun FavoriteGenresStats(
     }
 }
 
+ */
+
+@Composable
+private fun PartnerLyuteratura(
+    navController: NavController,
+    mViewModel: StatisticsViewModel = hiltViewModel()
+) {
+    val context = LocalContext.current
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(10.dp)
+            .clip(RoundedCornerShape(30.dp))
+            .background(LightPinkBackground)
+            .clickable {
+                mViewModel.sendOnClickMetric(
+                    DataClickMetric(
+                        Buttons.SWAP_STAT,
+                        Screens.Statistics.route
+                    )
+                )
+                mViewModel.currentScreen.value = AMOUNT_OF_BOOKS
+            }
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.SpaceBetween,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            TopBar(navController = navController, rq = PARTNER)
+
+            Image(
+                painter = painterResource(id = R.drawable.partner_lyuteratura_logo),
+                contentDescription = "lyuteratura logo",
+                modifier = Modifier
+                    .fillMaxWidth(0.5f)
+                    .fillMaxHeight(0.1f),
+                contentScale = ContentScale.Fit
+            )
+
+            Image(
+                painter = painterResource(id = R.drawable.partner_lyuteratura),
+                contentDescription = "lyuteratura content",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.5f)
+                ,
+                contentScale = ContentScale.FillBounds
+            )
+            Text(
+                text = "Любите детей, книги и творчество?",
+                fontFamily = Inter,
+                fontWeight = FontWeight.Black,
+                color = Color.Black,
+                fontSize = 32.sp,
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
+            Text(
+                text = "Тогда не проходите мимо и загляните в детский книжный магазин “Лютература”.",
+                fontFamily = Inter,
+                color = Color.Black,
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp,
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
+            Button(
+                onClick = {
+                    val sendIntent = Intent(
+                        Intent.ACTION_VIEW, Uri.parse(
+                            Partners.lyuteraturaUrl
+                        )
+                    )
+                    val webIntent = Intent.createChooser(sendIntent, null)
+                    context.startActivity(webIntent)
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+                    .clip(RoundedCornerShape(60.dp))
+                    .height(45.dp),
+                colors = ButtonDefaults.buttonColors(LightYellowBtn)
+            ) {
+                Text(text = "Заглянуть в магазин")
+            }
+        }
+    }
+}
+
+/*
 @Composable
 private fun ReadBooksStats(
     navController: NavController,
@@ -196,7 +295,7 @@ private fun ReadBooksStats(
         modifier = Modifier
             .fillMaxSize()
             .padding(10.dp)
-            .clip(RoundedCornerShape(60.dp))
+            .clip(RoundedCornerShape(30.dp))
             .clickable {
                 mViewModel.sendOnClickMetric(
                     DataClickMetric(
@@ -204,13 +303,13 @@ private fun ReadBooksStats(
                         Screens.Statistics.route
                     )
                 )
-                mViewModel.currentScreen.value = FAVORITE_AUTHORS
+                mViewModel.currentScreen.value = PARTNER
             }
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(BackGroundGrey),
+                .background(LighterPinkBackground),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             TopBar(navController, AMOUNT_OF_BOOKS)
@@ -268,6 +367,98 @@ private fun ReadBooksStats(
     }
 }
 
+ */
+@Composable
+private fun ReadBooksStats(
+    navController: NavController,
+    mViewModel: StatisticsViewModel = hiltViewModel()
+) {
+    val booksAmount = mViewModel.readBooks.value?.size
+    val string = if (booksAmount == 1) "книга" else if (booksAmount in 2..4) "книги" else "книг"
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(10.dp)
+            .clip(RoundedCornerShape(30.dp))
+            .clickable {
+                mViewModel.sendOnClickMetric(
+                    DataClickMetric(
+                        Buttons.SWAP_STAT,
+                        Screens.Statistics.route
+                    )
+                )
+                mViewModel.currentScreen.value = PARTNER
+            }
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(LighterPinkBackground),
+            verticalArrangement = Arrangement.SpaceBetween,
+            horizontalAlignment = Alignment.CenterHorizontally
+
+        ) {
+            TopBar(navController, AMOUNT_OF_BOOKS)
+            Image(
+                painter = painterResource(id = R.drawable.book_court_logo),
+                contentDescription ="Book court logo"
+            )
+            Text(
+                text = "$booksAmount $string!",
+                fontFamily = Inter,
+                fontWeight = FontWeight.Black,
+                color = Color.Black,
+                fontSize = 32.sp
+            )
+            Text(
+                text = "Вы прочитали, хороший результат \uD83D\uDCAA",
+                fontFamily = Inter,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black,
+                fontSize = 18.sp,
+            )
+            Column {
+                Text(
+                    text = "Продолжайте читать, ведь чтение книг:",
+                    fontFamily = Inter,
+                    fontWeight = FontWeight.Black,
+                    color = Color.Black,
+                    fontSize = 18.sp,
+                )
+                Text(
+                    text =  "1. Увеличивает словарный запас\n" +
+                            "2. Помогает общаться с людьми\n" +
+                            "3. Снижает стресс\n" +
+                            "4. Развивает память и мышление",
+                    fontFamily = Inter,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black,
+                    fontSize = 18.sp,
+                )
+            }
+            Image(
+                painter = painterResource(id = R.drawable.cup_coffee_open_book),
+                contentDescription = "lyuteratura logo",
+                modifier = Modifier
+                    .fillMaxWidth(),
+                    //.fillMaxHeight(0.1f),
+                contentScale = ContentScale.Crop
+            )
+            Button(
+                onClick = {/*TODO*/ },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+                    .clip(RoundedCornerShape(60.dp))
+                    .height(45.dp),
+                colors = ButtonDefaults.buttonColors(LightYellowBtn)
+            ) {
+                Text(text = "Поделиться")
+            }
+        }
+    }
+}
+
 @Composable
 private fun TopBar(
     navController: NavController,
@@ -284,7 +475,7 @@ private fun TopBar(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(20.dp),
+                        .padding(16.dp),
                     horizontalArrangement = Arrangement.Center
                 ) {
                     Box(
@@ -302,16 +493,9 @@ private fun TopBar(
                             .clip(RoundedCornerShape(10.dp))
                             .background(Color.White)
                     )
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Box(
-                        modifier = Modifier
-                            .width(50.dp)
-                            .height(6.dp)
-                            .clip(RoundedCornerShape(10.dp))
-                            .background(Color.White)
-                    )
                 }
             }
+            /*
             FAVORITE_AUTHORS -> {
                 Row(
                     modifier = Modifier
@@ -344,7 +528,8 @@ private fun TopBar(
                     )
                 }
             }
-            else -> {
+             */
+            PARTNER -> {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -359,6 +544,22 @@ private fun TopBar(
                             .background(Color.White)
                     )
                     Spacer(modifier = Modifier.width(6.dp))
+                    Box(
+                        modifier = Modifier
+                            .width(50.dp)
+                            .height(6.dp)
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(Grey)
+                    )
+                }
+            }
+            else -> {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(20.dp),
+                    horizontalArrangement = Arrangement.Center
+                ) {
                     Box(
                         modifier = Modifier
                             .width(50.dp)
@@ -854,6 +1055,7 @@ private fun LongDeck(modifier: Modifier) {
 
 object StatisticsScreenRequest {
     const val AMOUNT_OF_BOOKS = "AMOUNT_OF_BOOKS_RQ"
+    const val PARTNER = "partner lyuteratura"
     const val FAVORITE_GENRES = "FAVORITE_GENRES_RQ"
     const val FAVORITE_AUTHORS = "FAVORITE_AUTHORS_RQ"
 }
