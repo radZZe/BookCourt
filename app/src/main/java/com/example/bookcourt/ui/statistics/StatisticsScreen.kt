@@ -236,13 +236,13 @@ private fun PartnerLyuteratura(
             )
 
             Image(
-                painter = painterResource(id = R.drawable.partner_lyuteratura),
+                painter = painterResource(id = R.drawable.partner_lyuteratura_content),
                 contentDescription = "lyuteratura content",
                 modifier = Modifier
                     .fillMaxWidth()
                     .fillMaxHeight(0.5f)
                 ,
-                contentScale = ContentScale.FillBounds
+                contentScale = ContentScale.Fit
             )
             Text(
                 text = "Любите детей, книги и творчество?",
@@ -440,9 +440,9 @@ private fun ReadBooksStats(
                 painter = painterResource(id = R.drawable.cup_coffee_open_book),
                 contentDescription = "lyuteratura logo",
                 modifier = Modifier
-                    .fillMaxWidth(),
-                    //.fillMaxHeight(0.1f),
-                contentScale = ContentScale.Crop
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.3f),
+                contentScale = ContentScale.Fit
             )
             Button(
                 onClick = {/*TODO*/ },
