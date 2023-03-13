@@ -17,6 +17,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -194,6 +196,170 @@ private fun FavoriteGenresStats(
 }
 
  */
+
+
+
+
+//@Preview
+//@Composable
+//fun ReadBooksStatsPreview(){
+//
+//}
+@Preview
+@Composable
+private fun PartnerLyuteraturaPreview() {
+    val context = LocalContext.current
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(10.dp)
+            .clip(RoundedCornerShape(30.dp))
+            .background(LightPinkBackground)
+            .clickable {
+
+            }
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.SpaceBetween,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.partner_lyuteratura_logo),
+                contentDescription = "lyuteratura logo",
+                modifier = Modifier
+                    .fillMaxWidth(0.5f)
+                    .fillMaxHeight(0.1f),
+                contentScale = ContentScale.Fit
+            )
+
+            Image(
+                painter = painterResource(id = R.drawable.partner_lyuteratura_content),
+                contentDescription = "lyuteratura content",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.5f)
+                ,
+                contentScale = ContentScale.Fit
+            )
+            Text(
+                text = "Любите детей, книги и творчество?",
+                fontFamily = Inter,
+                fontWeight = FontWeight.Black,
+                color = Color.Black,
+                fontSize = 32.sp,
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
+            Text(
+                text = "Тогда не проходите мимо и загляните в детский книжный магазин “Лютература”.",
+                fontFamily = Inter,
+                color = Color.Black,
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp,
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
+            Button(
+                onClick = {
+                    val sendIntent = Intent(
+                        Intent.ACTION_VIEW, Uri.parse(
+                            Partners.lyuteraturaUrl
+                        )
+                    )
+                    val webIntent = Intent.createChooser(sendIntent, null)
+                    context.startActivity(webIntent)
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+                    .clip(RoundedCornerShape(60.dp))
+                    .height(45.dp),
+                colors = ButtonDefaults.buttonColors(LightYellowBtn)
+            ) {
+                Text(text = "Заглянуть в магазин")
+            }
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun ReadBooksStats() {
+    val string = "книг"
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(10.dp)
+            .clip(RoundedCornerShape(30.dp))
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(LighterPinkBackground),
+            verticalArrangement = Arrangement.SpaceBetween,
+            horizontalAlignment = Alignment.CenterHorizontally
+
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.book_court_logo),
+                contentDescription ="Book court logo"
+            )
+            Text(
+                text = "0!",
+                fontFamily = Inter,
+                fontWeight = FontWeight.Black,
+                color = Color.Black,
+                fontSize = 32.sp
+            )
+            Text(
+                text = "Вы прочитали, хороший результат \uD83D\uDCAA",
+                fontFamily = Inter,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black,
+                fontSize = 18.sp,
+            )
+            Column {
+                Text(
+                    text = "Продолжайте читать, ведь чтение книг:",
+                    fontFamily = Inter,
+                    fontWeight = FontWeight.Black,
+                    color = Color.Black,
+                    fontSize = 18.sp,
+                )
+                Text(
+                    text =  "1. Увеличивает словарный запас\n" +
+                            "2. Помогает общаться с людьми\n" +
+                            "3. Снижает стресс\n" +
+                            "4. Развивает память и мышление",
+                    fontFamily = Inter,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black,
+                    fontSize = 18.sp,
+                )
+            }
+            Image(
+                painter = painterResource(id = R.drawable.cup_coffee_open_book),
+                contentDescription = "lyuteratura logo",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.3f),
+                contentScale = ContentScale.Fit
+            )
+            Button(
+                onClick = {/*TODO*/ },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+                    .clip(RoundedCornerShape(60.dp))
+                    .height(45.dp),
+                colors = ButtonDefaults.buttonColors(LightYellowBtn)
+            ) {
+                Text(text = "Поделиться")
+            }
+        }
+    }
+}
 
 @Composable
 private fun PartnerLyuteratura(
