@@ -27,7 +27,7 @@ import kotlinx.coroutines.launch
 import kotlin.math.abs
 import kotlin.math.sign
 
-open class CardStackController(
+open class BookCardController(
     val scope: CoroutineScope,
     private val screenWidth: Float,
     private val screenHeight: Float,
@@ -59,27 +59,21 @@ open class CardStackController(
     fun swipeLeft() {
         scope.apply {
             launch {
-
                 offsetX.animateTo(-screenWidth, animationSpec)
                 onSwipeLeft()
-
                 launch {
                     offsetX.snapTo(center.x)
                 }
-
                 launch {
                     offsetY.snapTo(0f)
                 }
-
                 launch {
                     rotation.snapTo(0f)
                 }
-
                 launch {
                     scale.snapTo(0.8f)
                 }
             }
-
             launch {
                 scale.animateTo(1f, animationSpec)
             }
@@ -90,26 +84,20 @@ open class CardStackController(
         scope.apply {
             launch {
                 offsetX.animateTo(screenWidth, animationSpec)
-
                 onSwipeRight()
-
                 launch {
                     offsetX.snapTo(center.x)
                 }
-
                 launch {
                     offsetY.snapTo(0f)
                 }
-
                 launch {
                     scale.snapTo(0.8f)
                 }
-
                 launch {
                     rotation.snapTo(0f)
                 }
             }
-
             launch {
                 scale.animateTo(1f, animationSpec)
             }
@@ -121,24 +109,19 @@ open class CardStackController(
             launch {
                 offsetY.animateTo(-screenHeight, animationSpec)
                 onSwipeUp()
-
                 launch {
                     offsetX.snapTo(0f)
                 }
-
                 launch {
                     offsetY.snapTo(center.y)
                 }
-
                 launch {
                     scale.snapTo(0.8f)
                 }
-
                 launch {
                     rotation.snapTo(0f)
                 }
             }
-
             launch {
                 scale.animateTo(1f, animationSpec)
             }
@@ -150,24 +133,19 @@ open class CardStackController(
             launch {
                 offsetY.animateTo(screenHeight, animationSpec)
                 onSwipeDown()
-
                 launch {
                     offsetX.snapTo(0f)
                 }
-
                 launch {
                     offsetY.snapTo(center.y)
                 }
-
                 launch {
                     scale.snapTo(0.8f)
                 }
-
                 launch {
                     rotation.snapTo(0f)
                 }
             }
-
             launch {
                 scale.animateTo(1f, animationSpec)
             }
@@ -180,15 +158,12 @@ open class CardStackController(
             launch {
                 offsetX.animateTo(center.x, animationSpec)
             }
-
             launch {
                 offsetY.animateTo(center.y, animationSpec)
             }
-
             launch {
                 rotation.animateTo(0f, animationSpec)
             }
-
             launch {
                 scale.animateTo(0.8f, animationSpec)
             }
@@ -197,10 +172,10 @@ open class CardStackController(
 }
 
 @Composable
-fun rememberCardStackController(
+fun rememberBookCardController(
     animationSpec: AnimationSpec<Float> = SwipeableDefaults.AnimationSpec,
     viewModel: CardStackViewModel = hiltViewModel()
-): CardStackController {
+): BookCardController {
     val scope = rememberCoroutineScope()
     val screenWidth = with(LocalDensity.current) {
         LocalConfiguration.current.screenWidthDp.dp.toPx()
@@ -210,7 +185,7 @@ fun rememberCardStackController(
     }
 
     return remember {
-        CardStackController(
+        BookCardController(
             scope = scope,
             screenWidth = screenWidth,
             screenHeight = screenHeight,
@@ -224,7 +199,7 @@ fun rememberCardStackController(
 
 @OptIn(ExperimentalMaterialApi::class)
 fun Modifier.draggableStack(
-    controller: CardStackController,
+    controller: BookCardController,
     thresholdConfig: (Float, Float) -> ThresholdConfig,
 ): Modifier = composed {
 
@@ -316,29 +291,29 @@ fun Modifier.draggableStack(
     }
 }
 
-fun isTopShift(controller: CardStackController):Boolean{
+fun isTopShift(controller: BookCardController):Boolean{
     return controller.offsetY.value <= -controller.thresholdY+controller.limitValueY
 }
 
-fun isBottomShift(controller: CardStackController):Boolean{
+fun isBottomShift(controller: BookCardController):Boolean{
     return controller.offsetY.value >= controller.thresholdY-controller.limitValueY
 }
 
-fun isLeftShift(controller: CardStackController):Boolean{
+fun isLeftShift(controller: BookCardController):Boolean{
  return controller.offsetX.value <= -controller.thresholdX+controller.limitValueX
 }
 
-fun isRightShift(controller: CardStackController):Boolean{
+fun isRightShift(controller: BookCardController):Boolean{
     return controller.offsetX.value >= controller.thresholdX-controller.limitValueX
 }
-fun isShiftByX(controller: CardStackController,dragAmount:Offset):Boolean{
+fun isShiftByX(controller: BookCardController, dragAmount:Offset):Boolean{
     var percentShiftX = abs(controller.offsetX.value)/(controller.right.x/100)
     var percentShiftY = abs(controller.offsetY.value)/(controller.top.y/100)
     return (percentShiftX>=percentShiftY) && abs(dragAmount.x) > abs(dragAmount.y)
             ||((percentShiftX>percentShiftY) && abs(dragAmount.x) < abs(dragAmount.y))
 }
 
-fun drawShift(controller: CardStackController,direction:String?){
+fun drawShift(controller: BookCardController, direction:String?){
     controller.viewModel.changeDirection(
         direction,
         controller.viewModel.currentItem

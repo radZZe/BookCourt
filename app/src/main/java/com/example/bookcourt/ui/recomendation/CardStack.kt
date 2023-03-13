@@ -61,7 +61,6 @@ fun CardStack(
     onClick: (clickMetric: DataClickMetric) -> Unit = {},
     onEmptyStack: () -> Unit = {},
     sessionTimer: () -> Unit = {},
-//    cardStackController: CardStackController,
     viewModel: CardStackViewModel = hiltViewModel(),
     onNavigateToStatistics:()->Unit
 ) {
@@ -144,7 +143,7 @@ fun BookCard(
 
     var item = itemRaw.value
     var i = viewModel.i
-    val cardStackController = rememberCardStackController()
+    val cardStackController = rememberBookCardController()
     cardStackController.onSwipeLeft = {
         user.readBooksList.add(item)
         onSwipeLeft(item)
@@ -580,9 +579,13 @@ fun BookCardImage(
                 .fillMaxSize(), horizontalArrangement = Arrangement.End
         ) {
             if (viewModel.isFirstNotification.value) {
-                // TODO Добавить отправку метрики клик на переход в статистику
                 NotificationMessage(Modifier.padding(top = 20.dp), counter,onClick = {
-//                   navController.popBackStack()
+                    onClick(
+                        DataClickMetric(
+                            Buttons.STATS_NOTIFICATION,
+                            Screens.Recommendation.route
+                        )
+                    )
                     onNavigateToStatistics()
                 })
                 viewModel.countEqualToLimit()
