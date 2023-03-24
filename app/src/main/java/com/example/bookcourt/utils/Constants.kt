@@ -100,5 +100,8 @@ object AppVersion {
     const val appVersion = "0.9.5"
 }
 
+object Partners{
+    const val lyuteraturaUrl = "https://lyuteratura.ru/"
+}
 
 
