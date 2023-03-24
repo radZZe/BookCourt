@@ -12,6 +12,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.bookcourt.data.repositories.DataStoreRepository
 import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.isRemembered
+import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.isTutorChecked
 import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.savedCity
 import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.uuid
 import com.example.bookcourt.data.repositories.MetricsRepository
@@ -21,6 +22,7 @@ import com.example.bookcourt.models.user.User
 import com.example.bookcourt.utils.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.first
 import java.io.IOException
 import java.util.*
 import java.util.regex.Pattern
@@ -41,6 +43,7 @@ class SignInViewModel @Inject constructor(
     var isRememberMe by mutableStateOf(false)
     var city by mutableStateOf("")
     var isLoading by mutableStateOf(false)
+    var isTutorChecked = dataStoreRepository.getBoolPref(DataStoreRepository.isTutorChecked)
 
     var sessionTime = System.currentTimeMillis().toInt()
 
@@ -98,8 +101,13 @@ class SignInViewModel @Inject constructor(
             userRepository.addUser(user)
             sendUserMetric(context,name,surname,phoneNumber,city,UUID)
             withContext(Dispatchers.Main){
-                navController.popBackStack()
-                navController.navigate(route = Screens.Recommendation.route)
+                if (isTutorChecked.first()) {
+                    navController.popBackStack()
+                    navController.navigate(route = Screens.Recommendation.route)
+                } else {
+                    navController.popBackStack()
+                    navController.navigate(route = Screens.Tutorial.route)
+                }
             }
         }
     }

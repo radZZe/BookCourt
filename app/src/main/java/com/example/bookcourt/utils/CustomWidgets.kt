@@ -1,6 +1,11 @@
 package com.example.bookcourt.ui.theme
 
+import androidx.compose.animation.Animatable
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -17,11 +22,15 @@ import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.LightGray
+import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
@@ -30,118 +39,25 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.zIndex
 import com.example.bookcourt.R
+import com.example.bookcourt.ui.statistics.IgraSlov
+import com.example.bookcourt.ui.statistics.Zarya
 import com.example.bookcourt.utils.Constants.OTHER_CITY
 import com.example.bookcourt.utils.Constants.cities
+import com.example.bookcourt.utils.Constants.statisticScreensList
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.PagerState
+import com.google.accompanist.pager.rememberPagerState
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.Collections
 
-@Composable
-fun TutorialGreeting(
-    onCLick: () -> Unit
-) {
-    Surface(
-        modifier = Modifier
-            .padding(20.dp)
-            .fillMaxWidth()
-            .wrapContentHeight(),
-        shape = RoundedCornerShape(20.dp),
-        color = Color.White,
-        elevation = 10.dp
-    ) {
-        Column(
-            modifier = Modifier
-                .padding(20.dp)
-                .fillMaxWidth()
-        ) {
-            Text(
-                text = "Как работают свайпы?",
-                fontSize = 26.sp,
-                fontFamily = Gilroy,
-                fontWeight = FontWeight.Medium,
-                color = Color.Black
-            )
-            Spacer(modifier = Modifier.height(20.dp))
-            Row {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_swipe_up),
-                    contentDescription = "",
-                    tint = Brown
-                )
-                Spacer(modifier = Modifier.width(10.dp))
-                Text(
-                    text = "Добавить в желаемое",
-                    fontSize = 22.sp,
-                    fontFamily = Gilroy,
-                    fontWeight = FontWeight.Medium,
-                    color = Color.Black
-                )
-            }
-            Spacer(modifier = Modifier.height(12.dp))
-            Row {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_swipe_right),
-                    contentDescription = "",
-                    tint = Brown
-                )
-                Spacer(modifier = Modifier.width(10.dp))
-                Text(
-                    text = "Нравится",
-                    fontSize = 22.sp,
-                    fontFamily = Gilroy,
-                    fontWeight = FontWeight.Medium,
-                    color = Color.Black
-                )
-            }
-            Spacer(modifier = Modifier.height(12.dp))
-            Row {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_swipe_left),
-                    contentDescription = "",
-                    tint = Brown
-                )
-                Spacer(modifier = Modifier.width(10.dp))
-                Text(
-                    text = "Не нравится",
-                    fontSize = 22.sp,
-                    fontFamily = Gilroy,
-                    fontWeight = FontWeight.Medium,
-                    color = Color.Black
-                )
-            }
-            Spacer(modifier = Modifier.height(12.dp))
-            Row {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_swipe_down),
-                    contentDescription = "",
-                    tint = Brown
-                )
-                Spacer(modifier = Modifier.width(10.dp))
-                Text(
-                    text = "Пропустить",
-                    fontSize = 22.sp,
-                    fontFamily = Gilroy,
-                    fontWeight = FontWeight.Medium,
-                    color = Color.Black
-                )
-            }
-            Spacer(modifier = Modifier.height(20.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                CustomButton(
-                    text = "Хорошо",
-                    color = BrightOlive,
-                    textColor = Color.White
-                ) { onCLick() }
-            }
-        }
-    }
-}
 
 @Composable
 fun CustomCheckBox(
@@ -170,17 +86,18 @@ fun CustomCheckBox(
 
 @Composable
 fun CustomButton(
-    text: String,
+    text: String = "Text",
     textColor: Color = LightBrown,
     color: Color = Brown,
+    modifier: Modifier = Modifier,
     onCLick: () -> Unit = {}
 ) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(50.dp))
             .background(color = color)
-            .padding(top = 12.dp, bottom = 12.dp, start = 20.dp, end = 20.dp)
+            .padding(vertical = 13.dp, horizontal = 20.dp)
             .clickable { onCLick() },
         Alignment.Center
     ) {
@@ -395,6 +312,102 @@ fun CityItem(
             color = Color.Black,
             fontWeight = FontWeight.Medium
         )
+    }
+}
+
+@Composable
+fun InstaStoriesProgressBar(
+    modifier: Modifier,
+    startProgress: Boolean = false,
+    onAnimationEnd: () -> Unit
+) {
+
+    var progress by remember {
+        mutableStateOf(0.00f)
+    }
+
+    val animatedProgress by animateFloatAsState(
+        targetValue = progress,
+        animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec
+    )
+    if (startProgress) {
+        LaunchedEffect(key1 = Unit) {
+            while (progress < 1f) {
+                progress += 0.01f
+                delay(50)
+            }
+            onAnimationEnd() // The action after the timeline is over
+        }
+    }
+
+    LinearProgressIndicator(
+        backgroundColor = Color.LightGray,
+        color = Color.White,
+        modifier = modifier
+            .padding(top = 12.dp, bottom = 12.dp)
+            .clip(RoundedCornerShape(12.dp)),
+        progress = animatedProgress
+    )
+}
+
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+fun StoryLikePages(
+    pagerState: PagerState,
+    screens: List<String>
+) {
+    HorizontalPager(state = pagerState, dragEnabled = false) { page ->
+        when(screens[page]) {
+            "IgraSlov" -> { IgraSlov() }
+            else -> { Zarya() }
+        }
+    }
+}
+
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+@Preview
+fun Statistics() {
+    // n - number of "stories" in stats screen < change it on your own
+    val stories = statisticScreensList.size
+    val pagerState = rememberPagerState(pageCount = stories)
+    val coroutineScope = rememberCoroutineScope()
+
+    var currentPage by remember {
+        mutableStateOf(0)
+    }
+
+    val darkGradient = Brush.verticalGradient(
+        listOf(
+            Color(0xFF14161A), Color(0xFF2E3643), Color(0xFF303845)
+        )
+    )
+    Box(modifier = Modifier.fillMaxSize()) {
+        StoryLikePages(pagerState = pagerState, statisticScreensList)
+        Box(modifier = Modifier.wrapContentHeight().fillMaxWidth()) {
+//            Box(modifier = Modifier.height(24.dp).fillMaxWidth().zIndex(1f))
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth().zIndex(2f),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Spacer(modifier = Modifier.padding(4.dp))
+                for( i in 0 until stories) {
+                    InstaStoriesProgressBar(
+                        modifier = Modifier.weight(1f),
+                        startProgress = (i == currentPage)) {
+                        coroutineScope.launch {
+                            if (currentPage < stories - 1) {
+                                currentPage++
+                            }
+                            pagerState.animateScrollToPage(currentPage)
+                        }
+                    }
+                    Spacer(modifier = Modifier.padding(4.dp))
+                }
+            }
+        }
+
     }
 }
 

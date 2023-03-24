@@ -3,7 +3,6 @@ package com.example.bookcourt.ui.auth
 import android.Manifest
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.content.pm.PackageManager.PERMISSION_GRANTED
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -18,7 +17,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -34,7 +32,8 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.navigation.NavController
 import com.example.bookcourt.R
 import com.example.bookcourt.ui.theme.*
-import com.example.bookcourt.utils.*
+import com.example.bookcourt.utils.PhoneNumberVisualTransformation
+import com.example.bookcourt.utils.isPermanentlyDenied
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -46,28 +45,27 @@ fun SignInScreen(
     navController: NavController,
     mViewModel: SignInViewModel = hiltViewModel()
 ) {
-
-        Box(
-            contentAlignment = Alignment.Center,
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.auth_background),
+            contentDescription = "Background",
+            contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.auth_background),
-                contentDescription = "Background",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize()
-            )
-            Image(
-                painter = painterResource(id = R.drawable.auth_background_alpha),
-                contentDescription = "Background",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .alpha(0.2f)
-            )
-            AuthFields(navController, mViewModel)
-        }
+        )
+        Image(
+            painter = painterResource(id = R.drawable.auth_background_alpha),
+            contentDescription = "Background",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .fillMaxSize()
+                .alpha(0.2f)
+        )
+        AuthFields(navController, mViewModel)
     }
+}
 
 @Composable
 fun AuthFields(navController: NavController, mViewModel: SignInViewModel) {
@@ -93,8 +91,10 @@ fun AuthFields(navController: NavController, mViewModel: SignInViewModel) {
                 contentDescription = "Lead App Icon",
                 modifier = Modifier.size(100.dp)
             )
-            TextBlock("Имя", "Введите ваше имя", mViewModel.name,
-                visualTransformation = VisualTransformation.None) { mViewModel.onNameChanged(it) }
+            TextBlock(
+                "Имя", "Введите ваше имя", mViewModel.name,
+                visualTransformation = VisualTransformation.None
+            ) { mViewModel.onNameChanged(it) }
             Spacer(modifier = Modifier.height(18.dp))
             TextBlock(
                 "Фамилия",
@@ -110,7 +110,7 @@ fun AuthFields(navController: NavController, mViewModel: SignInViewModel) {
                 keyboardType = KeyboardType.Phone,
                 visualTransformation = PhoneNumberVisualTransformation()
             ) {
-                if(it.length<=12){
+                if (it.length <= 12) {
                     mViewModel.onPhoneChanged(it)
                 }
 
@@ -122,7 +122,7 @@ fun AuthFields(navController: NavController, mViewModel: SignInViewModel) {
                 mViewModel.city
             ) { mViewModel.onCityChanged(it) }
             Spacer(modifier = Modifier.height(36.dp))
-            if(mViewModel.isLoading){
+            if (mViewModel.isLoading) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -130,11 +130,11 @@ fun AuthFields(navController: NavController, mViewModel: SignInViewModel) {
                         .background(Brown)
                         .padding(2.dp),
                     Alignment.Center
-                ){
+                ) {
                     CircularProgressIndicator(color = Color.White)
                 }
 
-            }else{
+            } else {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -188,7 +188,7 @@ fun TextBlock(
     placeholder: String,
     value: String,
     keyboardType: KeyboardType = KeyboardType.Text,
-    visualTransformation:VisualTransformation,
+    visualTransformation: VisualTransformation,
     onValueChange: (String) -> Unit
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {

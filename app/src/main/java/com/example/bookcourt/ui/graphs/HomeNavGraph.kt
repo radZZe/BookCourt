@@ -14,6 +14,7 @@ import com.example.bookcourt.models.book.BookInfo
 import com.example.bookcourt.ui.RecomendationScreen
 import com.example.bookcourt.ui.auth.SignInScreen
 import com.example.bookcourt.ui.statistics.Statistics
+import com.example.bookcourt.ui.tutorial.TutorScreen
 import com.example.bookcourt.utils.BottomBarScreen
 import com.example.bookcourt.utils.Screens
 import com.example.bookcourt.utils.SplashScreen
@@ -42,11 +43,14 @@ fun NavigationGraph(
         composable(BottomBarScreen.AddBook.route) {
 //           AddBookScreen()
         }
-        composable(BottomBarScreen.Cart.route) {
+        composable(Screens.Tutorial.route) {
+            TutorScreen(navController = navController)
 //            CartScreen()
         }
         composable(Screens.SignIn.route) {
             SignInScreen(navController = navController)
+//            com.example.bookcourt.ui.theme.Statistics()
+//            TutorScreen()
         }
         composable(Screens.Splash.route) {
             SplashScreen(navController = navController)
