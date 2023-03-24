@@ -9,7 +9,6 @@ import com.example.bookcourt.data.repositories.MetricsRepository
 import com.example.bookcourt.data.repositories.UserRepositoryImpl
 import com.example.bookcourt.data.room.UserDatabase
 import com.example.bookcourt.data.room.UserRepository
-import com.example.bookcourt.models.Metric
 import com.example.bookcourt.utils.Hashing
 import dagger.Module
 import dagger.Provides

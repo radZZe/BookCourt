@@ -12,6 +12,7 @@ sealed class Screens(
     object CardInfo : Screens(route = "Card Info", title = "Card Info")
     object Statistics : Screens(route = "Statistics", title = "Statistics")
     object Recommendation : Screens(route = "Recommendations", title = "Recommendations")
+    object Tutorial : Screens(route = "Tutorial", title = "Tutorial")
 }
 
 sealed class BottomBarScreen(
