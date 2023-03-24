@@ -38,9 +38,3 @@ fun NotificationMessage(modifier: Modifier,count:Int,onClick:()->Unit) {
         }
     }
 }
-
-//@Preview
-//@Composable
-//fun NotificationMessagePreview(){
-//    NotificationMessage()
-//}
