@@ -14,6 +14,7 @@ import javax.inject.Inject
 class NetworkRepository @Inject constructor(
     private val client: OkHttpClient
 ) {
+    // TODO Сделать два источника данных кэш и сеть , для них сделать репозитории
     suspend fun getAllBooks(context: Context):String?{
         var json = context.assets.open("books.json").bufferedReader().use {
             it.readText()

@@ -27,7 +27,6 @@ class SendMetricsWorker(context: Context, workerParams: WorkerParameters) : Work
     }
 
     private fun sendMetric(json: String) {
-
         var body = json
         var mediaType = "application/json".toMediaTypeOrNull();
         var requestBody = RequestBody.create(
@@ -35,7 +34,7 @@ class SendMetricsWorker(context: Context, workerParams: WorkerParameters) : Work
             body
         )
 //        val request: Request = Request.Builder()
-//            .url("http://cca9-77-34-189-143.eu.ngrok.io/api/SendMetric")
+//            .url("http://2f65-77-34-189-143.jp.ngrok.io/api/SendMetric")
 //            .method("POST", requestBody)
 //            .addHeader("Content-Type", "application/json")
 //            .build()

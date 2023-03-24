@@ -1,21 +1,18 @@
 package com.example.bookcourt.di
 
 import android.app.Application
-import android.text.BoringLayout.Metrics
 import androidx.room.Room
 
 import com.example.bookcourt.data.repositories.DataStoreRepository
 import com.example.bookcourt.data.repositories.MetricsRepository
 import com.example.bookcourt.data.repositories.UserRepositoryImpl
 import com.example.bookcourt.data.room.UserDatabase
-import com.example.bookcourt.data.room.UserRepository
-import com.example.bookcourt.models.Metric
+import com.example.bookcourt.data.repositories.UserRepository
 import com.example.bookcourt.utils.Hashing
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import okhttp3.OkHttpClient
 import javax.inject.Singleton
 
 
