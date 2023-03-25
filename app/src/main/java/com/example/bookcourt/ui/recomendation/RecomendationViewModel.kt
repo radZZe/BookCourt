@@ -2,10 +2,8 @@ package com.example.bookcourt.ui.recomendation
 
 import android.content.Context
 import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.animation.core.Animatable
+import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookcourt.data.repositories.DataStoreRepository
@@ -38,44 +36,65 @@ class RecomendationViewModel @Inject constructor(
     private val userRepository: UserRepository
 ) : ViewModel() {
 
-    lateinit var user : User
+    lateinit var user: User
 
-    private var _validBooks = mutableStateListOf<Book>()
-    val validBooks:MutableList<Book> = _validBooks
+    var validBooks = mutableStateListOf<Book>()
     var dataIsReady by mutableStateOf(false)
+
     var isFirstDataLoading by mutableStateOf(true)
+    var isNotificationDisplay = dataStoreRepository.getBoolPref(DataStoreRepository.isNotificationDisplay)
+    var isFirstNotification = mutableStateOf(false)
+
     private var sessionTime = System.currentTimeMillis().toInt()
     private var fetchJob: Job? = null
+
+    val limitSwipeValue = 3;
+    var counter by mutableStateOf(0)
+
+
+    var blurValueRecommendationScreen = Animatable(0f)
+
+    fun displayNotificationMessage(){
+        viewModelScope.launch {
+            blurValueRecommendationScreen.snapTo(20f)
+        }
+    }
+
+    fun closeNotificationMessage(){
+        viewModelScope.launch {
+            blurValueRecommendationScreen.snapTo(0f)
+        }
+    }
 
     fun getAllBooks(context: Context) {
         fetchJob?.cancel()
         fetchJob = viewModelScope.launch(Dispatchers.IO) {
-            try{
+            try {
                 user = getUser()
                 val allBooksItems = convertBooksJsonToList(context)
-                booksValidation(user,allBooksItems)
+                booksValidation(user, allBooksItems)
                 isFirstDataLoading = false
                 dataIsReady = true
-            }catch (ioe:IOException){
-                Log.d("getAllBooks","error cause ${ioe.cause}")
+            } catch (ioe: IOException) {
+                Log.d("getAllBooks", "error cause ${ioe.cause}")
             }
 
         }
     }
 
-    fun booksValidation(user: User, allBooks:List<Book>){
+    fun booksValidation(user: User, allBooks: List<Book>) {
         val readBooks = user.readBooksList.map { it.bookInfo }
         if (readBooks.isEmpty()) {
-            _validBooks.addAll(allBooks)
+            validBooks.addAll(allBooks)
         } else {
             var items = allBooks.filter { book ->
                 book.bookInfo !in readBooks
             }
-            _validBooks.addAll(items)
+            validBooks.addAll(items)
         }
     }
 
-    suspend fun convertBooksJsonToList(context: Context):List<Book>{
+    suspend fun convertBooksJsonToList(context: Context): List<Book> {
         val json = networkRepository.getAllBooks(context)!!
         val data = Json.decodeFromString<MutableList<BookRemote>>("""$json""")
         val allBooksItems = data.map { it.toBook() }
@@ -91,7 +110,7 @@ class RecomendationViewModel @Inject constructor(
 
     fun metricSwipeLeft(book: Book) {
         viewModelScope.launch(Dispatchers.IO) {
-            metricRep.onSwipe(book,DISLIKE_BOOK)
+            metricRep.onSwipe(book, DISLIKE_BOOK)
         }
     }
 
@@ -112,7 +131,7 @@ class RecomendationViewModel @Inject constructor(
             metricRep.onSwipe(book, SKIP_BOOK)
         }
     }
-    
+
     fun metricClick(clickMetric: DataClickMetric) {
         viewModelScope.launch(Dispatchers.IO) {
             metricRep.onClick(clickMetric)
@@ -122,9 +141,17 @@ class RecomendationViewModel @Inject constructor(
     fun metricScreenTime() {
         viewModelScope.launch(Dispatchers.IO) {
             sessionTime = System.currentTimeMillis().toInt() - sessionTime
-            metricRep.appTime(sessionTime, MetricType.SCREEN_SESSION_TIME,"Recomendation")
+            metricRep.appTime(sessionTime, MetricType.SCREEN_SESSION_TIME, "Recomendation")
             sessionTime = System.currentTimeMillis().toInt()
         }
+    }
+
+    fun countEqualToLimit(){
+        viewModelScope.launch(Dispatchers.IO) {
+            isFirstNotification.value = true
+            dataStoreRepository.setPref(true,DataStoreRepository.isNotificationDisplay)
+        }
+
     }
 
 }
