@@ -1,17 +1,17 @@
 package com.example.bookcourt.ui.recomendation
 
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.AnimationSpec
+import android.util.Log
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.SwipeableDefaults
 import androidx.compose.material.ThresholdConfig
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
@@ -23,6 +23,7 @@ import com.example.bookcourt.utils.DIRECTION_RIGHT
 import com.example.bookcourt.utils.DIRECTION_TOP
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 import kotlin.math.sign
@@ -45,10 +46,31 @@ open class BookCardController(
     val offsetX = Animatable(0f)
     val offsetY = Animatable(0f)
     val rotation = Animatable(0f)
-    val scale = Animatable(0.8f)
+    val visibility_first = Animatable(1f)
+    val visibility_second = Animatable(0f)
 
-    val limitValueY = 200
-    val limitValueX = 100
+    val limitValueY = 50
+    val limitValueX = 50
+
+    val likeIconSize = Animatable(20.0f)
+    val dislikeIconSize = Animatable(20.0f)
+    val wantToReadIconSize = Animatable(20.0f)
+    val skipBookIconSize = Animatable(20.0f)
+
+
+    var baseIconColor = Color(222, 210, 169)
+
+    var likeIconAlpha = Animatable(0f)
+    var currentLikeIconColor = Color(red = 252, 87, 5)
+
+    var dislikeIconAlpha = Animatable(0f)
+    var currentDislikeIconColor = Color(red = 252, 87, 5)
+
+    var wantToReadIconAlpha = Animatable(0f)
+    var currentWantToReadIconColor = Color(red = 243, 183, 29)
+
+    var skipIconAlpha = Animatable(0f)
+    var currentSkipIconColor = Color(red = 134, 134, 134)
 
 
     var onSwipeLeft: () -> Unit = {}
@@ -59,7 +81,12 @@ open class BookCardController(
     fun swipeLeft() {
         scope.apply {
             launch {
+
                 offsetX.animateTo(-screenWidth, animationSpec)
+                visibility_first.animateTo(
+                    targetValue = 0f,
+                    animationSpec = tween(durationMillis = 200, easing = LinearEasing)
+                )
                 onSwipeLeft()
                 launch {
                     offsetX.snapTo(center.x)
@@ -71,11 +98,15 @@ open class BookCardController(
                     rotation.snapTo(0f)
                 }
                 launch {
-                    scale.snapTo(0.8f)
+                    visibility_first.snapTo(1f)
                 }
-            }
-            launch {
-                scale.animateTo(1f, animationSpec)
+                launch {
+                    dislikeIconSize.snapTo(20.0f)
+                }
+                launch {
+                    dislikeIconAlpha.snapTo(0f)
+                }
+
             }
         }
     }
@@ -83,7 +114,12 @@ open class BookCardController(
     fun swipeRight() {
         scope.apply {
             launch {
+
                 offsetX.animateTo(screenWidth, animationSpec)
+                visibility_first.animateTo(
+                    targetValue = 0f,
+                    animationSpec = tween(durationMillis = 200, easing = LinearEasing)
+                )
                 onSwipeRight()
                 launch {
                     offsetX.snapTo(center.x)
@@ -92,14 +128,20 @@ open class BookCardController(
                     offsetY.snapTo(0f)
                 }
                 launch {
-                    scale.snapTo(0.8f)
-                }
-                launch {
                     rotation.snapTo(0f)
                 }
-            }
-            launch {
-                scale.animateTo(1f, animationSpec)
+                launch {
+                    visibility_first.snapTo(1f)
+                }
+                launch {
+                    likeIconSize.animateTo(
+                        targetValue = 20f,
+                        animationSpec = tween(durationMillis = 200, easing = LinearEasing)
+                    )
+                }
+                launch {
+                    likeIconAlpha.snapTo(0f)
+                }
             }
         }
     }
@@ -107,7 +149,12 @@ open class BookCardController(
     fun swipeUp() {
         scope.apply {
             launch {
+
                 offsetY.animateTo(-screenHeight, animationSpec)
+                visibility_first.animateTo(
+                    targetValue = 0f,
+                    animationSpec = tween(durationMillis = 200, easing = LinearEasing)
+                )
                 onSwipeUp()
                 launch {
                     offsetX.snapTo(0f)
@@ -116,14 +163,18 @@ open class BookCardController(
                     offsetY.snapTo(center.y)
                 }
                 launch {
-                    scale.snapTo(0.8f)
-                }
-                launch {
                     rotation.snapTo(0f)
                 }
-            }
-            launch {
-                scale.animateTo(1f, animationSpec)
+                launch {
+                    visibility_first.snapTo(1f)
+                }
+                launch {
+                    wantToReadIconSize.snapTo(20.0f)
+                }
+                launch {
+                    wantToReadIconAlpha.snapTo(0f)
+                }
+
             }
         }
     }
@@ -132,6 +183,10 @@ open class BookCardController(
         scope.apply {
             launch {
                 offsetY.animateTo(screenHeight, animationSpec)
+                visibility_first.animateTo(
+                    targetValue = 0f,
+                    animationSpec = tween(durationMillis = 200, easing = LinearEasing)
+                )
                 onSwipeDown()
                 launch {
                     offsetX.snapTo(0f)
@@ -140,21 +195,26 @@ open class BookCardController(
                     offsetY.snapTo(center.y)
                 }
                 launch {
-                    scale.snapTo(0.8f)
-                }
-                launch {
                     rotation.snapTo(0f)
                 }
-            }
-            launch {
-                scale.animateTo(1f, animationSpec)
+                launch {
+                    visibility_first.snapTo(1f)
+                }
+                launch {
+                    skipBookIconSize.snapTo(20.0f)
+                }
+                launch {
+                    skipIconAlpha.snapTo(
+                        0f
+                    )
+                }
+
             }
         }
     }
 
     fun returnCenter() {
         scope.apply {
-            viewModel.changeDirection(null, viewModel.currentItem)
             launch {
                 offsetX.animateTo(center.x, animationSpec)
             }
@@ -165,8 +225,23 @@ open class BookCardController(
                 rotation.animateTo(0f, animationSpec)
             }
             launch {
-                scale.animateTo(0.8f, animationSpec)
+                visibility_first.animateTo(
+                    targetValue = 1f,
+                    animationSpec = tween(durationMillis = 200, easing = FastOutSlowInEasing)
+                )
             }
+
+            launch {
+                likeIconSize.snapTo(20.0f)
+                wantToReadIconSize.snapTo(20.0f)
+                skipBookIconSize.snapTo(20.0f)
+                dislikeIconSize.snapTo(20.0f)
+                likeIconAlpha.snapTo(0f)
+                dislikeIconAlpha.snapTo(0f)
+                wantToReadIconAlpha.snapTo(0f)
+                skipIconAlpha.snapTo(0f)
+            }
+
         }
     }
 }
@@ -196,7 +271,6 @@ fun rememberBookCardController(
 }
 
 
-
 @OptIn(ExperimentalMaterialApi::class)
 fun Modifier.draggableStack(
     controller: BookCardController,
@@ -216,23 +290,46 @@ fun Modifier.draggableStack(
     Modifier.pointerInput(Unit) {
         detectDragGestures(
             onDragEnd = {
-                if(controller.offsetY.value == controller.center.y && controller.offsetX.value == controller.center.x){
-                    controller.viewModel.changeDirection(
-                        null,
-                        controller.viewModel.currentItem
-                    )
-                }
 
                 if (isTopShift(controller)) {
+                    controller.scope.apply {
+                        launch(Dispatchers.Default) {
+                            iconPulseAnimation(
+                                controller.wantToReadIconAlpha,
+                                controller.wantToReadIconSize
+                            )
+                        }
+                    }
                     controller.swipeUp()
 
                 } else if (isBottomShift(controller)) {
+                    controller.scope.apply {
+                        launch(Dispatchers.Default) {
+                            iconPulseAnimation(
+                                controller.skipIconAlpha,
+                                controller.skipBookIconSize
+                            )
+                        }
+                    }
                     controller.swipeDown()
 
                 } else if (isLeftShift(controller)) {
+                    controller.scope.apply {
+                        launch(Dispatchers.Default) {
+                            iconPulseAnimation(
+                                controller.dislikeIconAlpha,
+                                controller.dislikeIconSize
+                            )
+                        }
+                    }
                     controller.swipeLeft()
 
                 } else if (isRightShift(controller)) {
+                    controller.scope.apply {
+                        launch(Dispatchers.Default) {
+                            iconPulseAnimation(controller.likeIconAlpha, controller.likeIconSize)
+                        }
+                    }
                     controller.swipeRight()
 
                 } else {
@@ -243,43 +340,31 @@ fun Modifier.draggableStack(
             onDrag = { change, dragAmount ->
                 controller.scope.apply {
                     launch(Dispatchers.Default) {
-                        if(isShiftByX(controller,dragAmount)){
+                        var percentShiftY =
+                            controller.offsetY.value / (controller.top.y / 100)
+                        var percentShiftX =
+                            controller.offsetX.value / (controller.right.x / 100)
+
+                        Log.d("Percent","percentShiftX : ${percentShiftX}")
+                        Log.d("Percent","percentShiftY : ${percentShiftY}")
+                        if (isShiftByX(controller, dragAmount)) {
+                            val targetChange = normalize(
+                                controller.center.x,
+                                controller.right.x,
+                                abs(controller.offsetX.value),
+                                0f,
+                                10f
+                            )
+                            drawIconByShiftX(percentShiftX,controller)
+                            controller.rotation.snapTo(targetChange * controller.offsetX.value.sign)
+                            controller.visibility_first.snapTo(1 - (abs(percentShiftX) / 200))
                             controller.offsetX.snapTo(controller.offsetX.value + dragAmount.x)
-                        }else{
+                        } else {
+                            drawIconByShiftY(percentShiftY,controller)
+                            controller.visibility_first.snapTo(1 - (abs(percentShiftY) / 200))
                             controller.offsetY.snapTo(controller.offsetY.value + dragAmount.y)
                         }
 
-                        if (isTopShift(controller)) {
-                            drawShift(controller, DIRECTION_TOP)
-                        } else if (isBottomShift(controller)) {
-                            drawShift(controller, DIRECTION_BOTTOM)
-                        } else if (isLeftShift(controller)) {
-                            drawShift(controller, DIRECTION_LEFT)
-                        } else if (isRightShift(controller)) {
-                            drawShift(controller, DIRECTION_RIGHT)
-                        } else  {
-                            drawShift(controller, null)
-                        }
-
-                        val targetRotation = normalize(
-                            controller.center.x,
-                            controller.right.x,
-                            abs(controller.offsetX.value),
-                            0f,
-                            10f
-                        )
-
-
-                        controller.rotation.snapTo(targetRotation * -controller.offsetX.value.sign)
-
-                        controller.scale.snapTo(
-                            normalize(
-                                controller.center.x,
-                                controller.right.x / 3,
-                                abs(controller.offsetX.value),
-                                0.8f
-                            )
-                        )
                     }
                 }
                 change.consume()
@@ -291,34 +376,29 @@ fun Modifier.draggableStack(
     }
 }
 
-fun isTopShift(controller: BookCardController):Boolean{
-    return controller.offsetY.value <= -controller.thresholdY+controller.limitValueY
+fun isTopShift(controller: BookCardController): Boolean {
+    return controller.offsetY.value <= -controller.thresholdY
 }
 
-fun isBottomShift(controller: BookCardController):Boolean{
-    return controller.offsetY.value >= controller.thresholdY-controller.limitValueY
+fun isBottomShift(controller: BookCardController): Boolean {
+    return controller.offsetY.value >= controller.thresholdY
 }
 
-fun isLeftShift(controller: BookCardController):Boolean{
- return controller.offsetX.value <= -controller.thresholdX+controller.limitValueX
+fun isLeftShift(controller: BookCardController): Boolean {
+    return controller.offsetX.value <= -controller.thresholdX
 }
 
-fun isRightShift(controller: BookCardController):Boolean{
-    return controller.offsetX.value >= controller.thresholdX-controller.limitValueX
-}
-fun isShiftByX(controller: BookCardController, dragAmount:Offset):Boolean{
-    var percentShiftX = abs(controller.offsetX.value)/(controller.right.x/100)
-    var percentShiftY = abs(controller.offsetY.value)/(controller.top.y/100)
-    return (percentShiftX>=percentShiftY) && abs(dragAmount.x) > abs(dragAmount.y)
-            ||((percentShiftX>percentShiftY) && abs(dragAmount.x) < abs(dragAmount.y))
+fun isRightShift(controller: BookCardController): Boolean {
+    return controller.offsetX.value >= controller.thresholdX
 }
 
-fun drawShift(controller: BookCardController, direction:String?){
-    controller.viewModel.changeDirection(
-        direction,
-        controller.viewModel.currentItem
-    )
+fun isShiftByX(controller: BookCardController, dragAmount: Offset): Boolean {
+    var percentShiftX = abs(controller.offsetX.value) / (controller.right.x / 100)
+    var percentShiftY = abs(controller.offsetY.value) / (controller.top.y / 100)
+    return (percentShiftX >= percentShiftY) && abs(dragAmount.x) > abs(dragAmount.y)
+            || ((percentShiftX > percentShiftY) && abs(dragAmount.x) < abs(dragAmount.y))
 }
+
 
 
 
@@ -329,11 +409,64 @@ private fun normalize(
     startRange: Float = 0f,
     endRange: Float = 1f
 ): Float {
-    require(startRange < endRange) {
-        "Start range is greater than end range"
-    }
-
     val value = v.coerceIn(min, max)
-
     return (value - min) / (max - min) * (endRange + startRange) + startRange
+}
+
+suspend private fun iconPulseAnimation(
+    alpha: Animatable<Float, AnimationVector1D>,
+    size: Animatable<Float, AnimationVector1D>
+) {
+    alpha.animateTo(
+        targetValue = 1f,
+        animationSpec = tween(durationMillis = 50, easing = LinearEasing)
+    )
+    size.animateTo(
+        targetValue = 55f,
+        animationSpec = tween(durationMillis = 50, easing = LinearEasing)
+    )
+}
+
+suspend private fun iconChanges(
+    alpha: Animatable<Float, AnimationVector1D>,
+    size: Animatable<Float, AnimationVector1D>,
+    sizeTo: Float,
+    alphaTo: Float
+) {
+    size.snapTo(sizeTo)
+    alpha.snapTo(alphaTo)
+}
+suspend fun drawIconByShiftX(value:Float,controller: BookCardController){
+    if(value < 0){
+        iconChanges(
+            controller.dislikeIconAlpha,
+            controller.dislikeIconSize,
+            (20.0 + 0.55 * abs(value)).toFloat(),
+            abs(value) / 50
+        )
+    }else{
+        iconChanges(
+            controller.likeIconAlpha,
+            controller.likeIconSize,
+            (20.0 + (55 * value)/100).toFloat(),
+            value / 50
+        )
+    }
+}
+suspend fun drawIconByShiftY(value:Float,controller: BookCardController){
+    if(value < 0){
+        iconChanges(
+            controller.wantToReadIconAlpha,
+            controller.wantToReadIconSize,
+            (20.0 + 0.55 * abs(value)).toFloat(),
+            abs(value) / 50
+        )
+    }else{
+        iconChanges(
+            controller.skipIconAlpha,
+            controller.skipBookIconSize,
+            (20.0 + 0.55 * value).toFloat(),
+            value / 50
+        )
+    }
 }
