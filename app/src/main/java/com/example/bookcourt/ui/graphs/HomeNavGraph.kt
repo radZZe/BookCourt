@@ -14,6 +14,7 @@ import com.example.bookcourt.ui.auth.SignInScreen
 import com.example.bookcourt.ui.statistics.Statistics
 import com.example.bookcourt.ui.tutorial.TutorScreen
 import com.example.bookcourt.utils.Screens
+import com.example.bookcourt.utils.SplashScreen
 
 @Composable
 fun NavigationGraph(
@@ -33,8 +34,8 @@ fun NavigationGraph(
             SignInScreen(navController = navController)
         }
         composable(Screens.Splash.route) {
-//            SplashScreen(navController = navController)
-            Statistics()
+            SplashScreen(navController = navController)
+//            Statistics()
         }
         composable(
             Screens.CardInfo.route +

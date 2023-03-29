@@ -67,7 +67,7 @@ object Constants {
         ),
     )
 
-    val statisticScreensList = listOf("ReadBooks", "Lyuteratura", "IgraSlov", "Zarya",)
+    val statisticScreensList = listOf("ReadBooks", "Lyuteratura", "FavoriteAuthors", "IgraSlov", "Zarya", "FavoriteGenres")
 }
 
 object MetricType {

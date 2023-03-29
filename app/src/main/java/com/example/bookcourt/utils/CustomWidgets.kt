@@ -32,10 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.zIndex
-import com.example.bookcourt.ui.statistics.PartnerIgraSlov
-import com.example.bookcourt.ui.statistics.PartnerLyuteratura
-import com.example.bookcourt.ui.statistics.PartnerZarya
-import com.example.bookcourt.ui.statistics.ReadBooksStats
+import com.example.bookcourt.ui.statistics.*
 import com.example.bookcourt.utils.Constants.OTHER_CITY
 import com.example.bookcourt.utils.Constants.cities
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -301,7 +298,7 @@ fun InstaStoriesProgressBar(
         backgroundColor = Color.LightGray,
         color = Color.White,
         modifier = modifier
-            .padding(top = 12.dp, bottom = 12.dp)
+//            .padding(top = 4.dp, bottom = 4.dp)
             .clip(RoundedCornerShape(12.dp)),
         progress = animatedProgress
     )
@@ -323,6 +320,12 @@ fun StoryLikePages(
             }
             "ReadBooks" -> {
                 ReadBooksStats()
+            }
+            "FavoriteAuthors" -> {
+                FavoriteAuthors()
+            }
+            "FavoriteGenres" -> {
+                FavoriteGenresStats()
             }
             else -> {
                 PartnerZarya()
