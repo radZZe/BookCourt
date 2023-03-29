@@ -66,7 +66,6 @@ fun PartnerZarya() {
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-//                text = "В ЦСИ \"Заря\" вы всегда найдете\nпознавателььную и обучающую литературу,\nсвязанную с искусством.",
                 text = "В ЦСИ \"Заря\" вы всегда найдете познавателььную и обучающую литературу, связанную с искусством.",
                 fontWeight = FontWeight.Normal,
                 color = Color.Black,
@@ -83,7 +82,6 @@ fun PartnerZarya() {
 }
 
 @Composable
-//@Preview
 fun PartnerIgraSlov() {
     Column(
         modifier = Modifier
@@ -160,16 +158,15 @@ fun PartnerLyuteratura(
             verticalArrangement = Arrangement.SpaceBetween,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-//            TopBar(navController = navController, rq = StatisticsScreenRequest.PARTNER)
 
-//            Image(
-//                painter = painterResource(id = R.drawable.partner_lyuteratura_logo),
-//                contentDescription = "lyuteratura logo",
-//                modifier = Modifier
-//                    .fillMaxWidth(0.5f)
-//                    .fillMaxHeight(0.1f),
-//                contentScale = ContentScale.Fit
-//            )
+            Image(
+                painter = painterResource(id = R.drawable.partner_lyuteratura_logo),
+                contentDescription = "lyuteratura logo",
+                modifier = Modifier
+                    .fillMaxWidth(0.5f)
+                    .fillMaxHeight(0.1f),
+                contentScale = ContentScale.Fit
+            )
 
             Image(
                 painter = painterResource(id = R.drawable.partner_lyuteratura_content),
