@@ -39,7 +39,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.yield
 
 
-@OptIn(ExperimentalPagerApi::class, ExperimentalAnimationApi::class)
+@OptIn(ExperimentalPagerApi::class)
 @Composable
 fun TutorScreen(
     navController: NavController,
@@ -303,8 +303,6 @@ fun TutorScreen(
     }
 }
 
-
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun Cover(
     page: TutorialCard,
@@ -432,192 +430,6 @@ fun BottomPart(
                     painter = painterResource(id = R.drawable.luterature_logo),
                     contentDescription = "Sponsor Logo",
                     modifier = Modifier.size(30.dp)
-                )
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalAnimationApi::class)
-@Composable
-//@Preview
-fun TutorCard(
-    tutorialCard: TutorialCard,
-    viewModel: TutorialScreenViewModel
-) {
-    var isVisible by remember { mutableStateOf(true) }
-    LaunchedEffect(key1 = Unit) {
-        while (true) {
-            delay(2000)
-//        viewModel.changeState()
-//            isVisible = false
-//            delay(1000)
-//            isVisible = true
-        }
-    }
-
-    Box() {
-        Box(
-            modifier = Modifier
-                .height(490.dp)
-                .width(340.dp)
-                .zIndex(1f)
-        ) {
-            when (tutorialCard.swipe) {
-                "Right" -> {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        horizontalArrangement = Arrangement.End,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.right_icon_ic),
-                            contentDescription = "Swipe Right",
-                            alignment = Alignment.TopCenter,
-                            modifier = Modifier
-                                .size(90.dp)
-                                .alpha(0.95f)
-                                .zIndex(1f)
-                        )
-                    }
-                }
-                "Left" -> {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        horizontalArrangement = Arrangement.Start,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.left_icon_ic),
-                            contentDescription = "Swipe Left",
-                            alignment = Alignment.CenterEnd,
-                            modifier = Modifier
-                                .size(90.dp)
-                                .alpha(0.95f)
-                                .zIndex(1f)
-                        )
-                    }
-                }
-                "Up" -> {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        verticalArrangement = Arrangement.Top,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.up_icon_ic),
-                            contentDescription = "Swipe Up",
-                            alignment = Alignment.CenterStart,
-                            modifier = Modifier
-                                .size(70.dp)
-                                .alpha(0.95f)
-                                .zIndex(1f)
-                        )
-                    }
-
-                }
-                else -> {}
-            }
-        }
-        Column(
-            modifier = Modifier
-                .wrapContentHeight()
-                .fillMaxWidth()
-                .zIndex(0f),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Box(
-                modifier = Modifier
-                    .height(490.dp)
-                    .width(260.dp)
-                    .padding(top = 39.dp)
-                    .clip(RoundedCornerShape(30.dp))
-                    .background(Color.Black)
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(5.dp)
-                        .clip(RoundedCornerShape(30.dp))
-                        .background(BackGroundWhite)
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.status_bar),
-                        contentDescription = "Status Bar",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(40.dp)
-                            .padding(top = 2.dp, start = 10.dp, end = 10.dp)
-                    )
-                    AnimatedVisibility(
-//                        visible = viewModel.currentCardState,
-                        visible = isVisible,
-                        enter = fadeIn(
-                            animationSpec = tween(200)
-                        ),
-                        exit = when (tutorialCard.swipe) {
-                            "No" -> slideOutHorizontally(
-                                animationSpec = tween(500),
-                                targetOffsetX = { 1000 }
-                            )
-                            "Right" -> slideOutHorizontally(
-                                animationSpec = tween(500),
-                                targetOffsetX = { -1000 }
-                            )
-                            "Left" -> slideOutVertically(
-                                animationSpec = tween(500),
-                                targetOffsetY = { -1000 }
-                            )
-                            else -> fadeOut()
-                        }
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .height(320.dp)
-                                .width(220.dp)
-                                .clip(RoundedCornerShape(20.dp))
-                                .zIndex(2f)
-                        ) {
-                            Image(
-                                painter = painterResource(id = tutorialCard.cover),
-                                contentDescription = "Book Cover",
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier
-                                    .fillMaxSize()
-                            )
-                        }
-                    }
-                    BottomPart(
-                        bookTitle = tutorialCard.bookTitle,
-                        bookAuthor = tutorialCard.bookAuthor
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                if (tutorialCard.bottomIcon != null) {
-                    Image(
-                        painter = painterResource(id = tutorialCard.bottomIcon),
-                        contentDescription = "Bottom Icon",
-                        modifier = Modifier.size(14.dp)
-                    )
-                    Spacer(modifier = Modifier.width(6.dp))
-                }
-                Text(
-                    text = tutorialCard.bottomText,
-                    fontSize = 15.sp,
-                    fontFamily = Gilroy
                 )
             }
         }
