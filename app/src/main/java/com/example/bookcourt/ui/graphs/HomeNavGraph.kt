@@ -1,8 +1,6 @@
 package com.example.bookcourt.ui.graphs
 
-import android.os.Build
 import androidx.activity.compose.BackHandler
-import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -15,45 +13,28 @@ import com.example.bookcourt.ui.RecomendationScreen
 import com.example.bookcourt.ui.auth.SignInScreen
 import com.example.bookcourt.ui.statistics.Statistics
 import com.example.bookcourt.ui.tutorial.TutorScreen
-import com.example.bookcourt.utils.BottomBarScreen
 import com.example.bookcourt.utils.Screens
-import com.example.bookcourt.utils.SplashScreen
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NavigationGraph(
     navController: NavHostController = rememberNavController(),
 ) {
     NavHost(navController, startDestination = Screens.Splash.route) {
-        composable(BottomBarScreen.Library.route) {
-//            LibraryScreen()
-        }
-//        composable(BottomBarScreen.Profile.route) {
-//            ProfileScreen()
-//        }
         composable(Screens.Recommendation.route) {
             BackHandler(true) {}
             RecomendationScreen(
                 onNavigateToStatistics = { navController.navigate(Screens.Statistics.route) }
             )
         }
-        composable(BottomBarScreen.ReadBook.route) {
-//            ReadBookScreen()
-        }
-        composable(BottomBarScreen.AddBook.route) {
-//           AddBookScreen()
-        }
         composable(Screens.Tutorial.route) {
             TutorScreen(navController = navController)
-//            CartScreen()
         }
         composable(Screens.SignIn.route) {
             SignInScreen(navController = navController)
-//            com.example.bookcourt.ui.theme.Statistics()
-//            TutorScreen()
         }
         composable(Screens.Splash.route) {
-            SplashScreen(navController = navController)
+//            SplashScreen(navController = navController)
+            Statistics()
         }
         composable(
             Screens.CardInfo.route +
@@ -111,9 +92,7 @@ fun NavigationGraph(
             BackHandler(true) {
 
             }
-            Statistics(navController = navController)
-
-//            SwipableStats(navController = navController)
+            Statistics()
         }
     }
 }

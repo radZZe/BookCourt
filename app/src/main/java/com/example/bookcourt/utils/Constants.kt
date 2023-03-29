@@ -2,7 +2,6 @@ package com.example.bookcourt.utils
 
 import com.example.bookcourt.R
 import com.example.bookcourt.models.ui.TutorialCard
-import com.example.bookcourt.ui.tutorial.TutorCard
 
 object Constants {
     const val OTHER_CITY = "Другой"
@@ -68,7 +67,7 @@ object Constants {
         ),
     )
 
-    val statisticScreensList = listOf("IgraSlov", "Zarya")
+    val statisticScreensList = listOf("ReadBooks", "Lyuteratura", "IgraSlov", "Zarya",)
 }
 
 object MetricType {
