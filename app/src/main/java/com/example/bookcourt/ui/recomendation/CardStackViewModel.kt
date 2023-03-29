@@ -36,14 +36,14 @@ class CardStackViewModel @Inject constructor(
     var currentItem = if(allBooks.isNotEmpty()) allBooks[i] else null
 
 
-    fun changeCurrentItem(){
-        if(i!=-1){
-            currentItem = allBooks[i]
-        }else{
-            isEmpty = true
-        }
-
-    }
+//    fun changeCurrentItem(){
+//        if(i!=-1){
+//            currentItem = allBooks[i]
+//        }else{
+//            isEmpty = true
+//        }
+//
+//    }
 
     fun countEqualToLimit(){
         viewModelScope.launch(Dispatchers.IO) {
@@ -56,12 +56,6 @@ class CardStackViewModel @Inject constructor(
     fun updateUserStatistic(user: User) {
         viewModelScope.launch(Dispatchers.IO) {
             userRepository.updateUser(user)
-        }
-    }
-
-    fun changeDirection(newDirection:String?,item: MutableState<Book>?){
-        if(item != null){
-            item.value.onSwipeDirection = newDirection
         }
     }
 }

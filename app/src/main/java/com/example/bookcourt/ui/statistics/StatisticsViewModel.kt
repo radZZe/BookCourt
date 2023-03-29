@@ -1,6 +1,11 @@
 package com.example.bookcourt.ui.statistics
 
+import android.content.Context
+import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.util.Log
+import android.view.View
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,6 +17,7 @@ import com.example.bookcourt.models.book.Book
 import com.example.bookcourt.models.metrics.DataClickMetric
 import com.example.bookcourt.models.user.User
 import com.example.bookcourt.ui.statistics.StatisticsScreenRequest.AMOUNT_OF_BOOKS
+import com.example.bookcourt.utils.BitmapUtils
 import com.example.bookcourt.utils.MetricType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -19,6 +25,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
+
 
 @HiltViewModel
 class StatisticsViewModel @Inject constructor(
@@ -30,7 +37,7 @@ class StatisticsViewModel @Inject constructor(
     private val userId = dataStoreRepository.getPref(DataStoreRepository.uuid)
 
     var user = mutableStateOf<User?>(null)
-    val currentScreen = mutableStateOf<String>(AMOUNT_OF_BOOKS)
+    val currentScreen = mutableStateOf(AMOUNT_OF_BOOKS)
     val readBooks = mutableStateOf<MutableList<Book>?>(null)
     val wantToRead = mutableStateOf<MutableList<Book>?>(null)
     private var sessionTime = System.currentTimeMillis().toInt()
@@ -69,16 +76,16 @@ class StatisticsViewModel @Inject constructor(
     }
 
     fun getTopAuthors(): Map<String, Int> {
-        val topGenreMap = mutableMapOf<String, Int>()
+        val topAuthorsMap = mutableMapOf<String, Int>()
         for (book in user.value!!.readBooksList) {
-            if (topGenreMap.containsKey(book.bookInfo.author)) {
-                var count = topGenreMap[book.bookInfo.author]!!
-                topGenreMap[book.bookInfo.author] = (count + 1)
+            if (topAuthorsMap.containsKey(book.bookInfo.author)) {
+                var count = topAuthorsMap[book.bookInfo.author]!!
+                topAuthorsMap[book.bookInfo.author] = (count + 1)
             } else {
-                topGenreMap[book.bookInfo.author] = 1
+                topAuthorsMap[book.bookInfo.author] = 1
             }
         }
-        return topGenreMap.toList().sortedByDescending { (_, value) -> value }.toMap()
+        return topAuthorsMap.toList().sortedByDescending { (_, value) -> value }.toMap()
     }
 
     fun sendOnClickMetric(clickMetric: DataClickMetric) {
@@ -94,6 +101,40 @@ class StatisticsViewModel @Inject constructor(
             metricsRepository.appTime(sessionTime, MetricType.SCREEN_SESSION_TIME,"Statistics")
         }
         Log.d("Screen", "metric worked")
+    }
+
+    fun shareStatistics(
+        view:View,
+        context: Context
+    ){
+        val bitmap = Bitmap.createBitmap(
+            view.width,
+            view.height,
+            Bitmap.Config.ARGB_8888
+        )
+        val canvas = Canvas(bitmap)
+        view.layout(
+            view.left,
+            view.top,
+            view.right,
+            view.bottom
+        )
+        view.draw(canvas)
+
+        val shareIntent: Intent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(
+                Intent.EXTRA_STREAM,
+                BitmapUtils.getBitmapUri(
+                    context,
+                    bitmap,
+                    "statistics",
+                    "images/"
+                )
+            )
+            type = "image/jpeg"
+        }
+        context.startActivity(Intent.createChooser(shareIntent, null))
     }
 
 }
