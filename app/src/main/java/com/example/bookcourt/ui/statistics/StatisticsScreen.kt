@@ -138,278 +138,6 @@ fun Statistics(
 }
 
 @Composable
-fun ReadBooksStats() {
-    val string = "книг"
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(10.dp)
-            .clip(RoundedCornerShape(30.dp))
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(LighterPinkBackground),
-            verticalArrangement = Arrangement.SpaceBetween,
-            horizontalAlignment = Alignment.CenterHorizontally
-
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.book_court_logo),
-                contentDescription = "Book court logo"
-            )
-            Text(
-                text = "0!",
-                fontFamily = Inter,
-                fontWeight = FontWeight.Black,
-                color = Color.Black,
-                fontSize = 32.sp
-            )
-            Text(
-                text = "Вы прочитали, хороший результат \uD83D\uDCAA",
-                fontFamily = Inter,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black,
-                fontSize = 18.sp,
-            )
-            Column {
-                Text(
-                    text = "Продолжайте читать, ведь чтение книг:",
-                    fontFamily = Inter,
-                    fontWeight = FontWeight.Black,
-                    color = Color.Black,
-                    fontSize = 18.sp,
-                )
-                Text(
-                    text = "1. Увеличивает словарный запас\n" +
-                            "2. Помогает общаться с людьми\n" +
-                            "3. Снижает стресс\n" +
-                            "4. Развивает память и мышление",
-                    fontFamily = Inter,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.Black,
-                    fontSize = 18.sp,
-                )
-            }
-
-            Image(
-                painter = painterResource(id = R.drawable.cup_coffee_open_book),
-                contentDescription = "cup coffee and open book image",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(0.3f),
-                contentScale = ContentScale.Fit
-            )
-            Button(
-                onClick = {/*TODO*/ },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-                    .clip(RoundedCornerShape(60.dp))
-                    .height(45.dp),
-                colors = ButtonDefaults.buttonColors(LightYellowBtn)
-            ) {
-                Text(text = "Поделиться")
-            }
-        }
-    }
-}
-
-@Preview
-@Composable
-fun FavoriteGenresStatsPreview() {
-    val view = LocalView.current
-    val context = LocalContext.current
-    val top3Genres = listOf(
-        Pair("Genre", 3),
-        Pair("Genre2", 2),
-        Pair("Genre1", 1),
-    )
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(10.dp)
-            .clip(RoundedCornerShape(30.dp))
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(TopGenresLightPink),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.book_court_logo),
-                contentDescription = "Book court logo"
-            )
-            Text(
-                text = "Любимые жанры",
-                fontFamily = Inter,
-                fontWeight = FontWeight.Black,
-                color = Color.Black,
-                fontSize = 32.sp
-            )
-            LazyVerticalGrid(
-                columns = GridCells.Adaptive(minSize = 128.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                contentPadding = PaddingValues(16.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight(),
-                userScrollEnabled = false
-            ) {
-                items(top3Genres) { item ->
-                    item.let {
-                        GenreItem(
-                            genre = it.first,
-                            booksAmount = it.second
-                        )
-                    }
-                }
-            }
-            Image(
-                painter = painterResource(id = R.drawable.open_book),
-                contentDescription = "open book image",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(0.5f),
-                contentScale = ContentScale.FillBounds
-            )
-        }
-        Button(
-            onClick = {
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-                .align(Alignment.BottomCenter)
-                .clip(RoundedCornerShape(60.dp))
-                .height(45.dp),
-            colors = ButtonDefaults.buttonColors(LightYellowBtn)
-        ) {
-            Text(text = "Поделиться")
-        }
-    }
-}
-
-@Preview
-@Composable
-private fun FavoriteAuthorsPreview() {
-    val view = LocalView.current
-    val context = LocalContext.current
-    val firstPlaceAuthor = "Author1"
-    val secondPlaceAuthor = "Author2"
-    val thirdPlaceAuthor = "Author3"
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(10.dp)
-            .clip(RoundedCornerShape(30.dp))
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(TopAuthorsLightPink),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.book_court_logo),
-                contentDescription = "Book court logo"
-            )
-            Text(
-                text = "Ваш ТОП - 3 авторов",
-                fontFamily = Inter,
-                fontWeight = FontWeight.Black,
-                color = Color.Black,
-                fontSize = 32.sp
-            )
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(3f),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                TopAuthorItemPreview(
-                    authorName = firstPlaceAuthor,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                )
-                TopAuthorItemPreview(
-                    authorName = secondPlaceAuthor,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                )
-                TopAuthorItemPreview(
-                    authorName = thirdPlaceAuthor,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                )
-            }
-            Button(
-                onClick = {
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-                    .clip(RoundedCornerShape(60.dp))
-                    .height(45.dp),
-                colors = ButtonDefaults.buttonColors(LightYellowBtn)
-            ) {
-                Text(text = "Поделиться")
-            }
-
-        }
-    }
-}
-
-@Composable
-private fun TopAuthorItemPreview(
-    authorName: String,
-    modifier: Modifier
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.book_court_logo),
-            contentDescription = "${authorName}'s book image",
-            modifier = Modifier
-                .fillMaxHeight()
-                .fillMaxWidth(0.35f)
-                .padding(horizontal = 16.dp)
-                .clip(RoundedCornerShape(20.dp)),
-            contentScale = ContentScale.FillBounds
-        )
-        Column {
-            Text(
-                text = authorName,
-                fontFamily = Inter,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black,
-                fontSize = 18.sp
-            )
-            Text(
-                text = "Genre",
-                fontFamily = Inter,
-                fontWeight = FontWeight.Normal,
-                color = Color.Gray,
-                fontSize = 16.sp
-            )
-        }
-    }
-}
-
-
-@Composable
 fun FavoriteGenresStats(
     mViewModel: StatisticsViewModel = hiltViewModel()
 ) {
@@ -421,83 +149,64 @@ fun FavoriteGenresStats(
         topGenres.getOrNull(1),
         topGenres.getOrNull(2)
     )
-    Box(
+    Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(10.dp)
-            .clip(RoundedCornerShape(30.dp))
-            .clickable {
-                mViewModel.sendOnClickMetric(
-                    DataClickMetric(
-                        Buttons.SWAP_STAT,
-                        Screens.Statistics.route
-                    )
-                )
-                mViewModel.currentScreen.value = FAVORITE_GENRES
-            }
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(TopGenresLightPink),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            .background(TopGenresLightPink)
+            .padding(bottom = 40.dp, top = 60.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.SpaceBetween
 
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.book_court_logo),
-                contentDescription = "Book court logo"
-            )
-            Text(
-                text = "Любимые жанры",
-                fontFamily = Inter,
-                fontWeight = FontWeight.Black,
-                color = Color.Black,
-                fontSize = 32.sp
-            )
-            LazyVerticalGrid(
-                columns = GridCells.Adaptive(minSize = 128.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                contentPadding = PaddingValues(16.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight(),
-                userScrollEnabled = false
-            ) {
-                items(top3Genres) { item ->
-                    item?.let {
-                        GenreItem(
-                            genre = it.first,
-                            booksAmount = it.second
-                        )
-                    }
-                }
-            }
-            Image(
-                painter = painterResource(id = R.drawable.open_book),
-                contentDescription = "open book image",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(0.5f),
-                contentScale = ContentScale.FillBounds
-            )
-        }
-        Button(
-            onClick = {
-                mViewModel.shareStatistics(view, context)
-            },
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.book_court_logo),
+            contentDescription = "Book court logo"
+        )
+        Text(
+            text = "Любимые жанры",
+            fontFamily = Inter,
+            fontWeight = FontWeight.Black,
+            color = Color.Black,
+            fontSize = 32.sp
+        )
+        LazyVerticalGrid(
+            columns = GridCells.Adaptive(minSize = 128.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            contentPadding = PaddingValues(16.dp),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
-                .align(Alignment.BottomCenter)
-                .clip(RoundedCornerShape(60.dp))
-                .height(45.dp),
-            colors = ButtonDefaults.buttonColors(LightYellowBtn)
+                .wrapContentHeight(),
+            userScrollEnabled = false
         ) {
-            Text(text = "Поделиться")
+            items(top3Genres) { item ->
+                item?.let {
+                    GenreItem(
+                        genre = it.first,
+                        booksAmount = it.second
+                    )
+                }
+            }
         }
+        Image(
+            painter = painterResource(id = R.drawable.open_book),
+            contentDescription = "open book image",
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.5f),
+            contentScale = ContentScale.FillBounds
+        )
+        CustomButton(
+            text = "Поделиться",
+            textColor = Color.Black,
+            modifier = Modifier.padding(horizontal = 20.dp),
+            color = Color(0xFFFCE181),
+            onCLick = {
+                mViewModel.shareStatistics(view, context)
+            }
+        )
     }
+
 }
 
 @Composable
@@ -536,182 +245,80 @@ private fun GenreItem(
 }
 
 @Composable
-private fun PartnerLyuteratura(
-    navController: NavController,
+fun ReadBooksStats(
     mViewModel: StatisticsViewModel = hiltViewModel()
 ) {
+    val booksAmount = mViewModel.readBooks.value?.size
+    val view = LocalView.current
     val context = LocalContext.current
-    Box(
-        contentAlignment = Alignment.Center,
+    val string = if (booksAmount == 1) "книга" else if (booksAmount in 2..4) "книги" else "книг"
+    Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(10.dp)
-            .clip(RoundedCornerShape(30.dp))
-            .background(LightPinkBackground)
-            .clickable {
-                mViewModel.sendOnClickMetric(
-                    DataClickMetric(
-                        Buttons.SWAP_STAT,
-                        Screens.Statistics.route
-                    )
-                )
-                mViewModel.currentScreen.value = FAVORITE_AUTHORS
-            }
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize(),
-            verticalArrangement = Arrangement.SpaceBetween,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.partner_lyuteratura_logo),
-                contentDescription = "lyuteratura logo",
-                modifier = Modifier
-                    .fillMaxWidth(0.5f)
-                    .fillMaxHeight(0.1f),
-                contentScale = ContentScale.Fit
-            )
+            .background(LighterPinkBackground)
+            .padding(bottom = 40.dp, top = 60.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.SpaceBetween
 
-            Image(
-                painter = painterResource(id = R.drawable.partner_lyuteratura_content),
-                contentDescription = "lyuteratura content",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(0.5f),
-                contentScale = ContentScale.Fit
-            )
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.book_court_logo),
+            contentDescription ="Book court logo"
+        )
+        Text(
+            text = "$booksAmount $string!",
+            fontFamily = Inter,
+            fontWeight = FontWeight.Black,
+            color = Color.Black,
+            fontSize = 32.sp
+        )
+        Text(
+            text = "Вы прочитали, хороший результат \uD83D\uDCAA",
+            fontFamily = Inter,
+            fontWeight = FontWeight.Bold,
+            color = Color.Black,
+            fontSize = 18.sp,
+        )
+        Column {
             Text(
-                text = "Любите детей, книги и творчество?",
+                text = "Продолжайте читать, ведь чтение книг:",
                 fontFamily = Inter,
                 fontWeight = FontWeight.Black,
                 color = Color.Black,
-                fontSize = 32.sp,
-                modifier = Modifier.padding(horizontal = 16.dp)
+                fontSize = 18.sp,
             )
             Text(
-                text = "Тогда не проходите мимо и загляните в детский книжный магазин “Лютература”.",
+                text = "1. Увеличивает словарный запас\n" +
+                        "2. Помогает общаться с людьми\n" +
+                        "3. Снижает стресс\n" +
+                        "4. Развивает память и мышление",
                 fontFamily = Inter,
-                color = Color.Black,
                 fontWeight = FontWeight.Bold,
+                color = Color.Black,
                 fontSize = 18.sp,
-                modifier = Modifier.padding(horizontal = 16.dp)
             )
-            Button(
-                onClick = {
-                    val sendIntent = Intent(
-                        Intent.ACTION_VIEW, Uri.parse(
-                            Partners.lyuteraturaUrl
-                        )
-                    )
-                    val webIntent = Intent.createChooser(sendIntent, null)
-                    context.startActivity(webIntent)
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-                    .clip(RoundedCornerShape(60.dp))
-                    .height(45.dp),
-                colors = ButtonDefaults.buttonColors(LightYellowBtn)
-            ) {
-                Text(text = "Заглянуть в магазин")
-            }
         }
+
+        Image(
+            painter = painterResource(id = R.drawable.cup_coffee_open_book),
+            contentDescription = "lyuteratura logo",
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.3f),
+            contentScale = ContentScale.Fit
+        )
+        CustomButton(
+            text = "Поделиться",
+            textColor = Color.Black,
+            modifier = Modifier.padding(horizontal = 20.dp),
+            color = Color(0xFFFCE181),
+            onCLick = {
+                mViewModel.shareStatistics(view, context)
+            }
+        )
     }
+
 }
-
-
-//@Composable
-//private fun ReadBooksStats(
-//    navController: NavController,
-//    mViewModel: StatisticsViewModel = hiltViewModel()
-//) {
-//    val booksAmount = mViewModel.readBooks.value?.size
-//    val view = LocalView.current
-//    val context = LocalContext.current
-//    val string = if (booksAmount == 1) "книга" else if (booksAmount in 2..4) "книги" else "книг"
-//    Box(
-//        modifier = Modifier
-//            .fillMaxSize()
-//            .padding(10.dp)
-//            .clip(RoundedCornerShape(30.dp))
-//            .clickable {
-//                mViewModel.sendOnClickMetric(
-//                    DataClickMetric(
-//                        Buttons.SWAP_STAT,
-//                        Screens.Statistics.route
-//                    )
-//                )
-//                mViewModel.currentScreen.value = PARTNER
-//            }
-//    ) {
-//        Column(
-//            modifier = Modifier
-//                .fillMaxSize()
-//                .background(LighterPinkBackground),
-//            verticalArrangement = Arrangement.SpaceBetween,
-//            horizontalAlignment = Alignment.CenterHorizontally
-//
-//        ) {
-//            Image(
-//                painter = painterResource(id = R.drawable.book_court_logo),
-//                contentDescription ="Book court logo"
-//            )
-//            Text(
-//                text = "$booksAmount $string!",
-//                fontFamily = Inter,
-//                fontWeight = FontWeight.Black,
-//                color = Color.Black,
-//                fontSize = 32.sp
-//            )
-//            Text(
-//                text = "Вы прочитали, хороший результат \uD83D\uDCAA",
-//                fontFamily = Inter,
-//                fontWeight = FontWeight.Bold,
-//                color = Color.Black,
-//                fontSize = 18.sp,
-//            )
-//            Column {
-//                Text(
-//                    text = "Продолжайте читать, ведь чтение книг:",
-//                    fontFamily = Inter,
-//                    fontWeight = FontWeight.Black,
-//                    color = Color.Black,
-//                    fontSize = 18.sp,
-//                )
-//                Text(
-//                    text = "1. Увеличивает словарный запас\n" +
-//                            "2. Помогает общаться с людьми\n" +
-//                            "3. Снижает стресс\n" +
-//                            "4. Развивает память и мышление",
-//                    fontFamily = Inter,
-//                    fontWeight = FontWeight.Bold,
-//                    color = Color.Black,
-//                    fontSize = 18.sp,
-//                )
-//            }
-//            Image(
-//                painter = painterResource(id = R.drawable.cup_coffee_open_book),
-//                contentDescription = "lyuteratura logo",
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .fillMaxHeight(0.3f),
-//                contentScale = ContentScale.Fit
-//            )
-//            Button(
-//                onClick = {mViewModel.shareStatistics(view, context) },
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(16.dp)
-//                    .clip(RoundedCornerShape(60.dp))
-//                    .height(45.dp),
-//                colors = ButtonDefaults.buttonColors(LightYellowBtn)
-//            ) {
-//                Text(text = "Поделиться")
-//            }
-//        }
-//    }
-//}
 
 @Composable
 fun FavoriteAuthors(
@@ -723,46 +330,37 @@ fun FavoriteAuthors(
     val firstPlaceAuthor = topAuthors.getOrNull(0)?.first
     val secondPlaceAuthor = topAuthors.getOrNull(1)?.first
     val thirdPlaceAuthor = topAuthors.getOrNull(2)?.first
-    Box(
+    Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(10.dp)
-            .clip(RoundedCornerShape(30.dp))
-            .clickable {
-                mViewModel.sendOnClickMetric(
-                    DataClickMetric(
-                        Buttons.SWAP_STAT,
-                        Screens.Statistics.route
-                    )
-                )
-                mViewModel.currentScreen.value = FAVORITE_GENRES
-            }
+            .background(TopAuthorsLightPink)
+            .padding(bottom = 40.dp, top = 50.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.SpaceBetween
     ) {
+        Image(
+            painter = painterResource(id = R.drawable.book_court_logo),
+            contentDescription = "Book court logo"
+        )
+        Text(
+            text = "Ваш ТОП - 3 авторов",
+            fontFamily = Inter,
+            fontWeight = FontWeight.Black,
+            color = Color.Black,
+            fontSize = 32.sp
+        )
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .background(TopAuthorsLightPink),
+                .fillMaxWidth()
+                .weight(3f)
+                .padding(vertical = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
-
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.book_court_logo),
-                contentDescription = "Book court logo"
-            )
-            Text(
-                text = "Ваш ТОП - 3 авторов",
-                fontFamily = Inter,
-                fontWeight = FontWeight.Black,
-                color = Color.Black,
-                fontSize = 32.sp
-            )
-            Column(
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(3f),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .weight(1f)
             ) {
                 firstPlaceAuthor?.let { author ->
                     val authorBook = mViewModel.user.value?.readBooksList?.find { book ->
@@ -772,11 +370,16 @@ fun FavoriteAuthors(
                         TopAuthorItem(
                             book = it,
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .weight(1f)
+                                .fillMaxSize()
                         )
                     }
                 }
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+            ) {
                 secondPlaceAuthor?.let { author ->
                     val authorBook = mViewModel.user.value?.readBooksList?.find { book ->
                         book.bookInfo.author == author
@@ -785,12 +388,17 @@ fun FavoriteAuthors(
                         TopAuthorItem(
                             book = it,
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .weight(1f)
+                                .fillMaxSize()
                         )
                     }
 
                 }
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+            ) {
                 thirdPlaceAuthor?.let { author ->
                     val authorBook = mViewModel.user.value?.readBooksList?.find { book ->
                         book.bookInfo.author == author
@@ -799,32 +407,26 @@ fun FavoriteAuthors(
                         TopAuthorItem(
                             book = it,
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .weight(1f)
+                                .fillMaxSize()
                         )
                     }
                 }
             }
-            Button(
-                onClick = {
-                    mViewModel.shareStatistics(view, context)
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-                    .clip(RoundedCornerShape(60.dp))
-                    .height(45.dp),
-                colors = ButtonDefaults.buttonColors(LightYellowBtn)
-            ) {
-                Text(text = "Поделиться")
-            }
-
         }
+        CustomButton(
+            text = "Поделиться",
+            textColor = Color.Black,
+            modifier = Modifier.padding(horizontal = 20.dp),
+            color = Color(0xFFFCE181),
+            onCLick = {
+                mViewModel.shareStatistics(view, context)
+            }
+        )
     }
 }
 
 @Composable
-private fun TopAuthorItem(
+fun TopAuthorItem(
     book: Book,
     modifier: Modifier
 ) {

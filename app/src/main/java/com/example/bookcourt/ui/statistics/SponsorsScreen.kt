@@ -130,89 +130,68 @@ fun PartnerIgraSlov() {
     }
 }
 
+
 @Composable
-fun PartnerLyuteratura(
-    mViewModel: StatisticsViewModel = hiltViewModel()
-) {
+fun PartnerLyuteratura() {
     val context = LocalContext.current
-    Box(
-        contentAlignment = Alignment.Center,
+    Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(10.dp)
-            .clip(RoundedCornerShape(30.dp))
             .background(LightPinkBackground)
-            .clickable {
-                mViewModel.sendOnClickMetric(
-                    DataClickMetric(
-                        Buttons.SWAP_STAT,
-                        Screens.Statistics.route
+            .padding(bottom = 40.dp, top = 60.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.partner_lyuteratura_logo),
+            contentDescription = "lyuteratura logo",
+            modifier = Modifier
+                .fillMaxWidth(0.5f)
+                .fillMaxHeight(0.1f),
+            contentScale = ContentScale.Fit
+        )
+        Image(
+            painter = painterResource(id = R.drawable.partner_lyuteratura_content),
+            contentDescription = "lyuteratura content",
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.5f),
+            contentScale = ContentScale.Fit
+        )
+        Text(
+            text = "Любите детей, книги и творчество?",
+            fontFamily = Inter,
+            fontWeight = FontWeight.Black,
+            color = Color.Black,
+            fontSize = 32.sp,
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
+        Text(
+            text = "Тогда не проходите мимо и загляните в детский книжный магазин “Лютература”.",
+            fontFamily = Inter,
+            color = Color.Black,
+            fontWeight = FontWeight.Bold,
+            fontSize = 18.sp,
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
+        CustomButton(
+            text = "Заглянуть в магазин",
+            textColor = Color.Black,
+            modifier = Modifier.padding(horizontal = 20.dp),
+            color = Color(0xFFFCE181),
+            onCLick = {
+                val sendIntent = Intent(
+                    Intent.ACTION_VIEW, Uri.parse(
+                        Partners.lyuteraturaUrl
                     )
                 )
-                mViewModel.currentScreen.value = StatisticsScreenRequest.AMOUNT_OF_BOOKS
+                val webIntent = Intent.createChooser(sendIntent, null)
+                context.startActivity(webIntent)
             }
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize(),
-            verticalArrangement = Arrangement.SpaceBetween,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-
-            Image(
-                painter = painterResource(id = R.drawable.partner_lyuteratura_logo),
-                contentDescription = "lyuteratura logo",
-                modifier = Modifier
-                    .fillMaxWidth(0.5f)
-                    .fillMaxHeight(0.1f),
-                contentScale = ContentScale.Fit
-            )
-
-            Image(
-                painter = painterResource(id = R.drawable.partner_lyuteratura_content),
-                contentDescription = "lyuteratura content",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(0.5f)
-                ,
-                contentScale = ContentScale.Fit
-            )
-            Text(
-                text = "Любите детей, книги и творчество?",
-                fontFamily = Inter,
-                fontWeight = FontWeight.Black,
-                color = Color.Black,
-                fontSize = 32.sp,
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
-            Text(
-                text = "Тогда не проходите мимо и загляните в детский книжный магазин “Лютература”.",
-                fontFamily = Inter,
-                color = Color.Black,
-                fontWeight = FontWeight.Bold,
-                fontSize = 18.sp,
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
-            Button(
-                onClick = {
-                    val sendIntent = Intent(
-                        Intent.ACTION_VIEW, Uri.parse(
-                            Partners.lyuteraturaUrl
-                        )
-                    )
-                    val webIntent = Intent.createChooser(sendIntent, null)
-                    context.startActivity(webIntent)
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-                    .clip(RoundedCornerShape(60.dp))
-                    .height(45.dp),
-                colors = ButtonDefaults.buttonColors(LightYellowBtn)
-            ) {
-                Text(text = "Заглянуть в магазин")
-            }
-        }
+        )
     }
 }
+
+
+
 
