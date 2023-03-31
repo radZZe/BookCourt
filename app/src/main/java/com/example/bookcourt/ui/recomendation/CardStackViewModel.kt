@@ -27,7 +27,6 @@ class CardStackViewModel @Inject constructor(
     var isEmpty by mutableStateOf(false)
     var isNotificationDisplay = dataStoreRepository.getBoolPref(DataStoreRepository.isNotificationDisplay)
     var isFirstNotification = mutableStateOf(false)
-    var isBookInfoDisplay = mutableStateOf(false)
 
     var allBooks:List<MutableState<Book>> = listOf()
     var i by mutableStateOf(allBooks.size - 1)

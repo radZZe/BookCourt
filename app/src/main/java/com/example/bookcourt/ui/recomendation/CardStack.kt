@@ -169,32 +169,6 @@ fun BookCard(
     }
 
 
-
-
-    if (viewModel.isBookInfoDisplay.value) {
-        var book = BookInfo(
-            title = item.bookInfo.title,
-            author = item.bookInfo.author,
-            description = item.bookInfo.description,
-            numberOfPages = item.bookInfo.numberOfPages,
-            rate = item.bookInfo.rate,
-            genre = item.bookInfo.genre,
-            price = item.bookInfo.price,
-            image = item.bookInfo.image
-        )
-        CardInfoScreen(
-            book = book,
-            onClick = {
-                onClick(
-                    DataClickMetric(
-                        Buttons.BOOK_CARD, Screens.Recommendation.route
-                    )
-                )
-                viewModel.isBookInfoDisplay.value = false
-            },
-            modifier = Modifier.visible(visible = index == i)
-        )
-    } else {
         var alpha = if (index == i) bookCardController.visibility_first.value
         else if (index == i - 1) (1-(bookCardController.visibility_first.value)) else 0f
         Box(
@@ -268,14 +242,6 @@ fun BookCard(
                     .graphicsLayer(
                         rotationZ = if (index == i) bookCardController.rotation.value else 0f,
                     )
-                    .clickable {
-                        onClick(
-                            DataClickMetric(
-                                Buttons.BOOK_CARD, Screens.Recommendation.route
-                            )
-                        )
-                        viewModel.isBookInfoDisplay.value = true
-                    }
                     .alpha(alpha)
             ) {
                 Box(
@@ -715,7 +681,7 @@ fun BookCard(
 //
 //        }
 
-    }
+
 
 
 }
