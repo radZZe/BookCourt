@@ -1,7 +1,12 @@
 package com.example.bookcourt.ui.theme
 
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -38,7 +43,6 @@ import com.example.bookcourt.utils.Constants.cities
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
-import kotlinx.coroutines.delay
 import java.util.*
 
 
@@ -181,11 +185,7 @@ fun AutoCompleteTextField(
         }
     )
     AnimatedVisibility(visible = expanded) {
-        Card(
-            modifier = Modifier
-//                .padding(horizontal = 5.dp)
-//                .width(textFieldsSize.width.dp),
-        ) {
+        Card(modifier = Modifier) {
             LazyColumn(
                 modifier = Modifier
                     .heightIn(max = 150.dp)
@@ -275,62 +275,67 @@ fun CityItem(
 fun InstaStoriesProgressBar(
     modifier: Modifier,
     startProgress: Boolean = false,
-    onAnimationEnd: () -> Unit
-) {
-    var progress by remember {
-        mutableStateOf(0.00f)
-    }
+    paused: Boolean = false,
+    isNext: Boolean,
+    onAnimationEnd: () -> Unit,
 
-    val animatedProgress by animateFloatAsState(
-        targetValue = progress,
-        animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec
-    )
+) {
+    val percent = remember { Animatable(0f) }
+
     if (startProgress) {
-        LaunchedEffect(key1 = Unit) {
-            while (progress < 1f) {
-                progress += 0.01f
-                delay(50)
+        LaunchedEffect(paused) {
+            percent.snapTo(0f)
+            if (paused) percent.stop()
+            else {
+                percent.animateTo(
+                    targetValue = 1f,
+                    animationSpec = tween(
+                        durationMillis = (5000 * (1f - percent.value)).toInt(), // (3)
+                        easing = LinearEasing
+                    )
+                )
+                onAnimationEnd()
             }
-            onAnimationEnd() // The action after the timeline is over
+        }
+    } else {
+        LaunchedEffect(paused) {
+            if (isNext) {
+                percent.snapTo(0f)
+            } else {
+                percent.snapTo(1f)
+            }
         }
     }
+
     LinearProgressIndicator(
         backgroundColor = Color.LightGray,
         color = Color.White,
-        modifier = modifier
-//            .padding(top = 4.dp, bottom = 4.dp)
-            .clip(RoundedCornerShape(12.dp)),
-        progress = animatedProgress
+        modifier = modifier,
+        progress = percent.value
     )
 }
 
-@OptIn(ExperimentalPagerApi::class)
 @Composable
-fun StoryLikePages(
-    pagerState: PagerState,
-    screens: List<String>
+fun RedirectButton(
+    context: Context,
+    redirectUrl: String,
+    color: Color = LightYellowBtn,
+    text: String = "Заглянуть в магазин"
 ) {
-    HorizontalPager(state = pagerState, dragEnabled = false) { page ->
-        when (screens[page]) {
-            "IgraSlov" -> {
-                PartnerIgraSlov()
-            }
-            "Lyuteratura" -> {
-                PartnerLyuteratura()
-            }
-            "ReadBooks" -> {
-                ReadBooksStats()
-            }
-            "FavoriteAuthors" -> {
-                FavoriteAuthors()
-            }
-            "FavoriteGenres" -> {
-                FavoriteGenresStats()
-            }
-            else -> {
-                PartnerZarya()
-            }
-        }
+    Button(
+        onClick = {
+            val sendIntent = Intent(Intent.ACTION_VIEW, Uri.parse(redirectUrl))
+            val webIntent = Intent.createChooser(sendIntent, null)
+            context.startActivity(webIntent)
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 13.dp, horizontal = 20.dp)
+            .clip(RoundedCornerShape(60.dp))
+            .height(45.dp),
+        colors = ButtonDefaults.buttonColors(color)
+    ) {
+        Text(text = text)
     }
 }
 

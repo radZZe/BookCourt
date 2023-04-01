@@ -35,7 +35,6 @@ fun NavigationGraph(
         }
         composable(Screens.Splash.route) {
             SplashScreen(navController = navController)
-//            Statistics()
         }
         composable(
             Screens.CardInfo.route +
@@ -93,7 +92,7 @@ fun NavigationGraph(
             BackHandler(true) {
 
             }
-            Statistics()
+            Statistics(navController = navController)
         }
     }
 }

@@ -16,7 +16,6 @@ import com.example.bookcourt.data.repositories.UserRepository
 import com.example.bookcourt.models.book.Book
 import com.example.bookcourt.models.metrics.DataClickMetric
 import com.example.bookcourt.models.user.User
-import com.example.bookcourt.ui.statistics.StatisticsScreenRequest.AMOUNT_OF_BOOKS
 import com.example.bookcourt.utils.BitmapUtils
 import com.example.bookcourt.utils.MetricType
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -37,7 +36,6 @@ class StatisticsViewModel @Inject constructor(
     private val userId = dataStoreRepository.getPref(DataStoreRepository.uuid)
 
     var user = mutableStateOf<User?>(null)
-    val currentScreen = mutableStateOf(AMOUNT_OF_BOOKS)
     val readBooks = mutableStateOf<MutableList<Book>?>(null)
     val wantToRead = mutableStateOf<MutableList<Book>?>(null)
     private var sessionTime = System.currentTimeMillis().toInt()

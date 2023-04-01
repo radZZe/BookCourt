@@ -87,7 +87,7 @@ fun AuthFields(navController: NavController, mViewModel: SignInViewModel) {
                 .verticalScroll(rememberScrollState(), reverseScrolling = true)
         ) {
             Image(
-                painter = painterResource(id = R.drawable.app_logo),
+                painter = painterResource(id = R.drawable.book_court_logo),
                 contentDescription = "Lead App Icon",
                 modifier = Modifier.size(100.dp)
             )
