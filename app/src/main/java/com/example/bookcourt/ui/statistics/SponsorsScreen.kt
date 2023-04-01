@@ -1,14 +1,10 @@
 package com.example.bookcourt.ui.statistics
 
-import android.content.Intent
-import android.net.Uri
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -22,23 +18,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.example.bookcourt.R
-import com.example.bookcourt.models.metrics.DataClickMetric
 import com.example.bookcourt.ui.theme.*
-import com.example.bookcourt.utils.Buttons
 import com.example.bookcourt.utils.Partners
-import com.example.bookcourt.utils.Screens
 
 @Composable
 @Preview
 fun PartnerZarya() {
+    val context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(ZaryaBackground)
-            .padding(bottom = 40.dp, top = 20.dp),
+            .padding(bottom = 20.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
@@ -72,22 +64,18 @@ fun PartnerZarya() {
                 fontSize = 18.sp
             )
         }
-        CustomButton(
-            text = "Заглянуть в магазин",
-            textColor = Color.Black,
-            modifier = Modifier.padding(horizontal = 20.dp),
-            color = Color(0xFFFCE181)
-        )
+        RedirectButton(context = context, redirectUrl = Partners.csiZaryaUrl)
     }
 }
 
 @Composable
 fun PartnerIgraSlov() {
+    val context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(IgraSlovBackground)
-            .padding(bottom = 40.dp, top = 20.dp),
+            .padding(bottom = 20.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
@@ -121,15 +109,9 @@ fun PartnerIgraSlov() {
                 fontSize = 18.sp
             )
         }
-        CustomButton(
-            text = "Заглянуть в магазин",
-            textColor = Color.Black,
-            modifier = Modifier.padding(horizontal = 20.dp),
-            color = Color(0xFFFCE181)
-        )
+        RedirectButton(context = context, redirectUrl = Partners.igraSlovUrl)
     }
 }
-
 
 @Composable
 fun PartnerLyuteratura() {
@@ -141,6 +123,7 @@ fun PartnerLyuteratura() {
             .padding(bottom = 40.dp, top = 60.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
+
     ) {
         Image(
             painter = painterResource(id = R.drawable.partner_lyuteratura_logo),
@@ -174,24 +157,7 @@ fun PartnerLyuteratura() {
             fontSize = 18.sp,
             modifier = Modifier.padding(horizontal = 16.dp)
         )
-        CustomButton(
-            text = "Заглянуть в магазин",
-            textColor = Color.Black,
-            modifier = Modifier.padding(horizontal = 20.dp),
-            color = Color(0xFFFCE181),
-            onCLick = {
-                val sendIntent = Intent(
-                    Intent.ACTION_VIEW, Uri.parse(
-                        Partners.lyuteraturaUrl
-                    )
-                )
-                val webIntent = Intent.createChooser(sendIntent, null)
-                context.startActivity(webIntent)
-            }
-        )
+        RedirectButton(context = context, redirectUrl = Partners.lyuteraturaUrl)
     }
 }
-
-
-
 

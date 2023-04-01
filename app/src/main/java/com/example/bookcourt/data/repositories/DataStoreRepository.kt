@@ -106,9 +106,4 @@ class DataStoreRepository(val context: Context) {
 
     }
 
-    suspend fun getString34(prefKey: Preferences.Key<String>): String? {
-        val pref = dataStore.data.first()
-        return pref[prefKey]
-    }
-
 }

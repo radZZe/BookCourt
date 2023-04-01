@@ -1,10 +1,9 @@
 package com.example.bookcourt.ui.statistics
 
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -18,6 +17,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
@@ -33,15 +33,13 @@ import coil.compose.SubcomposeAsyncImage
 import com.example.bookcourt.R
 import com.example.bookcourt.models.book.Book
 import com.example.bookcourt.models.metrics.DataClickMetric
-import com.example.bookcourt.ui.statistics.StatisticsScreenRequest.FAVORITE_AUTHORS
-import com.example.bookcourt.ui.statistics.StatisticsScreenRequest.FAVORITE_GENRES
 import com.example.bookcourt.ui.theme.*
-import com.example.bookcourt.utils.Buttons
 import com.example.bookcourt.utils.Buttons.CLOSE
 import com.example.bookcourt.utils.Constants
-import com.example.bookcourt.utils.Partners
 import com.example.bookcourt.utils.Screens
 import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.launch
 
@@ -49,6 +47,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun Statistics(
+    navController: NavController,
     mViewModel: StatisticsViewModel = hiltViewModel()
 ) {
     LaunchedEffect(key1 = Unit) {
@@ -58,23 +57,60 @@ fun Statistics(
     val stories = Constants.statisticScreensList.size
     val pagerState = rememberPagerState(pageCount = stories)
     val coroutineScope = rememberCoroutineScope()
+    val gradient = Brush.verticalGradient(listOf(Shadow, Color.Transparent))
 
     var currentPage by remember {
         mutableStateOf(0)
     }
 
-    val gradient = Brush.verticalGradient(listOf(Shadow, Color.Transparent))
+    var paused by remember {
+        mutableStateOf(false)
+    }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    val targetOffset = 500
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onPress = {
+//                        try {
+//                            paused = true
+//                            awaitRelease()
+//                        } finally {
+//                            paused = false
+//                        }
+                    },
+                    onTap = { offset ->
+                        coroutineScope.launch {
+                            if (currentPage < stories - 1) {
+                                if (offset.x < targetOffset) { // 300
+                                    if (currentPage == 0) currentPage = 0 else currentPage--
+                                } else if (offset.x > targetOffset) { // 700
+                                    currentPage++
+                                }
+                            } else if (currentPage == stories - 1) {
+                                if (offset.x < targetOffset) { // 300
+                                    currentPage--
+                                } else if (offset.x > targetOffset) { // 700
+                                    navController.popBackStack()
+                                    navController.navigate(route = Screens.Recommendation.route)
+                                }
+                            }
+                            pagerState.animateScrollToPage(page = currentPage)
+                        }
+                    }
+                )
+            }
+
+    ) {
         StoryLikePages(pagerState = pagerState, Constants.statisticScreensList)
-
         Column(
             modifier = Modifier
                 .wrapContentHeight()
                 .fillMaxWidth()
                 .background(gradient)
         ) {
-//            Box(modifier = Modifier.height(24.dp).fillMaxWidth().zIndex(1f))
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -89,23 +125,26 @@ fun Statistics(
                 Spacer(modifier = Modifier.padding(4.dp))
                 for (i in 0 until stories) {
                     InstaStoriesProgressBar(
-                        modifier = Modifier.weight(1f),
-                        startProgress = (i == currentPage)
+                        modifier = Modifier
+                            .weight(1f)
+                            .clip(RoundedCornerShape(12.dp)),
+                        paused = paused,
+                        startProgress = (i == currentPage),
+                        isNext = (i > currentPage)
                     ) {
                         coroutineScope.launch {
                             if (currentPage < stories - 1) {
                                 currentPage++
+                            } else {
+                                navController.popBackStack()
+                                navController.navigate(route = Screens.Recommendation.route)
                             }
                             pagerState.animateScrollToPage(page = currentPage % stories)
                         }
                     }
                     Spacer(
-                        modifier = Modifier.padding(
-                            top = 8.dp,
-                            start = 4.dp,
-                            end = 4.dp,
-                            bottom = 2.dp
-                        )
+                        modifier = Modifier
+                            .padding(top = 8.dp, start = 4.dp, end = 4.dp, bottom = 2.dp)
                     )
                 }
             }
@@ -129,11 +168,283 @@ fun Statistics(
                                     screen = "Statistics"
                                 )
                             )
+                            navController.popBackStack()
+                            navController.navigate(route = Screens.Recommendation.route)
                         }
+
                 )
             }
         }
+    }
+}
 
+@Composable
+fun ReadBooksStats() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(10.dp)
+            .clip(RoundedCornerShape(30.dp))
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(LighterPinkBackground),
+            verticalArrangement = Arrangement.SpaceBetween,
+            horizontalAlignment = Alignment.CenterHorizontally
+
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.book_court_logo),
+                contentDescription = "Book court logo"
+            )
+            Text(
+                text = "0!",
+                fontFamily = Inter,
+                fontWeight = FontWeight.Black,
+                color = Color.Black,
+                fontSize = 32.sp
+            )
+            Text(
+                text = "Вы прочитали, хороший результат \uD83D\uDCAA",
+                fontFamily = Inter,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black,
+                fontSize = 18.sp,
+            )
+            Column {
+                Text(
+                    text = "Продолжайте читать, ведь чтение книг:",
+                    fontFamily = Inter,
+                    fontWeight = FontWeight.Black,
+                    color = Color.Black,
+                    fontSize = 18.sp,
+                )
+                Text(
+                    text = "1. Увеличивает словарный запас\n" +
+                            "2. Помогает общаться с людьми\n" +
+                            "3. Снижает стресс\n" +
+                            "4. Развивает память и мышление",
+                    fontFamily = Inter,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black,
+                    fontSize = 18.sp,
+                )
+            }
+
+            Image(
+                painter = painterResource(id = R.drawable.cup_coffee_open_book),
+                contentDescription = "cup coffee and open book image",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.3f),
+                contentScale = ContentScale.Fit
+            )
+            Button(
+                onClick = {/*TODO*/ },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+                    .clip(RoundedCornerShape(60.dp))
+                    .height(45.dp),
+                colors = ButtonDefaults.buttonColors(LightYellowBtn)
+            ) {
+                Text(text = "Поделиться")
+            }
+        }
+    }
+}
+
+@Preview
+@Composable
+fun FavoriteGenresStatsPreview() {
+    val view = LocalView.current
+    val context = LocalContext.current
+    val top3Genres = listOf(
+        Pair("Genre", 3),
+        Pair("Genre2", 2),
+        Pair("Genre1", 1),
+    )
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(10.dp)
+            .clip(RoundedCornerShape(30.dp))
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(TopGenresLightPink),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.book_court_logo),
+                contentDescription = "Book court logo"
+            )
+            Text(
+                text = "Любимые жанры",
+                fontFamily = Inter,
+                fontWeight = FontWeight.Black,
+                color = Color.Black,
+                fontSize = 32.sp
+            )
+            LazyVerticalGrid(
+                columns = GridCells.Adaptive(minSize = 128.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                contentPadding = PaddingValues(16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight(),
+                userScrollEnabled = false
+            ) {
+                items(top3Genres) { item ->
+                    item.let {
+                        GenreItem(
+                            genre = it.first,
+                            booksAmount = it.second
+                        )
+                    }
+                }
+            }
+            Image(
+                painter = painterResource(id = R.drawable.open_book),
+                contentDescription = "open book image",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.5f),
+                contentScale = ContentScale.FillBounds
+            )
+        }
+        Button(
+            onClick = {
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+                .align(Alignment.BottomCenter)
+                .clip(RoundedCornerShape(60.dp))
+                .height(45.dp),
+            colors = ButtonDefaults.buttonColors(LightYellowBtn)
+        ) {
+            Text(text = "Поделиться")
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun FavoriteAuthorsPreview() {
+    val view = LocalView.current
+    val context = LocalContext.current
+    val firstPlaceAuthor = "Author1"
+    val secondPlaceAuthor = "Author2"
+    val thirdPlaceAuthor = "Author3"
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(10.dp)
+            .clip(RoundedCornerShape(30.dp))
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(TopAuthorsLightPink),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.book_court_logo),
+                contentDescription = "Book court logo"
+            )
+            Text(
+                text = "Ваш ТОП - 3 авторов",
+                fontFamily = Inter,
+                fontWeight = FontWeight.Black,
+                color = Color.Black,
+                fontSize = 32.sp
+            )
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(3f),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                TopAuthorItemPreview(
+                    authorName = firstPlaceAuthor,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                )
+                TopAuthorItemPreview(
+                    authorName = secondPlaceAuthor,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                )
+                TopAuthorItemPreview(
+                    authorName = thirdPlaceAuthor,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                )
+            }
+            Button(
+                onClick = {
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+                    .clip(RoundedCornerShape(60.dp))
+                    .height(45.dp),
+                colors = ButtonDefaults.buttonColors(LightYellowBtn)
+            ) {
+                Text(text = "Поделиться")
+            }
+
+        }
+    }
+}
+
+@Composable
+private fun TopAuthorItemPreview(
+    authorName: String,
+    modifier: Modifier
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.book_court_logo),
+            contentDescription = "${authorName}'s book image",
+            modifier = Modifier
+                .fillMaxHeight()
+                .fillMaxWidth(0.35f)
+                .padding(horizontal = 16.dp)
+                .clip(RoundedCornerShape(20.dp)),
+            contentScale = ContentScale.FillBounds
+        )
+        Column {
+            Text(
+                text = authorName,
+                fontFamily = Inter,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black,
+                fontSize = 18.sp
+            )
+            Text(
+                text = "Genre",
+                fontFamily = Inter,
+                fontWeight = FontWeight.Normal,
+                color = Color.Gray,
+                fontSize = 16.sp
+            )
+        }
     }
 }
 
@@ -156,7 +467,6 @@ fun FavoriteGenresStats(
             .padding(bottom = 40.dp, top = 60.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
-
     ) {
         Image(
             painter = painterResource(id = R.drawable.book_court_logo),
@@ -469,59 +779,32 @@ fun TopAuthorItem(
     }
 }
 
-
-object StatisticsScreenRequest {
-    const val AMOUNT_OF_BOOKS = "AMOUNT_OF_BOOKS_RQ"
-    const val PARTNER = "partner lyuteratura"
-    const val FAVORITE_GENRES = "FAVORITE_GENRES_RQ"
-    const val FAVORITE_AUTHORS = "FAVORITE_AUTHORS_RQ"
-}
-//@Composable
-//@Preview
-//private fun FavoriteGenresStats(
-//) {
-//    Box(
-//        contentAlignment = Alignment.Center,
-//        modifier = Modifier
-//            .fillMaxSize()
-//            .padding(10.dp)
-//            .clip(RoundedCornerShape(60.dp))
-//            .background(Color(0xFF524E4E))
-////            .clickable {
-////                mViewModel.sendOnClickMetric(
-////                    DataClickMetric(
-////                        Buttons.SWAP_STAT,
-////                        Screens.Statistics.route
-////                    )
-////                )
-////                mViewModel.currentScreen.value = AMOUNT_OF_BOOKS
-////            }
-//    ) {
-//        Column(
-//            modifier = Modifier
-//                .fillMaxSize(),
-//            verticalArrangement = Arrangement.SpaceBetween
-//        ) {
-////            TopBar(navController = navController, rq = FAVORITE_GENRES)
-//            Text(
-//                text = "Мои любимые\nжанры",
-//                fontFamily = Manrope,
-//                fontWeight = FontWeight.ExtraBold,
-//                color = Color.White,
-//                fontSize = 32.sp,
-//                modifier = Modifier.padding(start = 45.dp)
-//            )
-////            DisplayGenresShelves(mViewModel)
-////            ShareApp(textColor = Color.White)
-//        }
-//    }
-//}
-
+@OptIn(ExperimentalPagerApi::class)
 @Composable
-fun Shadow(modifier: Modifier) {
-    val gradient = Brush.verticalGradient(listOf(Color.Black, Color.Transparent))
-    Box(modifier = modifier.background(gradient))
+fun StoryLikePages(
+    pagerState: PagerState,
+    screens: List<String>
+) {
+    HorizontalPager(state = pagerState, dragEnabled = false) { page ->
+        when (screens[page]) {
+            "IgraSlov" -> {
+                PartnerIgraSlov()
+            }
+            "Lyuteratura" -> {
+                PartnerLyuteratura()
+            }
+            "ReadBooks" -> {
+                ReadBooksStats()
+            }
+            "FavoriteAuthors" -> {
+                FavoriteAuthors()
+            }
+            "FavoriteGenres" -> {
+                FavoriteGenresStats()
+            }
+            else -> {
+                PartnerZarya()
+            }
+        }
+    }
 }
-
-
-
