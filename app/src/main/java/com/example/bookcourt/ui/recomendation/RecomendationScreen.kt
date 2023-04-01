@@ -1,9 +1,12 @@
 package com.example.bookcourt.ui
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -11,6 +14,7 @@ import androidx.compose.material.BottomSheetScaffold
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -113,7 +117,6 @@ fun RecomendationContent(
                                         top = 12.dp,
                                         bottom = 10.dp
                                     ),
-                                verticalArrangement = Arrangement.SpaceBetween,
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 Box(
@@ -123,6 +126,9 @@ fun RecomendationContent(
                                         .background(Color.Gray)
                                         .clip(RoundedCornerShape(50))
                                 ) {}
+                                Spacer(modifier = Modifier
+                                    .height(15.dp)
+                                    .fillMaxWidth())
                                 Column(
                                     Modifier
                                         .fillMaxWidth()
@@ -132,7 +138,7 @@ fun RecomendationContent(
                                 ) {
                                     Row(
                                         modifier = Modifier
-                                            .padding(bottom = 5.dp)
+                                            .padding(bottom = 15.dp)
                                             .fillMaxWidth()
                                             .fillMaxHeight(),
                                         horizontalArrangement = Arrangement.SpaceBetween
@@ -180,23 +186,25 @@ fun RecomendationContent(
                                 Box( // Поменять на CustomButton
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .fillMaxHeight(0.20f)
+                                        .fillMaxHeight(0.15f)
                                         .clip(RoundedCornerShape(65))
                                         .background(Color(252, 225, 129))
-                                        .clickable {
-                                            //TODO
-                                            //onClick(
-////                                        DataClickMetric(
-////                                            Buttons.BUY_BOOK, Screens.Recommendation.route
-////                                        )
-////                                    )
-////                                    val sendIntent: Intent = Intent(
-////                                        Intent.ACTION_VIEW, Uri.parse(
-////                                            item.buyUri
-////                                        )
-////                                    )
-////                                    val webIntent = Intent.createChooser(sendIntent, null)
-////                                    context.startActivity(webIntent)
+                                        .clickable(
+                                            interactionSource = remember { MutableInteractionSource() },
+                                            indication = rememberRipple(color = Color.Black),
+                                        ) {
+
+                                            DataClickMetric(
+                                                Buttons.BUY_BOOK, Screens.Recommendation.route
+                                            )
+
+                                            val sendIntent: Intent = Intent(
+                                                Intent.ACTION_VIEW, Uri.parse(
+                                                    item.buyUri
+                                                )
+                                            )
+                                            val webIntent = Intent.createChooser(sendIntent, null)
+                                            context.startActivity(webIntent)
                                         },
                                     contentAlignment = Alignment.Center
                                 ) {
@@ -211,6 +219,9 @@ fun RecomendationContent(
                                         )
                                     )
                                 }
+                                Spacer(modifier = Modifier
+                                    .height(15.dp)
+                                    .fillMaxWidth())
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
                                     verticalAlignment = Alignment.CenterVertically,
@@ -292,6 +303,9 @@ fun RecomendationContent(
                                         )
                                     }
                                 }
+                                Spacer(modifier = Modifier
+                                    .height(15.dp)
+                                    .fillMaxWidth())
                                 Column() {
                                     Text(
                                         text = "Описание",
@@ -320,85 +334,83 @@ fun RecomendationContent(
                         sheetShape = RoundedCornerShape(topStart = 23.dp, topEnd = 23.dp),
                         sheetPeekHeight = 120.dp
                     ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .fillMaxHeight(0.07f)
-                                .background(
-                                    Color.White
-                                ),
-                            horizontalArrangement = Arrangement.End
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.statistics_icon),
-                                contentDescription = "",
+                        Column(modifier = Modifier.background(Color(250,248,242))){
+                            Row(
                                 modifier = Modifier
-                                    .clickable {
-                                        onNavigateToStatistics()
+                                    .fillMaxWidth()
+                                    .fillMaxHeight(0.07f),
+                                horizontalArrangement = Arrangement.End
+                            ) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.statistics_icon),
+                                    contentDescription = "",
+                                    modifier = Modifier
+                                        .clickable {
+                                            onNavigateToStatistics()
+                                            viewModel.metricClick(DataClickMetric(button= "Statistics",screen="Recommendation"))
+                                        }
+                                        .padding(end = 8.dp)
+                                )
+                                Image(
+                                    painter = painterResource(id = R.drawable.search_icon),
+                                    contentDescription = "",
+                                    modifier = Modifier
+                                        .clickable {
+                                            //TODO ПОИСК
+                                            viewModel.metricClick(DataClickMetric(button= "Search",screen="Recommendation"))
+                                        }
+                                        .padding(end = 18.dp)
+                                )
+                            }
+                            CardStack(
+                                modifier = Modifier.fillMaxHeight(0.8f),
+                                user = viewModel.user,
+                                itemsRaw = viewModel.validBooks,
+                                onSwipeLeft = {
+                                    with(viewModel) {
+                                        metricSwipeLeft(it)
+                                        validBooks.remove(it)
+                                        // counter += 1
                                     }
-                                    .padding(end = 8.dp)
+                                    viewModel.counter += 1
+
+                                },
+                                onSwipeRight = {
+                                    with(viewModel) {
+                                        metricSwipeRight(it)
+                                        validBooks.remove(it)
+                                        // counter += 1
+                                    }
+                                    viewModel.counter += 1
+
+                                },
+                                onSwipeUp = {
+                                    with(viewModel) {
+                                        metricSwipeTop(it)
+                                        validBooks.remove(it)
+                                        // counter += 1
+                                    }
+                                    viewModel.counter += 1
+
+                                },
+                                onSwipeDown = {
+                                    with(viewModel) {
+                                        metricSwipeDown(it)
+                                        validBooks.remove(it)
+                                        // counter += 1
+                                    }
+                                    viewModel.counter += 1
+
+                                },
+                                onNavigateToStatistics = onNavigateToStatistics
                             )
-                            Image(
-                                painter = painterResource(id = R.drawable.search_icon),
-                                contentDescription = "",
+                            Box(
                                 modifier = Modifier
-                                    .clickable {
-                                        //TODO ПОИСК
-                                    }
-                                    .padding(end = 18.dp)
+                                    .fillMaxWidth()
+                                    .fillMaxHeight()
                             )
                         }
-                        CardStack(
-                            modifier = Modifier.fillMaxHeight(0.8f),
-                            user = viewModel.user,
-                            itemsRaw = viewModel.validBooks,
-                            onSwipeLeft = {
-                                with(viewModel) {
-                                    metricSwipeLeft(it)
-                                    validBooks.remove(it)
-                                    // counter += 1
-                                }
-                                viewModel.counter += 1
 
-                            },
-                            onSwipeRight = {
-                                with(viewModel) {
-                                    metricSwipeRight(it)
-                                    validBooks.remove(it)
-                                    // counter += 1
-                                }
-                                viewModel.counter += 1
-
-                            },
-                            onSwipeUp = {
-                                with(viewModel) {
-                                    metricSwipeTop(it)
-                                    validBooks.remove(it)
-                                    // counter += 1
-                                }
-                                viewModel.counter += 1
-
-                            },
-                            onSwipeDown = {
-                                with(viewModel) {
-                                    metricSwipeDown(it)
-                                    validBooks.remove(it)
-                                    // counter += 1
-                                }
-                                viewModel.counter += 1
-
-                            },
-                            onClick = {
-                                viewModel.metricClick(it)
-                            },
-                            sessionTimer = { viewModel.metricScreenTime() },
-                            onNavigateToStatistics = onNavigateToStatistics
-                        )
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .fillMaxHeight()
-                        )
                     }
                 } else {
                     Box(
@@ -415,7 +427,6 @@ fun RecomendationContent(
                                 )
                             )
                             viewModel.metricScreenTime()
-//                        navController.popBackStack()
                             onNavigateToStatistics()
                         }
                     }
@@ -507,12 +518,6 @@ fun NotificationMessage(navigateToStatistics: () -> Unit, closeCallback: () -> U
     }
 
 }
-
-//@Preview(showBackground = true)
-//@Composable
-//fun NotificationMessagePreview() {
-//    NotificationMessage()
-//}
 
 
 

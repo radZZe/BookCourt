@@ -17,10 +17,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.bookcourt.utils.DIRECTION_BOTTOM
-import com.example.bookcourt.utils.DIRECTION_LEFT
-import com.example.bookcourt.utils.DIRECTION_RIGHT
-import com.example.bookcourt.utils.DIRECTION_TOP
+
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -47,10 +44,7 @@ open class BookCardController(
     val offsetY = Animatable(0f)
     val rotation = Animatable(0f)
     val visibility_first = Animatable(1f)
-    val visibility_second = Animatable(0f)
 
-    val limitValueY = 50
-    val limitValueX = 50
 
     val likeIconSize = Animatable(20.0f)
     val dislikeIconSize = Animatable(20.0f)
@@ -344,9 +338,6 @@ fun Modifier.draggableStack(
                             controller.offsetY.value / (controller.top.y / 100)
                         var percentShiftX =
                             controller.offsetX.value / (controller.right.x / 100)
-
-                        Log.d("Percent","percentShiftX : ${percentShiftX}")
-                        Log.d("Percent","percentShiftY : ${percentShiftY}")
                         if (isShiftByX(controller, dragAmount)) {
                             val targetChange = normalize(
                                 controller.center.x,
