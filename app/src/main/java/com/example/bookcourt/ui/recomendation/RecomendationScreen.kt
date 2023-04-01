@@ -334,83 +334,83 @@ fun RecomendationContent(
                         sheetShape = RoundedCornerShape(topStart = 23.dp, topEnd = 23.dp),
                         sheetPeekHeight = 120.dp
                     ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .fillMaxHeight(0.07f)
-                                .background(
-                                    Color.White
-                                ),
-                            horizontalArrangement = Arrangement.End
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.statistics_icon),
-                                contentDescription = "",
+                        Column(modifier = Modifier.background(Color(250,248,242))){
+                            Row(
                                 modifier = Modifier
-                                    .clickable {
-                                        onNavigateToStatistics()
-                                        viewModel.metricClick(DataClickMetric(button= "Statistics",screen="Recommendation"))
+                                    .fillMaxWidth()
+                                    .fillMaxHeight(0.07f),
+                                horizontalArrangement = Arrangement.End
+                            ) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.statistics_icon),
+                                    contentDescription = "",
+                                    modifier = Modifier
+                                        .clickable {
+                                            onNavigateToStatistics()
+                                            viewModel.metricClick(DataClickMetric(button= "Statistics",screen="Recommendation"))
+                                        }
+                                        .padding(end = 8.dp)
+                                )
+                                Image(
+                                    painter = painterResource(id = R.drawable.search_icon),
+                                    contentDescription = "",
+                                    modifier = Modifier
+                                        .clickable {
+                                            //TODO ПОИСК
+                                            viewModel.metricClick(DataClickMetric(button= "Search",screen="Recommendation"))
+                                        }
+                                        .padding(end = 18.dp)
+                                )
+                            }
+                            CardStack(
+                                modifier = Modifier.fillMaxHeight(0.8f),
+                                user = viewModel.user,
+                                itemsRaw = viewModel.validBooks,
+                                onSwipeLeft = {
+                                    with(viewModel) {
+                                        metricSwipeLeft(it)
+                                        validBooks.remove(it)
+                                        // counter += 1
                                     }
-                                    .padding(end = 8.dp)
+                                    viewModel.counter += 1
+
+                                },
+                                onSwipeRight = {
+                                    with(viewModel) {
+                                        metricSwipeRight(it)
+                                        validBooks.remove(it)
+                                        // counter += 1
+                                    }
+                                    viewModel.counter += 1
+
+                                },
+                                onSwipeUp = {
+                                    with(viewModel) {
+                                        metricSwipeTop(it)
+                                        validBooks.remove(it)
+                                        // counter += 1
+                                    }
+                                    viewModel.counter += 1
+
+                                },
+                                onSwipeDown = {
+                                    with(viewModel) {
+                                        metricSwipeDown(it)
+                                        validBooks.remove(it)
+                                        // counter += 1
+                                    }
+                                    viewModel.counter += 1
+
+                                },
+                                onNavigateToStatistics = onNavigateToStatistics
                             )
-                            Image(
-                                painter = painterResource(id = R.drawable.search_icon),
-                                contentDescription = "",
+                            Box(
                                 modifier = Modifier
-                                    .clickable {
-                                        //TODO ПОИСК
-                                        viewModel.metricClick(DataClickMetric(button= "Search",screen="Recommendation"))
-                                    }
-                                    .padding(end = 18.dp)
+                                    .fillMaxWidth()
+                                    .fillMaxHeight()
                             )
                         }
-                        CardStack(
-                            modifier = Modifier.fillMaxHeight(0.8f),
-                            user = viewModel.user,
-                            itemsRaw = viewModel.validBooks,
-                            onSwipeLeft = {
-                                with(viewModel) {
-                                    metricSwipeLeft(it)
-                                    validBooks.remove(it)
-                                    // counter += 1
-                                }
-                                viewModel.counter += 1
 
-                            },
-                            onSwipeRight = {
-                                with(viewModel) {
-                                    metricSwipeRight(it)
-                                    validBooks.remove(it)
-                                    // counter += 1
-                                }
-                                viewModel.counter += 1
-
-                            },
-                            onSwipeUp = {
-                                with(viewModel) {
-                                    metricSwipeTop(it)
-                                    validBooks.remove(it)
-                                    // counter += 1
-                                }
-                                viewModel.counter += 1
-
-                            },
-                            onSwipeDown = {
-                                with(viewModel) {
-                                    metricSwipeDown(it)
-                                    validBooks.remove(it)
-                                    // counter += 1
-                                }
-                                viewModel.counter += 1
-
-                            },
-                            onNavigateToStatistics = onNavigateToStatistics
-                        )
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .fillMaxHeight()
-                        )
                     }
                 } else {
                     Box(

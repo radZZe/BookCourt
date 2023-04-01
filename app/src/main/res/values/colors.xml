@@ -14,4 +14,5 @@
     <color name="rating_color">#FF9800</color>
     <color name="light_brown">#B2AC8B</color>
     <color name="brown">#483936</color>
+    <color name="main_bg_color">#FAF8F2</color>
 </resources>
