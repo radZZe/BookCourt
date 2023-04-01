@@ -101,6 +101,8 @@ object AppVersion {
 
 object Partners{
     const val lyuteraturaUrl = "https://lyuteratura.ru/"
+    const val csiZaryaUrl = "http://zaryavladivostok.ru/ru/shop/books"
+    const val igraSlovUrl = "https://igraslov.store/"
 }
 
 
