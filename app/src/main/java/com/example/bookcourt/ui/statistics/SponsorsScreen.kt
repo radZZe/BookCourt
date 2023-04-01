@@ -116,54 +116,48 @@ fun PartnerIgraSlov() {
 @Composable
 fun PartnerLyuteratura() {
     val context = LocalContext.current
-    Box(
-        contentAlignment = Alignment.Center,
+    Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(10.dp)
-            .clip(RoundedCornerShape(30.dp))
             .background(LightPinkBackground)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize(),
-            verticalArrangement = Arrangement.SpaceBetween,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.partner_lyuteratura_logo),
-                contentDescription = "lyuteratura logo",
-                modifier = Modifier
-                    .fillMaxWidth(0.5f)
-                    .fillMaxHeight(0.1f),
-                contentScale = ContentScale.Fit
-            )
+            .padding(bottom = 40.dp, top = 60.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.SpaceBetween
 
-            Image(
-                painter = painterResource(id = R.drawable.partner_lyuteratura_content),
-                contentDescription = "lyuteratura content",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(0.5f),
-                contentScale = ContentScale.Fit
-            )
-            Text(
-                text = "Любите детей, книги и творчество?",
-                fontFamily = Inter,
-                fontWeight = FontWeight.Black,
-                color = Color.Black,
-                fontSize = 32.sp,
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
-            Text(
-                text = "Тогда не проходите мимо и загляните в детский книжный магазин “Лютература”.",
-                fontFamily = Inter,
-                color = Color.Black,
-                fontWeight = FontWeight.Bold,
-                fontSize = 18.sp,
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
-            RedirectButton(context = context, redirectUrl = Partners.lyuteraturaUrl)
-        }
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.partner_lyuteratura_logo),
+            contentDescription = "lyuteratura logo",
+            modifier = Modifier
+                .fillMaxWidth(0.5f)
+                .fillMaxHeight(0.1f),
+            contentScale = ContentScale.Fit
+        )
+        Image(
+            painter = painterResource(id = R.drawable.partner_lyuteratura_content),
+            contentDescription = "lyuteratura content",
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.5f),
+            contentScale = ContentScale.Fit
+        )
+        Text(
+            text = "Любите детей, книги и творчество?",
+            fontFamily = Inter,
+            fontWeight = FontWeight.Black,
+            color = Color.Black,
+            fontSize = 32.sp,
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
+        Text(
+            text = "Тогда не проходите мимо и загляните в детский книжный магазин “Лютература”.",
+            fontFamily = Inter,
+            color = Color.Black,
+            fontWeight = FontWeight.Bold,
+            fontSize = 18.sp,
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
+        RedirectButton(context = context, redirectUrl = Partners.lyuteraturaUrl)
     }
 }
+
