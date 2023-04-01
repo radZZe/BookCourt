@@ -18,39 +18,13 @@ import javax.inject.Inject
 @HiltViewModel
 class CardStackViewModel @Inject constructor(
     val dataStoreRepository: DataStoreRepository,
-    private val metricRep: MetricsRepository,
     private val userRepository: UserRepository
 ) : ViewModel() {
-    private val userId = dataStoreRepository.getPref(DataStoreRepository.uuid)
 
-    //state flags
     var isEmpty by mutableStateOf(false)
-    var isNotificationDisplay = dataStoreRepository.getBoolPref(DataStoreRepository.isNotificationDisplay)
-    var isFirstNotification = mutableStateOf(false)
-
     var allBooks:List<MutableState<Book>> = listOf()
     var i by mutableStateOf(allBooks.size - 1)
-    var counter by mutableStateOf(0)
-
     var currentItem = if(allBooks.isNotEmpty()) allBooks[i] else null
-
-
-//    fun changeCurrentItem(){
-//        if(i!=-1){
-//            currentItem = allBooks[i]
-//        }else{
-//            isEmpty = true
-//        }
-//
-//    }
-
-    fun countEqualToLimit(){
-        viewModelScope.launch(Dispatchers.IO) {
-            isFirstNotification.value = true
-            dataStoreRepository.setPref(true,DataStoreRepository.isNotificationDisplay)
-        }
-
-    }
 
     fun updateUserStatistic(user: User) {
         viewModelScope.launch(Dispatchers.IO) {

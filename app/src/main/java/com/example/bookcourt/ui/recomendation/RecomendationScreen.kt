@@ -404,10 +404,6 @@ fun RecomendationContent(
                                 viewModel.counter += 1
 
                             },
-                            onClick = {
-                                viewModel.metricClick(it)
-                            },
-                            sessionTimer = { viewModel.metricScreenTime() },
                             onNavigateToStatistics = onNavigateToStatistics
                         )
                         Box(
@@ -431,7 +427,6 @@ fun RecomendationContent(
                                 )
                             )
                             viewModel.metricScreenTime()
-//                        navController.popBackStack()
                             onNavigateToStatistics()
                         }
                     }
@@ -523,12 +518,6 @@ fun NotificationMessage(navigateToStatistics: () -> Unit, closeCallback: () -> U
     }
 
 }
-
-//@Preview(showBackground = true)
-//@Composable
-//fun NotificationMessagePreview() {
-//    NotificationMessage()
-//}
 
 
 
