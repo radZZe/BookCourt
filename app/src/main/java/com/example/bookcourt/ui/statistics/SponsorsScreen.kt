@@ -54,14 +54,14 @@ fun PartnerZarya() {
                 text = "Книги про искусство",
                 fontWeight = FontWeight.ExtraBold,
                 color = Color.Black,
-                fontSize = 30.sp
+                fontSize = 26.sp
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = "В ЦСИ \"Заря\" вы всегда найдете познавателььную и обучающую литературу, связанную с искусством.",
                 fontWeight = FontWeight.Normal,
                 color = Color.Black,
-                fontSize = 18.sp
+                fontSize = 16.sp
             )
         }
         RedirectButton(context = context, redirectUrl = Partners.csiZaryaUrl)
@@ -99,14 +99,14 @@ fun PartnerIgraSlov() {
                 text = "Вы точно найдете, что почитать",
                 fontWeight = FontWeight.ExtraBold,
                 color = Color.Black,
-                fontSize = 30.sp
+                fontSize = 26.sp
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = "Независимый книжный магазин \"Игра слов\", место, где редкие книги и кофе.",
                 fontWeight = FontWeight.Normal,
                 color = Color.Black,
-                fontSize = 18.sp
+                fontSize = 16.sp
             )
         }
         RedirectButton(context = context, redirectUrl = Partners.igraSlovUrl)
@@ -120,7 +120,7 @@ fun PartnerLyuteratura() {
         modifier = Modifier
             .fillMaxSize()
             .background(LightPinkBackground)
-            .padding(bottom = 40.dp, top = 60.dp),
+            .padding(bottom = 20.dp, top = 20.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
 

@@ -178,82 +178,82 @@ fun Statistics(
     }
 }
 
-@Composable
-fun ReadBooksStats() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(10.dp)
-            .clip(RoundedCornerShape(30.dp))
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(LighterPinkBackground),
-            verticalArrangement = Arrangement.SpaceBetween,
-            horizontalAlignment = Alignment.CenterHorizontally
-
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.book_court_logo),
-                contentDescription = "Book court logo"
-            )
-            Text(
-                text = "0!",
-                fontFamily = Inter,
-                fontWeight = FontWeight.Black,
-                color = Color.Black,
-                fontSize = 32.sp
-            )
-            Text(
-                text = "Вы прочитали, хороший результат \uD83D\uDCAA",
-                fontFamily = Inter,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black,
-                fontSize = 18.sp,
-            )
-            Column {
-                Text(
-                    text = "Продолжайте читать, ведь чтение книг:",
-                    fontFamily = Inter,
-                    fontWeight = FontWeight.Black,
-                    color = Color.Black,
-                    fontSize = 18.sp,
-                )
-                Text(
-                    text = "1. Увеличивает словарный запас\n" +
-                            "2. Помогает общаться с людьми\n" +
-                            "3. Снижает стресс\n" +
-                            "4. Развивает память и мышление",
-                    fontFamily = Inter,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.Black,
-                    fontSize = 18.sp,
-                )
-            }
-
-            Image(
-                painter = painterResource(id = R.drawable.cup_coffee_open_book),
-                contentDescription = "cup coffee and open book image",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(0.3f),
-                contentScale = ContentScale.Fit
-            )
-            Button(
-                onClick = {/*TODO*/ },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-                    .clip(RoundedCornerShape(60.dp))
-                    .height(45.dp),
-                colors = ButtonDefaults.buttonColors(LightYellowBtn)
-            ) {
-                Text(text = "Поделиться")
-            }
-        }
-    }
-}
+//@Composable
+//fun ReadBooksStats() {
+//    Box(
+//        modifier = Modifier
+//            .fillMaxSize()
+//            .padding(10.dp)
+//            .clip(RoundedCornerShape(30.dp))
+//    ) {
+//        Column(
+//            modifier = Modifier
+//                .fillMaxSize()
+//                .background(LighterPinkBackground),
+//            verticalArrangement = Arrangement.SpaceBetween,
+//            horizontalAlignment = Alignment.CenterHorizontally
+//
+//        ) {
+//            Image(
+//                painter = painterResource(id = R.drawable.book_court_logo),
+//                contentDescription = "Book court logo"
+//            )
+//            Text(
+//                text = "0!",
+//                fontFamily = Inter,
+//                fontWeight = FontWeight.Black,
+//                color = Color.Black,
+//                fontSize = 32.sp
+//            )
+//            Text(
+//                text = "Вы прочитали, хороший результат \uD83D\uDCAA",
+//                fontFamily = Inter,
+//                fontWeight = FontWeight.Bold,
+//                color = Color.Black,
+//                fontSize = 18.sp,
+//            )
+//            Column {
+//                Text(
+//                    text = "Продолжайте читать, ведь чтение книг:",
+//                    fontFamily = Inter,
+//                    fontWeight = FontWeight.Black,
+//                    color = Color.Black,
+//                    fontSize = 18.sp,
+//                )
+//                Text(
+//                    text = "1. Увеличивает словарный запас\n" +
+//                            "2. Помогает общаться с людьми\n" +
+//                            "3. Снижает стресс\n" +
+//                            "4. Развивает память и мышление",
+//                    fontFamily = Inter,
+//                    fontWeight = FontWeight.Bold,
+//                    color = Color.Black,
+//                    fontSize = 18.sp,
+//                )
+//            }
+//
+//            Image(
+//                painter = painterResource(id = R.drawable.cup_coffee_open_book),
+//                contentDescription = "cup coffee and open book image",
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .fillMaxHeight(0.3f),
+//                contentScale = ContentScale.Fit
+//            )
+//            Button(
+//                onClick = {/*TODO*/ },
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding(16.dp)
+//                    .clip(RoundedCornerShape(60.dp))
+//                    .height(45.dp),
+//                colors = ButtonDefaults.buttonColors(LightYellowBtn)
+//            ) {
+//                Text(text = "Поделиться")
+//            }
+//        }
+//    }
+//}
 
 @Preview
 @Composable
@@ -268,7 +268,7 @@ fun FavoriteGenresStatsPreview() {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(10.dp)
+            .padding(start = 10.dp, end = 10.dp, bottom = 10.dp, top = 0.dp)
             .clip(RoundedCornerShape(30.dp))
     ) {
         Column(
@@ -277,11 +277,11 @@ fun FavoriteGenresStatsPreview() {
                 .background(TopGenresLightPink),
             verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
-
         ) {
             Image(
                 painter = painterResource(id = R.drawable.book_court_logo),
-                contentDescription = "Book court logo"
+                contentDescription = "Book court logo",
+                modifier = Modifier.size(130.dp)
             )
             Text(
                 text = "Любимые жанры",
