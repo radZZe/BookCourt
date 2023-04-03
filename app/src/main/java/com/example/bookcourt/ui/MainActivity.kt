@@ -23,10 +23,12 @@ import androidx.navigation.compose.rememberNavController
 import com.example.bookcourt.data.repositories.DataStoreRepository
 import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.startSessionTime
 import com.example.bookcourt.ui.auth.SignInViewModel
+import com.example.bookcourt.ui.graphs.BottomNavigationGraph
 import com.example.bookcourt.ui.graphs.NavigationGraph
 import com.example.bookcourt.ui.recomendation.RecomendationViewModel
 import com.example.bookcourt.ui.statistics.StatisticsViewModel
 import com.example.bookcourt.ui.theme.BookCourtTheme
+import com.example.bookcourt.utils.BottomNavigationMenu
 import com.example.bookcourt.utils.Screens
 import com.example.bookcourt.utils.SplashViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -41,14 +43,17 @@ class MainActivity : ComponentActivity() {
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val navController = NavController(this)
         setContent {
             BookCourtTheme {
                 Scaffold(
+//                    bottomBar = { BottomNavigationMenu(navController) }
                 ) {
                     Column(
                         modifier = Modifier.fillMaxSize(),
                     ) {
                         NavigationGraph()
+//                        BottomNavigationGraph()
                     }
                 }
             }

@@ -510,7 +510,7 @@ fun FavoriteGenresStats(
             text = "Поделиться",
             textColor = Color.Black,
             modifier = Modifier.padding(horizontal = 20.dp),
-            color = Color(0xFFFCE181),
+            color = LightYellowBtn,
             onCLick = {
                 mViewModel.shareStatistics(view, context)
             }
@@ -621,7 +621,7 @@ fun ReadBooksStats(
             text = "Поделиться",
             textColor = Color.Black,
             modifier = Modifier.padding(horizontal = 20.dp),
-            color = Color(0xFFFCE181),
+            color = LightYellowBtn,
             onCLick = {
                 mViewModel.shareStatistics(view, context)
             }
@@ -727,7 +727,7 @@ fun FavoriteAuthors(
             text = "Поделиться",
             textColor = Color.Black,
             modifier = Modifier.padding(horizontal = 20.dp),
-            color = Color(0xFFFCE181),
+            color = LightYellowBtn,
             onCLick = {
                 mViewModel.shareStatistics(view, context)
             }

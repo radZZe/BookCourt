@@ -63,7 +63,7 @@ fun CustomButton(
             .clickable { onCLick() },
         Alignment.Center
     ) {
-        Text(text = text, color = textColor, fontSize = 16.sp, fontFamily = Gilroy)
+        Text(text = text, color = textColor, fontSize = 16.sp, fontFamily = Roboto)
     }
 }
 
@@ -332,10 +332,10 @@ fun RedirectButton(
             .fillMaxWidth()
             .padding(vertical = 13.dp, horizontal = 20.dp)
             .clip(RoundedCornerShape(60.dp))
-            .height(45.dp),
+            .height(46.dp),
         colors = ButtonDefaults.buttonColors(color)
     ) {
-        Text(text = text)
+        Text(text = text, fontSize = 16.sp, fontFamily = Roboto)
     }
 }
 

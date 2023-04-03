@@ -52,3 +52,12 @@ val Inter = FontFamily(
     Font(R.font.inter_semi_bold, weight = FontWeight.SemiBold),
     Font(R.font.inter_thin, weight = FontWeight.Thin)
 )
+
+val Roboto = FontFamily(
+    Font(R.font.roboto_regular),
+    Font(R.font.roboto_bold, weight = FontWeight.Bold),
+    Font(R.font.roboto_medium, weight = FontWeight.Medium),
+    Font(R.font.roboto_thin, weight = FontWeight.Thin),
+    Font(R.font.roboto_light, weight = FontWeight.Light),
+    Font(R.font.roboto_black, weight = FontWeight.Black),
+)
