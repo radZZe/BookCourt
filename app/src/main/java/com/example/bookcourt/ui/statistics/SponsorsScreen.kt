@@ -146,7 +146,7 @@ fun PartnerLyuteratura() {
             fontFamily = Inter,
             fontWeight = FontWeight.Black,
             color = Color.Black,
-            fontSize = 32.sp,
+            fontSize = 26.sp,
             modifier = Modifier.padding(horizontal = 16.dp)
         )
         Text(
@@ -154,7 +154,7 @@ fun PartnerLyuteratura() {
             fontFamily = Inter,
             color = Color.Black,
             fontWeight = FontWeight.Bold,
-            fontSize = 18.sp,
+            fontSize = 16.sp,
             modifier = Modifier.padding(horizontal = 16.dp)
         )
         RedirectButton(context = context, redirectUrl = Partners.lyuteraturaUrl)

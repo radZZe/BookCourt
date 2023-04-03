@@ -68,6 +68,8 @@ object Constants {
     )
 
     val statisticScreensList = listOf("ReadBooks", "Lyuteratura", "FavoriteAuthors", "IgraSlov", "Zarya", "FavoriteGenres")
+
+    val navMenuScreensList = listOf(BottomNavMenu.StatisticsBottomNav, BottomNavMenu.RecomendationsBottomNav, BottomNavMenu.SearchBottomNav)
 }
 
 object MetricType {
