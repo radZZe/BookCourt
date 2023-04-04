@@ -1,6 +1,5 @@
-package com.example.bookcourt.ui.recomendation
+package com.example.bookcourt.ui.recommendation
 
-import android.util.Log
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.material.ExperimentalMaterialApi
@@ -11,7 +10,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
@@ -20,7 +18,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 import kotlin.math.sign
@@ -46,10 +43,10 @@ open class BookCardController(
     val visibility_first = Animatable(1f)
 
 
-    val likeIconSize = Animatable(20.0f)
-    val dislikeIconSize = Animatable(20.0f)
-    val wantToReadIconSize = Animatable(20.0f)
-    val skipBookIconSize = Animatable(20.0f)
+    val likeIconSize = Animatable(16.0f)
+    val dislikeIconSize = Animatable(16.0f)
+    val wantToReadIconSize = Animatable(16.0f)
+    val skipBookIconSize = Animatable(16.0f)
 
 
     var baseIconColor = Color(222, 210, 169)
@@ -413,7 +410,7 @@ suspend private fun iconPulseAnimation(
         animationSpec = tween(durationMillis = 50, easing = LinearEasing)
     )
     size.animateTo(
-        targetValue = 55f,
+        targetValue = 42f,
         animationSpec = tween(durationMillis = 50, easing = LinearEasing)
     )
 }

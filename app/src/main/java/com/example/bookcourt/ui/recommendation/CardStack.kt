@@ -1,5 +1,6 @@
 package com.example.bookcourt.utils
 
+import android.util.DisplayMetrics
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -9,12 +10,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layout
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
@@ -27,9 +29,8 @@ import coil.request.ImageRequest
 import coil.size.Size
 import com.example.bookcourt.R
 import com.example.bookcourt.models.book.Book
-import com.example.bookcourt.models.metrics.DataClickMetric
 import com.example.bookcourt.models.user.User
-import com.example.bookcourt.ui.recomendation.*
+import com.example.bookcourt.ui.recommendation.*
 import com.example.bookcourt.ui.theme.CustomButton
 import kotlin.math.roundToInt
 
@@ -152,63 +153,70 @@ fun BookCard(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .fillMaxHeight()
-            .zIndex(if (index == i) 3f else 1f)
+            .fillMaxSize()
+            .zIndex(if (index == i) 3f else 1f),
     ) {
-        if (index == i) {
-            RecommendationIcon(
-                bookCardController,
-                Modifier
-                    .align(Alignment.TopCenter)
-                    .zIndex(4f),
-                bookCardController.wantToReadIconSize.value.dp,
-                bookCardController.currentWantToReadIconColor,
-                R.drawable.want_to_read_icon,
-                bookCardController.wantToReadIconAlpha.value,
-                "want to read icon"
-            )
-            RecommendationIcon(
-                bookCardController,
-                Modifier
-                    .align(Alignment.CenterStart)
-                    .zIndex(4f),
-                bookCardController.dislikeIconSize.value.dp,
-                bookCardController.currentDislikeIconColor,
-                R.drawable.dislike_book_icon,
-                bookCardController.dislikeIconAlpha.value,
-                "dislike icon"
-            )
+        RecommendationIcon(
+            bookCardController,
+            Modifier
+                .zIndex(4f)
+                .align(Alignment.TopCenter),
+            bookCardController.wantToReadIconSize.value.dp,
+            bookCardController.currentWantToReadIconColor,
+            R.drawable.want_to_read_icon,
+            bookCardController.wantToReadIconAlpha.value,
+            "want to read icon"
+        )
 
-            RecommendationIcon(
-                bookCardController,
-                Modifier
-                    .align(Alignment.CenterEnd)
-                    .zIndex(4f),
-                bookCardController.likeIconSize.value.dp,
-                bookCardController.currentLikeIconColor,
-                R.drawable.like_book_icon,
-                bookCardController.likeIconAlpha.value,
-                "like icon"
-            )
-            RecommendationIcon(
-                bookCardController,
-                Modifier
-                    .align(Alignment.BottomCenter)
-                    .zIndex(4f),
-                bookCardController.skipBookIconSize.value.dp,
-                bookCardController.currentSkipIconColor,
-                R.drawable.skip_book_icon,
-                bookCardController.skipIconAlpha.value,
-                "skip icon"
-            )
-        }
+        RecommendationIcon(
+            bookCardController,
+            Modifier
+                .zIndex(4f)
+                .align(Alignment.CenterStart),
+            bookCardController.dislikeIconSize.value.dp,
+            bookCardController.currentDislikeIconColor,
+            R.drawable.dislike_book_icon,
+            bookCardController.dislikeIconAlpha.value,
+            "dislike icon"
+        )
+
+        RecommendationIcon(
+            bookCardController,
+            Modifier
+                .zIndex(4f)
+                .align(Alignment.CenterEnd),
+            bookCardController.likeIconSize.value.dp,
+            bookCardController.currentLikeIconColor,
+            R.drawable.like_book_icon,
+            bookCardController.likeIconAlpha.value,
+            "like icon"
+        )
+
+
+        RecommendationIcon(
+            bookCardController,
+            Modifier
+                .zIndex(4f)
+                .align(Alignment.BottomCenter),
+            bookCardController.skipBookIconSize.value.dp,
+            bookCardController.currentSkipIconColor,
+            R.drawable.skip_book_icon,
+            bookCardController.skipIconAlpha.value,
+            "skip icon"
+        )
+
+
+
+
+        var windowHeight =  LocalConfiguration.current.screenHeightDp.toFloat() * LocalDensity.current.density
+
+
 
         Card(
             shape = RoundedCornerShape(20.dp),
             modifier = Modifier
-                .align(Alignment.Center)
-                .fillMaxWidth(0.80f)
-                .fillMaxHeight(0.80f)
+                .width(300.dp)
+                .height(if(windowHeight > LIMIT_WINDOW_HEIGHT) 470.dp else 400.dp)
                 .draggableStack(
                     controller = bookCardController,
                     thresholdConfig = thresholdConfig,
@@ -221,23 +229,19 @@ fun BookCard(
                     rotationZ = if (index == i) bookCardController.rotation.value else 0f,
                 )
                 .alpha(alpha)
+                .align(Alignment.Center)
         ) {
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(topStart = 23.dp, topEnd = 23.dp))
             ) {
                 BookCardImage(uri = item.bookInfo.image)
-
             }
-
-
         }
 
 
     }
-
 }
-
 
 fun Modifier.moveTo(
     x: Float, y: Float
@@ -248,7 +252,6 @@ fun Modifier.moveTo(
         placeable.placeRelative(x.roundToInt(), y.roundToInt())
     }
 })
-
 
 
 @Composable
@@ -329,3 +332,5 @@ fun RecommendationIcon(
 
     }
 }
+
+const val LIMIT_WINDOW_HEIGHT = 1920
