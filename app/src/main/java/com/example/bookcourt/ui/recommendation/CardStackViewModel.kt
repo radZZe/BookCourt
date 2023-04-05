@@ -1,4 +1,4 @@
-package com.example.bookcourt.ui.recomendation
+package com.example.bookcourt.ui.recommendation
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -6,7 +6,6 @@ import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookcourt.data.repositories.DataStoreRepository
-import com.example.bookcourt.data.repositories.MetricsRepository
 import com.example.bookcourt.data.repositories.UserRepository
 import com.example.bookcourt.models.book.Book
 import com.example.bookcourt.models.user.User

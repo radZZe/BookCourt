@@ -1,4 +1,4 @@
-package com.example.bookcourt.ui.recomendation
+package com.example.bookcourt.ui.recommendation
 
 import android.content.Context
 import android.util.Log

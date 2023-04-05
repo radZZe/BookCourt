@@ -1,6 +1,5 @@
-package com.example.bookcourt.ui.recomendation
+package com.example.bookcourt.ui.recommendation
 
-import android.app.Notification
 import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
