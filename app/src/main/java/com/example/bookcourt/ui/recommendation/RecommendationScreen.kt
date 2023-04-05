@@ -33,12 +33,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil.compose.AsyncImagePainter
-import coil.compose.rememberAsyncImagePainter
-import coil.request.ImageRequest
-import coil.size.Size
 import com.example.bookcourt.R
 import com.example.bookcourt.models.metrics.DataClickMetric
+import com.example.bookcourt.ui.recommendation.NotificationRecommendation
 import com.example.bookcourt.ui.recommendation.RecomendationViewModel
 import com.example.bookcourt.ui.theme.CustomButton
 import com.example.bookcourt.ui.theme.MainBgColor
@@ -84,7 +81,7 @@ fun RecomendationContent(
         Box(modifier = Modifier.fillMaxSize()) {
             if (viewModel.isFirstNotification.value) {
                 viewModel.displayNotificationMessage()
-                NotificationMessage(
+                NotificationRecommendation(
                     navigateToStatistics = {
                         onNavigateToStatistics()
                         viewModel.closeNotificationMessage()
@@ -491,81 +488,7 @@ fun RecomendationContent(
 
 }
 
-@Composable
-fun NotificationMessage(navigateToStatistics: () -> Unit, closeCallback: () -> Unit) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .zIndex(4f)
-    ) {
-        Box(
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(20.dp)
-        ) {
-            Image(
-                painterResource(id = R.drawable.close_icon),
-                contentDescription = "",
-                modifier = Modifier.clickable {
-                    closeCallback()
-                }
-            )
-        }
-        Column(
-            modifier = Modifier
-                .fillMaxWidth(0.9f)
-                .align(Alignment.Center),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            val painter = rememberAsyncImagePainter(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data("https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Winking%20Face.png")
-                    .size(Size.ORIGINAL)
-                    .build(),
-            )
 
-            if (painter.state is AsyncImagePainter.State.Loading) {
-                CircularProgressIndicator()
-            }
-            Image(
-                painter = painter,
-                contentDescription = " ",
-                contentScale = ContentScale.Crop,
-            )
-            Column(
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.padding(bottom = 15.dp)
-            ) {
-                Text(
-                    text = "Ух ты! Вы посмотрели уже 3 книги", fontFamily = FontFamily(
-                        Font(
-                            R.font.manrope_extrabold,
-                        )
-                    ),
-                    fontSize = 12.sp
-                )
-                Text(
-                    text = "Теперь можно взглянуть на статистику", fontFamily = FontFamily(
-                        Font(
-                            R.font.manrope_extrabold,
-                        )
-                    ),
-                    fontSize = 12.sp
-                )
-            }
-
-            CustomButton(
-                text = "Смотреть статистику",
-                textColor = Color.Black,
-                color = Color(252, 225, 129),
-                onCLick = {
-                    navigateToStatistics()
-                })
-        }
-    }
-
-}
 
 
 
