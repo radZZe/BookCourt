@@ -12,11 +12,10 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.bookcourt.data.repositories.DataStoreRepository
 import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.isRemembered
-import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.isTutorChecked
 import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.savedCity
 import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.uuid
 import com.example.bookcourt.data.repositories.MetricsRepository
-import com.example.bookcourt.data.repositories.UserRepository
+import com.example.bookcourt.data.user.UserRepositoryI
 import com.example.bookcourt.models.metrics.DataClickMetric
 import com.example.bookcourt.models.user.User
 import com.example.bookcourt.utils.*
@@ -34,7 +33,7 @@ class SignInViewModel @Inject constructor(
     private val dataStoreRepository: DataStoreRepository,
     private val metricRep: MetricsRepository,
     private val hashing: Hashing,
-    private val userRepository: UserRepository
+    private val userRepositoryI: UserRepositoryI
 ) : ViewModel() {
 
     var name by mutableStateOf("")
@@ -98,7 +97,7 @@ class SignInViewModel @Inject constructor(
             )
             editPrefs(UUID)
             sendMetrics()
-            userRepository.addUser(user)
+            userRepositoryI.saveData(user)
             sendUserMetric(context,name,surname,phoneNumber,city,UUID)
             withContext(Dispatchers.Main){
                 if (isTutorChecked.first()) {
