@@ -41,6 +41,7 @@ import com.example.bookcourt.R
 import com.example.bookcourt.models.metrics.DataClickMetric
 import com.example.bookcourt.ui.recommendation.RecomendationViewModel
 import com.example.bookcourt.ui.theme.CustomButton
+import com.example.bookcourt.ui.theme.MainBgColor
 import com.example.bookcourt.utils.*
 
 @Composable
@@ -98,7 +99,7 @@ fun RecomendationContent(
             }
             Column(
                 modifier = Modifier
-                    .background(Color(red = 250, 248, 242))
+                    .background(MainBgColor)
                     .blur(viewModel.blurValueRecommendationScreen.value.dp),
                 verticalArrangement = Arrangement.SpaceAround,
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -353,7 +354,6 @@ fun RecomendationContent(
                             }
 
                         },
-                        sheetContentColor = Color.Green,
                         sheetElevation = 5.dp,
                         sheetShape = RoundedCornerShape(topStart = 23.dp, topEnd = 23.dp),
                         sheetPeekHeight = if(windowHeight>LIMIT_WINDOW_HEIGHT) 175.dp else 155.dp,
