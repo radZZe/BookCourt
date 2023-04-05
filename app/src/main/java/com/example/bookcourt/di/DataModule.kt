@@ -5,9 +5,11 @@ import androidx.room.Room
 
 import com.example.bookcourt.data.repositories.DataStoreRepository
 import com.example.bookcourt.data.repositories.MetricsRepository
-import com.example.bookcourt.data.repositories.UserRepositoryImpl
-import com.example.bookcourt.data.room.UserDatabase
-import com.example.bookcourt.data.repositories.UserRepository
+import com.example.bookcourt.data.user.UserRepository
+import com.example.bookcourt.data.user.UserRepositoryI
+import com.example.bookcourt.data.user.room.UserDatabase
+import com.example.bookcourt.data.user.sources.UserLocalSource
+import com.example.bookcourt.data.user.sources.UserNetworkSource
 import com.example.bookcourt.utils.Hashing
 import dagger.Module
 import dagger.Provides
@@ -51,7 +53,19 @@ class DataModule {
 
     @Provides
     @Singleton
-    fun provideUserRepository(db: UserDatabase) : UserRepository {
-        return UserRepositoryImpl(db.userDao())
+    fun provideUserRepository(networkSource: UserNetworkSource,localSource: UserLocalSource) : UserRepositoryI {
+        return UserRepository(networkSource,localSource)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserNetworkSource(db: UserDatabase) : UserNetworkSource {
+        return UserNetworkSource()
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserLocalSource(db: UserDatabase) : UserLocalSource {
+        return UserLocalSource(db.userDao())
     }
 }
