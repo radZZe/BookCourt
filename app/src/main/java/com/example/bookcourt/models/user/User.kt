@@ -9,10 +9,12 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class User(
     @PrimaryKey(autoGenerate = false) val uid: String,
-    val name:String,
-    val surname:String,
-    val phone: String,
+    val name:String? = null,
+    val email:String,
     val city: String,
+    val image:String? = null,
+    val dayBD:String? = null,
+    val sex:String? = null,
     var readBooksList: MutableList<Book>,
     var wantToRead: MutableList<Book>,
 //    @Embedded
