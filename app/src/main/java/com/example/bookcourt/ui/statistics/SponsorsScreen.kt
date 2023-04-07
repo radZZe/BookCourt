@@ -64,7 +64,12 @@ fun PartnerZarya() {
                 fontSize = 16.sp
             )
         }
-        RedirectButton(context = context, redirectUrl = Partners.csiZaryaUrl)
+        RedirectButton(
+            context = context,
+            redirectUrl = Partners.csiZaryaUrl,
+            modifier = Modifier
+                .weight(1f,false),
+        )
     }
 }
 
@@ -109,7 +114,12 @@ fun PartnerIgraSlov() {
                 fontSize = 16.sp
             )
         }
-        RedirectButton(context = context, redirectUrl = Partners.igraSlovUrl)
+        RedirectButton(
+            context = context,
+            redirectUrl = Partners.igraSlovUrl,
+            modifier = Modifier
+                .weight(1f,false),
+        )
     }
 }
 
@@ -120,7 +130,7 @@ fun PartnerLyuteratura() {
         modifier = Modifier
             .fillMaxSize()
             .background(LightPinkBackground)
-            .padding(bottom = 20.dp, top = 20.dp),
+            .padding(bottom = 20.dp, top = 50.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
 
@@ -157,7 +167,12 @@ fun PartnerLyuteratura() {
             fontSize = 16.sp,
             modifier = Modifier.padding(horizontal = 16.dp)
         )
-        RedirectButton(context = context, redirectUrl = Partners.lyuteraturaUrl)
+        RedirectButton(
+            context = context,
+            redirectUrl = Partners.lyuteraturaUrl,
+            modifier = Modifier
+                .weight(1f,false),
+        )
     }
 }
 
