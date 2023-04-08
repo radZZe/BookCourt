@@ -61,146 +61,146 @@ import com.google.android.gms.location.LocationServices
 import java.util.*
 
 
-@Composable
-fun SignInScreen(
-    navController: NavController,
-    mViewModel: SignInViewModel = hiltViewModel()
-) {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.auth_background),
-            contentDescription = "Background",
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize()
-        )
-        Image(
-            painter = painterResource(id = R.drawable.auth_background_alpha),
-            contentDescription = "Background",
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .fillMaxSize()
-                .alpha(0.2f)
-        )
-        AuthFields(navController, mViewModel)
-    }
-}
+//@Composable
+//fun SignInScreen(
+//    navController: NavController,
+//    mViewModel: SignInViewModel = hiltViewModel()
+//) {
+//    Box(
+//        contentAlignment = Alignment.Center,
+//        modifier = Modifier.fillMaxSize()
+//    ) {
+//        Image(
+//            painter = painterResource(id = R.drawable.auth_background),
+//            contentDescription = "Background",
+//            contentScale = ContentScale.Crop,
+//            modifier = Modifier.fillMaxSize()
+//        )
+//        Image(
+//            painter = painterResource(id = R.drawable.auth_background_alpha),
+//            contentDescription = "Background",
+//            contentScale = ContentScale.Crop,
+//            modifier = Modifier
+//                .fillMaxSize()
+//                .alpha(0.2f)
+//        )
+//        AuthFields(navController, mViewModel)
+//    }
+//}
 
-@Composable
-fun AuthFields(navController: NavController, mViewModel: SignInViewModel) {
-    val context = LocalContext.current
-    var validationState = remember { mutableStateOf(true) }
-    Box(
-        modifier = Modifier
-            .padding(start = 32.dp, end = 32.dp)
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .clip(RoundedCornerShape(15.dp))
-            .background(BackGroundWhite)
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 20.dp, end = 20.dp, top = 0.dp, bottom = 20.dp)
-                .verticalScroll(rememberScrollState(), reverseScrolling = true)
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.book_court_logo),
-                contentDescription = "Lead App Icon",
-                modifier = Modifier.size(100.dp)
-            )
-            TextBlock(
-                "Имя", "Введите ваше имя", mViewModel.name,
-                visualTransformation = VisualTransformation.None
-            ) { mViewModel.onNameChanged(it) }
-            Spacer(modifier = Modifier.height(18.dp))
-            TextBlock(
-                "Фамилия",
-                "Введите вашу фамилию",
-                mViewModel.surname,
-                visualTransformation = VisualTransformation.None
-            ) { mViewModel.onSurnameChanged(it) }
-            Spacer(modifier = Modifier.height(18.dp))
-            TextBlock(
-                "Телефон",
-                "Введите номер телефона",
-                mViewModel.phoneNumber,
-                keyboardType = KeyboardType.Phone,
-                visualTransformation = PhoneNumberVisualTransformation()
-            ) {
-                if (it.length <= 12) {
-                    mViewModel.onPhoneChanged(it)
-                }
-
-            }
-            Spacer(modifier = Modifier.height(18.dp))
-            AutoCompleteTextField(
-                "Начните вводить свой город...",
-                mViewModel.city
-            ) { mViewModel.onCityChanged(it) }
-            Spacer(modifier = Modifier.height(36.dp))
-            if (mViewModel.isLoading) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(10.dp))
-                        .background(Brown)
-                        .padding(2.dp),
-                    Alignment.Center
-                ) {
-                    CircularProgressIndicator(color = Color.White)
-                }
-
-            } else {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(10.dp))
-                        .background(Brown)
-                        .padding(top = 12.dp, bottom = 12.dp)
-                        .clickable {
-
-                            if (mViewModel.name.isNotBlank() &&
-                                mViewModel.surname.isNotBlank() &&
-                                mViewModel.city.isNotBlank()
-                            ) {
-                                if (mViewModel.isValidPhone()) {
-                                    mViewModel.onCheckedChanged()
-                                    mViewModel.saveUser(navController, context)
-                                } else {
-                                    validationState.value = false
-                                }
-                            } else {
-                                Toast
-                                    .makeText(
-                                        context,
-                                        "Все поля должны быть заполненны",
-                                        Toast.LENGTH_SHORT
-                                    )
-                                    .show()
-                            }
-                        },
-                    Alignment.Center
-                ) {
-                    Text(
-                        text = "Войти",
-                        color = LightBrown,
-                        fontSize = 16.sp,
-                        fontFamily = Gilroy,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-            }
-
-            if (!validationState.value) {
-                SimpleAlertDialog(validationState)
-            }
-        }
-    }
-}
+//@Composable
+//fun AuthFields(navController: NavController, mViewModel: SignInViewModel) {
+//    val context = LocalContext.current
+//    var validationState = remember { mutableStateOf(true) }
+//    Box(
+//        modifier = Modifier
+//            .padding(start = 32.dp, end = 32.dp)
+//            .fillMaxWidth()
+//            .wrapContentHeight()
+//            .clip(RoundedCornerShape(15.dp))
+//            .background(BackGroundWhite)
+//    ) {
+//        Column(
+//            horizontalAlignment = Alignment.CenterHorizontally,
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .padding(start = 20.dp, end = 20.dp, top = 0.dp, bottom = 20.dp)
+//                .verticalScroll(rememberScrollState(), reverseScrolling = true)
+//        ) {
+//            Image(
+//                painter = painterResource(id = R.drawable.book_court_logo),
+//                contentDescription = "Lead App Icon",
+//                modifier = Modifier.size(100.dp)
+//            )
+//            TextBlock(
+//                "Имя", "Введите ваше имя", mViewModel.name,
+//                visualTransformation = VisualTransformation.None
+//            ) { mViewModel.onNameChanged(it) }
+//            Spacer(modifier = Modifier.height(18.dp))
+//            TextBlock(
+//                "Фамилия",
+//                "Введите вашу фамилию",
+//                mViewModel.surname,
+//                visualTransformation = VisualTransformation.None
+//            ) { mViewModel.onSurnameChanged(it) }
+//            Spacer(modifier = Modifier.height(18.dp))
+//            TextBlock(
+//                "Телефон",
+//                "Введите номер телефона",
+//                mViewModel.phoneNumber,
+//                keyboardType = KeyboardType.Phone,
+//                visualTransformation = PhoneNumberVisualTransformation()
+//            ) {
+//                if (it.length <= 12) {
+//                    mViewModel.onPhoneChanged(it)
+//                }
+//
+//            }
+//            Spacer(modifier = Modifier.height(18.dp))
+//            AutoCompleteTextField(
+//                "Начните вводить свой город...",
+//                mViewModel.city
+//            ) { mViewModel.onCityChanged(it) }
+//            Spacer(modifier = Modifier.height(36.dp))
+//            if (mViewModel.isLoading) {
+//                Box(
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .clip(RoundedCornerShape(10.dp))
+//                        .background(Brown)
+//                        .padding(2.dp),
+//                    Alignment.Center
+//                ) {
+//                    CircularProgressIndicator(color = Color.White)
+//                }
+//
+//            } else {
+//                Box(
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .clip(RoundedCornerShape(10.dp))
+//                        .background(Brown)
+//                        .padding(top = 12.dp, bottom = 12.dp)
+//                        .clickable {
+//
+//                            if (mViewModel.name.isNotBlank() &&
+//                                mViewModel.surname.isNotBlank() &&
+//                                mViewModel.city.isNotBlank()
+//                            ) {
+//                                if (mViewModel.isValidPhone()) {
+//                                    mViewModel.onCheckedChanged()
+//                                    mViewModel.saveUser(navController, context)
+//                                } else {
+//                                    validationState.value = false
+//                                }
+//                            } else {
+//                                Toast
+//                                    .makeText(
+//                                        context,
+//                                        "Все поля должны быть заполненны",
+//                                        Toast.LENGTH_SHORT
+//                                    )
+//                                    .show()
+//                            }
+//                        },
+//                    Alignment.Center
+//                ) {
+//                    Text(
+//                        text = "Войти",
+//                        color = LightBrown,
+//                        fontSize = 16.sp,
+//                        fontFamily = Gilroy,
+//                        fontWeight = FontWeight.Bold
+//                    )
+//                }
+//            }
+//
+//            if (!validationState.value) {
+//                SimpleAlertDialog(validationState)
+//            }
+//        }
+//    }
+//}
 
 @Composable
 fun TextBlock(
@@ -292,13 +292,12 @@ fun SimpleAlertDialog(state: MutableState<Boolean>) {
 }
 
 @Composable
-fun NewSignInScreen(
+fun SignInScreen(
     onNavigateToCategorySelection: () -> Unit,
     onNavigateToTutorial: () -> Unit,
-//    mViewModel: SignInViewModel = hiltViewModel()
+    mViewModel: SignInViewModel = hiltViewModel()
 ) {
-    var testValue by remember { mutableStateOf("") }
-    var testCity by remember { mutableStateOf("") }
+    var context = LocalContext.current
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -314,23 +313,24 @@ fun NewSignInScreen(
             )
             Spacer(modifier = Modifier.height(50.dp))
 //            EmailField(value = mViewModel.email, onValueChange = { mViewModel.onEmailChanged(it)})
-            EmailField(value = testValue, onValueChange = { testValue = it }, "Электронная почта")
+            EmailField(value = mViewModel.email, onValueChange = { mViewModel.onEmailChanged(it) }, "Электронная почта")
             AutoCompleteTextField(
                 "Начните вводить свой город...",
-                "Владивосток"
-            ) { testCity = it }
+                mViewModel.city
+            ) { mViewModel.onCityChanged(it) }
 
         }
         Button(
             onClick = {
-                onNavigateToCategorySelection()
+                mViewModel.saveUser(onNavigateToCategorySelection,onNavigateToTutorial,context)
+
             },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom=20.dp)
                 .align(Alignment.BottomCenter),
             shape = RoundedCornerShape(50.dp),
-            enabled = isValidEmail(testValue),
+            enabled = isValidEmail(mViewModel.email),
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = LightYellowBtn,
                 contentColor = Color.Black,

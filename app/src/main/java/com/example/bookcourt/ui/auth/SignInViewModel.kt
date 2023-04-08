@@ -88,7 +88,8 @@ class SignInViewModel @Inject constructor(
         metricRep.onClick(DataClickMetric(Buttons.SIGN_IN, Screens.SignIn.route))
     }
 
-    fun saveUser(navController: NavController, context:Context) {
+    fun saveUser(onNavigateToCategorySelection: () -> Unit,
+                 onNavigateToTutorial: () -> Unit, context:Context) {
         isLoading = true
         viewModelScope.launch(Dispatchers.IO) {
             val UUID = hashing.getHash("AB$name$phoneNumber".toByteArray(), "SHA256")
@@ -105,11 +106,9 @@ class SignInViewModel @Inject constructor(
             sendUserMetric(context,name,surname,phoneNumber,city,UUID)
             withContext(Dispatchers.Main){
                 if (isTutorChecked.first()) {
-                    navController.popBackStack()
-                    navController.navigate(route = Screens.Recommendation.route)
+                    onNavigateToCategorySelection()
                 } else {
-                    navController.popBackStack()
-                    navController.navigate(route = Screens.Tutorial.route)
+                    onNavigateToTutorial()
                 }
             }
         }

@@ -10,7 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.bookcourt.data.repositories.DataStoreRepository
 import com.example.bookcourt.data.repositories.MetricsRepository
 import com.example.bookcourt.data.repositories.NetworkRepository
-import com.example.bookcourt.data.repositories.UserRepository
+import com.example.bookcourt.data.user.UserRepository
 import com.example.bookcourt.models.BookRemote
 import com.example.bookcourt.models.book.Book
 import dagger.hilt.android.lifecycle.HiltViewModel

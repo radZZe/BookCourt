@@ -12,7 +12,6 @@ import androidx.navigation.compose.rememberNavController
 import com.example.bookcourt.ui.graphs.RootNavigationGraph
 import com.example.bookcourt.ui.theme.BookCourtTheme
 import androidx.navigation.NavController
-import com.example.bookcourt.ui.graphs.NavigationGraph
 import com.example.bookcourt.ui.theme.BookCourtTheme
 import com.example.bookcourt.utils.BottomNavigationMenu
 import dagger.hilt.android.AndroidEntryPoint

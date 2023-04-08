@@ -11,6 +11,7 @@ sealed class Screens(
     object Splash : Screens(route = "Splash", title = "Splash")
     object Recommendation : Screens(route = "Recommendations", title = "Recommendations")
     object Tutorial : Screens(route = "Tutorial", title = "Tutorial")
+    object CategorySelection : Screens(route = "CategorySelection", title = "CategorySelection")
 }
 
 sealed class BottomNavMenu(

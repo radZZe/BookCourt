@@ -3,6 +3,7 @@ package com.example.bookcourt.ui.graphs
 import androidx.navigation.*
 import androidx.navigation.compose.composable
 import com.example.bookcourt.ui.auth.SignInScreen
+import com.example.bookcourt.ui.categorySelection.CategorySelectionScreen
 import com.example.bookcourt.ui.tutorial.TutorScreen
 import com.example.bookcourt.utils.Graph
 import com.example.bookcourt.utils.Screens
@@ -17,10 +18,18 @@ fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
             TutorScreen(navController = navController)
         }
         composable(Screens.SignIn.route) {
-            SignInScreen(navController = navController)
+
+            SignInScreen(
+                onNavigateToTutorial = {navController.navigate(Screens.Tutorial.route)},
+                onNavigateToCategorySelection = {navController.navigate(Screens.CategorySelection.route)}
+
+            )
         }
         composable(Screens.Splash.route) {
             SplashScreen(navController = navController)
+        }
+        composable(Screens.CategorySelection.route) {
+            CategorySelectionScreen()
         }
     }
 }
