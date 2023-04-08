@@ -46,14 +46,16 @@ import com.example.bookcourt.ui.theme.MainBgColor
 import com.example.bookcourt.utils.*
 
 @Composable
-fun RecomendationScreen(onNavigateToStatistics: () -> Unit) {
-    RecomendationContent(onNavigateToStatistics)
+fun RecomendationScreen(onNavigateToStatistics: () -> Unit,
+                        onNavigateToProfile:()->Unit,) {
+    RecomendationContent(onNavigateToStatistics,onNavigateToProfile)
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun RecomendationContent(
     onNavigateToStatistics: () -> Unit,
+    onNavigateToProfile:()->Unit,
     viewModel: RecomendationViewModel = hiltViewModel()
 ) {
     var windowHeight =  LocalConfiguration.current.screenHeightDp.toFloat() * LocalDensity.current.density
@@ -368,7 +370,7 @@ fun RecomendationContent(
                         sheetPeekHeight = if(windowHeight>LIMIT_WINDOW_HEIGHT) 175.dp else 155.dp,
                         scaffoldState = bottomSheetScaffoldState
                     ) {
-                        Box(){
+                        Box(modifier = Modifier.background(MainBgColor)){
                             if (bottomSheetScaffoldState.bottomSheetState.isExpanded) {
                                 Box(
                                     modifier = Modifier
@@ -382,7 +384,7 @@ fun RecomendationContent(
                                 Row(horizontalArrangement = Arrangement.End,modifier = Modifier.fillMaxWidth()){
                                     Box(modifier = Modifier
                                         .clickable {
-                                            //TODO navigate to profile
+                                            onNavigateToProfile()
                                         }
                                         .size(45.dp)
                                         .clip(CircleShape))
