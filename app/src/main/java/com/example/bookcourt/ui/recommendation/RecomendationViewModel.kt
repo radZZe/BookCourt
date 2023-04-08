@@ -1,4 +1,4 @@
-package com.example.bookcourt.ui.recomendation
+package com.example.bookcourt.ui.recommendation
 
 import android.content.Context
 import android.util.Log
@@ -10,7 +10,7 @@ import com.example.bookcourt.data.repositories.DataStoreRepository
 import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.uuid
 import com.example.bookcourt.data.repositories.MetricsRepository
 import com.example.bookcourt.data.repositories.NetworkRepository
-import com.example.bookcourt.data.repositories.UserRepository
+import com.example.bookcourt.data.user.UserRepositoryI
 import com.example.bookcourt.models.book.Book
 import com.example.bookcourt.models.BookRemote
 import com.example.bookcourt.models.metrics.DataClickMetric
@@ -33,7 +33,7 @@ class RecomendationViewModel @Inject constructor(
     private val networkRepository: NetworkRepository,
     private val dataStoreRepository: DataStoreRepository,
     private val metricRep: MetricsRepository,
-    private val userRepository: UserRepository
+    private val userRepositoryI: UserRepositoryI
 ) : ViewModel() {
 
     lateinit var user: User
@@ -103,7 +103,7 @@ class RecomendationViewModel @Inject constructor(
 
     suspend fun getUser(): User {
         val userId = dataStoreRepository.getPref(uuid)
-        user = userRepository.getUserById(userId.first())
+        user = userRepositoryI.loadData(userId.first())!!//TODO
         return user
     }
 

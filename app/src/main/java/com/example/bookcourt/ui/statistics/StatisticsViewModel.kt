@@ -12,7 +12,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.bookcourt.data.repositories.DataStoreRepository
 import com.example.bookcourt.data.repositories.MetricsRepository
 import com.example.bookcourt.data.repositories.NetworkRepository
-import com.example.bookcourt.data.repositories.UserRepository
+import com.example.bookcourt.data.user.UserRepositoryI
 import com.example.bookcourt.models.book.Book
 import com.example.bookcourt.models.metrics.DataClickMetric
 import com.example.bookcourt.models.user.User
@@ -29,7 +29,7 @@ import javax.inject.Inject
 @HiltViewModel
 class StatisticsViewModel @Inject constructor(
     val networkRepository: NetworkRepository,
-    private val userRepository: UserRepository,
+    private val userRepositoryI: UserRepositoryI,
     val dataStoreRepository: DataStoreRepository,
     private val metricsRepository: MetricsRepository
 ) : ViewModel() {
@@ -42,7 +42,7 @@ class StatisticsViewModel @Inject constructor(
 
     fun getUserStats() {
         val job = viewModelScope.launch(Dispatchers.IO) {
-                user = mutableStateOf(userRepository.getUserById(userId.first()))
+                user = mutableStateOf(userRepositoryI.loadData(userId.first()))
                 user.value?.let { getReadBooksList(it) }
                 user.value?.let { getWantedBooksList(it) }
         }
