@@ -19,5 +19,6 @@ fun RootNavigationGraph(
         composable(route = Graph.BOTTOM_NAV_GRAPH) {
             HomeScreen()
         }
+        profileNavGraph(navController = navController)
     }
 }

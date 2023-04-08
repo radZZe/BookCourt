@@ -12,6 +12,7 @@ sealed class Screens(
     object Recommendation : Screens(route = "Recommendations", title = "Recommendations")
     object Tutorial : Screens(route = "Tutorial", title = "Tutorial")
     object CategorySelection : Screens(route = "CategorySelection", title = "CategorySelection")
+    object Profile:Screens(route = "Profile", title = "Profile")
 }
 
 sealed class BottomNavMenu(
@@ -40,4 +41,5 @@ object Graph {
     const val ROOT = "root_graph"
     const val LOGIN = "login_graph"
     const val BOTTOM_NAV_GRAPH = "bottom_nav_graph"
+    const val PROFILE_NAV_GRAPH = "profile_nav_graph"
 }

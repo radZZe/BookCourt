@@ -42,10 +42,9 @@ fun CategorySelectionScreen(
     val windowInfo = rememberWindowSizeClass()
     Box(modifier = Modifier
         .fillMaxSize()
-        .padding(start = 16.dp, end = 16.dp)
         .background(MainBgColor),
     contentAlignment = Alignment.Center) {
-        Column() {
+        Column(modifier = Modifier.padding(horizontal = 16.dp)) {
             HeaderCategoryScreen(windowInfo.screenHeightInfo)
             Spacer(modifier = Modifier.height(24.dp))
             CategoriesGrid(viewModel, windowInfo.screenHeightInfo)
