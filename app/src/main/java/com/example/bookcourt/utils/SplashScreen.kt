@@ -41,7 +41,7 @@ fun SplashScreen(
         delay(2000)
         if (rememberMeState.value == true && rememberTutorState.value == true) {
             navController.popBackStack()
-            navController.navigate(route = Screens.Recommendation.route)
+            navController.navigate(Graph.BOTTOM_NAV_GRAPH)
         } else if (rememberMeState.value == true && rememberTutorState.value == false) {
             navController.popBackStack()
             navController.navigate(route = Screens.Tutorial.route)
@@ -90,5 +90,4 @@ fun SplashUI(alpha: Float) {
             )
         }
     }
-
 }

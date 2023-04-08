@@ -6,6 +6,7 @@ import com.example.bookcourt.models.ui.TutorialCard
 object Constants {
     const val OTHER_CITY = "Другой"
     const val DATE_TIME_METRIC_FORMAT = "dd-MM-yyyy HH:mm:ss"
+
     val cities = listOf(
         "Хабаровск",
         "Владивосток",
@@ -23,7 +24,6 @@ object Constants {
         TutorialCard(
             bookTitle = "Это Владивосток, детка",
             bookAuthor = "Диана Лютер, Детская литература",
-//            cover = "https://gl-img.rg.ru/resize800x533/uploads/photogallery/2022/07/07/oblozhka---god-literatury_a4c",
             cover = R.drawable.cover_this_is_vdk,
             bottomText = "Выбирай движением",
             bottomIcon = null,
@@ -32,7 +32,6 @@ object Constants {
         TutorialCard(
             bookTitle = "Лис и Ча",
             bookAuthor = "Диана Лютер, Детская литература",
-//            cover = "https://gl-img.rg.ru/resize800x533/uploads/photogallery/2022/07/07/oblozhka---god-literatury_a4c",
             cover = R.drawable.cover_fox_and_cha,
             bottomText = "Нравится",
             bottomIcon = R.drawable.heart_ic,
@@ -41,7 +40,6 @@ object Constants {
         TutorialCard(
             bookTitle = "Остров Владивосток",
             bookAuthor = "Диана Лютер, живопись и графика",
-//            cover = "https://gl-img.rg.ru/resize800x533/uploads/photogallery/2022/07/07/oblozhka---god-literatury_a4c",
             cover = R.drawable.cover_island_vdk,
             bottomText = "Не нравится",
             bottomIcon = R.drawable.dislike_heart_ic,
@@ -50,7 +48,6 @@ object Constants {
         TutorialCard(
             bookTitle = "Эрмитаж",
             bookAuthor = "Диана Лютер, цветы и птицы",
-//            cover = "https://gl-img.rg.ru/resize800x533/uploads/photogallery/2022/07/07/oblozhka---god-literatury_a4c",
             cover = R.drawable.cover_flowers_and_birds,
             bottomText = "Хочу прочитать",
             bottomIcon = R.drawable.favorite_ic,
@@ -59,7 +56,6 @@ object Constants {
         TutorialCard(
             bookTitle = "Лис и Ча",
             bookAuthor = "Диана Лютер, Детская литература",
-//            cover = "https://gl-img.rg.ru/resize800x533/uploads/photogallery/2022/07/07/oblozhka---god-literatury_a4c",
             cover = R.drawable.cover_fox_and_cha,
             bottomText = "Нравится",
             bottomIcon = R.drawable.skip_ic,
@@ -69,7 +65,7 @@ object Constants {
 
     val statisticScreensList = listOf("ReadBooks", "Lyuteratura", "FavoriteAuthors", "IgraSlov", "Zarya", "FavoriteGenres")
 
-    val navMenuScreensList = listOf(BottomNavMenu.StatisticsBottomNav, BottomNavMenu.RecomendationsBottomNav, BottomNavMenu.SearchBottomNav)
+    val navMenuScreensList = listOf(BottomNavMenu.Statistics, BottomNavMenu.Recommendations, BottomNavMenu.Search)
 }
 
 object MetricType {
