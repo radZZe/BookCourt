@@ -25,8 +25,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
+    private val dataStoreRepository: DataStoreRepository,
     private val networkRepository: NetworkRepository
 ) : ViewModel() {
+    var recentRequests = mutableListOf<String>()
+
     private val _isDisplayed = MutableStateFlow(false)
     val isDisplayed = _isDisplayed.asStateFlow()
 
@@ -64,11 +67,39 @@ class SearchViewModel @Inject constructor(
     fun onSearchTextChange(text: String) {
         _isDisplayed.update { true }
         _searchText.value = text
+        updateRecentRequests(text)
     }
 
     fun onClearSearchText() {
         _isDisplayed.update { false }
         _searchText.value = ""
+    }
+
+    fun getRecentRequests() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val requests = dataStoreRepository.getPref(DataStoreRepository.recentRequestsList).first()
+            recentRequests = requests.split(" ") as MutableList<String>
+        }
+    }
+
+    fun updateRecentRequests(request: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            with(recentRequests) {
+                reverse()
+                add(request)
+                if(size > 5) {
+                    val deletableRange = size - 5
+                    val newRequestsList = slice(deletableRange - 1 until size) as MutableList<String>
+                    recentRequests = newRequestsList
+                }
+                reverse()
+            }
+            var requests = ""
+            for (requestName in recentRequests) {
+                requests += "$requestName "
+            }
+            dataStoreRepository.setPref(requests, DataStoreRepository.recentRequestsList)
+        }
     }
 
 
