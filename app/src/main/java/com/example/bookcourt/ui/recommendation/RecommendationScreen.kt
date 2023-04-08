@@ -1,7 +1,10 @@
 package com.example.bookcourt.ui
 
+import android.content.ContentResolver
 import android.content.Intent
 import android.net.Uri
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -33,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
 import com.example.bookcourt.R
 import com.example.bookcourt.models.metrics.DataClickMetric
 import com.example.bookcourt.ui.recommendation.NotificationRecommendation
@@ -74,6 +78,14 @@ fun RecomendationContent(
     if (counter == limitSwipeValue + 1) {
         viewModel.isFirstNotification.value = false
     }
+
+    var resources = LocalContext.current.resources
+    var imagePlaceholderUri = Uri.Builder()
+        .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE)
+        .authority(resources.getResourcePackageName(R.drawable.image_placeholder))
+        .appendPath(resources.getResourceTypeName(R.drawable.image_placeholder))
+        .appendPath(resources.getResourceEntryName(R.drawable.image_placeholder))
+        .build()
 
     if (viewModel.dataIsReady) {
 
@@ -367,44 +379,26 @@ fun RecomendationContent(
                                 )
                             }
                             Column() {
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(topBarHeight)
-                                        .zIndex(4f),
-                                    horizontalArrangement = Arrangement.End
-                                ) {
-                                    Image(
-                                        painter = painterResource(id = R.drawable.statistics_icon),
-                                        contentDescription = "",
-                                        modifier = Modifier
-                                            .clickable {
-                                                onNavigateToStatistics()
-                                                viewModel.metricClick(
-                                                    DataClickMetric(
-                                                        button = "Statistics",
-                                                        screen = "Recommendation"
-                                                    )
-                                                )
-                                            }
-                                            .padding(end = 8.dp)
-                                    )
-                                    Image(
-                                        painter = painterResource(id = R.drawable.search_icon),
-                                        contentDescription = "",
-                                        modifier = Modifier
-                                            .clickable {
-                                                //TODO ПОИСК
-                                                viewModel.metricClick(
-                                                    DataClickMetric(
-                                                        button = "Search",
-                                                        screen = "Recommendation"
-                                                    )
-                                                )
-                                            }
-                                            .padding(end = 18.dp)
-                                    )
+                                Row(horizontalArrangement = Arrangement.End,modifier = Modifier.fillMaxWidth()){
+                                    Box(modifier = Modifier
+                                        .clickable {
+                                            //TODO navigate to profile
+                                        }
+                                        .size(45.dp)
+                                        .clip(CircleShape))
+                                    {
+                                        AsyncImage(
+                                            model = if (viewModel.user.image == null) imagePlaceholderUri else viewModel.user.image,
+                                            modifier = Modifier
+                                                .fillMaxSize()
+                                                .align(Alignment.Center),
+                                            contentDescription = "profile_placeholder",
+                                            contentScale = ContentScale.Crop
+                                        )
+                                    }
                                 }
+
+
                                 Spacer(modifier = Modifier.height(if(windowHeight > LIMIT_WINDOW_HEIGHT) 25.dp else 15.dp))
                                 CardStack(
                                     modifier = Modifier.height(cardStackHeight),
