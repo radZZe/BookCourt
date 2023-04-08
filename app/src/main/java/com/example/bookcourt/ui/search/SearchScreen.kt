@@ -44,6 +44,10 @@ fun SearchScreen(
         LaunchedEffect(key1 = Unit) {
             viewModel.getAllBooks(context)
         }
+    } else {
+        LaunchedEffect(key1 = Unit) {
+            viewModel.getRecentRequests()
+        }
     }
 
     Column(
@@ -88,6 +92,32 @@ fun SearchScreen(
             },
             textStyle = TextStyle(fontFamily = Roboto)
         )
+        if (!isDisplayed) {
+            Text(
+                text = "Ваши последние запросы:",
+                fontSize = 16.sp,
+                fontFamily = Roboto,
+                color = PrimaryText,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 20.dp, end = 20.dp, top = 20.dp)
+            )
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 20.dp, end = 20.dp, top = 20.dp)
+                    .weight(1f)
+            ) {
+                items(viewModel.recentRequests) { request ->
+                    Text(
+                        text = request,
+                        fontSize = 16.sp,
+                        fontFamily = Roboto,
+                        color = SecondaryText,
+                    )
+                }
+            }
+        }
         if (books.isEmpty() && isDisplayed) {
             Text(
                 text = "К сожалению, ничего не найдено, возмножно Вас заинтересуют следующие книги:",
@@ -97,7 +127,7 @@ fun SearchScreen(
                 fontFamily = Roboto,
                 color = SecondaryText,
             )
-        }
+        } 
         if (isSearching) {
             Box(modifier = Modifier.fillMaxSize()) {
                 CircularProgressIndicator(
