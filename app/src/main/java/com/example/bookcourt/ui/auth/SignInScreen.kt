@@ -322,8 +322,8 @@ fun SignInScreen(
         }
         Button(
             onClick = {
+                mViewModel.onCheckedChanged()
                 mViewModel.saveUser(onNavigateToCategorySelection,onNavigateToTutorial,context)
-
             },
             modifier = Modifier
                 .fillMaxWidth()

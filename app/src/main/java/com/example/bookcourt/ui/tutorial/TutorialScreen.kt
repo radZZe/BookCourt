@@ -41,7 +41,7 @@ import kotlinx.coroutines.yield
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun TutorScreen(
-    navController: NavController,
+    onNavigateToCategorySelection:()->Unit,
     mViewModel: TutorialScreenViewModel = hiltViewModel()
 ) {
     val pagerState = rememberPagerState(pageCount = tutorialCards.size, initialOffscreenLimit = 2)
@@ -294,8 +294,7 @@ fun TutorScreen(
             onCLick = {
                 mViewModel.changeIsTutorChecked()
                 mViewModel.metricClick(DataClickMetric(Buttons.CHECK_TUTOR, Screens.Tutorial.route))
-                navController.popBackStack()
-                navController.navigate(route = Graph.BOTTOM_NAV_GRAPH)
+                onNavigateToCategorySelection()
             }
         )
     }
