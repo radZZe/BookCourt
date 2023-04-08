@@ -12,12 +12,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
@@ -31,6 +29,7 @@ import com.example.bookcourt.ui.theme.CustomButton
 import com.example.bookcourt.ui.theme.Gilroy
 import com.example.bookcourt.utils.Buttons
 import com.example.bookcourt.utils.Constants.tutorialCards
+import com.example.bookcourt.utils.Graph
 import com.example.bookcourt.utils.Screens
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPagerIndicator
@@ -46,7 +45,6 @@ fun TutorScreen(
     mViewModel: TutorialScreenViewModel = hiltViewModel()
 ) {
     val pagerState = rememberPagerState(pageCount = tutorialCards.size, initialOffscreenLimit = 2)
-    val isTutorChecked = mViewModel.isTutorChecked
 
     LaunchedEffect(key1 = Unit) {
         while (true) {
@@ -204,34 +202,34 @@ fun TutorScreen(
                                             targetOffsetX = { -1000 },
                                             animationSpec = tween(animationSpec)
                                         )
-                                        Cover(tutorialCard, nextPage, exitAnim, mViewModel)
+                                        Cover(tutorialCard, nextPage, exitAnim)
                                     }
                                     "Left" -> {
                                         exitAnim = slideOutVertically(
                                             targetOffsetY = { -1000 },
                                             animationSpec = tween(animationSpec)
                                         )
-                                        Cover(tutorialCard, nextPage, exitAnim, mViewModel)
+                                        Cover(tutorialCard, nextPage, exitAnim)
                                     }
                                     "No" -> {
                                         exitAnim = slideOutHorizontally(
                                             targetOffsetX = { 1000 },
                                             animationSpec = tween(animationSpec)
                                         )
-                                        Cover(tutorialCard, nextPage, exitAnim, mViewModel)
+                                        Cover(tutorialCard, nextPage, exitAnim)
                                     }
                                     "Up" -> {
                                         exitAnim = slideOutVertically(
                                             targetOffsetY = { 1000 },
                                             animationSpec = tween(animationSpec)
                                         )
-                                        Cover(tutorialCard, nextPage, exitAnim, mViewModel)
+                                        Cover(tutorialCard, nextPage, exitAnim)
                                     }
                                     else -> {
                                         exitAnim = fadeOut(
                                             animationSpec = tween(animationSpec)
                                         )
-                                        Cover(tutorialCard, nextPage, exitAnim, mViewModel)
+                                        Cover(tutorialCard, nextPage, exitAnim)
                                     }
                                 }
 
@@ -297,7 +295,7 @@ fun TutorScreen(
                 mViewModel.changeIsTutorChecked()
                 mViewModel.metricClick(DataClickMetric(Buttons.CHECK_TUTOR, Screens.Tutorial.route))
                 navController.popBackStack()
-                navController.navigate(route = Screens.Recommendation.route)
+                navController.navigate(route = Graph.BOTTOM_NAV_GRAPH)
             }
         )
     }
@@ -307,8 +305,7 @@ fun TutorScreen(
 fun Cover(
     page: TutorialCard,
     nextPage: TutorialCard,
-    animation: ExitTransition = fadeOut(),
-    viewModel: TutorialScreenViewModel
+    animation: ExitTransition = fadeOut()
 ) {
     var isReady by remember { mutableStateOf(true) }
     var secondReady by remember { mutableStateOf(false) }

@@ -272,50 +272,6 @@ fun CityItem(
 }
 
 @Composable
-fun InstaStoriesProgressBar(
-    modifier: Modifier,
-    startProgress: Boolean = false,
-    paused: Boolean = false,
-    isNext: Boolean,
-    onAnimationEnd: () -> Unit,
-
-) {
-    val percent = remember { Animatable(0f) }
-
-    if (startProgress) {
-        LaunchedEffect(paused) {
-            percent.snapTo(0f)
-            if (paused) percent.stop()
-            else {
-                percent.animateTo(
-                    targetValue = 1f,
-                    animationSpec = tween(
-                        durationMillis = (5000 * (1f - percent.value)).toInt(), // (3)
-                        easing = LinearEasing
-                    )
-                )
-                onAnimationEnd()
-            }
-        }
-    } else {
-        LaunchedEffect(paused) {
-            if (isNext) {
-                percent.snapTo(0f)
-            } else {
-                percent.snapTo(1f)
-            }
-        }
-    }
-
-    LinearProgressIndicator(
-        backgroundColor = Color.LightGray,
-        color = Color.White,
-        modifier = modifier,
-        progress = percent.value
-    )
-}
-
-@Composable
 fun RedirectButton(
     context: Context,
     redirectUrl: String,

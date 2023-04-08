@@ -1,21 +1,24 @@
 package com.example.bookcourt.ui.statistics
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.LinearProgressIndicator
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
@@ -23,20 +26,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import coil.compose.SubcomposeAsyncImage
 import com.example.bookcourt.R
 import com.example.bookcourt.models.book.Book
-import com.example.bookcourt.models.metrics.DataClickMetric
 import com.example.bookcourt.ui.theme.*
-import com.example.bookcourt.utils.Buttons.CLOSE
 import com.example.bookcourt.utils.Constants
-import com.example.bookcourt.utils.Screens
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
@@ -47,55 +45,36 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun Statistics(
-    navController: NavController,
-    mViewModel: StatisticsViewModel = hiltViewModel()
+    viewModel: StatisticsViewModel = hiltViewModel()
 ) {
     LaunchedEffect(key1 = Unit) {
-        mViewModel.getUserStats()
+        viewModel.getUserStats()
     }
 
-    val stories = Constants.statisticScreensList.size
-    val pagerState = rememberPagerState(pageCount = stories)
+    val targetOffset = 500
+    val pagerState = rememberPagerState(pageCount = Constants.statisticScreensList.size)
     val coroutineScope = rememberCoroutineScope()
-    val gradient = Brush.verticalGradient(listOf(Shadow, Color.Transparent))
 
     var currentPage by remember {
         mutableStateOf(0)
     }
 
-    var paused by remember {
-        mutableStateOf(false)
-    }
-
-    val targetOffset = 500
     Box(
         modifier = Modifier
             .fillMaxSize()
             .pointerInput(Unit) {
                 detectTapGestures(
-                    onPress = {
-//                        try {
-//                            paused = true
-//                            awaitRelease()
-//                        } finally {
-//                            paused = false
-//                        }
-                    },
                     onTap = { offset ->
                         coroutineScope.launch {
-                            if (currentPage < stories - 1) {
-                                if (offset.x < targetOffset) { // 300
-                                    if (currentPage == 0) currentPage = 0 else currentPage--
-                                } else if (offset.x > targetOffset) { // 700
-                                    currentPage++
+                            currentPage = if (offset.x < targetOffset) {
+                                if (currentPage == 0) {
+                                    0
+                                } else {
+                                    (currentPage - 1) % (pagerState.pageCount)
                                 }
-                            } else if (currentPage == stories - 1) {
-                                if (offset.x < targetOffset) { // 300
-                                    currentPage--
-                                } else if (offset.x > targetOffset) { // 700
-                                    navController.popBackStack()
-                                    navController.navigate(route = Screens.Recommendation.route)
-                                }
+                            } else {
+                                if (currentPage == 5) 0 else (currentPage + 1)
+                                //(currentPage + 1) % (pagerState.pageCount)
                             }
                             pagerState.animateScrollToPage(page = currentPage)
                         }
@@ -104,346 +83,38 @@ fun Statistics(
             }
 
     ) {
-        StoryLikePages(pagerState = pagerState, Constants.statisticScreensList)
+        StatisticsPages(pagerState = pagerState, Constants.statisticScreensList)
         Column(
             modifier = Modifier
                 .wrapContentHeight()
                 .fillMaxWidth()
-                .background(gradient)
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(
-                        top = 8.dp,
-                        start = 4.dp,
-                        end = 4.dp
-                    )
+                    .padding(top = 8.dp, start = 4.dp, end = 4.dp)
                     .zIndex(3f),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Spacer(modifier = Modifier.padding(4.dp))
-                for (i in 0 until stories) {
-                    InstaStoriesProgressBar(
+                for (i in 0 until pagerState.pageCount) {
+                    StoriesProgressBar(
                         modifier = Modifier
                             .weight(1f)
                             .clip(RoundedCornerShape(12.dp)),
-                        paused = paused,
                         startProgress = (i == currentPage),
                         isNext = (i > currentPage)
                     ) {
                         coroutineScope.launch {
-                            if (currentPage < stories - 1) {
-                                currentPage++
-                            } else {
-                                navController.popBackStack()
-                                navController.navigate(route = Screens.Recommendation.route)
-                            }
-                            pagerState.animateScrollToPage(page = currentPage % stories)
+                            if (currentPage == pagerState.pageCount) {
+                                currentPage = 0
+                            } else currentPage++
+                            pagerState.animateScrollToPage(page = currentPage % pagerState.pageCount)
                         }
                     }
-                    Spacer(
-                        modifier = Modifier
-                            .padding(top = 8.dp, start = 4.dp, end = 4.dp, bottom = 2.dp)
-                    )
+                    Spacer(modifier = Modifier.width(4.dp))
                 }
             }
-            Row(
-                horizontalArrangement = Arrangement.End,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(end = 10.dp, bottom = 10.dp)
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.close_icon),
-                    contentDescription = "Close Icon",
-                    tint = Color.White,
-                    modifier = Modifier
-                        .size(18.dp)
-                        .clickable {
-                            mViewModel.metricScreenTime()
-                            mViewModel.sendOnClickMetric(
-                                DataClickMetric(
-                                    button = CLOSE,
-                                    screen = "Statistics"
-                                )
-                            )
-                            navController.popBackStack()
-                            navController.navigate(route = Screens.Recommendation.route)
-                        }
-
-                )
-            }
-        }
-    }
-}
-
-//@Composable
-//fun ReadBooksStats() {
-//    Box(
-//        modifier = Modifier
-//            .fillMaxSize()
-//            .padding(10.dp)
-//            .clip(RoundedCornerShape(30.dp))
-//    ) {
-//        Column(
-//            modifier = Modifier
-//                .fillMaxSize()
-//                .background(LighterPinkBackground),
-//            verticalArrangement = Arrangement.SpaceBetween,
-//            horizontalAlignment = Alignment.CenterHorizontally
-//
-//        ) {
-//            Image(
-//                painter = painterResource(id = R.drawable.book_court_logo),
-//                contentDescription = "Book court logo"
-//            )
-//            Text(
-//                text = "0!",
-//                fontFamily = Inter,
-//                fontWeight = FontWeight.Black,
-//                color = Color.Black,
-//                fontSize = 32.sp
-//            )
-//            Text(
-//                text = "Вы прочитали, хороший результат \uD83D\uDCAA",
-//                fontFamily = Inter,
-//                fontWeight = FontWeight.Bold,
-//                color = Color.Black,
-//                fontSize = 18.sp,
-//            )
-//            Column {
-//                Text(
-//                    text = "Продолжайте читать, ведь чтение книг:",
-//                    fontFamily = Inter,
-//                    fontWeight = FontWeight.Black,
-//                    color = Color.Black,
-//                    fontSize = 18.sp,
-//                )
-//                Text(
-//                    text = "1. Увеличивает словарный запас\n" +
-//                            "2. Помогает общаться с людьми\n" +
-//                            "3. Снижает стресс\n" +
-//                            "4. Развивает память и мышление",
-//                    fontFamily = Inter,
-//                    fontWeight = FontWeight.Bold,
-//                    color = Color.Black,
-//                    fontSize = 18.sp,
-//                )
-//            }
-//
-//            Image(
-//                painter = painterResource(id = R.drawable.cup_coffee_open_book),
-//                contentDescription = "cup coffee and open book image",
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .fillMaxHeight(0.3f),
-//                contentScale = ContentScale.Fit
-//            )
-//            Button(
-//                onClick = {/*TODO*/ },
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(16.dp)
-//                    .clip(RoundedCornerShape(60.dp))
-//                    .height(45.dp),
-//                colors = ButtonDefaults.buttonColors(LightYellowBtn)
-//            ) {
-//                Text(text = "Поделиться")
-//            }
-//        }
-//    }
-//}
-
-@Preview
-@Composable
-fun FavoriteGenresStatsPreview() {
-    val view = LocalView.current
-    val context = LocalContext.current
-    val top3Genres = listOf(
-        Pair("Genre", 3),
-        Pair("Genre2", 2),
-        Pair("Genre1", 1),
-    )
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(start = 10.dp, end = 10.dp, bottom = 10.dp, top = 0.dp)
-            .clip(RoundedCornerShape(30.dp))
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(TopGenresLightPink),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.book_court_logo),
-                contentDescription = "Book court logo",
-                modifier = Modifier.size(130.dp)
-            )
-            Text(
-                text = "Любимые жанры",
-                fontFamily = Inter,
-                fontWeight = FontWeight.Black,
-                color = Color.Black,
-                fontSize = 32.sp
-            )
-            LazyVerticalGrid(
-                columns = GridCells.Adaptive(minSize = 128.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                contentPadding = PaddingValues(16.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight(),
-                userScrollEnabled = false
-            ) {
-                items(top3Genres) { item ->
-                    item.let {
-                        GenreItem(
-                            genre = it.first,
-                            booksAmount = it.second
-                        )
-                    }
-                }
-            }
-            Image(
-                painter = painterResource(id = R.drawable.open_book),
-                contentDescription = "open book image",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(0.5f),
-                contentScale = ContentScale.FillBounds
-            )
-        }
-        Button(
-            onClick = {
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-                .align(Alignment.BottomCenter)
-                .clip(RoundedCornerShape(60.dp))
-                .height(45.dp),
-            colors = ButtonDefaults.buttonColors(LightYellowBtn)
-        ) {
-            Text(text = "Поделиться")
-        }
-    }
-}
-
-@Preview
-@Composable
-private fun FavoriteAuthorsPreview() {
-    val view = LocalView.current
-    val context = LocalContext.current
-    val firstPlaceAuthor = "Author1"
-    val secondPlaceAuthor = "Author2"
-    val thirdPlaceAuthor = "Author3"
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(10.dp)
-            .clip(RoundedCornerShape(30.dp))
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(TopAuthorsLightPink),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.book_court_logo),
-                contentDescription = "Book court logo"
-            )
-            Text(
-                text = "Ваш ТОП - 3 авторов",
-                fontFamily = Inter,
-                fontWeight = FontWeight.Black,
-                color = Color.Black,
-                fontSize = 32.sp
-            )
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(3f),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                TopAuthorItemPreview(
-                    authorName = firstPlaceAuthor,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                )
-                TopAuthorItemPreview(
-                    authorName = secondPlaceAuthor,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                )
-                TopAuthorItemPreview(
-                    authorName = thirdPlaceAuthor,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                )
-            }
-            Button(
-                onClick = {
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-                    .clip(RoundedCornerShape(60.dp))
-                    .height(45.dp),
-                colors = ButtonDefaults.buttonColors(LightYellowBtn)
-            ) {
-                Text(text = "Поделиться")
-            }
-
-        }
-    }
-}
-
-@Composable
-private fun TopAuthorItemPreview(
-    authorName: String,
-    modifier: Modifier
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.book_court_logo),
-            contentDescription = "${authorName}'s book image",
-            modifier = Modifier
-                .fillMaxHeight()
-                .fillMaxWidth(0.35f)
-                .padding(horizontal = 16.dp)
-                .clip(RoundedCornerShape(20.dp)),
-            contentScale = ContentScale.FillBounds
-        )
-        Column {
-            Text(
-                text = authorName,
-                fontFamily = Inter,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black,
-                fontSize = 18.sp
-            )
-            Text(
-                text = "Genre",
-                fontFamily = Inter,
-                fontWeight = FontWeight.Normal,
-                color = Color.Gray,
-                fontSize = 16.sp
-            )
         }
     }
 }
@@ -573,7 +244,7 @@ fun ReadBooksStats(
     ) {
         Image(
             painter = painterResource(id = R.drawable.book_court_logo),
-            contentDescription ="Book court logo"
+            contentDescription = "Book court logo"
         )
         Text(
             text = "$booksAmount $string!",
@@ -781,7 +452,7 @@ fun TopAuthorItem(
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun StoryLikePages(
+fun StatisticsPages(
     pagerState: PagerState,
     screens: List<String>
 ) {
@@ -807,4 +478,42 @@ fun StoryLikePages(
             }
         }
     }
+}
+
+@Composable
+fun StoriesProgressBar(
+    modifier: Modifier,
+    startProgress: Boolean = false,
+    isNext: Boolean,
+    onAnimationEnd: () -> Unit
+) {
+    val percent = remember { Animatable(0f) }
+
+    if (startProgress) {
+        LaunchedEffect(Unit) {
+            percent.snapTo(0f)
+            percent.animateTo(
+                targetValue = 1f,
+                animationSpec = tween(
+                    durationMillis = (5000 * (1f - percent.value)).toInt(),
+                    easing = LinearEasing
+                )
+            )
+            onAnimationEnd()
+        }
+    } else {
+        LaunchedEffect(Unit) {
+            if (isNext) {
+                percent.snapTo(0f)
+            } else {
+                percent.snapTo(1f)
+            }
+        }
+    }
+    LinearProgressIndicator(
+        backgroundColor = InactiveProgressGrey,
+        color = ActiveProgressGrey,
+        modifier = modifier,
+        progress = percent.value
+    )
 }

@@ -11,7 +11,6 @@ data class Book(
     val buyUri: String
 ){
     fun toBookMetric(swipeType:String): DataBookMetric {
-
         return DataBookMetric(
             isbn = this.isbn,
             description = this.bookInfo.description,
@@ -23,5 +22,20 @@ data class Book(
             price = this.bookInfo.price.toString(),
             shopOwner = this.shopOwner
         )
+    }
+
+    fun doesMatchSearchQuery(query: String): Boolean {
+        val matchingCombinations = listOf(
+            bookInfo.title,
+            bookInfo.author,
+            bookInfo.genre,
+            "${bookInfo.title}${bookInfo.author}",
+            "${bookInfo.title.first()}",
+            "${bookInfo.title.first()} ${bookInfo.author.first()}",
+            "${bookInfo.title} ${bookInfo.author.first()}"
+        )
+        return matchingCombinations.any {
+            it.contains(query, ignoreCase = true)
+        }
     }
 }
