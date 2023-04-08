@@ -4,6 +4,7 @@ import android.content.Context
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
+import android.text.TextUtils
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -36,6 +37,7 @@ class SignInViewModel @Inject constructor(
     private val userRepositoryI: UserRepositoryI
 ) : ViewModel() {
 
+    var email by mutableStateOf("")
     var name by mutableStateOf("")
     var surname by mutableStateOf("")
     var phoneNumber by mutableStateOf("+7")
@@ -45,6 +47,10 @@ class SignInViewModel @Inject constructor(
     var isTutorChecked = dataStoreRepository.getBoolPref(DataStoreRepository.isTutorChecked)
 
     var sessionTime = System.currentTimeMillis().toInt()
+
+    fun onEmailChanged(newText: String){
+        email = newText
+    }
 
     fun onCheckedChanged() {
         isRememberMe = !isRememberMe
@@ -88,9 +94,7 @@ class SignInViewModel @Inject constructor(
             val UUID = hashing.getHash("AB$name$phoneNumber".toByteArray(), "SHA256")
             val user = User(
                 uid = UUID,
-                name = name,
-                surname = surname,
-                phone = phoneNumber,
+                email = email,
                 city = city,
                 readBooksList = mutableListOf(),
                 wantToRead = mutableListOf()
@@ -111,20 +115,8 @@ class SignInViewModel @Inject constructor(
         }
     }
 
-    fun getCity(context: Context, location: Location?) {
-        if (location != null) {
-            var address: List<Address>? = null
-            try {
-                val geocoder: Geocoder = Geocoder(context, Locale.getDefault())
-                address = geocoder.getFromLocation(location.latitude, location.longitude, 1)
-                val city = address!![0].locality.toString()
-                viewModelScope.launch {
-                    dataStoreRepository.setPref(city, savedCity)
-                }
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
-        }
+    fun isValidEmail(email:String):Boolean{
+        return !TextUtils.isEmpty(email) && android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
 
     fun isValidPhone(): Boolean {
