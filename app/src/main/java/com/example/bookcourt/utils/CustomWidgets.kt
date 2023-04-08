@@ -2,7 +2,10 @@ package com.example.bookcourt.ui.theme
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.net.Uri
+import android.view.View
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
@@ -38,11 +41,13 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.zIndex
 import com.example.bookcourt.ui.statistics.*
+import com.example.bookcourt.utils.BitmapUtils
 import com.example.bookcourt.utils.Constants.OTHER_CITY
 import com.example.bookcourt.utils.Constants.cities
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
+import kotlinx.coroutines.delay
 import java.util.*
 
 
@@ -57,13 +62,13 @@ fun CustomButton(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(50.dp))
+            .clip(RoundedCornerShape(60.dp))
             .background(color = color)
             .padding(vertical = 13.dp, horizontal = 20.dp)
             .clickable { onCLick() },
         Alignment.Center
     ) {
-        Text(text = text, color = textColor, fontSize = 16.sp, fontFamily = Roboto)
+        Text(text = text, color = textColor, fontSize = 16.sp, fontFamily = Gilroy)
     }
 }
 
@@ -88,22 +93,75 @@ fun RedirectButton(
     context: Context,
     redirectUrl: String,
     color: Color = LightYellowBtn,
-    text: String = "Заглянуть в магазин"
+    text: String = "Заглянуть в магазин",
+    modifier: Modifier = Modifier
 ) {
+
     Button(
         onClick = {
             val sendIntent = Intent(Intent.ACTION_VIEW, Uri.parse(redirectUrl))
             val webIntent = Intent.createChooser(sendIntent, null)
             context.startActivity(webIntent)
         },
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 13.dp, horizontal = 20.dp)
             .clip(RoundedCornerShape(60.dp))
-            .height(46.dp),
+            .height(45.dp),
         colors = ButtonDefaults.buttonColors(color)
     ) {
-        Text(text = text, fontSize = 16.sp, fontFamily = Roboto)
+        Text(text = text)
+    }
+}
+
+@Composable
+fun ShareStatisticsButton(
+    context: Context,
+    contentView:View,
+    color: Color = LightYellowBtn,
+    text: String = "Поделиться",
+    modifier: Modifier = Modifier
+) {
+
+    Button(
+        onClick = {
+            val bitmap = Bitmap.createBitmap(
+                contentView.width,
+                contentView.height,
+                Bitmap.Config.ARGB_8888
+            )
+            val canvas = Canvas(bitmap)
+            contentView.layout(
+                contentView.left,
+                contentView.top,
+                contentView.right,
+                contentView.bottom
+            )
+            contentView.draw(canvas)
+
+            val shareIntent: Intent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(
+                    Intent.EXTRA_STREAM,
+                    BitmapUtils.getBitmapUri(
+                        context,
+                        bitmap,
+                        "statistics",
+                        "images/"
+                    )
+                )
+                type = "image/jpeg"
+            }
+            context.startActivity(Intent.createChooser(shareIntent, null))
+        },
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = 13.dp, horizontal = 20.dp)
+            .clip(RoundedCornerShape(60.dp))
+            .height(45.dp),
+        colors = ButtonDefaults.buttonColors(color)
+    ) {
+        Text(text = text)
     }
 }
 

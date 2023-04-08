@@ -111,9 +111,8 @@ fun Statistics(
                             } else currentPage++
                             pagerState.animateScrollToPage(page = currentPage % pagerState.pageCount)
                         }
-                    }
-                    Spacer(modifier = Modifier.width(4.dp))
-                }
+
+                )
             }
         }
     }
@@ -135,7 +134,7 @@ fun FavoriteGenresStats(
         modifier = Modifier
             .fillMaxSize()
             .background(TopGenresLightPink)
-            .padding(bottom = 40.dp, top = 60.dp),
+            .padding(bottom = 20.dp, top = 50.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
@@ -177,14 +176,10 @@ fun FavoriteGenresStats(
                 .fillMaxHeight(0.5f),
             contentScale = ContentScale.FillBounds
         )
-        CustomButton(
-            text = "Поделиться",
-            textColor = Color.Black,
-            modifier = Modifier.padding(horizontal = 20.dp),
-            color = LightYellowBtn,
-            onCLick = {
-                mViewModel.shareStatistics(view, context)
-            }
+        ShareStatisticsButton(
+            context = context,
+            contentView = view,
+            modifier = Modifier.weight(1f,false)
         )
     }
 
@@ -237,7 +232,7 @@ fun ReadBooksStats(
         modifier = Modifier
             .fillMaxSize()
             .background(LighterPinkBackground)
-            .padding(bottom = 40.dp, top = 60.dp),
+            .padding(bottom = 20.dp, top = 50.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
 
@@ -288,14 +283,10 @@ fun ReadBooksStats(
                 .fillMaxHeight(0.3f),
             contentScale = ContentScale.Fit
         )
-        CustomButton(
-            text = "Поделиться",
-            textColor = Color.Black,
-            modifier = Modifier.padding(horizontal = 20.dp),
-            color = LightYellowBtn,
-            onCLick = {
-                mViewModel.shareStatistics(view, context)
-            }
+        ShareStatisticsButton(
+            context = context,
+            contentView = view,
+            modifier = Modifier.weight(1f,false)
         )
     }
 
@@ -315,7 +306,7 @@ fun FavoriteAuthors(
         modifier = Modifier
             .fillMaxSize()
             .background(TopAuthorsLightPink)
-            .padding(bottom = 40.dp, top = 50.dp),
+            .padding(bottom = 20.dp, top = 50.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
@@ -394,14 +385,10 @@ fun FavoriteAuthors(
                 }
             }
         }
-        CustomButton(
-            text = "Поделиться",
-            textColor = Color.Black,
-            modifier = Modifier.padding(horizontal = 20.dp),
-            color = LightYellowBtn,
-            onCLick = {
-                mViewModel.shareStatistics(view, context)
-            }
+        ShareStatisticsButton(
+            context = context,
+            contentView = view,
+            modifier = Modifier.weight(1f,false)
         )
     }
 }
