@@ -30,14 +30,18 @@ fun PartnerZarya() {
         modifier = Modifier
             .fillMaxSize()
             .background(ZaryaBackground)
-            .padding(bottom = 20.dp),
+            .padding(bottom = 50.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Image(
             painter = painterResource(id = R.drawable.csi_zarya_logo),
             contentDescription = "Zarya logo",
-            modifier = Modifier.size(130.dp)
+            modifier = Modifier
+                .fillMaxWidth(0.3f)
+                .fillMaxHeight(0.1f)
+                .padding(top = 14.dp),
+            contentScale = ContentScale.Fit
         )
         Image(
             painter = painterResource(id = R.drawable.csi_zarya_screen_cover),
@@ -54,7 +58,7 @@ fun PartnerZarya() {
                 text = "Книги про искусство",
                 fontWeight = FontWeight.ExtraBold,
                 color = Color.Black,
-                fontSize = 26.sp
+                fontSize = 24.sp
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
@@ -80,14 +84,18 @@ fun PartnerIgraSlov() {
         modifier = Modifier
             .fillMaxSize()
             .background(IgraSlovBackground)
-            .padding(bottom = 20.dp),
+            .padding(bottom = 50.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Image(
             painter = painterResource(id = R.drawable.igra_slov_logo_unfilled),
             contentDescription = "Zarya logo",
-            modifier = Modifier.size(130.dp)
+            modifier = Modifier
+                .fillMaxWidth(0.3f)
+                .fillMaxHeight(0.1f)
+                .padding(top = 12.dp),
+            contentScale = ContentScale.Fit
         )
         Image(
             painter = painterResource(id = R.drawable.igra_slov_screen_cover),
@@ -104,7 +112,7 @@ fun PartnerIgraSlov() {
                 text = "Вы точно найдете, что почитать",
                 fontWeight = FontWeight.ExtraBold,
                 color = Color.Black,
-                fontSize = 26.sp
+                fontSize = 24.sp
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
@@ -133,7 +141,6 @@ fun PartnerLyuteratura() {
             .padding(bottom = 20.dp, top = 50.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
-
     ) {
         Image(
             painter = painterResource(id = R.drawable.partner_lyuteratura_logo),

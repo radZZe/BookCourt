@@ -1,33 +1,56 @@
 package com.example.bookcourt.ui.graphs
 
+import androidx.activity.compose.BackHandler
+import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.bookcourt.ui.ProfileScreen
 import com.example.bookcourt.ui.RecomendationScreen
+import com.example.bookcourt.ui.search.SearchScreen
 import com.example.bookcourt.ui.statistics.Statistics
 import com.example.bookcourt.utils.BottomNavMenu
+import com.example.bookcourt.utils.BottomNavigationMenu
+import com.example.bookcourt.utils.Graph
 import com.example.bookcourt.utils.Screens
 
 @Composable
+fun HomeScreen(navController: NavHostController = rememberNavController()) {
+    Scaffold(
+        bottomBar = { BottomNavigationMenu(navController) }
+    ) {
+        BottomNavigationGraph(navController = navController)
+    }
+}
+
+@Composable
 fun BottomNavigationGraph(
-    navController: NavHostController = rememberNavController(),
+    navController: NavHostController,
 ) {
     NavHost(
         navController = navController,
-        startDestination = BottomNavMenu.RecomendationsBottomNav.route
+        route = Graph.BOTTOM_NAV_GRAPH,
+        startDestination = BottomNavMenu.Recommendations.route
     ) {
-        composable(route = BottomNavMenu.RecomendationsBottomNav.route) {
+        composable(BottomNavMenu.Recommendations.route) {
+            BackHandler(true) {}
             RecomendationScreen(
-                onNavigateToStatistics = {  }
+                onNavigateToStatistics = { navController.navigate(BottomNavMenu.Statistics.route) },
+                onNavigateToProfile = {navController.navigate(Graph.PROFILE_NAV_GRAPH)}
             )
         }
-        composable(route = BottomNavMenu.SearchBottomNav.route) {
-
+        composable(route = BottomNavMenu.Search.route) {
+            SearchScreen(navController)
         }
-        composable(route = BottomNavMenu.StatisticsBottomNav.route) {
-            Statistics(navController = navController)
+        composable(route = BottomNavMenu.Statistics.route) {
+            Statistics()
+        }
+        composable(route = Graph.PROFILE_NAV_GRAPH){
+            ProfileScreen {
+                navController.navigate(Graph.BOTTOM_NAV_GRAPH)
+            }
         }
     }
 }

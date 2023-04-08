@@ -36,15 +36,15 @@ import com.google.accompanist.flowlayout.FlowRow
 
 @Composable
 fun CategorySelectionScreen(
+    onNavigateToBottomNav:()->Unit,
     viewModel: CategorySelectionViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
 ) {
     val windowInfo = rememberWindowSizeClass()
     Box(modifier = Modifier
         .fillMaxSize()
-        .padding(start = 16.dp, end = 16.dp)
         .background(MainBgColor),
     contentAlignment = Alignment.Center) {
-        Column() {
+        Column(modifier = Modifier.padding(horizontal = 16.dp)) {
             HeaderCategoryScreen(windowInfo.screenHeightInfo)
             Spacer(modifier = Modifier.height(24.dp))
             CategoriesGrid(viewModel, windowInfo.screenHeightInfo)
@@ -54,7 +54,7 @@ fun CategorySelectionScreen(
                 .align(Alignment.BottomCenter)
                 .padding(bottom = if (windowInfo.screenHeightInfo == WindowInfo.WindowType.Compact) 10.dp else 20.dp)
         ) {
-            NextButton(viewModel, windowInfo.screenHeightInfo)
+            NextButton(viewModel, windowInfo.screenHeightInfo,onNavigateToBottomNav)
         }
 
     }
@@ -163,13 +163,16 @@ fun BoxItem(
 }
 
 @Composable
-fun NextButton(viewModel: CategorySelectionViewModel, windowType: WindowInfo.WindowType) {
+fun NextButton(viewModel: CategorySelectionViewModel, windowType: WindowInfo.WindowType,onNavigateToBottomNav:()->Unit) {
     if (viewModel.selectedCategories.size > 0) {
 
         CustomButton(
             text = "Продолжить",
             color = LightYellowBtn,
-            textColor = Color.Black
+            textColor = Color.Black,
+            onCLick = {
+                onNavigateToBottomNav()
+            }
         )
 
     } else {
@@ -201,8 +204,8 @@ fun HeaderCategoryScreen(windowType: WindowInfo.WindowType) {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun CategorySelectionScreenPreview(){
-    CategorySelectionScreen()
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun CategorySelectionScreenPreview(){
+//    CategorySelectionScreen()
+//}

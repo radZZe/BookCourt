@@ -1,21 +1,24 @@
 package com.example.bookcourt.ui.statistics
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.LinearProgressIndicator
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
@@ -23,20 +26,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import coil.compose.SubcomposeAsyncImage
 import com.example.bookcourt.R
 import com.example.bookcourt.models.book.Book
-import com.example.bookcourt.models.metrics.DataClickMetric
 import com.example.bookcourt.ui.theme.*
-import com.example.bookcourt.utils.Buttons.CLOSE
 import com.example.bookcourt.utils.Constants
-import com.example.bookcourt.utils.Screens
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
@@ -47,55 +45,36 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun Statistics(
-    navController: NavController,
-    mViewModel: StatisticsViewModel = hiltViewModel()
+    viewModel: StatisticsViewModel = hiltViewModel()
 ) {
     LaunchedEffect(key1 = Unit) {
-        mViewModel.getUserStats()
+        viewModel.getUserStats()
     }
 
-    val stories = Constants.statisticScreensList.size
-    val pagerState = rememberPagerState(pageCount = stories)
+    val targetOffset = 500
+    val pagerState = rememberPagerState(pageCount = Constants.statisticScreensList.size)
     val coroutineScope = rememberCoroutineScope()
-    val gradient = Brush.verticalGradient(listOf(Shadow, Color.Transparent))
 
     var currentPage by remember {
         mutableStateOf(0)
     }
 
-    var paused by remember {
-        mutableStateOf(false)
-    }
-
-    val targetOffset = 500
     Box(
         modifier = Modifier
             .fillMaxSize()
             .pointerInput(Unit) {
                 detectTapGestures(
-                    onPress = {
-//                        try {
-//                            paused = true
-//                            awaitRelease()
-//                        } finally {
-//                            paused = false
-//                        }
-                    },
                     onTap = { offset ->
                         coroutineScope.launch {
-                            if (currentPage < stories - 1) {
-                                if (offset.x < targetOffset) { // 300
-                                    if (currentPage == 0) currentPage = 0 else currentPage--
-                                } else if (offset.x > targetOffset) { // 700
-                                    currentPage++
+                            currentPage = if (offset.x < targetOffset) {
+                                if (currentPage == 0) {
+                                    0
+                                } else {
+                                    (currentPage - 1) % (pagerState.pageCount)
                                 }
-                            } else if (currentPage == stories - 1) {
-                                if (offset.x < targetOffset) { // 300
-                                    currentPage--
-                                } else if (offset.x > targetOffset) { // 700
-                                    navController.popBackStack()
-                                    navController.navigate(route = Screens.Recommendation.route)
-                                }
+                            } else {
+                                if (currentPage == 5) 0 else (currentPage + 1)
+                                //(currentPage + 1) % (pagerState.pageCount)
                             }
                             pagerState.animateScrollToPage(page = currentPage)
                         }
@@ -104,72 +83,33 @@ fun Statistics(
             }
 
     ) {
-        StoryLikePages(pagerState = pagerState, Constants.statisticScreensList)
+        StatisticsPages(pagerState = pagerState, Constants.statisticScreensList)
         Column(
             modifier = Modifier
                 .wrapContentHeight()
                 .fillMaxWidth()
-                .background(gradient)
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(
-                        top = 8.dp,
-                        start = 4.dp,
-                        end = 4.dp
-                    )
+                    .padding(top = 8.dp, start = 4.dp, end = 4.dp)
                     .zIndex(3f),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Spacer(modifier = Modifier.padding(4.dp))
-                for (i in 0 until stories) {
-                    InstaStoriesProgressBar(
+                for (i in 0 until pagerState.pageCount) {
+                    StoriesProgressBar(
                         modifier = Modifier
                             .weight(1f)
                             .clip(RoundedCornerShape(12.dp)),
-                        paused = paused,
                         startProgress = (i == currentPage),
                         isNext = (i > currentPage)
                     ) {
                         coroutineScope.launch {
-                            if (currentPage < stories - 1) {
-                                currentPage++
-                            } else {
-                                navController.popBackStack()
-                                navController.navigate(route = Screens.Recommendation.route)
-                            }
-                            pagerState.animateScrollToPage(page = currentPage % stories)
-                        }
-                    }
-                    Spacer(
-                        modifier = Modifier
-                            .padding(top = 8.dp, start = 4.dp, end = 4.dp, bottom = 2.dp)
-                    )
-                }
-            }
-            Row(
-                horizontalArrangement = Arrangement.End,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(end = 10.dp, bottom = 10.dp)
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.close_icon),
-                    contentDescription = "Close Icon",
-                    tint = Color.White,
-                    modifier = Modifier
-                        .size(18.dp)
-                        .clickable {
-                            mViewModel.metricScreenTime()
-                            mViewModel.sendOnClickMetric(
-                                DataClickMetric(
-                                    button = CLOSE,
-                                    screen = "Statistics"
-                                )
-                            )
-                            navController.popBackStack()
-                            navController.navigate(route = Screens.Recommendation.route)
+                            if (currentPage == pagerState.pageCount) {
+                                currentPage = 0
+                            } else currentPage++
+                            pagerState.animateScrollToPage(page = currentPage % pagerState.pageCount)
                         }
 
                 )
@@ -299,7 +239,7 @@ fun ReadBooksStats(
     ) {
         Image(
             painter = painterResource(id = R.drawable.book_court_logo),
-            contentDescription ="Book court logo"
+            contentDescription = "Book court logo"
         )
         Text(
             text = "$booksAmount $string!",
@@ -499,7 +439,7 @@ fun TopAuthorItem(
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun StoryLikePages(
+fun StatisticsPages(
     pagerState: PagerState,
     screens: List<String>
 ) {
@@ -525,4 +465,42 @@ fun StoryLikePages(
             }
         }
     }
+}
+
+@Composable
+fun StoriesProgressBar(
+    modifier: Modifier,
+    startProgress: Boolean = false,
+    isNext: Boolean,
+    onAnimationEnd: () -> Unit
+) {
+    val percent = remember { Animatable(0f) }
+
+    if (startProgress) {
+        LaunchedEffect(Unit) {
+            percent.snapTo(0f)
+            percent.animateTo(
+                targetValue = 1f,
+                animationSpec = tween(
+                    durationMillis = (5000 * (1f - percent.value)).toInt(),
+                    easing = LinearEasing
+                )
+            )
+            onAnimationEnd()
+        }
+    } else {
+        LaunchedEffect(Unit) {
+            if (isNext) {
+                percent.snapTo(0f)
+            } else {
+                percent.snapTo(1f)
+            }
+        }
+    }
+    LinearProgressIndicator(
+        backgroundColor = InactiveProgressGrey,
+        color = ActiveProgressGrey,
+        modifier = modifier,
+        progress = percent.value
+    )
 }

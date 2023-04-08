@@ -8,8 +8,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Scaffold
 import androidx.compose.ui.Modifier
+import androidx.navigation.compose.rememberNavController
+import com.example.bookcourt.ui.graphs.RootNavigationGraph
+import com.example.bookcourt.ui.theme.BookCourtTheme
 import androidx.navigation.NavController
-import com.example.bookcourt.ui.graphs.NavigationGraph
 import com.example.bookcourt.ui.theme.BookCourtTheme
 import com.example.bookcourt.utils.BottomNavigationMenu
 import dagger.hilt.android.AndroidEntryPoint
@@ -18,20 +20,17 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private val mViewModel: MainActivityViewModel by viewModels()
-    
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val navController = NavController(this)
         setContent {
             BookCourtTheme {
                 Scaffold(
-//                    bottomBar = { BottomNavigationMenu(navController) }
                 ) {
                     Column(
                         modifier = Modifier.fillMaxSize(),
                     ) {
-                        NavigationGraph()
-//                        BottomNavigationGraph()
+                        RootNavigationGraph(navController = rememberNavController())
                     }
                 }
             }
@@ -47,7 +46,6 @@ class MainActivity : ComponentActivity() {
         super.onStop()
         mViewModel.sendMetric()
     }
-
 
 }
 

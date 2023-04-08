@@ -31,7 +31,7 @@ class MainActivityViewModel @Inject constructor(
 
     fun sendMetric() {
         viewModelScope.launch(Dispatchers.IO) {
-//            metricRep.appTime(time, MetricType.APP_SESSION_TIME)
+            metricRep.appTime(time, MetricType.APP_SESSION_TIME, "App")
             time = 0
         }
     }
