@@ -15,7 +15,12 @@ fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
         startDestination = Screens.Splash.route
     ) {
         composable(Screens.Tutorial.route) {
-            TutorScreen(navController = navController)
+
+            TutorScreen(
+                onNavigateToCategorySelection = {
+                    navController.navigate(Screens.CategorySelection.route)
+                }
+            )
         }
         composable(Screens.SignIn.route) {
 
@@ -29,7 +34,11 @@ fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
             SplashScreen(navController = navController)
         }
         composable(Screens.CategorySelection.route) {
-            CategorySelectionScreen()
+            CategorySelectionScreen(
+                onNavigateToBottomNav = {
+                    navController.navigate(Graph.BOTTOM_NAV_GRAPH)
+                }
+            )
         }
     }
 }
