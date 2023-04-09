@@ -1,5 +1,6 @@
 package com.example.bookcourt.ui.profile
 
+import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -10,10 +11,12 @@ import javax.inject.Inject
 @HiltViewModel
 class ProfileViewModel @Inject constructor():ViewModel(){
 
-    var name  by mutableStateOf<String?>(null)
-    var email  by mutableStateOf<String?>(null)
+    var name  by mutableStateOf<String>("")
+    var email  by mutableStateOf<String>("")
     var city  by mutableStateOf<String?>(null)
     var bDayDAte by mutableStateOf<String?>(null)
+    var sex by mutableStateOf<String?>(null)
+    var profileImage by mutableStateOf<Uri?>(null)
 
     fun onNameChanged(newText:String){
         name = newText
@@ -29,5 +32,13 @@ class ProfileViewModel @Inject constructor():ViewModel(){
 
     fun onBDayDAteChanged(newText:String){
         bDayDAte = newText
+    }
+
+    fun onSexChanged(newText: String){
+        sex = newText
+    }
+
+    fun onProfileImageChanged(newUri: Uri?){
+        profileImage = newUri
     }
 }

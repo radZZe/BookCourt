@@ -514,19 +514,22 @@ fun AutoCompleteTextField(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            if (value.isEmpty()) {
-                Text(
-                    text = placeholder,
-                    fontFamily = FontFamily(
-                        Font(
-                            R.font.roboto_regular
-                        )
-                    ),
-                    fontSize = 16.sp,
-                    color = Color(134, 134, 134)
-                )
+            Box(contentAlignment = Alignment.CenterStart){
+                if (value.isEmpty()) {
+                    Text(
+                        text = placeholder,
+                        fontFamily = FontFamily(
+                            Font(
+                                R.font.roboto_regular
+                            )
+                        ),
+                        fontSize = 16.sp,
+                        color = Color(134, 134, 134)
+                    )
+                }
+                innerTextField()
             }
-            innerTextField()
+
             Image(
                 painter = painterResource(id = R.drawable.arrow_down),
                 contentDescription = " ",
