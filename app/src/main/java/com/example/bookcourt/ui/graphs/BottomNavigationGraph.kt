@@ -48,9 +48,7 @@ fun BottomNavigationGraph(
             Statistics()
         }
         composable(route = Graph.PROFILE_NAV_GRAPH){
-            ProfileScreen {
-                navController.navigate(Graph.BOTTOM_NAV_GRAPH)
-            }
+            ProfileScreen(onNavigateToRecommendation = { navController.navigate(Graph.BOTTOM_NAV_GRAPH)})
         }
     }
 }

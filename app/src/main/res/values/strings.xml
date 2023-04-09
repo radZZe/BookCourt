@@ -19,4 +19,18 @@
     <string name="numberOfLikedBooks">Количество книг которые вам понравились:</string>
     <string name="top_favorite_genres">Топ 3 любимых жанра:</string>
     <string name="book_rating_info">Рейтинг %1$d \%%</string>
+    <string name="profile_screen_profile">Профиль</string>
+    <string name="profile_screen_name">Имя</string>
+    <string name="profile_screen_email">Электронная почта</string>
+    <string name="profile_screen_city">Город</string>
+    <string name="profile_screen_birthday_date">Дата рождения</string>
+    <string name="profile_screen_push_notification">Пуш-уведомления</string>
+    <string name="profile_screen_soon">Скоро</string>
+    <string name="profile_screen_report_the_problem">Сообщить о проблеме</string>
+    <string name="profile_screen_legal_information">Правовая информация</string>
+    <string name="profile_screen_sex">Пол</string>
+    <string name="profile_screen_save">Сохранить</string>
+    <string name="profile_screen_rate_us">Оценить нас</string>
+    <string name="profile_screen_logOut">Выйти</string>
+    <string name="profile_screen_version">BookCourt v1.1</string>
 </resources>
