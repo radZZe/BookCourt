@@ -2,17 +2,21 @@ package com.example.bookcourt.utils
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -24,10 +28,14 @@ import com.example.bookcourt.ui.theme.*
 
 @Composable
 fun BottomNavigationMenu(navController: NavController) {
+    val windowHeight = LocalConfiguration.current.screenHeightDp.toFloat() * LocalDensity.current.density
+    val menuHeight = if(windowHeight > LIMIT_WINDOW_HEIGHT) 72.dp else 56.dp
+
     var visibility by remember {
         mutableStateOf(1f)
     }
     Box(
+        contentAlignment = Alignment.Center,
         modifier = Modifier
             .fillMaxWidth()
             .alpha(visibility)
@@ -38,7 +46,7 @@ fun BottomNavigationMenu(navController: NavController) {
             contentColor = TextPlaceHolderColor,
             modifier = Modifier
                 .fillMaxWidth()
-                .wrapContentHeight()
+                .height(menuHeight),
         ) {
             val navBackStackEntry by navController.currentBackStackEntryAsState()
             val currentRoute = navBackStackEntry?.destination?.route
@@ -80,7 +88,12 @@ fun CustomBottomNavigationItem(
     Column(
         modifier = Modifier
             .wrapContentWidth()
-            .wrapContentHeight()
+            .fillMaxHeight()
+            .clickable(
+                onClick = { onClick() },
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            )
             .padding(vertical = 2.dp, horizontal = 20.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -90,8 +103,7 @@ fun CustomBottomNavigationItem(
                 .clip(RoundedCornerShape(50.dp))
                 .background(background)
                 .wrapContentHeight()
-                .wrapContentWidth()
-                .clickable(onClick = onClick),
+                .wrapContentWidth(),
             contentAlignment = Alignment.Center
         ) {
             Icon(

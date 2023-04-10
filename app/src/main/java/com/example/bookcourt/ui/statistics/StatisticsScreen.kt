@@ -25,10 +25,13 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
@@ -36,8 +39,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.SubcomposeAsyncImage
 import com.example.bookcourt.R
 import com.example.bookcourt.models.book.Book
+import com.example.bookcourt.ui.recommendation.LIMIT_WINDOW_HEIGHT
 import com.example.bookcourt.ui.theme.*
 import com.example.bookcourt.utils.Constants
+import com.example.bookcourt.utils.ShareStatisticsButton
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
@@ -48,8 +53,11 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun Statistics(
+    onNavigateToRecommendation: () -> Unit,
     viewModel: StatisticsViewModel = hiltViewModel()
 ) {
+    val windowHeight = LocalConfiguration.current.screenHeightDp.toFloat() * LocalDensity.current.density
+    val bottomPadding = if (windowHeight > LIMIT_WINDOW_HEIGHT) 76.dp else 56.dp
     LaunchedEffect(key1 = Unit) {
         viewModel.getUserStats()
     }
@@ -73,20 +81,23 @@ fun Statistics(
                                 if (currentPage == 0) {
                                     0
                                 } else {
-                                    (currentPage - 1) % (pagerState.pageCount)
+                                    currentPage - 1
                                 }
                             } else {
-                                if (currentPage == 5) 0 else (currentPage + 1)
-                                //(currentPage + 1) % (pagerState.pageCount)
+                                currentPage + 1
                             }
-                            pagerState.animateScrollToPage(page = currentPage)
+                            if (currentPage == pagerState.pageCount) {
+                                onNavigateToRecommendation()
+                            } else {
+                                pagerState.animateScrollToPage(page = currentPage % pagerState.pageCount)
+                            }
                         }
                     }
                 )
             }
 
     ) {
-        StatisticsPages(pagerState = pagerState, Constants.statisticScreensList)
+        StatisticsPages(bottomPadding = bottomPadding, pagerState = pagerState, Constants.statisticScreensList)
         Column(
             modifier = Modifier
                 .wrapContentHeight()
@@ -109,12 +120,15 @@ fun Statistics(
                         isNext = (i > currentPage)
                     ) {
                         coroutineScope.launch {
-                            if (currentPage == pagerState.pageCount) {
-                                currentPage = 0
-                            } else currentPage++
-                            pagerState.animateScrollToPage(page = currentPage % pagerState.pageCount)
+                            if (currentPage == pagerState.pageCount - 1) {
+                                onNavigateToRecommendation()
+                            } else {
+                                currentPage = (currentPage + 1) % (pagerState.pageCount)
+                                pagerState.animateScrollToPage(page = currentPage)
+                            }
                         }
                     }
+                    Spacer(modifier = Modifier.width(4.dp))
                 }
             }
         }
@@ -436,70 +450,71 @@ fun Statistics(
         }
     }
 
-    @OptIn(ExperimentalPagerApi::class)
-    @Composable
-    fun StatisticsPages(
-        pagerState: PagerState,
-        screens: List<String>
-    ) {
-        HorizontalPager(state = pagerState, dragEnabled = false) { page ->
-            when (screens[page]) {
-                "IgraSlov" -> {
-                    PartnerIgraSlov()
-                }
-                "Lyuteratura" -> {
-                    PartnerLyuteratura()
-                }
-                "ReadBooks" -> {
-                    ReadBooksStats()
-                }
-                "FavoriteAuthors" -> {
-                    FavoriteAuthors()
-                }
-                "FavoriteGenres" -> {
-                    FavoriteGenresStats()
-                }
-                else -> {
-                    PartnerZarya()
-                }
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+fun StatisticsPages(
+    bottomPadding: Dp,
+    pagerState: PagerState,
+    screens: List<String>
+) {
+    HorizontalPager(state = pagerState, dragEnabled = false) { page ->
+        when (screens[page]) {
+            "IgraSlov" -> {
+                PartnerIgraSlov(bottomPadding = bottomPadding)
+            }
+            "Lyuteratura" -> {
+                PartnerLyuteratura()
+            }
+            "ReadBooks" -> {
+                ReadBooksStats()
+            }
+            "FavoriteAuthors" -> {
+                FavoriteAuthors()
+            }
+            "FavoriteGenres" -> {
+                FavoriteGenresStats()
+            }
+            else -> {
+                PartnerZarya(bottomPadding = bottomPadding)
             }
         }
     }
+}
 
-    @Composable
-    fun StoriesProgressBar(
-        modifier: Modifier,
-        startProgress: Boolean = false,
-        isNext: Boolean,
-        onAnimationEnd: () -> Unit
-    ) {
-        val percent = remember { Animatable(0f) }
+@Composable
+fun StoriesProgressBar(
+    modifier: Modifier,
+    startProgress: Boolean = false,
+    isNext: Boolean,
+    onAnimationEnd: () -> Unit
+) {
+    val percent = remember { Animatable(0f) }
 
-        if (startProgress) {
-            LaunchedEffect(Unit) {
-                percent.snapTo(0f)
-                percent.animateTo(
-                    targetValue = 1f,
-                    animationSpec = tween(
-                        durationMillis = (5000 * (1f - percent.value)).toInt(),
-                        easing = LinearEasing
-                    )
+    if (startProgress) {
+        LaunchedEffect(Unit) {
+            percent.snapTo(0f)
+            percent.animateTo(
+                targetValue = 1f,
+                animationSpec = tween(
+                    durationMillis = (5000 * (1f - percent.value)).toInt(),
+                    easing = LinearEasing
                 )
-                onAnimationEnd()
-            }
-        } else {
-            LaunchedEffect(Unit) {
-                if (isNext) {
-                    percent.snapTo(0f)
-                } else {
-                    percent.snapTo(1f)
-                }
+            )
+            onAnimationEnd()
+        }
+    } else {
+        LaunchedEffect(Unit) {
+            if (isNext) {
+                percent.snapTo(0f)
+            } else {
+                percent.snapTo(1f)
             }
         }
-        LinearProgressIndicator(
-            backgroundColor = InactiveProgressGrey,
-            color = ActiveProgressGrey,
-            modifier = modifier,
-            progress = percent.value
-        )
     }
+    LinearProgressIndicator(
+        backgroundColor = InactiveProgressGrey,
+        color = ActiveProgressGrey,
+        modifier = modifier,
+        progress = percent.value
+    )
+}

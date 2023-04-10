@@ -3,21 +3,17 @@ package com.example.bookcourt.ui.search
 import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookcourt.data.repositories.DataStoreRepository
-import com.example.bookcourt.data.repositories.MetricsRepository
 import com.example.bookcourt.data.repositories.NetworkRepository
-import com.example.bookcourt.data.user.UserRepository
 import com.example.bookcourt.models.BookRemote
 import com.example.bookcourt.models.book.Book
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
+import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import java.io.IOException
@@ -28,7 +24,9 @@ class SearchViewModel @Inject constructor(
     private val dataStoreRepository: DataStoreRepository,
     private val networkRepository: NetworkRepository
 ) : ViewModel() {
-    var recentRequests = mutableListOf<String>()
+
+    private val _recentRequests = mutableStateListOf<String>()
+    val recentRequests = MutableStateFlow(_recentRequests)
 
     private val _isDisplayed = MutableStateFlow(false)
     val isDisplayed = _isDisplayed.asStateFlow()
@@ -43,11 +41,12 @@ class SearchViewModel @Inject constructor(
     private val _books = MutableStateFlow(_allBooks)
 
     var recommendedBooks = listOf<Book>()
+    @OptIn(FlowPreview::class)
     val books = searchText
-        .debounce(timeoutMillis = 1000L)
+        .debounce(timeoutMillis = 1500L)
         .onEach { _isSearching.update { true } }
         .combine(_books) { text, books ->
-            if(text.isBlank()) {
+            if (text.isBlank()) {
                 books
             } else {
                 books.filter { book ->
@@ -57,6 +56,7 @@ class SearchViewModel @Inject constructor(
         }
         .onEach {
             _isSearching.update { false }
+            updateRecentRequests()
         }
         .stateIn(
             viewModelScope,
@@ -65,39 +65,46 @@ class SearchViewModel @Inject constructor(
         )
 
     fun onSearchTextChange(text: String) {
-        _isDisplayed.update { true }
+        viewModelScope.launch {
+            delay(1500L)
+            _isDisplayed.update { true }
+        }
         _searchText.value = text
-        updateRecentRequests(text)
     }
 
     fun onClearSearchText() {
-        _isDisplayed.update { false }
         _searchText.value = ""
     }
 
     fun getRecentRequests() {
         viewModelScope.launch(Dispatchers.IO) {
-            val requests = dataStoreRepository.getPref(DataStoreRepository.recentRequestsList).first()
-            recentRequests = requests.split(" ") as MutableList<String>
+            val requests =
+                dataStoreRepository.getPref(DataStoreRepository.recentRequestsList).first()
+            _recentRequests.addAll(
+                if(requests.isBlank()) {
+                    listOf()
+                } else {
+                    Json.decodeFromString<MutableList<String>>(requests)
+                }
+            )
         }
     }
 
-    fun updateRecentRequests(request: String) {
+    fun updateRecentRequests() {
+        with(_recentRequests) {
+            filter { it != "" && it != " "}
+            reverse()
+            add(_searchText.value)
+            reverse()
+        }
+    }
+
+    fun saveRecentRequests() {
         viewModelScope.launch(Dispatchers.IO) {
-            with(recentRequests) {
-                reverse()
-                add(request)
-                if(size > 5) {
-                    val deletableRange = size - 5
-                    val newRequestsList = slice(deletableRange - 1 until size) as MutableList<String>
-                    recentRequests = newRequestsList
-                }
-                reverse()
-            }
-            var requests = ""
-            for (requestName in recentRequests) {
-                requests += "$requestName "
-            }
+            val requests = Json.encodeToString(
+                serializer = ListSerializer(String.serializer()),
+                _recentRequests
+            )
             dataStoreRepository.setPref(requests, DataStoreRepository.recentRequestsList)
         }
     }
@@ -105,6 +112,7 @@ class SearchViewModel @Inject constructor(
 
     /* No API, just mockup */
     private var fetchJob: Job? = null
+
     fun getAllBooks(context: Context) {
         fetchJob?.cancel()
         fetchJob = viewModelScope.launch(Dispatchers.IO) {
@@ -117,10 +125,10 @@ class SearchViewModel @Inject constructor(
             }
         }
     }
+
     private suspend fun convertBooksJsonToList(context: Context): List<Book> {
         val json = networkRepository.getAllBooks(context)!!
-        val data = Json.decodeFromString<MutableList<BookRemote>>("""$json""")
-        val allBooksItems = data.map { it.toBook() }
-        return allBooksItems
+        val data = Json.decodeFromString<MutableList<BookRemote>>(json)
+        return data.map { it.toBook() }
     }
 }

@@ -41,10 +41,14 @@ fun BottomNavigationGraph(
             )
         }
         composable(route = BottomNavMenu.Search.route) {
-            SearchScreen(navController)
+            SearchScreen(
+                onNavigateToRecommendation = { navController.navigate(BottomNavMenu.Recommendations.route) }
+            )
         }
         composable(route = BottomNavMenu.Statistics.route) {
-            Statistics()
+            Statistics(
+                onNavigateToRecommendation = { navController.navigate(BottomNavMenu.Recommendations.route) }
+            )
         }
         composable(route = Graph.PROFILE_NAV_GRAPH){
             ProfileScreen(onNavigateToRecommendation = { navController.navigate(Graph.BOTTOM_NAV_GRAPH)})
