@@ -14,7 +14,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -26,7 +25,6 @@ open class BookCardController(
     private val screenWidth: Float,
     private val screenHeight: Float,
     internal val animationSpec: AnimationSpec<Float> = SwipeableDefaults.AnimationSpec,
-    val viewModel: CardStackViewModel
 ) {
 
     var isInAnimation = false
@@ -244,7 +242,6 @@ open class BookCardController(
 @Composable
 fun rememberBookCardController(
     animationSpec: AnimationSpec<Float> = SwipeableDefaults.AnimationSpec,
-    viewModel: CardStackViewModel = hiltViewModel()
 ): BookCardController {
     val scope = rememberCoroutineScope()
     val screenWidth = with(LocalDensity.current) {
@@ -260,7 +257,6 @@ fun rememberBookCardController(
             screenWidth = screenWidth,
             screenHeight = screenHeight,
             animationSpec = animationSpec,
-            viewModel
         )
     }
 }
