@@ -44,7 +44,7 @@ fun CardStack(
     onSwipeRight: (item: Book) -> Unit = {},
     onSwipeUp: (item: Book) -> Unit = {},
     onSwipeDown: (item: Book) -> Unit = {},
-    viewModel: CardStackViewModel = hiltViewModel(),
+    viewModel: RecommendationViewModel = hiltViewModel(),
     disableDraggable:Boolean,
 ) {
 
@@ -115,7 +115,7 @@ fun BookCard(
     bookCardController: BookCardController,
     user: User,
     item: Book,
-    viewModel: CardStackViewModel,
+    viewModel: RecommendationViewModel,
     isFrontItem: Boolean,
     onSwipeLeft: (item: Book) -> Unit = {},
     onSwipeRight: (item: Book) -> Unit = {},

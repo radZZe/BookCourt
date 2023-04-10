@@ -153,4 +153,10 @@ class RecommendationViewModel @Inject constructor(
 
     }
 
+    fun updateUserStatistic(user: User) {
+        viewModelScope.launch(Dispatchers.IO) {
+            userRepositoryI.updateData(user)
+        }
+    }
+
 }
