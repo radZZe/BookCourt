@@ -29,7 +29,7 @@ import java.io.IOException
 import javax.inject.Inject
 
 @HiltViewModel
-class RecomendationViewModel @Inject constructor(
+class RecommendationViewModel @Inject constructor(
     private val networkRepository: NetworkRepository,
     private val dataStoreRepository: DataStoreRepository,
     private val metricRep: MetricsRepository,
@@ -48,7 +48,7 @@ class RecomendationViewModel @Inject constructor(
     private var sessionTime = System.currentTimeMillis().toInt()
     private var fetchJob: Job? = null
 
-    val limitSwipeValue = 3;
+    val limitSwipeValue = 3
     var counter by mutableStateOf(0)
 
 
@@ -82,26 +82,25 @@ class RecomendationViewModel @Inject constructor(
         }
     }
 
-    fun booksValidation(user: User, allBooks: List<Book>) {
+    private fun booksValidation(user: User, allBooks: List<Book>) {
         val readBooks = user.readBooksList.map { it.bookInfo }
         if (readBooks.isEmpty()) {
             validBooks.addAll(allBooks)
         } else {
-            var items = allBooks.filter { book ->
+            val items = allBooks.filter { book ->
                 book.bookInfo !in readBooks
             }
             validBooks.addAll(items)
         }
     }
 
-    suspend fun convertBooksJsonToList(context: Context): List<Book> {
+    private suspend fun convertBooksJsonToList(context: Context): List<Book> {
         val json = networkRepository.getAllBooks(context)!!
-        val data = Json.decodeFromString<MutableList<BookRemote>>("""$json""")
-        val allBooksItems = data.map { it.toBook() }
-        return allBooksItems
+        val data = Json.decodeFromString<MutableList<BookRemote>>(json)
+        return data.map { it.toBook() }
     }
 
-    suspend fun getUser(): User {
+    private suspend fun getUser(): User {
         val userId = dataStoreRepository.getPref(uuid)
         user = userRepositoryI.loadData(userId.first())!!//TODO
         return user
@@ -141,7 +140,7 @@ class RecomendationViewModel @Inject constructor(
     fun metricScreenTime() {
         viewModelScope.launch(Dispatchers.IO) {
             sessionTime = System.currentTimeMillis().toInt() - sessionTime
-            metricRep.appTime(sessionTime, MetricType.SCREEN_SESSION_TIME, "Recomendation")
+            metricRep.appTime(sessionTime, MetricType.SCREEN_SESSION_TIME, "Recommendation")
             sessionTime = System.currentTimeMillis().toInt()
         }
     }
