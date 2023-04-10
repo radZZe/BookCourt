@@ -8,13 +8,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.bookcourt.ui.ProfileScreen
-import com.example.bookcourt.ui.RecomendationScreen
+import com.example.bookcourt.ui.recommendation.RecommendationScreen
 import com.example.bookcourt.ui.search.SearchScreen
 import com.example.bookcourt.ui.statistics.Statistics
 import com.example.bookcourt.utils.BottomNavMenu
 import com.example.bookcourt.utils.BottomNavigationMenu
 import com.example.bookcourt.utils.Graph
-import com.example.bookcourt.utils.Screens
 
 @Composable
 fun HomeScreen(navController: NavHostController = rememberNavController()) {
@@ -36,7 +35,7 @@ fun BottomNavigationGraph(
     ) {
         composable(BottomNavMenu.Recommendations.route) {
             BackHandler(true) {}
-            RecomendationScreen(
+            RecommendationScreen(
                 onNavigateToStatistics = { navController.navigate(BottomNavMenu.Statistics.route) },
                 onNavigateToProfile = {navController.navigate(Graph.PROFILE_NAV_GRAPH)}
             )

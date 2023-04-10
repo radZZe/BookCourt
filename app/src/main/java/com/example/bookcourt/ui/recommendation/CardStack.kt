@@ -1,6 +1,5 @@
-package com.example.bookcourt.utils
+package com.example.bookcourt.ui.recommendation
 
-import android.util.DisplayMetrics
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -30,7 +29,6 @@ import coil.size.Size
 import com.example.bookcourt.R
 import com.example.bookcourt.models.book.Book
 import com.example.bookcourt.models.user.User
-import com.example.bookcourt.ui.recommendation.*
 import com.example.bookcourt.ui.theme.CustomButton
 import kotlin.math.roundToInt
 
@@ -39,25 +37,18 @@ import kotlin.math.roundToInt
 fun CardStack(
     modifier: Modifier,
     user: User,
-    itemsRaw: List<Book>,
+    frontItem:Book?,
+    backItem:Book?,
     thresholdConfig: (Float, Float) -> ThresholdConfig = { _, _ -> FractionalThreshold(0.2f) },
     onSwipeLeft: (item: Book) -> Unit = {},
     onSwipeRight: (item: Book) -> Unit = {},
     onSwipeUp: (item: Book) -> Unit = {},
     onSwipeDown: (item: Book) -> Unit = {},
     viewModel: CardStackViewModel = hiltViewModel(),
-    onNavigateToStatistics: () -> Unit
+    disableDraggable:Boolean,
 ) {
-    var isEmpty = viewModel.isEmpty
 
-
-    if (!isEmpty) {
-        viewModel.allBooks = itemsRaw.map {
-            mutableStateOf(it)
-        }
-        viewModel.currentItem = viewModel.allBooks.last()
-        viewModel.i = viewModel.allBooks.size - 1
-        var items = viewModel.allBooks
+    if(frontItem !=null){
         Box(
             modifier = modifier,
             contentAlignment = Alignment.Center
@@ -67,32 +58,34 @@ fun CardStack(
             BookCard(
                 bookCardController,
                 user,
-                items[viewModel.i],
+                frontItem,
                 viewModel,
-                viewModel.i,
+                true,
                 onSwipeLeft,
                 onSwipeRight,
                 onSwipeUp,
                 onSwipeDown,
                 thresholdConfig,
+                disableDraggable
             )
-            if (viewModel.i != 0) {
+            if(backItem !=null){
                 BookCard(
                     bookCardController,
                     user,
-                    items[viewModel.i - 1],
+                    backItem,
                     viewModel,
-                    viewModel.i - 1,
+                    false,
                     onSwipeLeft,
                     onSwipeRight,
                     onSwipeUp,
                     onSwipeDown,
                     thresholdConfig,
+                    disableDraggable
                 )
             }
-        }
 
-    } else {
+        }
+    }else{
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -100,10 +93,19 @@ fun CardStack(
             contentAlignment = Alignment.Center
         ) {
             CustomButton(text = "Посмотреть статистику") {
-                onNavigateToStatistics()
+//                viewModel.metricClick(
+//                    DataClickMetric(
+//                        Buttons.OPEN_STATS,
+//                        Screens.Recommendation.route
+//                    )
+//                )
+//                viewModel.metricScreenTime()
+//                onNavigateToStatistics()
             }
         }
     }
+
+
 }
 
 
@@ -112,49 +114,52 @@ fun CardStack(
 fun BookCard(
     bookCardController: BookCardController,
     user: User,
-    item: MutableState<Book>,
+    item: Book,
     viewModel: CardStackViewModel,
-    index: Int,
+    isFrontItem: Boolean,
     onSwipeLeft: (item: Book) -> Unit = {},
     onSwipeRight: (item: Book) -> Unit = {},
     onSwipeUp: (item: Book) -> Unit = {},
     onSwipeDown: (item: Book) -> Unit = {},
     thresholdConfig: (Float, Float) -> ThresholdConfig = { _, _ -> FractionalThreshold(0.2f) },
+    disableDraggable:Boolean,
 ) {
 
-    var item = item.value
-    var i = viewModel.i
-    bookCardController.onSwipeLeft = {
-        user.readBooksList.add(viewModel.allBooks.last().value)
-        viewModel.updateUserStatistic(user)
-        onSwipeLeft(viewModel.allBooks.last().value)
+    if(isFrontItem){
+        bookCardController.onSwipeLeft = {
+            user.readBooksList.add(item)
+            viewModel.updateUserStatistic(user)
+            onSwipeLeft(item)
+        }
+
+        bookCardController.onSwipeRight = {
+            user.readBooksList.add(item)
+            viewModel.updateUserStatistic(user)
+            onSwipeRight(item)
+        }
+
+        bookCardController.onSwipeUp = {
+            user.wantToRead.add(item)
+            viewModel.updateUserStatistic(user)
+            onSwipeUp(item)
+
+        }
+
+        bookCardController.onSwipeDown = {
+            onSwipeDown(item)
+        }
     }
 
-    bookCardController.onSwipeRight = {
-        user.readBooksList.add(viewModel.allBooks.last().value)
-        viewModel.updateUserStatistic(user)
-        onSwipeRight(viewModel.allBooks.last().value)
+
+    val alpha = when (isFrontItem) {
+        true -> bookCardController.visibilityFirst.value
+        false -> (1 - (bookCardController.visibilityFirst.value))
     }
-
-    bookCardController.onSwipeUp = {
-        user.wantToRead.add(viewModel.allBooks.last().value)
-        viewModel.updateUserStatistic(user)
-        onSwipeUp(viewModel.allBooks.last().value)
-
-    }
-
-    bookCardController.onSwipeDown = {
-        onSwipeDown(viewModel.allBooks.last().value)
-    }
-
-
-    var alpha = if (index == i) bookCardController.visibility_first.value
-    else if (index == i - 1) (1 - (bookCardController.visibility_first.value)) else 0f
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxSize()
-            .zIndex(if (index == i) 3f else 1f),
+            .zIndex(if (isFrontItem) 3f else 1f),
     ) {
         RecommendationIcon(
             bookCardController,
@@ -206,30 +211,37 @@ fun BookCard(
         )
 
 
-
-
-        var windowHeight =  LocalConfiguration.current.screenHeightDp.toFloat() * LocalDensity.current.density
+        val windowHeight =
+            LocalConfiguration.current.screenHeightDp.toFloat() * LocalDensity.current.density
 
 
 
         Card(
             shape = RoundedCornerShape(20.dp),
-            modifier = Modifier
-                .width(300.dp)
-                .height(if(windowHeight > LIMIT_WINDOW_HEIGHT) 470.dp else 400.dp)
-                .draggableStack(
-                    controller = bookCardController,
-                    thresholdConfig = thresholdConfig,
-                )
-                .moveTo(
-                    x = if (index == i) bookCardController.offsetX.value else 0f,
-                    y = if (index == i) bookCardController.offsetY.value else 0f
-                )
-                .graphicsLayer(
-                    rotationZ = if (index == i) bookCardController.rotation.value else 0f,
-                )
-                .alpha(alpha)
-                .align(Alignment.Center)
+            modifier = if(!disableDraggable){
+                Modifier
+                    .width(300.dp)
+                    .height(if (windowHeight > LIMIT_WINDOW_HEIGHT) 470.dp else 400.dp)
+                    .draggableStack(
+                        controller = bookCardController,
+                        thresholdConfig = thresholdConfig,
+                    )
+                    .moveTo(
+                        x = if (isFrontItem) bookCardController.offsetX.value else 0f,
+                        y = if (isFrontItem) bookCardController.offsetY.value else 0f
+                    )
+                    .graphicsLayer(
+                        rotationZ = if (isFrontItem) bookCardController.rotation.value else 0f,
+                    )
+                    .alpha(alpha)
+                    .align(Alignment.Center)
+            } else {
+                Modifier
+                    .width(300.dp)
+                    .height(if (windowHeight > LIMIT_WINDOW_HEIGHT) 470.dp else 400.dp)
+                    .alpha(alpha)
+                    .align(Alignment.Center)
+            }
         ) {
             Box(
                 modifier = Modifier
@@ -296,7 +308,7 @@ fun RecommendationIcon(
 ) {
     Box(modifier = modifier) {
         Box(contentAlignment = Alignment.Center) {
-            Box() {
+            Box {
                 Image(
                     painter = painterResource(id = icon),
                     contentDescription = description,
@@ -305,7 +317,7 @@ fun RecommendationIcon(
                     colorFilter = ColorFilter.tint(bookCardController.baseIconColor)
                 )
             }
-            Box() {
+            Box {
                 Image(
                     painter = painterResource(id = icon),
                     contentDescription = description,
@@ -315,7 +327,7 @@ fun RecommendationIcon(
                     colorFilter = ColorFilter.tint(color)
                 )
             }
-            Box() {
+            Box {
                 Image(
                     painter = painterResource(
                         id = icon
