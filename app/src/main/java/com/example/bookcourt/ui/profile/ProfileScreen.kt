@@ -1,7 +1,9 @@
 package com.example.bookcourt.ui
 
+import android.app.DatePickerDialog
 import android.content.ContentResolver
 import android.net.Uri
+import android.widget.DatePicker
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -11,9 +13,7 @@ import androidx.compose.foundation.shape.AbsoluteRoundedCornerShape
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
-import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,9 +24,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
@@ -35,11 +35,9 @@ import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.example.bookcourt.R
-import com.example.bookcourt.ui.auth.SignInViewModel
 import com.example.bookcourt.ui.profile.ProfileViewModel
-import com.example.bookcourt.ui.theme.CustomButton
-import com.example.bookcourt.ui.theme.LightYellowBtn
-import com.example.bookcourt.ui.theme.MainBgColor
+import com.example.bookcourt.ui.theme.*
+import java.util.*
 
 @Composable
 fun ProfileScreen(
@@ -97,14 +95,17 @@ fun ProfileTopSection(modifier: Modifier, onNavigateToRecommendation: () -> Unit
 fun ProfileMainSection(
     viewModel: ProfileViewModel
 ) {
-    var resources = LocalContext.current.resources
+
+
+
+    val resources = LocalContext.current.resources
 
     val galleryLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
             viewModel.onProfileImageChanged(uri)
         }
 
-    var imagePlaceholderUri = Uri.Builder()
+    val imagePlaceholderUri = Uri.Builder()
         .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE)
         .authority(resources.getResourcePackageName(R.drawable.image_placeholder))
         .appendPath(resources.getResourceTypeName(R.drawable.image_placeholder))
@@ -137,31 +138,111 @@ fun ProfileMainSection(
                 contentDescription = "button_image_upload"
             )
         }
-
+        Spacer(modifier = Modifier.height(40.dp))
         ProfileOutlinedTextField(
-            viewModel.name,
-            { viewModel.onNameChanged(it) },
-            stringResource(R.string.profile_screen_name)
+            label = stringResource(R.string.profile_screen_name),
+            value = viewModel.name,
+            onValueChanged = {viewModel.onNameChanged(it)},
+            paddingStart = 16.dp,
+            height = 48.dp,
+            labelFontSize = 13,
+            valueFontSize = 16,
+            trailingIcon = R.drawable.ic_close_circle,
+            onClickTrailingIcon = {
+                viewModel.onNameChanged("")
+            }
         )
-
         Spacer(modifier = Modifier.height(24.dp))
         ProfileOutlinedTextField(
-            viewModel.email,
-            { viewModel.onEmailChanged(it) },
-            stringResource(R.string.profile_screen_email)
+            label = stringResource(R.string.profile_screen_email),
+            value = viewModel.email,
+            onValueChanged = {viewModel.onEmailChanged(it)},
+            paddingStart = 16.dp,
+            height = 48.dp,
+            labelFontSize = 13,
+            valueFontSize = 16,
+            trailingIcon = R.drawable.ic_close_circle,
+            onClickTrailingIcon = {
+                viewModel.onEmailChanged("")
+            }
         )
         Spacer(modifier = Modifier.height(24.dp))
-//        ProfileOutlinedTextField(
-//            name,
-//            {name = it},
-//            stringResource(R.string.profile_screen_city)
-//        )
+        CityDropDownMenu(
+            value = viewModel.city,
+            onTFValueChange = {viewModel.onCityChanged(it)} ,
+            textWrapper = {
+                val lineHeightSp: TextUnit = 13.sp
+                val lineHeightDp: Dp = with(LocalDensity.current) {
+                    lineHeightSp.toDp()
+                }
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .height(48.dp)
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .align(Alignment.TopStart)
+                            .zIndex(3f)
+                    ) {
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Box(
+                            modifier = Modifier
+                                .background(MainBgColor)
+                                .zIndex(4f)
+                                .padding(horizontal = 2.dp)
+                        ) {
+                            TextRobotRegular(text = stringResource(id = R.string.profile_screen_city), color = DarkGreyColor, fontSize = 13)
+                        }
+                    }
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(48.dp - lineHeightDp.div(1.5f))
+                            .clip(
+                                RoundedCornerShape(9.dp)
+                            )
+                            .border(
+                                1.dp, BorderColor, RoundedCornerShape(9.dp)
+                            )
+                            .background(MainBgColor)
+                            .align(Alignment.BottomCenter)
+                            .zIndex(1f),
+                        contentAlignment = Alignment.CenterStart
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(end = 16.dp,start = 16.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            it()
+                            Image(
+                                painter = painterResource(id = R.drawable.arrow_down),
+                                contentDescription = " ",
+                                modifier = Modifier.height(8.dp)
+                            )
+                        }
+
+                    }
+                }
+            },
+            fontSize = 16 ,
+            itemsFontSize = 16,
+        backgroundColor = MainBgColor)
         Spacer(modifier = Modifier.height(24.dp))
-//        ProfileOutlinedTextField(
-//            name,
-//            {name = it},
-//            stringResource(R.string.profile_screen_birthday_date)
-//        )
+        ProfileDatePicker(
+            labelFontSize = 13,
+            height = 48.dp,
+            paddingStart = 16.dp,
+            label = stringResource(R.string.profile_screen_birthday_date),
+            value =viewModel.bDayDAte,
+            fontSize = 16,
+            onDateChanged = {
+                viewModel.onBDayDAteChanged(it)
+            }
+        )
         Spacer(modifier = Modifier.height(8.dp))
         SexCheckBox(viewModel)
         Spacer(modifier = Modifier.height(40.dp))
@@ -247,6 +328,93 @@ fun ProfileMainSection(
 
     }
 
+}
+
+@Composable
+fun ProfileDatePicker(
+    labelFontSize:Int,
+    height:Dp,
+    paddingStart:Dp,
+    label:String,
+    value:String,
+    fontSize:Int,
+    onDateChanged:(String)->Unit
+){
+    val calendar = Calendar.getInstance()
+    val year = calendar.get(Calendar.YEAR)
+    val month = calendar.get(Calendar.MONTH)
+    val day = calendar.get(Calendar.DAY_OF_MONTH)
+    calendar.time = Date()
+
+    val datePickerDialog = DatePickerDialog(
+        LocalContext.current,
+        { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
+            onDateChanged("$dayOfMonth.$month.$year")
+        }, year, month, day
+    )
+
+    val lineHeightSp: TextUnit = labelFontSize.sp
+    val lineHeightDp: Dp = with(LocalDensity.current) {
+        lineHeightSp.toDp()
+    }
+    Box(
+        Modifier
+            .fillMaxWidth()
+            .height(height)
+            .clickable {
+                datePickerDialog.show()
+            }
+    ) {
+        Row(
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .zIndex(3f)
+        ) {
+            Spacer(modifier = Modifier.width(paddingStart))
+            Box(
+                modifier = Modifier
+                    .background(MainBgColor)
+                    .zIndex(4f)
+                    .padding(horizontal = 2.dp)
+            ) {
+                TextRobotRegular(text = label, color = DarkGreyColor, fontSize = labelFontSize)
+            }
+        }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(height - lineHeightDp.div(1.5f))
+                .clip(
+                    RoundedCornerShape(9.dp)
+                )
+                .border(
+                    1.dp, BorderColor, RoundedCornerShape(9.dp)
+                )
+                .background(MainBgColor)
+                .align(Alignment.BottomCenter)
+                .zIndex(1f),
+            contentAlignment = Alignment.CenterStart
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(end = paddingStart),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text=value,
+                    fontFamily = FontFamily(
+                        Font(R.font.roboto_regular)
+                    ),
+                    fontSize = fontSize.sp,
+                    modifier = Modifier.padding(start = paddingStart)
+                )
+
+            }
+
+        }
+    }
 }
 
 @Composable
@@ -394,9 +562,12 @@ fun ProfileOutlinedTextField(
     onValueChanged: (String) -> Unit,
     paddingStart: Dp,
     height: Dp,
-    trailingIcon: Int,
+    trailingIcon: Int? = null,
+    onClickTrailingIcon: ()->Unit,
+    labelFontSize:Int,
+    valueFontSize:Int,
 ) {
-    val lineHeightSp: TextUnit = 12.sp
+    val lineHeightSp: TextUnit = labelFontSize.sp
     val lineHeightDp: Dp = with(LocalDensity.current) {
         lineHeightSp.toDp()
     }
@@ -415,8 +586,9 @@ fun ProfileOutlinedTextField(
                 modifier = Modifier
                     .background(MainBgColor)
                     .zIndex(4f)
+                    .padding(horizontal = 2.dp)
             ) {
-                TextRobotRegular(text = label, color = DarkGreyColor, fontSize = 12)
+                TextRobotRegular(text = label, color = DarkGreyColor, fontSize = labelFontSize)
             }
         }
         Box(
@@ -435,7 +607,9 @@ fun ProfileOutlinedTextField(
             contentAlignment = Alignment.CenterStart
         ) {
             Row(
-                modifier = Modifier.fillMaxSize().padding(end = paddingStart),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(end = paddingStart),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -443,36 +617,21 @@ fun ProfileOutlinedTextField(
                     value = value,
                     onValueChange = { onValueChanged(it) },
                     modifier = Modifier.padding(start = paddingStart),
-                    singleLine = true
+                    singleLine = true,
+                    textStyle = TextStyle(
+                        fontSize = valueFontSize.sp,
+                        fontFamily = FontFamily(
+                            Font(R.font.roboto_regular)
+                        )
+                    )
                 )
-                Image(painter = painterResource(id = trailingIcon), contentDescription = null)
+                if(trailingIcon!=null) Image(painter = painterResource(id = trailingIcon), contentDescription = null,modifier = Modifier.clickable { onClickTrailingIcon() })
             }
 
         }
     }
 }
 
-@Preview
-@Composable
-fun ProfileOutlinedTextFieldPreview() {
-    var testValue = remember {
-        mutableStateOf<String>("jopa")
-    }
-    ProfileOutlinedTextField(
-        "Test",
-        value = testValue.value,
-        onValueChanged = { testValue.value = it },
-        16.dp,
-        48.dp,
-        R.drawable.arrow_down
-    )
-}
-
-//    @Preview(showBackground = true)
-//    @Composable
-//    fun ProfileScreenPreview() {
-//        ProfileScreen({})
-//    }
 
 @Composable
 fun TextRobotRegular(text: String, color: Color, fontSize: Int) {
@@ -488,22 +647,7 @@ fun TextRobotRegular(text: String, color: Color, fontSize: Int) {
     )
 }
 
-@Composable
-fun ProfileOutlinedTextField(value: String, onValueChanged: (String) -> Unit, label: String) {
-    OutlinedTextField(
-        modifier = Modifier.fillMaxWidth(),
-        value = value,
-        onValueChange = { onValueChanged(it) },
-        label = { Text(text = label) },
-        singleLine = true,
-        shape = RoundedCornerShape(15.dp),
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            focusedBorderColor = BorderColor,
-            focusedLabelColor = DarkGreyColor,
-            cursorColor = Color.Black
-        ),
-    )
-}
+
 
 val DarkBgColor = Color(239, 235, 222)
 val BorderColor = Color(217, 217, 217)
