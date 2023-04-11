@@ -1,10 +1,8 @@
-package com.example.bookcourt.ui
+package com.example.bookcourt.ui.recommendation
 
 import android.content.ContentResolver
 import android.content.Intent
 import android.net.Uri
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -39,38 +37,32 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.example.bookcourt.R
 import com.example.bookcourt.models.metrics.DataClickMetric
-import com.example.bookcourt.ui.recommendation.NotificationRecommendation
-import com.example.bookcourt.ui.recommendation.RecomendationViewModel
-import com.example.bookcourt.ui.theme.CustomButton
+import com.example.bookcourt.ui.notifications.NotificationNothingToShow
 import com.example.bookcourt.ui.theme.MainBgColor
 import com.example.bookcourt.utils.*
 
 @Composable
-fun RecomendationScreen(onNavigateToStatistics: () -> Unit,
-                        onNavigateToProfile:()->Unit,) {
-    RecomendationContent(onNavigateToStatistics,onNavigateToProfile)
+fun RecommendationScreen(
+    onNavigateToStatistics: () -> Unit,
+    onNavigateToProfile: () -> Unit,
+) {
+    RecommendationContent(onNavigateToStatistics, onNavigateToProfile)
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun RecomendationContent(
+fun RecommendationContent(
     onNavigateToStatistics: () -> Unit,
-    onNavigateToProfile:()->Unit,
-    viewModel: RecomendationViewModel = hiltViewModel()
+    onNavigateToProfile: () -> Unit,
+    viewModel: RecommendationViewModel = hiltViewModel()
 ) {
-    var windowHeight =  LocalConfiguration.current.screenHeightDp.toFloat() * LocalDensity.current.density
 
-    var cardStackHeight = if(windowHeight > LIMIT_WINDOW_HEIGHT) 550.dp else 480.dp
-    var topBarHeight = if(windowHeight > LIMIT_WINDOW_HEIGHT) 45.dp else 30.dp
-
-    var counter = viewModel.counter
-    var limitSwipeValue = viewModel.limitSwipeValue
-    var context = LocalContext.current
-    LaunchedEffect(key1 = Unit) {
-        if (viewModel.isFirstDataLoading && viewModel.validBooks.isEmpty()) {
-            viewModel.getAllBooks(context)
-        }
-    }
+    val windowHeight =
+        LocalConfiguration.current.screenHeightDp.toFloat() * LocalDensity.current.density
+    val cardStackHeight = if (windowHeight > LIMIT_WINDOW_HEIGHT) 550.dp else 480.dp
+    val counter = viewModel.counter
+    val limitSwipeValue = viewModel.limitSwipeValue
+    val context = LocalContext.current
 
     val isNotificationDisplay = viewModel.isNotificationDisplay.collectAsState(initial = "")
 
@@ -81,296 +73,312 @@ fun RecomendationContent(
         viewModel.isFirstNotification.value = false
     }
 
-    var resources = LocalContext.current.resources
-    var imagePlaceholderUri = Uri.Builder()
+    val resources = LocalContext.current.resources
+    val imagePlaceholderUri = Uri.Builder()
         .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE)
         .authority(resources.getResourcePackageName(R.drawable.image_placeholder))
         .appendPath(resources.getResourceTypeName(R.drawable.image_placeholder))
         .appendPath(resources.getResourceEntryName(R.drawable.image_placeholder))
         .build()
 
+    LaunchedEffect(key1 = Unit) {
+        if (viewModel.isFirstDataLoading && viewModel.validBooks.isEmpty()) {
+            viewModel.getAllBooks(context)
+        }
+    }
+
     if (viewModel.dataIsReady) {
 
+        val itemsIsNotEmpty = viewModel.validBooks.isNotEmpty()
+        val frontItem =
+            if (itemsIsNotEmpty) viewModel.validBooks[viewModel.validBooks.lastIndex] else null
+        val backItem =
+            if (viewModel.validBooks.size <= 1) null else viewModel.validBooks[viewModel.validBooks.lastIndex - 1]
+        if (itemsIsNotEmpty) {
+            Box(modifier = Modifier.fillMaxSize()) {
+                if (viewModel.isFirstNotification.value) {
+                    viewModel.displayNotificationMessage()
+                    NotificationRecommendation(
+                        navigateToStatistics = {
+                            onNavigateToStatistics()
+                            viewModel.closeNotificationMessage()
+                            viewModel.isFirstNotification.value = false
 
-        Box(modifier = Modifier.fillMaxSize()) {
-            if (viewModel.isFirstNotification.value) {
-                viewModel.displayNotificationMessage()
-                NotificationRecommendation(
-                    navigateToStatistics = {
-                        onNavigateToStatistics()
-                        viewModel.closeNotificationMessage()
-                        viewModel.isFirstNotification.value = false
-
-                    },
-                    closeCallback = {
-                        viewModel.closeNotificationMessage()
-                        viewModel.isFirstNotification.value = false
-                    }
-                )
-            }
-            Column(
-                modifier = Modifier
-                    .background(MainBgColor)
-                    .blur(viewModel.blurValueRecommendationScreen.value.dp),
-                verticalArrangement = Arrangement.SpaceAround,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                if (viewModel.validBooks.isNotEmpty()) {
+                        },
+                        closeCallback = {
+                            viewModel.closeNotificationMessage()
+                            viewModel.isFirstNotification.value = false
+                        }
+                    )
+                }
+                Column(
+                    modifier = Modifier
+                        .background(MainBgColor)
+                        .blur(viewModel.blurValueRecommendationScreen.value.dp),
+                    verticalArrangement = Arrangement.SpaceAround,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
                     val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
                         bottomSheetState = rememberBottomSheetState(
                             initialValue = BottomSheetValue.Collapsed
                         )
                     )
+
                     BottomSheetScaffold(
                         sheetContent = {
-                            var item = viewModel.validBooks.last()
-                            Column(
-                                modifier = Modifier
-                                    .height(446.dp)
-                                    .padding(
-                                        start = 20.dp,
-                                        end = 20.dp,
-                                        top = 12.dp,
-                                        bottom = 10.dp
-                                    ),
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth(0.1f)
-                                        .height(2.dp)
-                                        .background(Color.Gray)
-                                        .clip(RoundedCornerShape(50))
-                                ) {}
-                                Spacer(
-                                    modifier = Modifier
-                                        .height(18.dp)
-                                        .fillMaxWidth()
-                                )
+                            if (frontItem != null) {
                                 Column(
-                                    Modifier
-                                        .fillMaxWidth()
-                                        .height(60.dp),
-                                    verticalArrangement = Arrangement.SpaceBetween,
+                                    modifier = Modifier
+                                        .height(446.dp)
+                                        .padding(
+                                            start = 20.dp,
+                                            end = 20.dp,
+                                            top = 12.dp,
+                                            bottom = 10.dp
+                                        ),
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth(0.1f)
+                                            .height(2.dp)
+                                            .background(Color.Gray)
+                                            .clip(RoundedCornerShape(50))
+                                    ) {}
+                                    Spacer(
+                                        modifier = Modifier
+                                            .height(18.dp)
+                                            .fillMaxWidth()
+                                    )
+                                    Column(
+                                        Modifier
+                                            .fillMaxWidth()
+                                            .height(60.dp),
+                                        verticalArrangement = Arrangement.SpaceBetween,
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ) {
+                                        Row(
+                                            modifier = Modifier
+                                                .padding()
+                                                .fillMaxWidth()
+                                                .fillMaxHeight(),
+                                            horizontalArrangement = Arrangement.SpaceBetween
+                                        ) {
+                                            Column {
+                                                Text(
+                                                    text = frontItem.bookInfo.title,
+                                                    color = Color.Black,
+                                                    fontSize = 16.sp,
+                                                    fontFamily = FontFamily(
+                                                        Font(
+                                                            R.font.roboto_bold,
+                                                        )
+                                                    ),
+                                                    maxLines = 1,
+                                                    overflow = TextOverflow.Ellipsis
+                                                )
+                                                Text(
+                                                    modifier = Modifier,
+                                                    text = "${frontItem.bookInfo.author}, ${frontItem.bookInfo.genre}",
+                                                    color = Color(134, 134, 134),
+                                                    fontSize = 14.sp,
+                                                    fontFamily = FontFamily(
+                                                        Font(
+                                                            R.font.roboto_regular,
+                                                        )
+                                                    )
+                                                )
+                                            }
+                                            Image(
+                                                painter = painterResource(id = R.drawable.igra_slov_logo),
+                                                contentDescription = "Logo image",
+                                                modifier = Modifier
+                                                    .height(60.dp)
+                                                    .width(60.dp)
+                                                    .clip(CircleShape),
+                                                contentScale = ContentScale.Crop
+                                            )
+
+                                        }
+
+
+                                    }
+                                    Spacer(
+                                        modifier = Modifier
+                                            .height(16.dp)
+                                            .fillMaxWidth()
+                                    )
+
                                     Row(
                                         modifier = Modifier
-                                            .padding()
                                             .fillMaxWidth()
-                                            .fillMaxHeight(),
-                                        horizontalArrangement = Arrangement.SpaceBetween
+                                            .height(40.dp),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.SpaceEvenly
                                     ) {
-                                        Column {
+                                        Column(
+                                            verticalArrangement = Arrangement.Center,
+                                            horizontalAlignment = Alignment.CenterHorizontally
+                                        ) {
                                             Text(
-                                                text = item.bookInfo.title,
+                                                text = "423",
                                                 color = Color.Black,
-                                                fontSize = 16.sp,
                                                 fontFamily = FontFamily(
                                                     Font(
-                                                        R.font.roboto_bold,
+                                                        R.font.roboto_medium,
                                                     )
                                                 ),
-                                                maxLines = 1,
-                                                overflow = TextOverflow.Ellipsis
+                                                fontSize = 14.sp
                                             )
                                             Text(
-                                                modifier = Modifier,
-                                                text = "${item.bookInfo.author}, ${item.bookInfo.genre}",
+                                                text = "Лайки",
                                                 color = Color(134, 134, 134),
-                                                fontSize = 14.sp,
                                                 fontFamily = FontFamily(
                                                     Font(
-                                                        R.font.roboto_regular,
+                                                        R.font.roboto_medium,
                                                     )
-                                                )
+                                                ),
+                                                fontSize = 14.sp
                                             )
                                         }
-                                        Image(
-                                            painter = painterResource(id = R.drawable.igra_slov_logo),
-                                            contentDescription = "Logo image",
-                                            modifier = Modifier
-                                                .height(60.dp)
-                                                .width(60.dp)
-                                                .clip(CircleShape),
-                                            contentScale = ContentScale.Crop
-                                        )
-
-                                    }
-
-
-                                }
-                                Spacer(
-                                    modifier = Modifier
-                                        .height(16.dp)
-                                        .fillMaxWidth()
-                                )
-
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(40.dp),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.SpaceEvenly
-                                ) {
-                                    Column(
-                                        verticalArrangement = Arrangement.Center,
-                                        horizontalAlignment = Alignment.CenterHorizontally
-                                    ) {
-                                        Text(
-                                            text = "423",
-                                            color = Color.Black,
-                                            fontFamily = FontFamily(
-                                                Font(
-                                                    R.font.roboto_medium,
-                                                )
-                                            ),
-                                            fontSize = 14.sp
-                                        )
-                                        Text(
-                                            text = "Лайки",
-                                            color = Color(134, 134, 134),
-                                            fontFamily = FontFamily(
-                                                Font(
-                                                    R.font.roboto_medium,
-                                                )
-                                            ),
-                                            fontSize = 14.sp
-                                        )
-                                    }
-                                    Column(
-                                        verticalArrangement = Arrangement.Center,
-                                        horizontalAlignment = Alignment.CenterHorizontally
-                                    ) {
-                                        Text(
-                                            text = item.bookInfo.rate.toString(),
-                                            color = Color.Black,
-                                            fontFamily = FontFamily(
-                                                Font(
-                                                    R.font.roboto_medium,
-                                                )
-                                            ),
-                                            fontSize = 14.sp
-                                        )
-                                        Text(
-                                            text = "Оценка",
-                                            color = Color(134, 134, 134),
-                                            fontFamily = FontFamily(
-                                                Font(
-                                                    R.font.roboto_medium,
-                                                )
-                                            ),
-                                            fontSize = 14.sp
-                                        )
-                                    }
-                                    Column(
-                                        verticalArrangement = Arrangement.Center,
-                                        horizontalAlignment = Alignment.CenterHorizontally
-                                    ) {
-                                        Text(
-                                            text = item.bookInfo.numberOfPages,
-                                            color = Color.Black,
-                                            fontFamily = FontFamily(
-                                                Font(
-                                                    R.font.roboto_medium,
-                                                )
-                                            ),
-                                            fontSize = 14.sp
-                                        )
-                                        Text(
-                                            text = "Страниц",
-                                            color = Color(134, 134, 134),
-                                            fontFamily = FontFamily(
-                                                Font(
-                                                    R.font.roboto_medium,
-                                                )
-                                            ),
-                                            fontSize = 14.sp
-                                        )
-                                    }
-                                }
-                                Spacer(
-                                    modifier = Modifier
-                                        .height(16.dp)
-                                        .fillMaxWidth()
-                                )
-                                Column(modifier = Modifier.height(134.dp)) {
-                                    Text(
-                                        text = "Описание",
-                                        color = Color.Black,
-                                        fontFamily = FontFamily(
-                                            Font(
-                                                R.font.roboto_bold,
-                                            )
-                                        ),
-                                        fontSize = 16.sp,
-                                        modifier = Modifier.padding(bottom = 2.dp)
-                                    )
-                                    Text(
-                                        text = item.bookInfo.description,
-                                        fontFamily = FontFamily(
-                                            Font(
-                                                R.font.roboto_regular,
-                                            )
-                                        ),
-                                        fontSize = 16.sp,
-                                        color = Color.Black,
-                                        maxLines = 5,
-                                        overflow = TextOverflow.Ellipsis
-                                    )
-                                }
-                                Spacer(
-                                    modifier = Modifier
-                                        .height(16.dp)
-                                        .fillMaxWidth()
-                                )
-                                Box( // Поменять на CustomButton
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(48.dp)
-                                        .clip(RoundedCornerShape(65))
-                                        .background(Color(252, 225, 129))
-                                        .padding(top = 12.dp, bottom = 12.dp)
-                                        .clickable(
-                                            interactionSource = remember { MutableInteractionSource() },
-                                            indication = rememberRipple(color = Color.Black),
+                                        Column(
+                                            verticalArrangement = Arrangement.Center,
+                                            horizontalAlignment = Alignment.CenterHorizontally
                                         ) {
-
-                                            DataClickMetric(
-                                                Buttons.BUY_BOOK, Screens.Recommendation.route
+                                            Text(
+                                                text = frontItem.bookInfo.rate.toString(),
+                                                color = Color.Black,
+                                                fontFamily = FontFamily(
+                                                    Font(
+                                                        R.font.roboto_medium,
+                                                    )
+                                                ),
+                                                fontSize = 14.sp
                                             )
-
-                                            val sendIntent: Intent = Intent(
-                                                Intent.ACTION_VIEW, Uri.parse(
-                                                    item.buyUri
-                                                )
+                                            Text(
+                                                text = "Оценка",
+                                                color = Color(134, 134, 134),
+                                                fontFamily = FontFamily(
+                                                    Font(
+                                                        R.font.roboto_medium,
+                                                    )
+                                                ),
+                                                fontSize = 14.sp
                                             )
-                                            val webIntent = Intent.createChooser(sendIntent, null)
-                                            context.startActivity(webIntent)
-                                        },
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Text(
-                                        text = "Посмотреть в магазине",
-                                        color = Color.Black,
-                                        fontFamily = FontFamily(
-                                            Font(
-                                                R.font.roboto_regular,
+                                        }
+                                        Column(
+                                            verticalArrangement = Arrangement.Center,
+                                            horizontalAlignment = Alignment.CenterHorizontally
+                                        ) {
+                                            Text(
+                                                text = frontItem.bookInfo.numberOfPages,
+                                                color = Color.Black,
+                                                fontFamily = FontFamily(
+                                                    Font(
+                                                        R.font.roboto_medium,
+                                                    )
+                                                ),
+                                                fontSize = 14.sp
                                             )
-                                        ),
-                                        fontSize = 16.sp,
+                                            Text(
+                                                text = "Страниц",
+                                                color = Color(134, 134, 134),
+                                                fontFamily = FontFamily(
+                                                    Font(
+                                                        R.font.roboto_medium,
+                                                    )
+                                                ),
+                                                fontSize = 14.sp
+                                            )
+                                        }
+                                    }
+                                    Spacer(
+                                        modifier = Modifier
+                                            .height(16.dp)
+                                            .fillMaxWidth()
                                     )
-                                }
+                                    Column(modifier = Modifier.height(134.dp)) {
+                                        Text(
+                                            text = "Описание",
+                                            color = Color.Black,
+                                            fontFamily = FontFamily(
+                                                Font(
+                                                    R.font.roboto_bold,
+                                                )
+                                            ),
+                                            fontSize = 16.sp,
+                                            modifier = Modifier.padding(bottom = 2.dp)
+                                        )
+                                        Text(
+                                            text = frontItem.bookInfo.description,
+                                            fontFamily = FontFamily(
+                                                Font(
+                                                    R.font.roboto_regular,
+                                                )
+                                            ),
+                                            fontSize = 16.sp,
+                                            color = Color.Black,
+                                            maxLines = 5,
+                                            overflow = TextOverflow.Ellipsis
+                                        )
+                                    }
+                                    Spacer(
+                                        modifier = Modifier
+                                            .height(16.dp)
+                                            .fillMaxWidth()
+                                    )
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .height(48.dp)
+                                            .clip(RoundedCornerShape(65))
+                                            .background(Color(252, 225, 129))
+                                            .padding(top = 12.dp, bottom = 12.dp)
+                                            .clickable(
+                                                interactionSource = remember { MutableInteractionSource() },
+                                                indication = rememberRipple(color = Color.Black),
+                                            ) {
 
+                                                DataClickMetric(
+                                                    Buttons.BUY_BOOK,
+                                                    Screens.Recommendation.route
+                                                )
+
+                                                val sendIntent = Intent(
+                                                    Intent.ACTION_VIEW, Uri.parse(
+                                                        frontItem.buyUri
+                                                    )
+                                                )
+                                                val webIntent =
+                                                    Intent.createChooser(sendIntent, null)
+                                                context.startActivity(webIntent)
+                                            },
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = "Посмотреть в магазине",
+                                            color = Color.Black,
+                                            fontFamily = FontFamily(
+                                                Font(
+                                                    R.font.roboto_regular,
+                                                )
+                                            ),
+                                            fontSize = 16.sp,
+                                        )
+                                    }
+
+                                }
                             }
+
 
                         },
                         sheetElevation = 5.dp,
                         sheetShape = RoundedCornerShape(topStart = 23.dp, topEnd = 23.dp),
-                        sheetPeekHeight = if(windowHeight>LIMIT_WINDOW_HEIGHT) 175.dp else 155.dp,
-                        scaffoldState = bottomSheetScaffoldState
+                        sheetPeekHeight = if (windowHeight > LIMIT_WINDOW_HEIGHT) 175.dp else 155.dp,
+                        scaffoldState = bottomSheetScaffoldState,
+                        sheetGesturesEnabled = !viewModel.isFirstNotification.value
                     ) {
-                        Box(modifier = Modifier.background(MainBgColor)){
+                        Box(modifier = Modifier.background(MainBgColor)) {
                             if (bottomSheetScaffoldState.bottomSheetState.isExpanded) {
                                 Box(
                                     modifier = Modifier
@@ -380,10 +388,22 @@ fun RecomendationContent(
                                         .zIndex(5f)
                                 )
                             }
-                            Column() {
-                                Row(horizontalArrangement = Arrangement.End,modifier = Modifier.fillMaxWidth()){
+                            Column {
+                                Row(
+                                    horizontalArrangement = Arrangement.End,
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
                                     Box(modifier = Modifier
-                                        .clickable {
+                                        .clickable(
+                                            enabled = !viewModel.isFirstNotification.value
+                                        ) {
+                                            viewModel.metricClick(
+                                                DataClickMetric(
+                                                    button = "ProfileButton",
+                                                    screen = "Recommendation"
+                                                )
+                                            )
+                                            viewModel.metricScreenTime()
                                             onNavigateToProfile()
                                         }
                                         .size(45.dp)
@@ -399,18 +419,16 @@ fun RecomendationContent(
                                         )
                                     }
                                 }
-
-
-                                Spacer(modifier = Modifier.height(if(windowHeight > LIMIT_WINDOW_HEIGHT) 25.dp else 15.dp))
+                                Spacer(modifier = Modifier.height(if (windowHeight > LIMIT_WINDOW_HEIGHT) 25.dp else 15.dp))
                                 CardStack(
                                     modifier = Modifier.height(cardStackHeight),
                                     user = viewModel.user,
-                                    itemsRaw = viewModel.validBooks,
+                                    frontItem = frontItem,
+                                    backItem = backItem,
                                     onSwipeLeft = {
                                         with(viewModel) {
                                             metricSwipeLeft(it)
                                             validBooks.remove(it)
-                                            // counter += 1
                                         }
                                         viewModel.counter += 1
 
@@ -419,7 +437,6 @@ fun RecomendationContent(
                                         with(viewModel) {
                                             metricSwipeRight(it)
                                             validBooks.remove(it)
-                                            // counter += 1
                                         }
                                         viewModel.counter += 1
 
@@ -428,7 +445,6 @@ fun RecomendationContent(
                                         with(viewModel) {
                                             metricSwipeTop(it)
                                             validBooks.remove(it)
-                                            // counter += 1
                                         }
                                         viewModel.counter += 1
 
@@ -437,12 +453,11 @@ fun RecomendationContent(
                                         with(viewModel) {
                                             metricSwipeDown(it)
                                             validBooks.remove(it)
-                                            // counter += 1
                                         }
                                         viewModel.counter += 1
 
                                     },
-                                    onNavigateToStatistics = onNavigateToStatistics
+                                    disableDraggable = viewModel.isFirstNotification.value
                                 )
                                 Box(
                                     modifier = Modifier
@@ -453,27 +468,15 @@ fun RecomendationContent(
                         }
 
                     }
-                } else {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(start = 24.dp, end = 24.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CustomButton(text = "Посмотреть статистику") {
-                            viewModel.metricClick(
-                                DataClickMetric(
-                                    Buttons.OPEN_STATS,
-                                    Screens.Recommendation.route
-                                )
-                            )
-                            viewModel.metricScreenTime()
-                            onNavigateToStatistics()
-                        }
-                    }
+
                 }
 
             }
+        } else {
+            NotificationNothingToShow(
+                title = "На этом пока всё",
+                text = "Вы можете ознакомиться с вашей статистикой пока мы подберем для вас новые книги"
+            )
         }
 
     } else {
