@@ -29,24 +29,35 @@ fun SplashScreen(
     }
     val rememberMeState = mViewModel.rememberMeState.collectAsState(initial = "")
     val rememberTutorState = mViewModel.rememberTutorState.collectAsState(initial = "")
+    val rememberVerificationState = mViewModel.rememberVerificationState.collectAsState(initial = "")
+    val rememberCategorySelectionState = mViewModel.rememberCategorySelectionState.collectAsState(initial = "")
 
-    var alphaAnim = animateFloatAsState(
+    val alphaAnim = animateFloatAsState(
         targetValue = if (startAnimation) 1f else 0f,
         animationSpec = tween(
             durationMillis = 1000
         )
     )
     LaunchedEffect(key1 = true) {
+        navController.popBackStack()
         startAnimation = true
         delay(2000)
-        if (rememberMeState.value == true && rememberTutorState.value == true) {
-            navController.popBackStack()
-            navController.navigate(Graph.BOTTOM_NAV_GRAPH)
-        } else if (rememberMeState.value == true && rememberTutorState.value == false) {
-            navController.popBackStack()
-            navController.navigate(route = Screens.Tutorial.route)
+
+        if (rememberMeState.value == true) {
+            if (rememberVerificationState.value == true) {
+                if (rememberTutorState.value == true) {
+                    if (rememberCategorySelectionState.value == true) {
+                        navController.navigate(Graph.BOTTOM_NAV_GRAPH)
+                    } else {
+                        navController.navigate(route = Screens.CategorySelection.route)
+                    }
+                } else {
+                    navController.navigate(route = Screens.Tutorial.route)
+                }
+            } else {
+                navController.navigate(route = Screens.VerificationCode.route)
+            }
         } else {
-            navController.popBackStack()
             navController.navigate(route = Screens.SignIn.route)
         }
     }

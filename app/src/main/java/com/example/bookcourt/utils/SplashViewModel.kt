@@ -12,4 +12,6 @@ class SplashViewModel  @Inject constructor(
 
     val rememberMeState = dataStoreRepository.getBoolPref(DataStoreRepository.isRemembered)
     val rememberTutorState = dataStoreRepository.getBoolPref(DataStoreRepository.isTutorChecked)
+    val rememberVerificationState = dataStoreRepository.getBoolPref(DataStoreRepository.isCodeVerificated)
+    val rememberCategorySelectionState = dataStoreRepository.getBoolPref(DataStoreRepository.isCategoriesSelected)
 }

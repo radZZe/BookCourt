@@ -91,6 +91,8 @@ object Buttons {
     const val STATS_NOTIFICATION = "Check Stats"
     const val SIGN_IN = "Sign In"
     const val CHECK_TUTOR = "Check Tutor"
+    const val VERIFY_CODE = "Verify Code"
+    const val CATEGORIES_SELECTION = "Pick Categories"
 }
 
 object AppVersion {

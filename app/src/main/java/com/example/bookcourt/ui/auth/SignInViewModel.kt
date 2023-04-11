@@ -92,18 +92,25 @@ class SignInViewModel @Inject constructor(
                  onNavigateToTutorial: () -> Unit, context:Context) {
         isLoading = true
         viewModelScope.launch(Dispatchers.IO) {
-            val UUID = hashing.getHash("AB$name$phoneNumber".toByteArray(), "SHA256")
-            val user = User(
-                uid = UUID,
-                email = email,
-                city = city,
-                readBooksList = mutableListOf(),
-                wantToRead = mutableListOf()
-            )
-            editPrefs(UUID)
+            if (dataStoreRepository.getBoolPref(isRemembered).first()) {
+                val userId = dataStoreRepository.getPref(uuid)
+                val user = userRepositoryI.loadData(userId.first())!!
+                user.email = email
+                userRepositoryI.updateData(user)
+            } else {
+                val UUID = hashing.getHash("AB$name$phoneNumber".toByteArray(), "SHA256")
+                val user = User(
+                    uid = UUID,
+                    email = email,
+                    city = city,
+                    readBooksList = mutableListOf(),
+                    wantToRead = mutableListOf()
+                )
+                userRepositoryI.saveData(user)
+                sendUserMetric(context,name,surname,phoneNumber,city, UUID)
+                editPrefs(UUID)
+            }
             sendMetrics()
-            userRepositoryI.saveData(user)
-            sendUserMetric(context,name,surname,phoneNumber,city,UUID)
             withContext(Dispatchers.Main){
                 if (isTutorChecked.first()) {
                     onNavigateToCategorySelection()
