@@ -7,6 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookcourt.data.repositories.DataStoreRepository
 import com.example.bookcourt.data.user.UserRepositoryI
+import com.example.bookcourt.models.book.Book
+import com.example.bookcourt.models.user.Sex
 import com.example.bookcourt.models.user.User
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -20,19 +22,27 @@ class ProfileViewModel @Inject constructor(
     private val userRepositoryI: UserRepositoryI
 ):ViewModel(){
 
+    val user:Flow<User> = flow{
+        val data = getUser()
+        emit(data)
+    }.shareIn(
+        scope = viewModelScope,
+        replay = 1,
+        started = SharingStarted.WhileSubscribed(),
+    )
+
     init {
-        val user: Flow<User> = flow{
-            val data = getUser()
-            emit(data)
-        }
         viewModelScope.launch(Dispatchers.IO) {
             user.collect{
+                userId = it.uid
                 name = it.name ?: ""
                 email = it.email
                 city = it.city
-                bDayDAte = it.dayBD?:""
-                sex = it.sex?:""
+                date = it.dayBD ?:""
+                sex = it.sex
                 profileImage = it.image?.toUri()
+                readBooksList = it.readBooksList
+                wantToRead = it.wantToRead
             }
         }
 
@@ -44,12 +54,14 @@ class ProfileViewModel @Inject constructor(
         val userId = dataStoreRepository.getPref(DataStoreRepository.uuid)
         return userRepositoryI.loadData(userId.first())!!
     }
-
+    var readBooksList = mutableListOf<Book>()
+    private var wantToRead = mutableListOf<Book>()
+    private var userId by mutableStateOf("")
     var name  by mutableStateOf("")
     var email  by mutableStateOf("")
     var city  by mutableStateOf("")
-    var bDayDAte by mutableStateOf("")
-    var sex by mutableStateOf( "")
+    var date by mutableStateOf("")
+    var sex by mutableStateOf<Sex?>( null)
     var profileImage by mutableStateOf<Uri?>(null)
 
     fun onNameChanged(newText:String){
@@ -65,15 +77,33 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun onBDayDAteChanged(newText:String){
-        bDayDAte = newText
+        date = newText
     }
 
-    fun onSexChanged(newText: String){
+    fun onSexChanged(newText: Sex){
         sex = newText
     }
 
     fun onProfileImageChanged(newUri: Uri?){
         profileImage = newUri
+    }
+
+    fun saveUserData(){
+        viewModelScope.launch(Dispatchers.IO) {
+            val user = User(
+                uid = userId,
+                name = name,
+                email = email,
+                city = city,
+                image = profileImage.toString(),
+                dayBD = date,
+                sex = sex,
+                readBooksList = readBooksList,
+                wantToRead = wantToRead
+            )
+            userRepositoryI.updateData(user)
+        }
+
     }
 
 

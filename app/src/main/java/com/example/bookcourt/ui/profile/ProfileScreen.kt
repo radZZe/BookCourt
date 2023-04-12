@@ -1,4 +1,4 @@
-package com.example.bookcourt.ui
+package com.example.bookcourt.ui.profile
 
 import android.app.DatePickerDialog
 import android.content.ContentResolver
@@ -35,7 +35,7 @@ import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.example.bookcourt.R
-import com.example.bookcourt.ui.profile.ProfileViewModel
+import com.example.bookcourt.models.user.Sex
 import com.example.bookcourt.ui.theme.*
 import java.util.*
 
@@ -54,7 +54,7 @@ fun ProfileScreen(
         Spacer(modifier = Modifier.height(60.dp))
         ProfileMainSection(viewModel)
         Spacer(modifier = Modifier.height(60.dp))
-        ProfileBottomSection()
+        ProfileBottomSection(viewModel)
     }
 }
 
@@ -75,7 +75,7 @@ fun ProfileTopSection(modifier: Modifier, onNavigateToRecommendation: () -> Unit
                 contentDescription = "arrow_left"
             )
             Spacer(modifier = Modifier.width(16.dp))
-            TextRobotRegular(
+            TextRobotoRegular(
                 text = stringResource(R.string.profile_screen_profile),
                 color = Color.Black,
                 fontSize = 18,
@@ -95,8 +95,6 @@ fun ProfileTopSection(modifier: Modifier, onNavigateToRecommendation: () -> Unit
 fun ProfileMainSection(
     viewModel: ProfileViewModel
 ) {
-
-
 
     val resources = LocalContext.current.resources
 
@@ -192,7 +190,7 @@ fun ProfileMainSection(
                                 .zIndex(4f)
                                 .padding(horizontal = 2.dp)
                         ) {
-                            TextRobotRegular(text = stringResource(id = R.string.profile_screen_city), color = DarkGreyColor, fontSize = 13)
+                            TextRobotoRegular(text = stringResource(id = R.string.profile_screen_city), color = DarkGreyColor, fontSize = 13)
                         }
                     }
                     Box(
@@ -237,7 +235,7 @@ fun ProfileMainSection(
             height = 48.dp,
             paddingStart = 16.dp,
             label = stringResource(R.string.profile_screen_birthday_date),
-            value =viewModel.bDayDAte,
+            value =viewModel.date,
             fontSize = 16,
             onDateChanged = {
                 viewModel.onBDayDAteChanged(it)
@@ -246,7 +244,7 @@ fun ProfileMainSection(
         Spacer(modifier = Modifier.height(8.dp))
         SexCheckBox(viewModel)
         Spacer(modifier = Modifier.height(40.dp))
-        Column() {
+        Column {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
@@ -254,14 +252,14 @@ fun ProfileMainSection(
                     .height(56.dp)
                     .fillMaxWidth()
             ) {
-                Row() {
-                    TextRobotRegular(
+                Row {
+                    TextRobotoRegular(
                         text = stringResource(R.string.profile_screen_push_notification),
                         color = DarkGreyColor,
                         fontSize = 16,
                     )
                     Spacer(modifier = Modifier.width(3.dp))
-                    TextRobotRegular(
+                    TextRobotoRegular(
                         text = stringResource(R.string.profile_screen_soon),
                         color = linkColor,
                         fontSize = 16,
@@ -285,7 +283,7 @@ fun ProfileMainSection(
                     .height(56.dp)
                     .fillMaxWidth()
             ) {
-                TextRobotRegular(
+                TextRobotoRegular(
                     text = stringResource(R.string.profile_screen_report_the_problem),
                     color = Color.Black,
                     fontSize = 16,
@@ -308,7 +306,7 @@ fun ProfileMainSection(
                     .height(56.dp)
                     .fillMaxWidth()
             ) {
-                TextRobotRegular(
+                TextRobotoRegular(
                     text = stringResource(R.string.profile_screen_legal_information),
                     color = Color.Black,
                     fontSize = 16,
@@ -348,8 +346,8 @@ fun ProfileDatePicker(
 
     val datePickerDialog = DatePickerDialog(
         LocalContext.current,
-        { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
-            onDateChanged("$dayOfMonth.$month.$year")
+        { _: DatePicker, selectedYear: Int, selectedMonth: Int, selectedDay: Int ->
+            onDateChanged("$selectedDay.$selectedMonth.$selectedYear")
         }, year, month, day
     )
 
@@ -377,7 +375,7 @@ fun ProfileDatePicker(
                     .zIndex(4f)
                     .padding(horizontal = 2.dp)
             ) {
-                TextRobotRegular(text = label, color = DarkGreyColor, fontSize = labelFontSize)
+                TextRobotoRegular(text = label, color = DarkGreyColor, fontSize = labelFontSize)
             }
         }
         Box(
@@ -420,7 +418,7 @@ fun ProfileDatePicker(
 @Composable
 fun SexCheckBox(viewModel: ProfileViewModel) {
     Row(horizontalArrangement = Arrangement.Start, modifier = Modifier.fillMaxWidth()) {
-        TextRobotRegular(
+        TextRobotoRegular(
             text = stringResource(R.string.profile_screen_sex),
             color = DarkGreyColor,
             fontSize = 14,
@@ -454,14 +452,14 @@ fun SexCheckBox(viewModel: ProfileViewModel) {
                         bottomRight = 0.dp
                     )
                 )
-                .background(if (viewModel.sex != MALE) MainBgColor else DarkBgColor)
+                .background(if (viewModel.sex != Sex.MALE) MainBgColor else DarkBgColor)
                 .clickable {
-                    viewModel.onSexChanged(MALE)
+                    viewModel.onSexChanged(Sex.MALE)
                 },
             contentAlignment = Alignment.Center
         ) {
-            TextRobotRegular(
-                text = MALE,
+            TextRobotoRegular(
+                text = stringResource(R.string.profile_screen_male),
                 color = Color.Black,
                 fontSize = 14,
             )
@@ -486,14 +484,14 @@ fun SexCheckBox(viewModel: ProfileViewModel) {
                         bottomRight = 15.dp
                     )
                 )
-                .background(if (viewModel.sex != FEMALE) MainBgColor else DarkBgColor)
+                .background(if (viewModel.sex != Sex.FEMALE) MainBgColor else DarkBgColor)
                 .clickable {
-                    viewModel.onSexChanged(FEMALE)
+                    viewModel.onSexChanged(Sex.FEMALE)
                 },
             contentAlignment = Alignment.Center
         ) {
-            TextRobotRegular(
-                text = FEMALE,
+            TextRobotoRegular(
+                text = stringResource(R.string.profile_screen_female),
                 color = Color.Black,
                 fontSize = 14,
             )
@@ -502,7 +500,7 @@ fun SexCheckBox(viewModel: ProfileViewModel) {
 }
 
 @Composable
-fun ProfileBottomSection() {
+fun ProfileBottomSection(viewModel: ProfileViewModel) {
     Column(
         modifier = Modifier.padding(horizontal = 17.dp),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -511,7 +509,7 @@ fun ProfileBottomSection() {
             text = stringResource(R.string.profile_screen_save),
             textColor = Color.Black,
             color = LightYellowBtn,
-            onCLick = {}
+            onCLick = {viewModel.saveUserData()}
             //TODO
         )
         Spacer(Modifier.height(12.dp))
@@ -531,7 +529,7 @@ fun ProfileBottomSection() {
                     modifier = Modifier.clickable { }  //TODO
                 )
                 Spacer(Modifier.width(12.dp))
-                TextRobotRegular(
+                TextRobotoRegular(
                     text = stringResource(R.string.profile_screen_rate_us),
                     color = Color.Black,
                     fontSize = 16,
@@ -540,13 +538,13 @@ fun ProfileBottomSection() {
 
         }
         Spacer(Modifier.height(24.dp))
-        TextRobotRegular(
+        TextRobotoRegular(
             text = stringResource(R.string.profile_screen_logOut),
             color = logOutColor,
             fontSize = 16,
         )
         Spacer(Modifier.height(42.dp))
-        TextRobotRegular(
+        TextRobotoRegular(
             stringResource(R.string.profile_screen_version),
             DarkGreyColor,
             14
@@ -588,7 +586,7 @@ fun ProfileOutlinedTextField(
                     .zIndex(4f)
                     .padding(horizontal = 2.dp)
             ) {
-                TextRobotRegular(text = label, color = DarkGreyColor, fontSize = labelFontSize)
+                TextRobotoRegular(text = label, color = DarkGreyColor, fontSize = labelFontSize)
             }
         }
         Box(
@@ -633,28 +631,10 @@ fun ProfileOutlinedTextField(
 }
 
 
-@Composable
-fun TextRobotRegular(text: String, color: Color, fontSize: Int) {
-    Text(
-        text = text,
-        color = color,
-        fontSize = fontSize.sp,
-        fontFamily = FontFamily(
-            Font(
-                R.font.roboto_regular
-            )
-        )
-    )
-}
-
-
-
 val DarkBgColor = Color(239, 235, 222)
 val BorderColor = Color(217, 217, 217)
 val DarkGreyColor = Color(140, 140, 140)
 val linkColor = Color(14, 125, 255)
 val logOutColor = Color(252, 87, 59)
-const val MALE = "Мужской"
-const val FEMALE = "Женский"
 
 

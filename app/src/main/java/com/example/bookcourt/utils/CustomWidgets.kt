@@ -7,9 +7,6 @@ import android.graphics.Canvas
 import android.net.Uri
 import android.view.View
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -36,7 +33,6 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -44,15 +40,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.zIndex
 import com.example.bookcourt.R
-import com.example.bookcourt.ui.statistics.*
 import com.example.bookcourt.utils.BitmapUtils
 import com.example.bookcourt.utils.Constants
-import com.example.bookcourt.utils.Constants.OTHER_CITY
-import com.example.bookcourt.utils.Constants.cities
-import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.PagerState
-import kotlinx.coroutines.delay
 import java.util.*
 
 
@@ -207,9 +196,7 @@ fun CityDropDownMenu(
     backgroundColor: Color,
 ) {
 
-    var textFieldValue by remember {
-        mutableStateOf(value)
-    }
+    var textFieldValue = value
 
     var isAvailable by remember {
         mutableStateOf(false)
@@ -329,6 +316,20 @@ fun CityDropDownMenu(
             }
         }
     }
+}
+
+@Composable
+fun TextRobotoRegular(text: String, color: Color, fontSize: Int) {
+    Text(
+        text = text,
+        color = color,
+        fontSize = fontSize.sp,
+        fontFamily = FontFamily(
+            Font(
+                R.font.roboto_regular
+            )
+        )
+    )
 }
 
 

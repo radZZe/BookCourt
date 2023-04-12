@@ -33,4 +33,8 @@
     <string name="profile_screen_rate_us">Оценить нас</string>
     <string name="profile_screen_logOut">Выйти</string>
     <string name="profile_screen_version">BookCourt v1.1</string>
+    <string name="male">Мужской</string>
+    <string name="fff">fdsfs</string>
+    <string name="profile_screen_female">Женский</string>
+    <string name="profile_screen_male">Мужской</string>
 </resources>
