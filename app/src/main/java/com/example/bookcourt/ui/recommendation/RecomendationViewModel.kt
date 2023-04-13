@@ -18,6 +18,7 @@ import com.example.bookcourt.models.user.User
 import com.example.bookcourt.utils.MetricType
 import com.example.bookcourt.utils.MetricType.SKIP_BOOK
 import com.example.bookcourt.utils.MetricType.DISLIKE_BOOK
+import com.example.bookcourt.utils.ResultTask
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -66,6 +67,24 @@ class RecomendationViewModel @Inject constructor(
         }
     }
 
+    fun getAllBooksRemote() {
+        fetchJob?.cancel()
+        fetchJob = viewModelScope.launch(Dispatchers.IO) {
+            user = getUser()
+            val allBooksRemote = networkRepository.getAllBooksRemote()//convertBooksJsonToList(context)
+            if (allBooksRemote is ResultTask.Success && allBooksRemote.data!=null){
+                allBooksRemote.data.map { it.toBook() }.also {
+                    booksValidation(user, it)
+                }
+                isFirstDataLoading = false
+                dataIsReady = true
+            }
+            else{
+                //TODO(негативный сценарий)
+            }
+
+        }
+    }
     fun getAllBooks(context: Context) {
         fetchJob?.cancel()
         fetchJob = viewModelScope.launch(Dispatchers.IO) {

@@ -1,18 +1,13 @@
 package com.example.bookcourt.data.repositories
-
-import android.app.Application
 import android.content.Context
-import androidx.compose.ui.platform.LocalContext
-import kotlinx.serialization.json.Json
-import okhttp3.*
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import java.io.File
-import java.nio.charset.Charset
+import com.example.bookcourt.data.api.BooksApi
+import com.example.bookcourt.models.BookRemote
+import com.example.bookcourt.utils.ResultTask
 import javax.inject.Inject
 
 
 class NetworkRepository @Inject constructor(
-    private val client: OkHttpClient
+    private val booksApi: BooksApi
 ) {
     // TODO Сделать два источника данных кэш и сеть , для них сделать репозитории
     suspend fun getAllBooks(context: Context):String?{
@@ -27,6 +22,15 @@ class NetworkRepository @Inject constructor(
 //        val response = client.newCall(request).execute()
 //        return response.body?.string()
         return json
+    }
+
+    suspend fun getAllBooksRemote():ResultTask<List<BookRemote>>{
+       val response =  try {
+            ResultTask.Success(data = booksApi.fetchBooks())
+        }catch (e:java.lang.Exception){
+            ResultTask.Error(message = e.message)
+        }
+        return response
     }
 
     suspend fun getUserData(context: Context):String{
