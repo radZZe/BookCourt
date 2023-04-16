@@ -14,8 +14,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -27,8 +25,9 @@ open class BookCardController(
     private val screenWidth: Float,
     private val screenHeight: Float,
     internal val animationSpec: AnimationSpec<Float> = SwipeableDefaults.AnimationSpec,
-    val viewModel: CardStackViewModel
 ) {
+
+    var isInAnimation = false
 
     val right = Offset(screenWidth, 0f)
     val center = Offset(0f, 0f)
@@ -40,7 +39,7 @@ open class BookCardController(
     val offsetX = Animatable(0f)
     val offsetY = Animatable(0f)
     val rotation = Animatable(0f)
-    val visibility_first = Animatable(1f)
+    val visibilityFirst = Animatable(1f)
 
 
     val likeIconSize = Animatable(16.0f)
@@ -72,9 +71,9 @@ open class BookCardController(
     fun swipeLeft() {
         scope.apply {
             launch {
-
+                isInAnimation = true
                 offsetX.animateTo(-screenWidth, animationSpec)
-                visibility_first.animateTo(
+                visibilityFirst.animateTo(
                     targetValue = 0f,
                     animationSpec = tween(durationMillis = 200, easing = LinearEasing)
                 )
@@ -89,7 +88,7 @@ open class BookCardController(
                     rotation.snapTo(0f)
                 }
                 launch {
-                    visibility_first.snapTo(1f)
+                    visibilityFirst.snapTo(1f)
                 }
                 launch {
                     dislikeIconSize.snapTo(20.0f)
@@ -97,6 +96,7 @@ open class BookCardController(
                 launch {
                     dislikeIconAlpha.snapTo(0f)
                 }
+                isInAnimation = false
 
             }
         }
@@ -105,9 +105,9 @@ open class BookCardController(
     fun swipeRight() {
         scope.apply {
             launch {
-
+                isInAnimation = true
                 offsetX.animateTo(screenWidth, animationSpec)
-                visibility_first.animateTo(
+                visibilityFirst.animateTo(
                     targetValue = 0f,
                     animationSpec = tween(durationMillis = 200, easing = LinearEasing)
                 )
@@ -122,7 +122,7 @@ open class BookCardController(
                     rotation.snapTo(0f)
                 }
                 launch {
-                    visibility_first.snapTo(1f)
+                    visibilityFirst.snapTo(1f)
                 }
                 launch {
                     likeIconSize.animateTo(
@@ -133,6 +133,7 @@ open class BookCardController(
                 launch {
                     likeIconAlpha.snapTo(0f)
                 }
+                isInAnimation = false
             }
         }
     }
@@ -140,9 +141,9 @@ open class BookCardController(
     fun swipeUp() {
         scope.apply {
             launch {
-
+                isInAnimation = true
                 offsetY.animateTo(-screenHeight, animationSpec)
-                visibility_first.animateTo(
+                visibilityFirst.animateTo(
                     targetValue = 0f,
                     animationSpec = tween(durationMillis = 200, easing = LinearEasing)
                 )
@@ -157,7 +158,7 @@ open class BookCardController(
                     rotation.snapTo(0f)
                 }
                 launch {
-                    visibility_first.snapTo(1f)
+                    visibilityFirst.snapTo(1f)
                 }
                 launch {
                     wantToReadIconSize.snapTo(20.0f)
@@ -165,7 +166,7 @@ open class BookCardController(
                 launch {
                     wantToReadIconAlpha.snapTo(0f)
                 }
-
+                isInAnimation = false
             }
         }
     }
@@ -173,8 +174,9 @@ open class BookCardController(
     fun swipeDown() {
         scope.apply {
             launch {
+                isInAnimation = true
                 offsetY.animateTo(screenHeight, animationSpec)
-                visibility_first.animateTo(
+                visibilityFirst.animateTo(
                     targetValue = 0f,
                     animationSpec = tween(durationMillis = 200, easing = LinearEasing)
                 )
@@ -189,7 +191,7 @@ open class BookCardController(
                     rotation.snapTo(0f)
                 }
                 launch {
-                    visibility_first.snapTo(1f)
+                    visibilityFirst.snapTo(1f)
                 }
                 launch {
                     skipBookIconSize.snapTo(20.0f)
@@ -199,7 +201,7 @@ open class BookCardController(
                         0f
                     )
                 }
-
+                isInAnimation = false
             }
         }
     }
@@ -216,7 +218,7 @@ open class BookCardController(
                 rotation.animateTo(0f, animationSpec)
             }
             launch {
-                visibility_first.animateTo(
+                visibilityFirst.animateTo(
                     targetValue = 1f,
                     animationSpec = tween(durationMillis = 200, easing = FastOutSlowInEasing)
                 )
@@ -240,7 +242,6 @@ open class BookCardController(
 @Composable
 fun rememberBookCardController(
     animationSpec: AnimationSpec<Float> = SwipeableDefaults.AnimationSpec,
-    viewModel: CardStackViewModel = hiltViewModel()
 ): BookCardController {
     val scope = rememberCoroutineScope()
     val screenWidth = with(LocalDensity.current) {
@@ -256,7 +257,6 @@ fun rememberBookCardController(
             screenWidth = screenWidth,
             screenHeight = screenHeight,
             animationSpec = animationSpec,
-            viewModel
         )
     }
 }
@@ -329,33 +329,33 @@ fun Modifier.draggableStack(
 
             },
             onDrag = { change, dragAmount ->
-                controller.scope.apply {
-                    launch(Dispatchers.Default) {
-                        var percentShiftY =
-                            controller.offsetY.value / (controller.top.y / 100)
-                        var percentShiftX =
-                            controller.offsetX.value / (controller.right.x / 100)
-                        if (isShiftByX(controller, dragAmount)) {
-                            val targetChange = normalize(
-                                controller.center.x,
-                                controller.right.x,
-                                abs(controller.offsetX.value),
-                                0f,
-                                10f
-                            )
-                            drawIconByShiftX(percentShiftX,controller)
-                            controller.rotation.snapTo(targetChange * controller.offsetX.value.sign)
-                            controller.visibility_first.snapTo(1 - (abs(percentShiftX) / 200))
-                            controller.offsetX.snapTo(controller.offsetX.value + dragAmount.x)
-                        } else {
-                            drawIconByShiftY(percentShiftY,controller)
-                            controller.visibility_first.snapTo(1 - (abs(percentShiftY) / 200))
-                            controller.offsetY.snapTo(controller.offsetY.value + dragAmount.y)
-                        }
+                if(!controller.isInAnimation){
+                    controller.scope.apply {
+                        launch(Dispatchers.Default) {
+                            val percentShiftY =
+                                controller.offsetY.value / (controller.top.y / 100)
+                            val percentShiftX =
+                                controller.offsetX.value / (controller.right.x / 100)
+                            if (isShiftByX(controller, dragAmount)) {
+                                val targetChange = normalize(
+                                    controller.center.x,
+                                    controller.right.x,
+                                    abs(controller.offsetX.value),
+                                )
+                                drawIconByShiftX(percentShiftX,controller)
+                                controller.rotation.snapTo(targetChange * controller.offsetX.value.sign)
+                                controller.visibilityFirst.snapTo(1 - (abs(percentShiftX) / 200))
+                                controller.offsetX.snapTo(controller.offsetX.value + dragAmount.x)
+                            } else {
+                                drawIconByShiftY(percentShiftY,controller)
+                                controller.visibilityFirst.snapTo(1 - (abs(percentShiftY) / 200))
+                                controller.offsetY.snapTo(controller.offsetY.value + dragAmount.y)
+                            }
 
+                        }
                     }
+                    change.consume()
                 }
-                change.consume()
             },
             onDragCancel = {
                 controller.returnCenter()
@@ -381,8 +381,8 @@ fun isRightShift(controller: BookCardController): Boolean {
 }
 
 fun isShiftByX(controller: BookCardController, dragAmount: Offset): Boolean {
-    var percentShiftX = abs(controller.offsetX.value) / (controller.right.x / 100)
-    var percentShiftY = abs(controller.offsetY.value) / (controller.top.y / 100)
+    val percentShiftX = abs(controller.offsetX.value) / (controller.right.x / 100)
+    val percentShiftY = abs(controller.offsetY.value) / (controller.top.y / 100)
     return (percentShiftX >= percentShiftY) && abs(dragAmount.x) > abs(dragAmount.y)
             || ((percentShiftX > percentShiftY) && abs(dragAmount.x) < abs(dragAmount.y))
 }
@@ -394,14 +394,14 @@ private fun normalize(
     min: Float,
     max: Float,
     v: Float,
-    startRange: Float = 0f,
-    endRange: Float = 1f
+    startRange: Float=0f,
+    endRange: Float = 10f
 ): Float {
     val value = v.coerceIn(min, max)
     return (value - min) / (max - min) * (endRange + startRange) + startRange
 }
 
-suspend private fun iconPulseAnimation(
+private suspend fun iconPulseAnimation(
     alpha: Animatable<Float, AnimationVector1D>,
     size: Animatable<Float, AnimationVector1D>
 ) {
@@ -415,7 +415,7 @@ suspend private fun iconPulseAnimation(
     )
 }
 
-suspend private fun iconChanges(
+private suspend fun iconChanges(
     alpha: Animatable<Float, AnimationVector1D>,
     size: Animatable<Float, AnimationVector1D>,
     sizeTo: Float,

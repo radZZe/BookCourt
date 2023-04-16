@@ -6,11 +6,14 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.Text
@@ -134,7 +137,7 @@ fun Statistics(
             modifier = Modifier
                 .fillMaxSize()
                 .background(TopGenresLightPink)
-                .padding(bottom = 20.dp, top = 50.dp),
+                .padding(bottom = 50.dp, top = 50.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
@@ -232,7 +235,7 @@ fun Statistics(
             modifier = Modifier
                 .fillMaxSize()
                 .background(LighterPinkBackground)
-                .padding(bottom = 20.dp, top = 50.dp),
+                .padding(bottom = 50.dp, top = 50.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
 
@@ -277,7 +280,7 @@ fun Statistics(
 
             Image(
                 painter = painterResource(id = R.drawable.cup_coffee_open_book),
-                contentDescription = "lyuteratura logo",
+                contentDescription = "cup coffee open book image",
                 modifier = Modifier
                     .fillMaxWidth()
                     .fillMaxHeight(0.3f),
@@ -306,7 +309,7 @@ fun Statistics(
             modifier = Modifier
                 .fillMaxSize()
                 .background(TopAuthorsLightPink)
-                .padding(bottom = 20.dp, top = 50.dp),
+                .padding(bottom = 50.dp, top = 50.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
@@ -340,9 +343,7 @@ fun Statistics(
                         }
                         authorBook?.let {
                             TopAuthorItem(
-                                book = it,
-                                modifier = Modifier
-                                    .fillMaxSize()
+                                book = it
                             )
                         }
                     }
@@ -358,9 +359,7 @@ fun Statistics(
                         }
                         authorBook?.let {
                             TopAuthorItem(
-                                book = it,
-                                modifier = Modifier
-                                    .fillMaxSize()
+                                book = it
                             )
                         }
 
@@ -377,9 +376,7 @@ fun Statistics(
                         }
                         authorBook?.let {
                             TopAuthorItem(
-                                book = it,
-                                modifier = Modifier
-                                    .fillMaxSize()
+                                book = it
                             )
                         }
                     }
@@ -396,20 +393,22 @@ fun Statistics(
     @Composable
     fun TopAuthorItem(
         book: Book,
-        modifier: Modifier
+        modifier: Modifier = Modifier
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = modifier
+                .fillMaxSize()
         ) {
             SubcomposeAsyncImage(
                 model = book.bookInfo.image,
                 contentDescription = "${book.bookInfo.author}'s book image",
                 modifier = Modifier
                     .fillMaxHeight()
-                    .fillMaxWidth(0.35f)
+                    //.fillMaxWidth(0.3f)
+                    .width(115.dp)
                     .padding(horizontal = 16.dp)
-                    .clip(RoundedCornerShape(20.dp)),
+                    .clip(RoundedCornerShape(15.dp)),
                 contentScale = ContentScale.FillBounds,
                 loading = {
                     CircularProgressIndicator(
