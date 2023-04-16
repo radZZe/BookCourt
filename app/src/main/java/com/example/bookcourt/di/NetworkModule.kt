@@ -8,6 +8,8 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
@@ -18,6 +20,17 @@ import javax.inject.Singleton
 class NetworkModule {
 
     @Provides
+    @Singleton
+    fun provideOkHttpClient(): OkHttpClient {
+        val interceptor = HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        }
+        return OkHttpClient().newBuilder()
+            .addInterceptor(interceptor)
+            .build()
+    }
+
+    @Provides
     fun provideNetworkRepository(
         booksApi: BooksApi
     ):NetworkRepository{
@@ -26,18 +39,10 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    fun provideMetricsApi():MetricsApi{
-        return Retrofit.Builder()
-            .baseUrl(ApiUrl.METRICS_URL)
-            .build()
-            .create(MetricsApi::class.java)
-    }
-
-    @Provides
-    @Singleton
-    fun provideBooksApi():BooksApi{
+    fun provideBooksApi(client: OkHttpClient):BooksApi{
        return Retrofit.Builder()
             .baseUrl(ApiUrl.BOOKS_URL)
+           .client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(BooksApi::class.java)

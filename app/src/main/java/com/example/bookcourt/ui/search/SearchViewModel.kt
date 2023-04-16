@@ -3,15 +3,11 @@ package com.example.bookcourt.ui.search
 import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookcourt.data.repositories.DataStoreRepository
-import com.example.bookcourt.data.repositories.MetricsRepository
 import com.example.bookcourt.data.repositories.NetworkRepository
-import com.example.bookcourt.data.user.UserRepository
-import com.example.bookcourt.models.BookRemote
+import com.example.bookcourt.models.BookDto
 import com.example.bookcourt.models.book.Book
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -119,7 +115,7 @@ class SearchViewModel @Inject constructor(
     }
     private suspend fun convertBooksJsonToList(context: Context): List<Book> {
         val json = networkRepository.getAllBooks(context)!!
-        val data = Json.decodeFromString<MutableList<BookRemote>>("""$json""")
+        val data = Json.decodeFromString<MutableList<BookDto>>("""$json""")
         val allBooksItems = data.map { it.toBook() }
         return allBooksItems
     }

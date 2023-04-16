@@ -7,7 +7,6 @@ import retrofit2.http.POST
 
 interface MetricsApi {
 
-    @Headers("Content-Type: application/json")
     @POST("SendMetric")
-    fun sendMetric(@Body json:String):Call<Unit>
+    suspend fun sendMetric(@Body json:String)
 }

@@ -12,7 +12,7 @@ import com.example.bookcourt.data.repositories.MetricsRepository
 import com.example.bookcourt.data.repositories.NetworkRepository
 import com.example.bookcourt.data.user.UserRepositoryI
 import com.example.bookcourt.models.book.Book
-import com.example.bookcourt.models.BookRemote
+import com.example.bookcourt.models.BookDto
 import com.example.bookcourt.models.metrics.DataClickMetric
 import com.example.bookcourt.models.user.User
 import com.example.bookcourt.utils.MetricType
@@ -71,11 +71,9 @@ class RecommendationViewModel @Inject constructor(
         fetchJob?.cancel()
         fetchJob = viewModelScope.launch(Dispatchers.IO) {
             user = getUser()
-            val allBooksRemote = networkRepository.getAllBooksRemote()//convertBooksJsonToList(context)
-            if (allBooksRemote is ResultTask.Success && allBooksRemote.data!=null){
-                allBooksRemote.data.map { it.toBook() }.also {
-                    booksValidation(user, it)
-                }
+            val books = networkRepository.getAllBooksRemote()//convertBooksJsonToList(context)
+            if (books is ResultTask.Success && books.data!=null){
+                    booksValidation(user, books.data)
                 isFirstDataLoading = false
                 dataIsReady = true
             }
@@ -115,7 +113,7 @@ class RecommendationViewModel @Inject constructor(
 
     private suspend fun convertBooksJsonToList(context: Context): List<Book> {
         val json = networkRepository.getAllBooks(context)!!
-        val data = Json.decodeFromString<MutableList<BookRemote>>(json)
+        val data = Json.decodeFromString<MutableList<BookDto>>(json)
         return data.map { it.toBook() }
     }
 
