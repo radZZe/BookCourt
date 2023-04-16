@@ -161,54 +161,54 @@ fun BookCard(
             .fillMaxSize()
             .zIndex(if (isFrontItem) 3f else 1f),
     ) {
-        RecommendationIcon(
-            bookCardController,
-            Modifier
-                .zIndex(4f)
-                .align(Alignment.TopCenter),
-            bookCardController.wantToReadIconSize.value.dp,
-            bookCardController.currentWantToReadIconColor,
-            R.drawable.want_to_read_icon,
-            bookCardController.wantToReadIconAlpha.value,
-            "want to read icon"
-        )
 
-        RecommendationIcon(
-            bookCardController,
-            Modifier
-                .zIndex(4f)
-                .align(Alignment.CenterStart),
-            bookCardController.dislikeIconSize.value.dp,
-            bookCardController.currentDislikeIconColor,
-            R.drawable.dislike_book_icon,
-            bookCardController.dislikeIconAlpha.value,
-            "dislike icon"
-        )
+        if(isFrontItem){
+            RecommendationIcon(
+                Modifier
+                    .zIndex(4f)
+                    .align(Alignment.TopCenter),
+                bookCardController.wantToReadIconSize.value.dp,
+                bookCardController.currentWantToReadIconColor,
+                R.drawable.want_to_read_icon,
+                bookCardController.wantToReadIconAlpha.value,
+                "want to read icon"
+            )
 
-        RecommendationIcon(
-            bookCardController,
-            Modifier
-                .zIndex(4f)
-                .align(Alignment.CenterEnd),
-            bookCardController.likeIconSize.value.dp,
-            bookCardController.currentLikeIconColor,
-            R.drawable.like_book_icon,
-            bookCardController.likeIconAlpha.value,
-            "like icon"
-        )
+            RecommendationIcon(
+                Modifier
+                    .zIndex(4f)
+                    .align(Alignment.CenterStart),
+                bookCardController.dislikeIconSize.value.dp,
+                bookCardController.currentDislikeIconColor,
+                R.drawable.dislike_book_icon,
+                bookCardController.dislikeIconAlpha.value,
+                "dislike icon"
+            )
+
+            RecommendationIcon(
+                Modifier
+                    .zIndex(4f)
+                    .align(Alignment.CenterEnd),
+                bookCardController.likeIconSize.value.dp,
+                bookCardController.currentLikeIconColor,
+                R.drawable.like_book_icon,
+                bookCardController.likeIconAlpha.value,
+                "like icon"
+            )
 
 
-        RecommendationIcon(
-            bookCardController,
-            Modifier
-                .zIndex(4f)
-                .align(Alignment.BottomCenter),
-            bookCardController.skipBookIconSize.value.dp,
-            bookCardController.currentSkipIconColor,
-            R.drawable.skip_book_icon,
-            bookCardController.skipIconAlpha.value,
-            "skip icon"
-        )
+            RecommendationIcon(
+                Modifier
+                    .zIndex(4f)
+                    .align(Alignment.BottomCenter),
+                bookCardController.skipBookIconSize.value.dp,
+                bookCardController.currentSkipIconColor,
+                R.drawable.skip_book_icon,
+                bookCardController.skipIconAlpha.value,
+                "skip icon"
+            )
+
+        }
 
 
         val windowHeight =
@@ -298,7 +298,6 @@ fun BookCardImage(
 
 @Composable
 fun RecommendationIcon(
-    bookCardController: BookCardController,
     modifier: Modifier,
     size: Dp,
     color: Color,
@@ -314,7 +313,7 @@ fun RecommendationIcon(
                     contentDescription = description,
                     modifier = Modifier
                         .size(size),
-                    colorFilter = ColorFilter.tint(bookCardController.baseIconColor)
+                    colorFilter = ColorFilter.tint(Color(222, 210, 169))
                 )
             }
             Box {
@@ -340,8 +339,6 @@ fun RecommendationIcon(
                 )
             }
         }
-
-
     }
 }
 
