@@ -62,7 +62,7 @@ fun CustomButton(
             backgroundColor = color,
             contentColor = textColor
         ),
-        contentPadding = PaddingValues(vertical = 12.dp)
+        contentPadding = PaddingValues(vertical = 13.dp)
     ) {
         Text(text = text, color = textColor, fontSize = 16.sp, fontFamily = Roboto)
     }
@@ -105,7 +105,7 @@ fun RedirectButton(
             .height(45.dp),
         colors = ButtonDefaults.buttonColors(color)
     ) {
-        Text(text = text)
+        Text(text = text, fontSize = 16.sp, fontFamily = Roboto)
     }
 }
 

@@ -14,12 +14,14 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -30,14 +32,17 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.SubcomposeAsyncImage
 import com.example.bookcourt.R
 import com.example.bookcourt.models.book.Book
+import com.example.bookcourt.models.user.SearchRequest
 import com.example.bookcourt.ui.theme.*
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SearchScreen(
     onNavigateToRecommendation: () -> Unit,
     viewModel: SearchViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     val searchText by viewModel.searchText.collectAsState()
     val books by viewModel.books.collectAsState()
@@ -47,7 +52,7 @@ fun SearchScreen(
 
     LaunchedEffect(key1 = Unit) {
         viewModel.getAllBooks(context)
-        viewModel.getRecentRequests()
+        viewModel.getSearchRequests()
     }
 
     Column(
@@ -87,7 +92,6 @@ fun SearchScreen(
                         .size(42.dp)
                         .clickable {
                             onNavigateToRecommendation()
-                            viewModel.saveRecentRequests()
                         }
 
                 )
@@ -98,20 +102,12 @@ fun SearchScreen(
             ),
             keyboardActions = KeyboardActions(
                 onSearch = {
-                    viewModel.updateRecentRequests()
+                    keyboardController?.hide()
+                    viewModel.addSearchRequest(searchText)
                 }
             )
         )
         if (isDisplayed) {
-            if (books.isEmpty()) {
-                Text(
-                    text = "К сожалению, ничего не найдено, возможно Вас заинтересуют следующие книги:",
-                    fontSize = 16.sp,
-                    fontFamily = Roboto,
-                    color = SecondaryText,
-                    modifier = Modifier.padding(top = 20.dp, start = 20.dp)
-                )
-            }
             if (isSearching) {
                 Box(modifier = Modifier.fillMaxSize()) {
                     CircularProgressIndicator(
@@ -119,6 +115,15 @@ fun SearchScreen(
                     )
                 }
             } else {
+                if (books.isEmpty()) {
+                    Text(
+                        text = "К сожалению, ничего не найдено, возможно Вас заинтересуют следующие книги:",
+                        fontSize = 16.sp,
+                        fontFamily = Roboto,
+                        color = SecondaryText,
+                        modifier = Modifier.padding(top = 20.dp, start = 20.dp)
+                    )
+                }
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -131,9 +136,7 @@ fun SearchScreen(
                 }
             }
         } else {
-            if (recentRequests.any { it != "" && it != " "}) {
-                RecentRequests(recentRequests.filter { it != "" && it != " " })
-            }
+            RecentRequests(recentRequests, viewModel)
         }
     }
 }
@@ -189,31 +192,34 @@ fun SearchBookCard(book: Book) {
 }
 
 @Composable
-fun RecentRequests(requests: List<String>, viewModel: SearchViewModel = hiltViewModel()) {
-    Text(
-        text = "Ваши последние запросы:",
-        fontSize = 16.sp,
-        fontFamily = Roboto,
-        color = PrimaryText,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 20.dp, bottom = 10.dp, start = 20.dp, end = 20.dp)
-    )
+fun RecentRequests(searchRequests: List<SearchRequest>, viewModel: SearchViewModel) {
+    if (searchRequests.isNotEmpty()) {
+        Text(
+            text = "Ваши последние запросы:",
+            fontSize = 16.sp,
+            fontFamily = Roboto,
+            color = PrimaryText,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 20.dp, bottom = 10.dp, start = 20.dp, end = 20.dp)
+        )
+    }
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 20.dp)
     ) {
-        items(requests) { request ->
+        items(searchRequests) { searchRequest ->
             Text(
-                text = request,
+                text = searchRequest.request,
                 fontSize = 16.sp,
                 fontFamily = Roboto,
                 color = SecondaryText,
                 modifier = Modifier
+                    .fillMaxWidth()
                     .padding(vertical = 10.dp)
                     .clickable {
-                        viewModel.onSearchTextChange(request)
+                        viewModel.onSearchTextChange(searchRequest.request)
                     }
 
             )

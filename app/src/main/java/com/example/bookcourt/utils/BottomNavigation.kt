@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.example.bookcourt.ui.recommendation.LIMIT_WINDOW_HEIGHT
 import com.example.bookcourt.ui.theme.*
 
 

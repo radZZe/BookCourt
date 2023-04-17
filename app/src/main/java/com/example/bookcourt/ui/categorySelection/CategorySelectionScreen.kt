@@ -161,6 +161,7 @@ fun NextButton(viewModel: CategorySelectionViewModel, windowType: WindowInfo.Win
             text = "Продолжить",
             color = LightYellowBtn,
             textColor = Color.Black,
+            modifier = Modifier.padding(horizontal = 20.dp),
             onCLick = {
                 onNavigateToBottomNav()
             }

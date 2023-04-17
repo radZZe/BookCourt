@@ -5,11 +5,13 @@ import androidx.room.Room
 
 import com.example.bookcourt.data.repositories.DataStoreRepository
 import com.example.bookcourt.data.repositories.MetricsRepository
-import com.example.bookcourt.data.user.UserRepository
-import com.example.bookcourt.data.user.UserRepositoryI
-import com.example.bookcourt.data.user.room.UserDatabase
-import com.example.bookcourt.data.user.sources.UserLocalSource
-import com.example.bookcourt.data.user.sources.UserNetworkSource
+import com.example.bookcourt.data.room.user.UserRepository
+import com.example.bookcourt.data.room.user.UserRepositoryI
+import com.example.bookcourt.data.room.searchRequest.SearchRequestDatabase
+import com.example.bookcourt.data.room.searchRequest.SearchRequestRepository
+import com.example.bookcourt.data.room.user.UserDatabase
+import com.example.bookcourt.data.room.user.sources.UserLocalSource
+import com.example.bookcourt.data.room.user.sources.UserNetworkSource
 import com.example.bookcourt.utils.Hashing
 import dagger.Module
 import dagger.Provides
@@ -53,7 +55,7 @@ class DataModule {
 
     @Provides
     @Singleton
-    fun provideUserRepository(networkSource: UserNetworkSource,localSource: UserLocalSource) : UserRepositoryI {
+    fun provideUserRepository(networkSource: UserNetworkSource, localSource: UserLocalSource) : UserRepositoryI {
         return UserRepository(networkSource,localSource)
     }
 
@@ -67,5 +69,21 @@ class DataModule {
     @Singleton
     fun provideUserLocalSource(db: UserDatabase) : UserLocalSource {
         return UserLocalSource(db.userDao())
+    }
+
+    @Provides
+    @Singleton
+    fun provideSearchRequestDatabase(application: Application) : SearchRequestDatabase {
+        return Room.databaseBuilder(
+            application,
+            SearchRequestDatabase::class.java,
+            "search_request_database"
+        ).build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideSearchRequestRepository(db: SearchRequestDatabase) : SearchRequestRepository {
+        return SearchRequestRepository(db.searchRequestDao())
     }
 }
