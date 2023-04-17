@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookcourt.data.repositories.DataStoreRepository
 import com.example.bookcourt.data.user.UserRepositoryI
-import com.example.bookcourt.models.book.Book
 import com.example.bookcourt.models.user.Sex
 import com.example.bookcourt.models.user.User
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,88 +19,76 @@ import javax.inject.Inject
 class ProfileViewModel @Inject constructor(
     private val dataStoreRepository: DataStoreRepository,
     private val userRepositoryI: UserRepositoryI
-):ViewModel(){
+) : ViewModel() {
 
-    val user:Flow<User> = flow{
-        val data = getUser()
-        emit(data)
-    }.shareIn(
-        scope = viewModelScope,
-        replay = 1,
-        started = SharingStarted.WhileSubscribed(),
-    )
-
-    init {
-        viewModelScope.launch(Dispatchers.IO) {
-            user.collect{
-                userId = it.uid
-                name = it.name ?: ""
-                email = it.email
-                city = it.city
-                date = it.dayBD ?:""
-                sex = it.sex
-                profileImage = it.image?.toUri()
-                readBooksList = it.readBooksList
-                wantToRead = it.wantToRead
-            }
-        }
-
-    }
+    private var user: User? = null
 
 
-
-    private suspend fun getUser(): User {
+    suspend fun getUser() {
         val userId = dataStoreRepository.getPref(DataStoreRepository.uuid)
-        return userRepositoryI.loadData(userId.first())!!
+        user = userRepositoryI.loadData(userId.first())!!
+        initUserData()
     }
-    var readBooksList = mutableListOf<Book>()
-    private var wantToRead = mutableListOf<Book>()
+
+    private fun initUserData() {
+        userId = user?.uid ?: ""
+        name = user?.name ?: ""
+        email = user?.email ?: ""
+        city = user?.city ?: ""
+        date = user?.dayBD ?: ""
+        sex = user?.sex
+        profileImage = user?.image?.toUri()
+    }
+
     private var userId by mutableStateOf("")
-    var name  by mutableStateOf("")
-    var email  by mutableStateOf("")
-    var city  by mutableStateOf("")
+    var name by mutableStateOf("")
+    var email by mutableStateOf("")
+    var city by mutableStateOf("")
     var date by mutableStateOf("")
-    var sex by mutableStateOf<Sex?>( null)
+    var sex by mutableStateOf<Sex?>(null)
     var profileImage by mutableStateOf<Uri?>(null)
 
-    fun onNameChanged(newText:String){
+    fun onNameChanged(newText: String) {
         name = newText
     }
 
-    fun onEmailChanged(newText:String){
+    fun onEmailChanged(newText: String) {
         email = newText
     }
 
-    fun onCityChanged(newText:String){
+    fun onCityChanged(newText: String) {
         city = newText
     }
 
-    fun onBDayDAteChanged(newText:String){
+    fun onBDayDAteChanged(newText: String) {
         date = newText
     }
 
-    fun onSexChanged(newText: Sex){
+    fun onSexChanged(newText: Sex) {
         sex = newText
     }
 
-    fun onProfileImageChanged(newUri: Uri?){
+    fun onProfileImageChanged(newUri: Uri?) {
         profileImage = newUri
     }
 
-    fun saveUserData(){
+    fun saveUserData() {
         viewModelScope.launch(Dispatchers.IO) {
-            val user = User(
-                uid = userId,
-                name = name,
-                email = email,
-                city = city,
-                image = profileImage.toString(),
-                dayBD = date,
-                sex = sex,
-                readBooksList = readBooksList,
-                wantToRead = wantToRead
-            )
-            userRepositoryI.updateData(user)
+            user?.let {
+                userRepositoryI.updateData(
+                    User(
+                        uid = userId,
+                        name = name,
+                        email = email,
+                        city = city,
+                        image = profileImage.toString(),
+                        dayBD = date,
+                        sex = sex,
+                        readBooksList = it.readBooksList,
+                        wantToRead = it.wantToRead
+                    )
+                )
+            }
         }
 
     }

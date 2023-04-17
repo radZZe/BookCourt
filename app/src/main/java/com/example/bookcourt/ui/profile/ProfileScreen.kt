@@ -44,6 +44,9 @@ fun ProfileScreen(
     onNavigateToRecommendation: () -> Unit,
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
+    LaunchedEffect(key1 = Unit, block = {
+        viewModel.getUser()
+    })
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -211,7 +214,7 @@ fun ProfileMainSection(
                         Row(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .padding(end = 16.dp,start = 16.dp),
+                                .padding(end = 16.dp, start = 16.dp),
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
