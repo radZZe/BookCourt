@@ -102,7 +102,7 @@ class RecommendationViewModel @Inject constructor(
 
     private suspend fun getUser(): User {
         val userId = dataStoreRepository.getPref(uuid)
-        user = userRepositoryI.loadData(userId.first())!!//TODO
+        user = userRepositoryI.loadData(userId.first())!!
         return user
     }
 

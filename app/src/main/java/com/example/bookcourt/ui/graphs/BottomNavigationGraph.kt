@@ -7,7 +7,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.bookcourt.ui.ProfileScreen
+import com.example.bookcourt.ui.profile.ProfileScreen
 import com.example.bookcourt.ui.recommendation.RecommendationScreen
 import com.example.bookcourt.ui.search.SearchScreen
 import com.example.bookcourt.ui.statistics.Statistics
@@ -47,9 +47,7 @@ fun BottomNavigationGraph(
             Statistics()
         }
         composable(route = Graph.PROFILE_NAV_GRAPH){
-            ProfileScreen {
-                navController.navigate(Graph.BOTTOM_NAV_GRAPH)
-            }
+            ProfileScreen(onNavigateToRecommendation = { navController.navigate(Graph.BOTTOM_NAV_GRAPH)})
         }
     }
 }
