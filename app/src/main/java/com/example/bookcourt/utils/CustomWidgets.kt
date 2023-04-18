@@ -40,6 +40,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.zIndex
 import com.example.bookcourt.R
+import com.example.bookcourt.ui.theme.LightBrown
+import com.example.bookcourt.ui.theme.LightYellowBtn
 import com.example.bookcourt.utils.BitmapUtils
 import com.example.bookcourt.utils.Constants
 import java.util.*
