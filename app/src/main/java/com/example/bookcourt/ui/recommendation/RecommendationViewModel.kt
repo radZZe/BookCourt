@@ -10,7 +10,7 @@ import com.example.bookcourt.data.repositories.DataStoreRepository
 import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.uuid
 import com.example.bookcourt.data.repositories.MetricsRepository
 import com.example.bookcourt.data.repositories.NetworkRepository
-import com.example.bookcourt.data.user.UserRepositoryI
+import com.example.bookcourt.data.room.user.UserRepositoryI
 import com.example.bookcourt.models.book.Book
 import com.example.bookcourt.models.BookRemote
 import com.example.bookcourt.models.metrics.DataClickMetric
@@ -102,7 +102,7 @@ class RecommendationViewModel @Inject constructor(
 
     private suspend fun getUser(): User {
         val userId = dataStoreRepository.getPref(uuid)
-        user = userRepositoryI.loadData(userId.first())!!//TODO
+        user = userRepositoryI.loadData(userId.first())!!
         return user
     }
 

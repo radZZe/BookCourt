@@ -29,7 +29,7 @@ import coil.size.Size
 import com.example.bookcourt.R
 import com.example.bookcourt.models.book.Book
 import com.example.bookcourt.models.user.User
-import com.example.bookcourt.ui.theme.CustomButton
+import com.example.bookcourt.utils.CustomButton
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterialApi::class)

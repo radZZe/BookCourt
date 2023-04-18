@@ -14,11 +14,13 @@ data class User(
     val city: String,
     val image:String? = null,
     val dayBD:String? = null,
-    val sex:String? = null,
+    val sex:Sex? = null,
     var readBooksList: MutableList<Book>,
     var wantToRead: MutableList<Book>,
-//    @Embedded
-//    @Contextual
-//    var statistics: UserStatistics,
-)
-//    val image : String,
+){
+
+}
+
+enum class Sex{
+    MALE,FEMALE
+}

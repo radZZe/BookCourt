@@ -1,10 +1,6 @@
 package com.example.bookcourt.ui.auth
 
-import android.Manifest
-import android.Manifest.permission.ACCESS_COARSE_LOCATION
-import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.text.TextUtils
-import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -19,45 +15,30 @@ import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.zIndex
-import androidx.core.app.ActivityCompat
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.navigation.NavController
 import com.example.bookcourt.R
 import com.example.bookcourt.ui.theme.*
+import com.example.bookcourt.utils.CityDropDownMenu
 import com.example.bookcourt.utils.Constants
-import com.example.bookcourt.utils.PhoneNumberVisualTransformation
-import com.example.bookcourt.utils.isPermanentlyDenied
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.rememberPermissionState
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 import java.util.*
 
 
@@ -314,10 +295,47 @@ fun SignInScreen(
             Spacer(modifier = Modifier.height(50.dp))
 //            EmailField(value = mViewModel.email, onValueChange = { mViewModel.onEmailChanged(it)})
             EmailField(value = mViewModel.email, onValueChange = { mViewModel.onEmailChanged(it) }, "Электронная почта")
-            AutoCompleteTextField(
-                "Начните вводить свой город...",
-                mViewModel.city
-            ) { mViewModel.onCityChanged(it) }
+            Spacer(modifier = Modifier.height(12.dp))
+            CityDropDownMenu(
+                mViewModel.city,
+                onTFValueChange = { mViewModel.onCityChanged(it)},
+                fontSize = 16,
+                textWrapper = { innerTextField ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(15.dp))
+                            .background(Color(239, 235, 222))
+                            .padding(start = 14.dp, end = 14.dp, top = 12.dp, bottom = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Box(contentAlignment = Alignment.CenterStart){
+                            if (mViewModel.city.isEmpty()) {
+                                Text(
+                                    text = "Начните вводить свой город",
+                                    fontFamily = FontFamily(
+                                        Font(
+                                            R.font.roboto_regular
+                                        )
+                                    ),
+                                    fontSize = 16.sp,
+                                    color = Color(134, 134, 134)
+                                )
+                            }
+                            innerTextField()
+                        }
+
+                        Image(
+                            painter = painterResource(id = R.drawable.arrow_down),
+                            contentDescription = " ",
+                            modifier = Modifier.height(8.dp)
+                        )
+                    }
+                },
+                itemsFontSize = 16,
+                backgroundColor = Color(239, 235, 222)
+            )
 
         }
         Button(
@@ -397,195 +415,6 @@ fun EmailField(value: String, onValueChange: (String) -> Unit, placeholder: Stri
 
 }
 
-//@Preview(showBackground = true)
-//@Composable
-//fun NewSignInScreenPreview() {
-//    NewSignInScreen(onNavigateToCategorySelection = { /*TODO*/ })
-//}
 
-@Composable
-fun CityItem(
-    title: String,
-    onSelect: (String) -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable {
-                onSelect(title)
-            }
-            .padding(start = 14.dp, end = 14.dp, top = 12.dp, bottom = 12.dp)
-    ) {
-        Text(
-            text = title,
-            fontFamily = FontFamily(
-                Font(
-                    R.font.roboto_regular
-                )
-            ),
-            fontSize = 16.sp,
-            color = Color.Black,
-        )
-    }
-}
 
-@Composable
-fun AutoCompleteTextField(
-    placeholder: String,
-    value: String,
-    onTFValueChange: (String) -> Unit
-) {
-
-    var textFieldValue by remember {
-        mutableStateOf(value)
-    }
-
-    var isAvailable by remember {
-        mutableStateOf(false)
-    }
-
-    val heightTextFields by remember {
-        mutableStateOf(55.dp)
-    }
-
-    var textFieldsSize by remember {
-        mutableStateOf(Size.Zero)
-    }
-
-    var isClearIconBtnVisible by remember {
-        mutableStateOf(false)
-    }
-
-    var expanded by remember {
-        mutableStateOf(false)
-    }
-
-    val interactionSource = remember {
-        MutableInteractionSource()
-    }
-    val focusRequester = remember {
-        FocusRequester()
-    }
-    val focusManager = LocalFocusManager.current
-
-    Spacer(modifier = Modifier.height(10.dp))
-    BasicTextField(
-        value = textFieldValue,
-        enabled = isAvailable,
-        onValueChange = {
-            textFieldValue = it
-            //expanded = true
-            onTFValueChange(it)
-            expanded = true
-        },
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(
-                interactionSource = interactionSource,
-                indication = rememberRipple(bounded = true),
-                onClick = { expanded = !expanded }
-            )
-            .onGloballyPositioned {
-                textFieldsSize = it.size.toSize()
-            }
-            .focusRequester(focusRequester)
-            .size(48.dp),
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Text,
-            imeAction = ImeAction.Next
-        ),
-        singleLine = true,
-        textStyle = TextStyle(
-            fontFamily = FontFamily(
-                Font(
-                    R.font.roboto_regular
-                )
-            ),
-            fontSize = 16.sp,
-            color = Color.Black
-        )
-    ) { innerTextField ->
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(15.dp))
-                .background(Color(239, 235, 222))
-                .padding(start = 14.dp, end = 14.dp, top = 12.dp, bottom = 12.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            if (value.isEmpty()) {
-                Text(
-                    text = placeholder,
-                    fontFamily = FontFamily(
-                        Font(
-                            R.font.roboto_regular
-                        )
-                    ),
-                    fontSize = 16.sp,
-                    color = Color(134, 134, 134)
-                )
-            }
-            innerTextField()
-            Image(
-                painter = painterResource(id = R.drawable.arrow_down),
-                contentDescription = " ",
-                modifier = Modifier.height(8.dp)
-            )
-        }
-    }
-    AnimatedVisibility(visible = expanded) {
-        Card(
-            modifier = Modifier,
-            shape = RoundedCornerShape(15.dp)
-        ) {
-            LazyColumn(
-                modifier = Modifier
-                    .heightIn(max = 150.dp)
-                    .zIndex(2f)
-                    .background(Color(239, 235, 222))
-            ) {
-                items(
-                    if (isAvailable) {
-                        Constants.cities.apply {
-                            filterNot {
-                                it.contains(Constants.OTHER_CITY)
-                            }
-                            filter {
-                                it.lowercase()
-                                    .contains(textFieldValue.lowercase()) || it.lowercase()
-                                    .contains("others")
-                            }
-                            sorted()
-                        }
-                    } else {
-                        Constants.cities.sorted().also {
-                            Collections.swap(it, it.indexOf(Constants.OTHER_CITY), it.lastIndex)
-                        }
-                    }
-
-                ) {
-                    CityItem(title = it) { title ->
-                        if (title == Constants.OTHER_CITY) {
-                            isAvailable = true
-                            // isClearIconBtnVisible = true
-                            focusRequester.requestFocus()
-                            textFieldValue = ""
-                            onTFValueChange(textFieldValue)
-                        } else {
-                            onTFValueChange(title)
-                            textFieldValue = title
-                            onTFValueChange(textFieldValue)
-                        }
-                        isClearIconBtnVisible = true
-                        expanded = false
-                    }
-                    if (isAvailable) {
-                        focusRequester.requestFocus()
-                    }
-                }
-            }
-        }
-    }
-}
 

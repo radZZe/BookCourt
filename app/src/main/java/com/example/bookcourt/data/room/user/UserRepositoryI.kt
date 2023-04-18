@@ -1,4 +1,4 @@
-package com.example.bookcourt.data.user
+package com.example.bookcourt.data.room.user
 
 import com.example.bookcourt.models.user.User
 
