@@ -1,7 +1,7 @@
-package com.example.bookcourt.data.user
+package com.example.bookcourt.data.room.user
 
-import com.example.bookcourt.data.user.sources.UserLocalSource
-import com.example.bookcourt.data.user.sources.UserNetworkSource
+import com.example.bookcourt.data.room.user.sources.UserLocalSource
+import com.example.bookcourt.data.room.user.sources.UserNetworkSource
 import com.example.bookcourt.models.user.User
 import javax.inject.Inject
 

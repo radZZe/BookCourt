@@ -1,4 +1,4 @@
-package com.example.bookcourt.ui.theme
+package com.example.bookcourt.utils
 
 import android.content.Context
 import android.content.Intent
@@ -21,7 +21,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
+import com.example.bookcourt.ui.theme.Roboto
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
@@ -40,6 +40,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.zIndex
 import com.example.bookcourt.R
+import com.example.bookcourt.ui.theme.LightBrown
+import com.example.bookcourt.ui.theme.LightYellowBtn
 import com.example.bookcourt.utils.BitmapUtils
 import com.example.bookcourt.utils.Constants
 import java.util.*
@@ -47,22 +49,24 @@ import java.util.*
 
 @Composable
 fun CustomButton(
+    modifier: Modifier = Modifier,
     text: String = "Text",
     textColor: Color = LightBrown,
-    color: Color = Brown,
-    modifier: Modifier = Modifier,
+    color: Color = LightYellowBtn,
     onCLick: () -> Unit = {}
 ) {
-    Box(
+    Button(
+        onClick = { onCLick() },
         modifier = modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(60.dp))
-            .background(color = color)
-            .padding(vertical = 13.dp, horizontal = 20.dp)
-            .clickable { onCLick() },
-        Alignment.Center
+            .fillMaxWidth(),
+        shape = RoundedCornerShape(50.dp),
+        colors = ButtonDefaults.buttonColors(
+            backgroundColor = color,
+            contentColor = textColor
+        ),
+        contentPadding = PaddingValues(vertical = 13.dp)
     ) {
-        Text(text = text, color = textColor, fontSize = 16.sp, fontFamily = Gilroy)
+        Text(text = text, color = textColor, fontSize = 16.sp, fontFamily = Roboto)
     }
 }
 
@@ -90,7 +94,6 @@ fun RedirectButton(
     text: String = "Заглянуть в магазин",
     modifier: Modifier = Modifier
 ) {
-
     Button(
         onClick = {
             val sendIntent = Intent(Intent.ACTION_VIEW, Uri.parse(redirectUrl))
@@ -104,7 +107,7 @@ fun RedirectButton(
             .height(45.dp),
         colors = ButtonDefaults.buttonColors(color)
     ) {
-        Text(text = text)
+        Text(text = text, fontSize = 16.sp, fontFamily = Roboto)
     }
 }
 
@@ -155,7 +158,7 @@ fun ShareStatisticsButton(
             .height(45.dp),
         colors = ButtonDefaults.buttonColors(color)
     ) {
-        Text(text = text)
+        Text(text = text, fontSize = 16.sp, fontFamily = Roboto)
     }
 }
 

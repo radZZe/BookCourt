@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.example.bookcourt.R
-import com.example.bookcourt.ui.theme.CustomButton
+import com.example.bookcourt.utils.CustomButton
 import com.example.bookcourt.ui.theme.LightYellowBtn
 
 @Composable

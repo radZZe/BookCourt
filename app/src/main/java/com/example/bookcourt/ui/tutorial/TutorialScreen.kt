@@ -20,16 +20,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.example.bookcourt.R
 import com.example.bookcourt.models.metrics.DataClickMetric
 import com.example.bookcourt.models.ui.TutorialCard
 import com.example.bookcourt.ui.theme.BackGroundWhite
-import com.example.bookcourt.ui.theme.CustomButton
+import com.example.bookcourt.utils.CustomButton
 import com.example.bookcourt.ui.theme.Gilroy
 import com.example.bookcourt.utils.Buttons
 import com.example.bookcourt.utils.Constants.tutorialCards
-import com.example.bookcourt.utils.Graph
 import com.example.bookcourt.utils.Screens
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPagerIndicator
