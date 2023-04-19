@@ -8,7 +8,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,12 +22,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.example.bookcourt.ui.recommendation.LIMIT_WINDOW_HEIGHT
 import com.example.bookcourt.ui.theme.*
+import com.example.bookcourt.utils.Constants.LIMIT_WINDOW_HEIGHT
 
 
 @Composable
 fun BottomNavigationMenu(navController: NavController) {
+    val windowInfo = rememberWindowSizeClass()
     val windowHeight = LocalConfiguration.current.screenHeightDp.toFloat() * LocalDensity.current.density
     val menuHeight = if(windowHeight > LIMIT_WINDOW_HEIGHT) 72.dp else 56.dp
 

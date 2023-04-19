@@ -31,6 +31,7 @@ import com.example.bookcourt.models.book.Book
 import com.example.bookcourt.models.user.User
 import com.example.bookcourt.utils.CustomButton
 import kotlin.math.roundToInt
+import com.example.bookcourt.utils.Constants.LIMIT_WINDOW_HEIGHT
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -342,4 +343,3 @@ fun RecommendationIcon(
     }
 }
 
-const val LIMIT_WINDOW_HEIGHT = 1920

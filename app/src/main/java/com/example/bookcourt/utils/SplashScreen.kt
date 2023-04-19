@@ -27,10 +27,10 @@ fun SplashScreen(
     var startAnimation by remember {
         mutableStateOf(false)
     }
-    val rememberMeState = mViewModel.rememberMeState.collectAsState(initial = "")
-    val rememberTutorState = mViewModel.rememberTutorState.collectAsState(initial = "")
-    val rememberVerificationState = mViewModel.rememberVerificationState.collectAsState(initial = "")
-    val rememberCategorySelectionState = mViewModel.rememberCategorySelectionState.collectAsState(initial = "")
+    val rememberMeState = mViewModel.rememberMeState.collectAsState(initial = false)
+    val tutorState = mViewModel.tutorState.collectAsState(initial = false)
+    val verificationState = mViewModel.verificationState.collectAsState(initial = false)
+    val categorySelectionState = mViewModel.categorySelectionState.collectAsState(initial = false)
 
     val alphaAnim = animateFloatAsState(
         targetValue = if (startAnimation) 1f else 0f,
@@ -43,20 +43,14 @@ fun SplashScreen(
         startAnimation = true
         delay(2000)
 
-        if (rememberMeState.value == true) {
-            if (rememberVerificationState.value == true) {
-                if (rememberTutorState.value == true) {
-                    if (rememberCategorySelectionState.value == true) {
-                        navController.navigate(Graph.BOTTOM_NAV_GRAPH)
-                    } else {
-                        navController.navigate(route = Screens.CategorySelection.route)
-                    }
-                } else {
-                    navController.navigate(route = Screens.Tutorial.route)
-                }
-            } else {
-                navController.navigate(route = Screens.VerificationCode.route)
-            }
+        if (categorySelectionState.value) {
+            navController.navigate(route = Graph.BOTTOM_NAV_GRAPH)
+        } else if (tutorState.value) {
+            navController.navigate(route = Screens.CategorySelection.route)
+        } else if (verificationState.value) {
+            navController.navigate(route = Screens.Tutorial.route)
+        } else if (rememberMeState.value) {
+            navController.navigate(route = Screens.VerificationCode.route)
         } else {
             navController.navigate(route = Screens.SignIn.route)
         }

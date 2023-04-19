@@ -11,7 +11,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookcourt.data.repositories.DataStoreRepository
 import com.example.bookcourt.data.repositories.MetricsRepository
-import com.example.bookcourt.data.user.UserRepositoryI
+import com.example.bookcourt.data.room.user.UserRepositoryI
 import com.example.bookcourt.models.metrics.DataClickMetric
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -82,8 +82,6 @@ class VerificationCodeViewModel @Inject constructor(
             countDownTimer()
         }
     }
-
-    // TODO отправка кода на почту
 
     private suspend fun editPrefs() {
         dataStoreRepository.setPref(!isCodeVerified, DataStoreRepository.isCodeVerificated)

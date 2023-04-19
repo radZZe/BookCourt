@@ -11,7 +11,7 @@ class SplashViewModel  @Inject constructor(
 ) : ViewModel() {
 
     val rememberMeState = dataStoreRepository.getBoolPref(DataStoreRepository.isRemembered)
-    val rememberTutorState = dataStoreRepository.getBoolPref(DataStoreRepository.isTutorChecked)
-    val rememberVerificationState = dataStoreRepository.getBoolPref(DataStoreRepository.isCodeVerificated)
-    val rememberCategorySelectionState = dataStoreRepository.getBoolPref(DataStoreRepository.isCategoriesSelected)
+    val tutorState = dataStoreRepository.getBoolPref(DataStoreRepository.isTutorChecked)
+    val verificationState = dataStoreRepository.getBoolPref(DataStoreRepository.isCodeVerificated)
+    val categorySelectionState = dataStoreRepository.getBoolPref(DataStoreRepository.isCategoriesSelected)
 }

@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookcourt.data.repositories.DataStoreRepository
 import com.example.bookcourt.data.repositories.MetricsRepository
-import com.example.bookcourt.data.user.UserRepositoryI
 import com.example.bookcourt.models.categorySelection.Category
 import com.example.bookcourt.models.metrics.DataClickMetric
 import dagger.hilt.android.lifecycle.HiltViewModel

@@ -20,13 +20,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.bookcourt.models.metrics.DataClickMetric
-import com.example.bookcourt.ui.theme.CustomButton
 import com.example.bookcourt.ui.theme.LightYellowBtn
 import com.example.bookcourt.ui.theme.MainBgColor
-import com.example.bookcourt.utils.Buttons
-import com.example.bookcourt.utils.Screens
-import com.example.bookcourt.utils.WindowInfo
-import com.example.bookcourt.utils.rememberWindowSizeClass
+import com.example.bookcourt.utils.*
 import com.google.accompanist.flowlayout.FlowRow
 
 @Composable

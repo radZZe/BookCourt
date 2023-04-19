@@ -40,6 +40,7 @@ import com.example.bookcourt.models.metrics.DataClickMetric
 import com.example.bookcourt.ui.notifications.NotificationNothingToShow
 import com.example.bookcourt.ui.theme.MainBgColor
 import com.example.bookcourt.utils.*
+import com.example.bookcourt.utils.Constants.LIMIT_WINDOW_HEIGHT
 
 @Composable
 fun RecommendationScreen(
