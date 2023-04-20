@@ -1,4 +1,4 @@
-package com.example.bookcourt.data.room.searchRequest
+package com.example.bookcourt.data.user.searchRequest
 
 import androidx.room.Database
 import androidx.room.RoomDatabase

@@ -1,4 +1,4 @@
-package com.example.bookcourt.data.room.searchRequest
+package com.example.bookcourt.data.user.searchRequest
 
 import com.example.bookcourt.models.user.SearchRequest
 

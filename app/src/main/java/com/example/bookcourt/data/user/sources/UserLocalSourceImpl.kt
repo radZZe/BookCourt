@@ -1,6 +1,6 @@
 package com.example.bookcourt.data.user.sources
 
-import com.example.bookcourt.data.user.UserDao
+import com.example.bookcourt.data.room.UserDao
 import com.example.bookcourt.models.user.User
 
 class UserLocalSourceImpl(

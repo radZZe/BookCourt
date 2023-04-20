@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookcourt.data.repositories.NetworkRepositoryImpl
-import com.example.bookcourt.data.room.searchRequest.SearchRequestRepository
+import com.example.bookcourt.data.user.searchRequest.SearchRequestRepository
 import com.example.bookcourt.models.BookRemote
 import com.example.bookcourt.models.book.Book
 import com.example.bookcourt.models.user.SearchRequest

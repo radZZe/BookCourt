@@ -6,9 +6,9 @@ import androidx.room.Room
 import com.example.bookcourt.data.repositories.DataStoreRepository
 import com.example.bookcourt.data.repositories.MetricsRepository
 import com.example.bookcourt.data.repositories.MetricsRepositoryImpl
-import com.example.bookcourt.data.room.searchRequest.SearchRequestDatabase
-import com.example.bookcourt.data.room.searchRequest.SearchRequestRepository
-import com.example.bookcourt.data.user.UserDatabase
+import com.example.bookcourt.data.user.searchRequest.SearchRequestDatabase
+import com.example.bookcourt.data.user.searchRequest.SearchRequestRepository
+import com.example.bookcourt.data.room.UserDatabase
 import com.example.bookcourt.data.user.sources.UserLocalSourceImpl
 import com.example.bookcourt.data.user.sources.UserNetworkSourceImpl
 import com.example.bookcourt.data.user.sources.UserSource
