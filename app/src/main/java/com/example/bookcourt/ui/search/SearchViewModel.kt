@@ -5,7 +5,7 @@ import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.bookcourt.data.repositories.NetworkRepository
+import com.example.bookcourt.data.repositories.NetworkRepositoryImpl
 import com.example.bookcourt.data.room.searchRequest.SearchRequestRepository
 import com.example.bookcourt.models.BookRemote
 import com.example.bookcourt.models.book.Book
@@ -23,8 +23,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
+    private val json:Json,
     private val searchRequestRepository: SearchRequestRepository,
-    private val networkRepository: NetworkRepository
+    private val networkRepository: NetworkRepositoryImpl,
 ) : ViewModel() {
 
     private val _recentRequests = mutableStateListOf<SearchRequest>()
@@ -113,8 +114,9 @@ class SearchViewModel @Inject constructor(
     }
 
     private suspend fun convertBooksJsonToList(context: Context): List<Book> {
-        val json = networkRepository.getAllBooks(context)!!
-        val data = Json.decodeFromString<MutableList<BookRemote>>(json)
-        return data.map { it.toBook() }
+        val jsonText = networkRepository.getAllBooks(context)!!
+        val data = json.decodeFromString<MutableList<BookRemote>>(jsonText)
+        val allBooksItems = data.map { it.toBook() }
+        return allBooksItems
     }
 }

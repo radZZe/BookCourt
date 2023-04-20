@@ -1,25 +1,28 @@
 package com.example.bookcourt.di
 
-import com.example.bookcourt.data.repositories.NetworkRepository
+import com.example.bookcourt.data.repositories.NetworkRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
-
-
+import javax.inject.Singleton
 
 
 @Module
 @InstallIn(SingletonComponent::class)
 class NetworkModule {
+
     @Provides
+    @Singleton
     fun provideOkHttpClient(): OkHttpClient {
         return OkHttpClient().newBuilder()
             .build()
     }
+
     @Provides
-    fun provideNetworkRepository(client: OkHttpClient):NetworkRepository{
-        return NetworkRepository(client)
+    @Singleton
+    fun provideNetworkRepository():NetworkRepositoryImpl{
+        return NetworkRepositoryImpl()
     }
 }

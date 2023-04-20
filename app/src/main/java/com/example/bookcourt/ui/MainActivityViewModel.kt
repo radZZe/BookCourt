@@ -3,7 +3,7 @@ package com.example.bookcourt.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookcourt.data.repositories.DataStoreRepository
-import com.example.bookcourt.data.repositories.MetricsRepository
+import com.example.bookcourt.data.repositories.MetricsRepositoryImpl
 import com.example.bookcourt.utils.MetricType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -14,8 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainActivityViewModel @Inject constructor(
-    private val dataStoreRepository: DataStoreRepository,
-    private val metricRep: MetricsRepository,
+    private val metricRep: MetricsRepositoryImpl,
 ) : ViewModel() {
 
     var time = 0

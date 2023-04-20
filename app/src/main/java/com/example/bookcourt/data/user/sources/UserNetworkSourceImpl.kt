@@ -1,8 +1,8 @@
-package com.example.bookcourt.data.room.user.sources
+package com.example.bookcourt.data.user.sources
 
 import com.example.bookcourt.models.user.User
 
-class UserNetworkSource: UserSourceI {
+class UserNetworkSourceImpl: UserSource {
     override suspend fun getData(id: String): User {
         TODO("Not yet implemented")
     }

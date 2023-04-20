@@ -1,9 +1,9 @@
-package com.example.bookcourt.data.room.user
+package com.example.bookcourt.data.user
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.example.bookcourt.data.room.user.UserDao
+import com.example.bookcourt.data.user.UserDao
 import com.example.bookcourt.models.user.User
 import com.example.bookcourt.utils.Converters
 
