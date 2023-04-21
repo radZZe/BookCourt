@@ -8,9 +8,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookcourt.data.repositories.DataStoreRepository
 import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.uuid
-import com.example.bookcourt.data.repositories.MetricsRepository
-import com.example.bookcourt.data.repositories.NetworkRepository
-import com.example.bookcourt.data.room.user.UserRepositoryI
+import com.example.bookcourt.data.repositories.MetricsRepositoryImpl
+import com.example.bookcourt.data.repositories.NetworkRepositoryImpl
+import com.example.bookcourt.data.user.UserRepository
 import com.example.bookcourt.models.book.Book
 import com.example.bookcourt.models.BookRemote
 import com.example.bookcourt.models.metrics.DataClickMetric
@@ -30,10 +30,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RecommendationViewModel @Inject constructor(
-    private val networkRepository: NetworkRepository,
+    private val networkRepository: NetworkRepositoryImpl,
     private val dataStoreRepository: DataStoreRepository,
-    private val metricRep: MetricsRepository,
-    private val userRepositoryI: UserRepositoryI
+    private val metricRep: MetricsRepositoryImpl,
+    private val userRepositoryI: UserRepository,
+    private val json:Json
 ) : ViewModel() {
 
     lateinit var user: User
@@ -95,8 +96,8 @@ class RecommendationViewModel @Inject constructor(
     }
 
     private suspend fun convertBooksJsonToList(context: Context): List<Book> {
-        val json = networkRepository.getAllBooks(context)!!
-        val data = Json.decodeFromString<MutableList<BookRemote>>(json)
+        val jsonText = networkRepository.getAllBooks(context)!!
+        val data = json.decodeFromString<MutableList<BookRemote>>(jsonText)
         return data.map { it.toBook() }
     }
 

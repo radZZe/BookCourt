@@ -1,30 +1,24 @@
 package com.example.bookcourt.ui.auth
 
 import android.content.Context
-import android.location.Address
-import android.location.Geocoder
-import android.location.Location
 import android.text.TextUtils
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavController
 import com.example.bookcourt.data.repositories.DataStoreRepository
 import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.isRemembered
 import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.savedCity
 import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.uuid
-import com.example.bookcourt.data.repositories.MetricsRepository
-import com.example.bookcourt.data.room.user.UserRepositoryI
+import com.example.bookcourt.data.repositories.MetricsRepositoryImpl
+import com.example.bookcourt.data.user.UserRepository
 import com.example.bookcourt.models.metrics.DataClickMetric
 import com.example.bookcourt.models.user.User
 import com.example.bookcourt.utils.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.first
-import java.io.IOException
-import java.util.*
 import java.util.regex.Pattern
 import javax.inject.Inject
 
@@ -32,9 +26,9 @@ import javax.inject.Inject
 @HiltViewModel
 class SignInViewModel @Inject constructor(
     private val dataStoreRepository: DataStoreRepository,
-    private val metricRep: MetricsRepository,
+    private val metricRep: MetricsRepositoryImpl,
     private val hashing: Hashing,
-    private val userRepositoryI: UserRepositoryI
+    private val userRepositoryI: UserRepository
 ) : ViewModel() {
 
     var email by mutableStateOf("")
@@ -56,17 +50,6 @@ class SignInViewModel @Inject constructor(
         isRememberMe = !isRememberMe
     }
 
-    fun onNameChanged(newText: String) {
-        name = newText
-    }
-
-    fun onSurnameChanged(newText: String) {
-        surname = newText
-    }
-
-    fun onPhoneChanged(newText: String) {
-        phoneNumber = newText
-    }
 
     fun onCityChanged(newText: String) {
         city = newText
@@ -114,13 +97,4 @@ class SignInViewModel @Inject constructor(
         }
     }
 
-    fun isValidEmail(email:String):Boolean{
-        return !TextUtils.isEmpty(email) && android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
-    }
-
-    fun isValidPhone(): Boolean {
-        val pattern =
-            Pattern.compile("^((8|\\+7)[\\- ]?)?(\\(?\\d{3}\\)?[\\- ]?)?[\\d\\- ]{7,10}\$")
-        return pattern.matcher(phoneNumber).matches()
-    }
 }

@@ -10,9 +10,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookcourt.data.repositories.DataStoreRepository
-import com.example.bookcourt.data.repositories.MetricsRepository
-import com.example.bookcourt.data.repositories.NetworkRepository
-import com.example.bookcourt.data.room.user.UserRepositoryI
+import com.example.bookcourt.data.repositories.MetricsRepositoryImpl
+import com.example.bookcourt.data.repositories.NetworkRepositoryImpl
+import com.example.bookcourt.data.user.UserRepository
 import com.example.bookcourt.models.book.Book
 import com.example.bookcourt.models.metrics.DataClickMetric
 import com.example.bookcourt.models.user.User
@@ -28,16 +28,15 @@ import javax.inject.Inject
 
 @HiltViewModel
 class StatisticsViewModel @Inject constructor(
-    val networkRepository: NetworkRepository,
-    private val userRepositoryI: UserRepositoryI,
+    private val userRepositoryI: UserRepository,
     val dataStoreRepository: DataStoreRepository,
-    private val metricsRepository: MetricsRepository
+    private val metricsRepositoryImpl: MetricsRepositoryImpl
 ) : ViewModel() {
     private val userId = dataStoreRepository.getPref(DataStoreRepository.uuid)
 
     var user = mutableStateOf<User?>(null)
     val readBooks = mutableStateOf<MutableList<Book>?>(null)
-    val wantToRead = mutableStateOf<MutableList<Book>?>(null)
+    private val wantToRead = mutableStateOf<MutableList<Book>?>(null)
     private var sessionTime = System.currentTimeMillis().toInt()
 
     fun getUserStats() {
@@ -53,18 +52,18 @@ class StatisticsViewModel @Inject constructor(
     }
 
     private fun getReadBooksList(user: User) {
-        readBooks.value =  user.readBooksList  as MutableList<Book>?
+        readBooks.value =  user.readBooksList
     }
 
     private  fun getWantedBooksList(user: User) {
-        wantToRead.value = user.wantToRead as MutableList<Book>?
+        wantToRead.value = user.wantToRead
     }
 
     fun getTopGenres(): Map<String, Int> {
         val topGenreMap = mutableMapOf<String, Int>()
         for (book in user.value!!.readBooksList) {
             if (topGenreMap.containsKey(book.bookInfo.genre)) {
-                var count = topGenreMap[book.bookInfo.genre]!!
+                val count = topGenreMap[book.bookInfo.genre]!!
                 topGenreMap[book.bookInfo.genre] = (count + 1)
             } else {
                 topGenreMap[book.bookInfo.genre] = 1
@@ -77,7 +76,7 @@ class StatisticsViewModel @Inject constructor(
         val topAuthorsMap = mutableMapOf<String, Int>()
         for (book in user.value!!.readBooksList) {
             if (topAuthorsMap.containsKey(book.bookInfo.author)) {
-                var count = topAuthorsMap[book.bookInfo.author]!!
+                val count = topAuthorsMap[book.bookInfo.author]!!
                 topAuthorsMap[book.bookInfo.author] = (count + 1)
             } else {
                 topAuthorsMap[book.bookInfo.author] = 1
@@ -88,7 +87,7 @@ class StatisticsViewModel @Inject constructor(
 
     fun sendOnClickMetric(clickMetric: DataClickMetric) {
         viewModelScope.launch(Dispatchers.IO) {
-            metricsRepository.onClick(clickMetric)
+            metricsRepositoryImpl.onClick(clickMetric)
         }
         Log.d("Screen", "cross clicked")
     }
@@ -96,7 +95,7 @@ class StatisticsViewModel @Inject constructor(
     fun metricScreenTime() {
         viewModelScope.launch(Dispatchers.IO) {
             sessionTime = System.currentTimeMillis().toInt() - sessionTime
-            metricsRepository.appTime(sessionTime, MetricType.SCREEN_SESSION_TIME,"Statistics")
+            metricsRepositoryImpl.appTime(sessionTime, MetricType.SCREEN_SESSION_TIME,"Statistics")
         }
         Log.d("Screen", "metric worked")
     }

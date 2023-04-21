@@ -6,7 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookcourt.data.repositories.DataStoreRepository
-import com.example.bookcourt.data.repositories.MetricsRepository
+import com.example.bookcourt.data.repositories.MetricsRepositoryImpl
 import com.example.bookcourt.models.metrics.DataClickMetric
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -16,7 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class TutorialScreenViewModel @Inject constructor(
     private val dataStoreRepository: DataStoreRepository,
-    private val metricRep: MetricsRepository,
+    private val metricRep: MetricsRepositoryImpl,
 ) : ViewModel() {
     var currentCardState by mutableStateOf(false)
     var isTutorChecked by mutableStateOf(false)
@@ -25,9 +25,9 @@ class TutorialScreenViewModel @Inject constructor(
         isTutorChecked = !isTutorChecked
     }
 
-    fun changeState() {
-        currentCardState = !currentCardState
-    }
+//    fun changeState() {
+//        currentCardState = !currentCardState
+//    }
 
     private suspend fun editPrefs() {
         dataStoreRepository.setPref(isTutorChecked, DataStoreRepository.isTutorChecked)

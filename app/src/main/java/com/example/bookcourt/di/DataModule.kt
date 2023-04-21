@@ -5,18 +5,23 @@ import androidx.room.Room
 
 import com.example.bookcourt.data.repositories.DataStoreRepository
 import com.example.bookcourt.data.repositories.MetricsRepository
-import com.example.bookcourt.data.room.user.UserRepository
-import com.example.bookcourt.data.room.user.UserRepositoryI
-import com.example.bookcourt.data.room.searchRequest.SearchRequestDatabase
-import com.example.bookcourt.data.room.searchRequest.SearchRequestRepository
-import com.example.bookcourt.data.room.user.UserDatabase
-import com.example.bookcourt.data.room.user.sources.UserLocalSource
-import com.example.bookcourt.data.room.user.sources.UserNetworkSource
+import com.example.bookcourt.data.repositories.MetricsRepositoryImpl
+import com.example.bookcourt.data.user.searchRequest.SearchRequestDatabase
+import com.example.bookcourt.data.user.searchRequest.SearchRequestRepository
+import com.example.bookcourt.data.room.UserDatabase
+import com.example.bookcourt.data.user.sources.UserLocalSourceImpl
+import com.example.bookcourt.data.user.sources.UserNetworkSourceImpl
+import com.example.bookcourt.data.user.sources.UserSource
+import com.example.bookcourt.data.user.UserRepositoryImpl
+import com.example.bookcourt.data.user.UserRepository
+import com.example.bookcourt.utils.Converters
 import com.example.bookcourt.utils.Hashing
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.serialization.json.Json
+import javax.inject.Named
 import javax.inject.Singleton
 
 
@@ -30,12 +35,16 @@ class DataModule {
         return DataStoreRepository(application)
     }
 
-
+    @Provides
+    @Singleton
+    fun provideJson(): Json {
+        return Json
+    }
 
     @Provides
     @Singleton
-    fun provideMetrics(dataStoreRepository: DataStoreRepository):MetricsRepository{
-        return MetricsRepository(dataStoreRepository)
+    fun provideMetrics(dataStoreRepository: DataStoreRepository,json:Json): MetricsRepository {
+        return MetricsRepositoryImpl(dataStoreRepository,json)
     }
 
     @Provides
@@ -45,30 +54,34 @@ class DataModule {
 
     @Provides
     @Singleton
-    fun provideUserDatabase(application: Application) : UserDatabase {
+    fun provideUserDatabase(application: Application,json:Json) : UserDatabase {
+        val converter = Converters(json)
         return Room.databaseBuilder(
             application,
             UserDatabase::class.java,
             "user_database"
-        ).build()
+        ).addTypeConverter(converter)
+            .build()
     }
 
     @Provides
     @Singleton
-    fun provideUserRepository(networkSource: UserNetworkSource, localSource: UserLocalSource) : UserRepositoryI {
-        return UserRepository(networkSource,localSource)
+    fun provideUserRepository(@Named("UserNetworkSource") networkSource: UserSource, @Named("UserLocalSource") localSource: UserSource) : UserRepository {
+        return UserRepositoryImpl(networkSource,localSource)
     }
 
     @Provides
     @Singleton
-    fun provideUserNetworkSource(db: UserDatabase) : UserNetworkSource {
-        return UserNetworkSource()
+    @Named("UserNetworkSource")
+    fun provideUserNetworkSource() : UserSource {
+        return UserNetworkSourceImpl()
     }
 
     @Provides
     @Singleton
-    fun provideUserLocalSource(db: UserDatabase) : UserLocalSource {
-        return UserLocalSource(db.userDao())
+    @Named("UserLocalSource")
+    fun provideUserLocalSource(db: UserDatabase) : UserSource {
+        return UserLocalSourceImpl(db.userDao())
     }
 
     @Provides

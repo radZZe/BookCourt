@@ -1,35 +1,40 @@
 package com.example.bookcourt.utils
 
+import androidx.room.ProvidedTypeConverter
 import androidx.room.TypeConverter
 import com.example.bookcourt.models.book.Book
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
+import javax.inject.Inject
 
-
-class Converters {
+@ProvidedTypeConverter
+class Converters @Inject constructor(
+    private val json: Json
+) {
 
     @TypeConverter
     fun convertBookListToString(list: List<Book>): String {
-        return Json.encodeToString(
+        return json.encodeToString(
             serializer = ListSerializer(Book.serializer()),
             list
         )
     }
 
     @TypeConverter
-    fun convertJsonToBookList(json: String) : List<Book> {
-        return Json.decodeFromString<MutableList<Book>>("""$json""")
+    fun convertJsonToBookList(jsonText: String) : List<Book> {
+
+        return json.decodeFromString<MutableList<Book>>(jsonText)
     }
 
     @TypeConverter
     fun convertBookToJson(book: Book) : String {
-        return Json.encodeToString(serializer = Book.serializer(), book)
+        return json.encodeToString(serializer = Book.serializer(), book)
     }
 
     @TypeConverter
-    fun convertJsonToBook(json: String) : Book {
-        return Json.decodeFromString<Book>("""$json""")
+    fun convertJsonToBook(jsonText: String) : Book {
+        return json.decodeFromString<Book>(jsonText)
     }
 
 //    fun convertToMap(value: String):MutableMap<String,Int>{

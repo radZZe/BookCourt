@@ -56,7 +56,6 @@ fun RecommendationContent(
     onNavigateToProfile: () -> Unit,
     viewModel: RecommendationViewModel = hiltViewModel()
 ) {
-
     val windowHeight =
         LocalConfiguration.current.screenHeightDp.toFloat() * LocalDensity.current.density
     val cardStackHeight = if (windowHeight > LIMIT_WINDOW_HEIGHT) 550.dp else 480.dp
