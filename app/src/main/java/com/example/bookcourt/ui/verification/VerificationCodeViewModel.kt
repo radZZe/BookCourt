@@ -1,9 +1,6 @@
 package com.example.bookcourt.ui.verification
 
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
@@ -31,32 +28,25 @@ class VerificationCodeViewModel @Inject constructor(
 ) : ViewModel() {
     var userEmail = mutableStateOf("")
 
-    val textList = listOf(
-        mutableStateOf(
-            TextFieldValue(
-                text = "",
-                selection = TextRange(0)
-            )
+    private val _textList = mutableStateListOf(
+        TextFieldValue(
+            text = "",
+            selection = TextRange(0)
         ),
-        mutableStateOf(
-            TextFieldValue(
-                text = "",
-                selection = TextRange(0)
-            )
+        TextFieldValue(
+            text = "",
+            selection = TextRange(0)
         ),
-        mutableStateOf(
-            TextFieldValue(
-                text = "",
-                selection = TextRange(0)
-            )
+        TextFieldValue(
+            text = "",
+            selection = TextRange(0)
         ),
-        mutableStateOf(
-            TextFieldValue(
-                text = "",
-                selection = TextRange(0)
-            )
-        )
+        TextFieldValue(
+            text = "",
+            selection = TextRange(0)
+        ),
     )
+    val textList: List<TextFieldValue> = _textList
 
     val requestList = listOf(
         FocusRequester(),
@@ -102,17 +92,18 @@ class VerificationCodeViewModel @Inject constructor(
         }
     }
 
+    fun changeTextListItem(index: Int, newValue: TextFieldValue) {
+        _textList[index] = newValue
+    }
+
     fun resendCode() {
         _timer.value = 59
         _isOver.update { false }
     }
 
-    fun nextFocus(
-        textList: List<MutableState<TextFieldValue>>,
-        requestList: List<FocusRequester>
-    ) {
+    fun nextFocus() {
         for (i in textList.indices) {
-            if (textList[i].value.text == "") {
+            if (textList[i].text == "") {
                 if (i < textList.size) {
                     requestList[i].requestFocus()
                     break
@@ -122,12 +113,11 @@ class VerificationCodeViewModel @Inject constructor(
     }
 
     fun connectInputtedCode(
-        textList: List<MutableState<TextFieldValue>>,
-        onVerifyCode: ((success: Boolean) -> Unit)? = null
+        onVerifyCode: ((Success: Boolean) -> Unit)? = null
     ) {
         var code = ""
-        for (text in textList) {
-            code += text.value.text
+        for (text in _textList) {
+            code += text.text
         }
         if (code.length == 4) {
             verifyCode(

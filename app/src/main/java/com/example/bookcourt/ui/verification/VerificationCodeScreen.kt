@@ -26,8 +26,6 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -52,6 +50,7 @@ fun VerificationCodeScreen(
     val timer by viewModel.timer.collectAsState()
     val isOver by viewModel.isOver.collectAsState()
     val isValid by viewModel.isValid.collectAsState()
+    val textList = viewModel.textList
 
     Column(
         verticalArrangement = Arrangement.SpaceBetween,
@@ -116,8 +115,7 @@ fun VerificationCodeScreen(
             VerificationCodeFields(
                 isValid = isValid,
                 viewModel = viewModel,
-                textList = viewModel.textList,
-                requestList = viewModel.requestList
+                textList = textList
             )
             Spacer(modifier = Modifier.height(20.dp))
             if (isValid == false) {
@@ -135,7 +133,7 @@ fun VerificationCodeScreen(
             if (isOver) {
                 Text(
                     text = "Повторно отправить код",
-                    modifier = Modifier.clickable {viewModel.resendCode()},
+                    modifier = Modifier.clickable { viewModel.resendCode() },
                     textAlign = TextAlign.Center,
                     fontSize = 16.sp,
                     fontFamily = Roboto,
@@ -174,11 +172,7 @@ fun VerificationCodeScreen(
         ) {
             Text(
                 text = "Продолжить", fontSize = 16.sp,
-                fontFamily = FontFamily(
-                    Font(
-                        R.font.roboto_regular
-                    )
-                ),
+                fontFamily = Roboto
             )
         }
     }
@@ -237,8 +231,7 @@ private fun InputField(
 private fun VerificationCodeFields(
     isValid: Boolean?,
     viewModel: VerificationCodeViewModel,
-    textList: List<MutableState<TextFieldValue>>,
-    requestList: List<FocusRequester>
+    textList: List<TextFieldValue>
 ) {
     val borderColor = if (isValid == null || isValid == true) Color.Transparent else Color.Red
     val focusManager = LocalFocusManager.current
@@ -246,7 +239,7 @@ private fun VerificationCodeFields(
 
     LaunchedEffect(Unit) {
         delay(300)
-        requestList[0].requestFocus()
+        viewModel.requestList[0].requestFocus()
     }
 
     Row(
@@ -255,37 +248,44 @@ private fun VerificationCodeFields(
     ) {
         for (i in textList.indices) {
             InputField(
-                value = textList[i].value,
+                value = textList[i],
                 borderColor = borderColor,
                 onValueChange = { newValue ->
-                    if (textList[i].value.text.isNotBlank()) {
+                    if (textList[i].text.isNotBlank()) {
                         if (newValue.text == "") {
-                            textList[i].value = TextFieldValue(
-                                text = "",
-                                selection = TextRange(0)
+                            viewModel.changeTextListItem(
+                                i,
+                                TextFieldValue(
+                                    text = "",
+                                    selection = TextRange(0)
+                                )
                             )
                         }
                         return@InputField
                     }
-                    textList[i].value = TextFieldValue(
-                        text = newValue.text,
-                        selection = TextRange(newValue.text.length)
+                    viewModel.changeTextListItem(
+                        i,
+                        TextFieldValue(
+                            text = newValue.text,
+                            selection = TextRange(newValue.text.length)
+                        )
                     )
-                    viewModel.connectInputtedCode(textList) {
+                    viewModel.connectInputtedCode {
                         focusManager.clearFocus()
                         keyboardController?.hide()
                         if (!it) {
-                            for (text in textList) {
-                                text.value = TextFieldValue(
+                            for (text in textList.indices) {
+                                val value = TextFieldValue(
                                     text = "",
                                     selection = TextRange(0)
                                 )
+                                viewModel.changeTextListItem(text, value)
                             }
                         }
                     }
-                    viewModel.nextFocus(textList, requestList)
+                    viewModel.nextFocus()
                 },
-                focusRequester = requestList[i]
+                focusRequester = viewModel.requestList[i]
             )
             if (i != textList.size - 1) {
                 Spacer(modifier = Modifier.width(20.dp))
