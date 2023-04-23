@@ -275,7 +275,7 @@ fun SimpleAlertDialog(state: MutableState<Boolean>) {
 @Composable
 fun SignInScreen(
     onNavigateToCategorySelection: () -> Unit,
-    onNavigateToTutorial: () -> Unit,
+    onNavigateToVerificationCode: () -> Unit,
     mViewModel: SignInViewModel = hiltViewModel()
 ) {
     var context = LocalContext.current
@@ -341,7 +341,7 @@ fun SignInScreen(
         Button(
             onClick = {
                 mViewModel.onCheckedChanged()
-                mViewModel.saveUser(onNavigateToCategorySelection,onNavigateToTutorial,context)
+                mViewModel.saveUser(onNavigateToCategorySelection,onNavigateToVerificationCode,context)
             },
             modifier = Modifier
                 .fillMaxWidth()

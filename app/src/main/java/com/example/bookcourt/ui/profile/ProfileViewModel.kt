@@ -11,6 +11,7 @@ import com.example.bookcourt.models.user.Sex
 import com.example.bookcourt.models.user.User
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -47,6 +48,7 @@ class ProfileViewModel @Inject constructor(
     var date by mutableStateOf("")
     var sex by mutableStateOf<Sex?>(null)
     var profileImage by mutableStateOf<Uri?>(null)
+    var isVisibleSnackBar by mutableStateOf(false)
 
     fun onNameChanged(newText: String) {
         name = newText
@@ -72,6 +74,14 @@ class ProfileViewModel @Inject constructor(
         profileImage = newUri
     }
 
+    fun showSnackBar(){
+        viewModelScope.launch {
+            isVisibleSnackBar = true
+            delay(1000)
+            isVisibleSnackBar = false
+        }
+    }
+
     fun saveUserData() {
         viewModelScope.launch(Dispatchers.IO) {
             user?.let {
@@ -81,7 +91,7 @@ class ProfileViewModel @Inject constructor(
                         name = name,
                         email = email,
                         city = city,
-                        image = profileImage.toString(),
+                        image = profileImage as String?,
                         dayBD = date,
                         sex = sex,
                         readBooksList = it.readBooksList,

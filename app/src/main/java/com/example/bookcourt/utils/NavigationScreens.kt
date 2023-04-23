@@ -13,6 +13,7 @@ sealed class Screens(
     object Tutorial : Screens(route = "Tutorial", title = "Tutorial")
     object CategorySelection : Screens(route = "CategorySelection", title = "CategorySelection")
     object Profile:Screens(route = "Profile", title = "Profile")
+    object VerificationCode: Screens(route = "VerificationCode", title = "VerificationCode")
 }
 
 sealed class BottomNavMenu(

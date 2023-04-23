@@ -18,17 +18,17 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.bookcourt.utils.CustomButton
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.bookcourt.models.metrics.DataClickMetric
 import com.example.bookcourt.ui.theme.LightYellowBtn
 import com.example.bookcourt.ui.theme.MainBgColor
-import com.example.bookcourt.utils.WindowInfo
-import com.example.bookcourt.utils.rememberWindowSizeClass
+import com.example.bookcourt.utils.*
 import com.google.accompanist.flowlayout.FlowRow
 
 @Composable
 fun CategorySelectionScreen(
     onNavigateToBottomNav:()->Unit,
-    viewModel: CategorySelectionViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
+    viewModel: CategorySelectionViewModel = hiltViewModel(),
 ) {
     val windowInfo = rememberWindowSizeClass()
     Box(modifier = Modifier
@@ -163,6 +163,9 @@ fun NextButton(viewModel: CategorySelectionViewModel, windowType: WindowInfo.Win
             textColor = Color.Black,
             modifier = Modifier.padding(horizontal = 20.dp),
             onCLick = {
+                viewModel.metricClick(
+                    DataClickMetric(Buttons.CATEGORIES_SELECTION, Screens.CategorySelection.route)
+                )
                 onNavigateToBottomNav()
             }
         )

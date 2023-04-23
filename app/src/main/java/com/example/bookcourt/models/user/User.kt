@@ -10,7 +10,7 @@ import kotlinx.serialization.Serializable
 data class User(
     @PrimaryKey(autoGenerate = false) val uid: String,
     val name:String? = null,
-    val email:String,
+    var email:String,
     val city: String,
     val image:String? = null,
     val dayBD:String? = null,
