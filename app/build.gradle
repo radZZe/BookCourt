@@ -55,6 +55,8 @@ android {
 
 dependencies {
 
+    implementation "com.github.skydoves:cloudy:0.1.2"
+
     implementation 'com.github.theapache64:rebugger:1.0.0-alpha02'
 
     implementation "com.google.accompanist:accompanist-flowlayout:0.23.1"
