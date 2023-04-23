@@ -36,9 +36,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.SubcomposeAsyncImage
 import com.example.bookcourt.R
 import com.example.bookcourt.models.book.Book
-import com.example.bookcourt.ui.recommendation.LIMIT_WINDOW_HEIGHT
 import com.example.bookcourt.ui.theme.*
 import com.example.bookcourt.utils.Constants
+import com.example.bookcourt.utils.Constants.LIMIT_WINDOW_HEIGHT
 import com.example.bookcourt.utils.ShareStatisticsButton
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager

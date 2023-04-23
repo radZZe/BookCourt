@@ -6,6 +6,7 @@ import com.example.bookcourt.models.ui.TutorialCard
 object Constants {
     const val OTHER_CITY = "Другой"
     const val DATE_TIME_METRIC_FORMAT = "dd-MM-yyyy HH:mm:ss"
+    const val LIMIT_WINDOW_HEIGHT = 1920
 
     val cities = listOf(
         "Хабаровск",
@@ -91,6 +92,8 @@ object Buttons {
     const val STATS_NOTIFICATION = "Check Stats"
     const val SIGN_IN = "Sign In"
     const val CHECK_TUTOR = "Check Tutor"
+    const val VERIFY_CODE = "Verify Code"
+    const val CATEGORIES_SELECTION = "Pick Categories"
 }
 
 object AppVersion {
