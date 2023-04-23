@@ -91,7 +91,7 @@ class ProfileViewModel @Inject constructor(
                         name = name,
                         email = email,
                         city = city,
-                        image = profileImage.toString(),
+                        image = profileImage as String?,
                         dayBD = date,
                         sex = sex,
                         readBooksList = it.readBooksList,
