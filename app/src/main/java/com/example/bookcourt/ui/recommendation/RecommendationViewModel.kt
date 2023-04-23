@@ -53,16 +53,19 @@ class RecommendationViewModel @Inject constructor(
 
 
     var blurValueRecommendationScreen = Animatable(0f)
+    var isBlur by mutableStateOf(false)
 
     fun displayNotificationMessage(){
         viewModelScope.launch {
             blurValueRecommendationScreen.snapTo(20f)
+            isBlur = true
         }
     }
 
     fun closeNotificationMessage(){
         viewModelScope.launch {
             blurValueRecommendationScreen.snapTo(0f)
+            isBlur = false
         }
     }
 
