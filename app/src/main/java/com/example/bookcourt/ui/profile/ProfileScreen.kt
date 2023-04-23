@@ -123,9 +123,11 @@ fun ProfileMainSection(
 
     val galleryLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-            val flags = Intent.FLAG_GRANT_READ_URI_PERMISSION//or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-            resolver.takePersistableUriPermission(uri!!, flags)
-            viewModel.onProfileImageChanged(uri)
+            if(uri != null){
+                val flags = Intent.FLAG_GRANT_READ_URI_PERMISSION//or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                resolver.takePersistableUriPermission(uri, flags)
+                viewModel.onProfileImageChanged(uri)
+            }
         }
 
 
