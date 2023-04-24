@@ -28,7 +28,6 @@ import com.example.bookcourt.utils.Constants.LIMIT_WINDOW_HEIGHT
 
 @Composable
 fun BottomNavigationMenu(navController: NavController) {
-    val windowInfo = rememberWindowSizeClass()
     val windowHeight = LocalConfiguration.current.screenHeightDp.toFloat() * LocalDensity.current.density
     val menuHeight = if(windowHeight > LIMIT_WINDOW_HEIGHT) 72.dp else 56.dp
 
@@ -62,15 +61,7 @@ fun BottomNavigationMenu(navController: NavController) {
                     screen = screen,
                     isSelected = (screen.route == currentRoute)
                 ) {
-                    navController.navigate(screen.route) {
-                        navController.graph.startDestinationRoute?.let { route ->
-                            popUpTo(route) {
-                                saveState = true
-                            }
-                        }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
+                    navController.navigate(screen.route)
                 }
             }
         }
