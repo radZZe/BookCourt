@@ -2,10 +2,7 @@ package com.example.bookcourt.utils
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.net.Uri
-import android.view.View
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -42,8 +39,6 @@ import androidx.compose.ui.zIndex
 import com.example.bookcourt.R
 import com.example.bookcourt.ui.theme.LightBrown
 import com.example.bookcourt.ui.theme.LightYellowBtn
-import com.example.bookcourt.utils.BitmapUtils
-import com.example.bookcourt.utils.Constants
 import java.util.*
 
 
@@ -113,41 +108,22 @@ fun RedirectButton(
 
 @Composable
 fun ShareStatisticsButton(
+    modifier: Modifier = Modifier,
+    statisticsText: String,
     context: Context,
-    contentView:View,
     color: Color = LightYellowBtn,
-    text: String = "Поделиться",
-    modifier: Modifier = Modifier
+    text: String = "Поделиться"
 ) {
 
     Button(
         onClick = {
-            val bitmap = Bitmap.createBitmap(
-                contentView.width,
-                contentView.height,
-                Bitmap.Config.ARGB_8888
-            )
-            val canvas = Canvas(bitmap)
-            contentView.layout(
-                contentView.left,
-                contentView.top,
-                contentView.right,
-                contentView.bottom
-            )
-            contentView.draw(canvas)
-
             val shareIntent: Intent = Intent().apply {
                 action = Intent.ACTION_SEND
                 putExtra(
-                    Intent.EXTRA_STREAM,
-                    BitmapUtils.getBitmapUri(
-                        context,
-                        bitmap,
-                        "statistics",
-                        "images/"
-                    )
+                    Intent.EXTRA_TEXT,
+                    statisticsText
                 )
-                type = "image/jpeg"
+                type = "text/plain"
             }
             context.startActivity(Intent.createChooser(shareIntent, null))
         },
