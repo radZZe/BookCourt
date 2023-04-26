@@ -58,6 +58,8 @@ fun Statistics(
     val bottomPadding = if (windowHeight > LIMIT_WINDOW_HEIGHT) 76.dp else 56.dp
     LaunchedEffect(key1 = Unit) {
         viewModel.getUserStats()
+//        viewModel.getTopAuthors()
+//        viewModel.getTopAuthors()
     }
 
     val targetOffset = 500
@@ -85,6 +87,7 @@ fun Statistics(
                                 currentPage + 1
                             }
                             if (currentPage == pagerState.pageCount) {
+                                viewModel.metricScreenTime()
                                 onNavigateToRecommendation()
                             } else {
                                 pagerState.animateScrollToPage(page = currentPage % pagerState.pageCount)
@@ -123,6 +126,7 @@ fun Statistics(
                     ) {
                         coroutineScope.launch {
                             if (currentPage == pagerState.pageCount - 1) {
+                                viewModel.metricScreenTime()
                                 onNavigateToRecommendation()
                             } else {
                                 currentPage = (currentPage + 1) % (pagerState.pageCount)
@@ -142,9 +146,8 @@ fun FavoriteGenresStats(
     bottomPadding: Dp,
     mViewModel: StatisticsViewModel = hiltViewModel()
 ) {
-    val view = LocalView.current
     val context = LocalContext.current
-    val topGenres = mViewModel.getTopGenres().toList()
+    val topGenres = mViewModel.favGenresList.toList()
     val top3Genres = listOf(
         topGenres.getOrNull(0),
         topGenres.getOrNull(1),
@@ -197,8 +200,8 @@ fun FavoriteGenresStats(
             contentScale = ContentScale.FillBounds
         )
         ShareStatisticsButton(
+            statisticsText = mViewModel.shareStatistics(),
             context = context,
-            contentView = view,
             modifier = Modifier.weight(1f, false)
         )
     }
@@ -246,7 +249,6 @@ fun ReadBooksStats(
     mViewModel: StatisticsViewModel = hiltViewModel()
 ) {
     val booksAmount = mViewModel.readBooks.value?.size
-    val view = LocalView.current
     val context = LocalContext.current
     val string = if (booksAmount == 1) "книга" else if (booksAmount in 2..4) "книги" else "книг"
     Column(
@@ -305,8 +307,8 @@ fun ReadBooksStats(
             contentScale = ContentScale.Fit
         )
         ShareStatisticsButton(
+            statisticsText = mViewModel.shareStatistics(),
             context = context,
-            contentView = view,
             modifier = Modifier.weight(1f, false)
         )
     }
@@ -317,9 +319,8 @@ fun FavoriteAuthors(
     bottomPadding: Dp,
     mViewModel: StatisticsViewModel = hiltViewModel()
 ) {
-    val view = LocalView.current
     val context = LocalContext.current
-    val topAuthors = mViewModel.getTopAuthors().toList()
+    val topAuthors = mViewModel.favAuthorsList.toList()
     val firstPlaceAuthor = topAuthors.getOrNull(0)?.first
     val secondPlaceAuthor = topAuthors.getOrNull(1)?.first
     val thirdPlaceAuthor = topAuthors.getOrNull(2)?.first
@@ -404,8 +405,8 @@ fun FavoriteAuthors(
             }
         }
         ShareStatisticsButton(
+            statisticsText = mViewModel.shareStatistics(),
             context = context,
-            contentView = view,
             modifier = Modifier.weight(1f, false)
         )
     }
