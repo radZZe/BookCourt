@@ -28,19 +28,26 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    signingConfigs {
+        release {
+            storeFile file("keystore.jks")
+            storePassword 'k4yWP9GQPOJx'
+            keyAlias 'first_key'
+            keyPassword 'k4yWP9GQPOJx'
+        }
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
     kotlinOptions {
         jvmTarget = '1.8'
-//        freeCompilerArgs += [
-//                "-Xjvm-default=all",
-//        ]
     }
     buildFeatures {
         compose true
