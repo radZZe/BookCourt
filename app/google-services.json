@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1086817449234",
+    "project_id": "bookcourt-ab1e0",
+    "storage_bucket": "bookcourt-ab1e0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1086817449234:android:5a879bb80d383801a9afcb",
+        "android_client_info": {
+          "package_name": "com.example.bookcourt"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1086817449234-4o0f6ks3oficjodmup24gaqki105fl53.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCdkUDc7tvZx_mQPBmmZYhixvHwkCKZg9E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1086817449234-4o0f6ks3oficjodmup24gaqki105fl53.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
