@@ -76,7 +76,7 @@ fun CustomBottomNavigationItem(
     onClick: () -> Unit
 ) {
     val background = if (isSelected) SelectedMenuItem else MenuBackGround
-
+    val icon = if (isSelected) screen.iconSelected else screen.icon
     Column(
         modifier = Modifier
             .wrapContentWidth()
@@ -99,7 +99,7 @@ fun CustomBottomNavigationItem(
             contentAlignment = Alignment.Center
         ) {
             Icon(
-                painter = painterResource(id = screen.icon),
+                painter = painterResource(id = icon),
                 contentDescription = "cnbIcon",
                 tint = contentColor,
                 modifier = Modifier
