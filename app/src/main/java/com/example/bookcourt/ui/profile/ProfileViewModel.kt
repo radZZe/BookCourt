@@ -70,7 +70,7 @@ class ProfileViewModel @Inject constructor(
         sex = newText
     }
 
-    fun onProfileImageChanged(newUri: Uri?) {
+    fun onProfileImageChanged(newUri: Uri) {
         profileImage = newUri
     }
 
@@ -84,14 +84,14 @@ class ProfileViewModel @Inject constructor(
 
     fun saveUserData() {
         viewModelScope.launch(Dispatchers.IO) {
-            user?.let {
+            user?.let { it ->
                 userRepositoryI.updateData(
                     User(
                         uid = userId,
                         name = name,
                         email = email,
                         city = city,
-                        image = profileImage as String?,
+                        image = profileImage?.toString(),
                         dayBD = date,
                         sex = sex,
                         readBooksList = it.readBooksList,
