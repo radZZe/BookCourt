@@ -1,5 +1,6 @@
 package com.example.bookcourt.ui.graphs
 
+import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
@@ -7,6 +8,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.bookcourt.ui.library.LibraryScreen
 import com.example.bookcourt.ui.profile.ProfileScreen
 import com.example.bookcourt.ui.recommendation.RecommendationScreen
 import com.example.bookcourt.ui.search.SearchScreen
@@ -40,9 +42,9 @@ fun BottomNavigationGraph(
                 onNavigateToProfile = {navController.navigate(Graph.PROFILE_NAV_GRAPH)}
             )
         }
-        composable(route = BottomNavMenu.Search.route) {
-            SearchScreen(
-                onNavigateToRecommendation = { navController.popBackStack()}
+        composable(route = BottomNavMenu.Library.route){
+            LibraryScreen(
+                onNavigateToRecommendation = {navController.popBackStack()}
             )
         }
         composable(route = BottomNavMenu.Statistics.route) {

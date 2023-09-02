@@ -21,6 +21,17 @@ object Constants {
         OTHER_CITY
     )
 
+    val genres = listOf(
+        "Детективы",
+        "Детская литература",
+        "Рассказы",
+        "Фантастика",
+        "Экономика",
+        "Научная фантастика",
+        "Фэнтези",
+        "Зарубежная литература"
+    )
+
     val tutorialCards = listOf(
         TutorialCard(
             bookTitle = "Это Владивосток, детка",
@@ -66,7 +77,7 @@ object Constants {
 
     val statisticScreensList = listOf("ReadBooks", "Lyuteratura", "FavoriteAuthors", "IgraSlov", "Zarya", "FavoriteGenres")
 
-    val navMenuScreensList = listOf(BottomNavMenu.Statistics, BottomNavMenu.Recommendations, BottomNavMenu.Search)
+    val navMenuScreensList = listOf(BottomNavMenu.Statistics, BottomNavMenu.Library, BottomNavMenu.Recommendations)
 }
 
 object MetricType {

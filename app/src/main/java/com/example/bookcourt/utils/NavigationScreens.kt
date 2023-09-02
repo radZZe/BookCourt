@@ -40,6 +40,12 @@ sealed class BottomNavMenu(
         icon = R.drawable.ic_search,
         iconSelected = R.drawable.ic_search_selected
     )
+    object Library: BottomNavMenu(
+        route = "Library",
+        title = "Библиотека",
+        icon = R.drawable.ic_library,
+        iconSelected = R.drawable.ic_library_selected
+    )
 }
 
 object Graph {
