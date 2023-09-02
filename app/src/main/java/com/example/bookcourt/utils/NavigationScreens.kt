@@ -40,6 +40,24 @@ sealed class BottomNavMenu(
         icon = R.drawable.ic_search,
         iconSelected = R.drawable.ic_search_selected
     )
+    object Bag : BottomNavMenu(
+        route = "Bag",
+        title = "Корзина",
+        icon = R.drawable.bag,
+        iconSelected = R.drawable.bag_fill
+    )
+    object Profile : BottomNavMenu(
+        route = "Profile",
+        title = "Профиль",
+        icon = R.drawable.profile,
+        iconSelected = R.drawable.profile_fill
+    )
+    object Library : BottomNavMenu(
+        route = "Library",
+        title = "Библиотека",
+        icon = R.drawable.compass,
+        iconSelected = R.drawable.compass_fill
+    )
 }
 
 object Graph {
