@@ -87,7 +87,6 @@ fun RecommendationContent(
 
     if (viewModel.dataIsReady) {
 
-
         val itemsIsNotEmpty = viewModel.validBooks.isNotEmpty()
         val frontItem =
             if (itemsIsNotEmpty) viewModel.validBooks[viewModel.validBooks.lastIndex] else null
@@ -179,7 +178,7 @@ fun MainRecommendationContent(
                 initialValue = BottomSheetValue.Collapsed
             )
         )
-        ProfileTopBar(viewModel,onNavigateToProfile,imagePlaceholderUri)
+            //ProfileTopBar(viewModel,onNavigateToProfile,imagePlaceholderUri)
 
         if(itemsIsNotEmpty){
             BottomSheetScaffold(
