@@ -6,7 +6,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -26,7 +25,10 @@ import coil.compose.SubcomposeAsyncImage
 import com.example.bookcourt.R
 import com.example.bookcourt.models.book.Book
 import com.example.bookcourt.ui.categorySelection.BoxItem
+import com.example.bookcourt.ui.theme.GrayBackground
+import com.example.bookcourt.ui.theme.GreenText
 import com.example.bookcourt.ui.theme.Roboto
+import com.example.bookcourt.ui.theme.SearchWidgetGrayGrayText
 import com.example.bookcourt.utils.WindowInfo
 import com.example.bookcourt.utils.rememberWindowSizeClass
 
@@ -45,7 +47,7 @@ fun LibraryScreen(onNavigateToSearchScreen:()->Unit, viewModel: LibraryViewModel
         verticalArrangement = Arrangement.spacedBy(16.dp),
         modifier = Modifier.verticalScroll(rememberScrollState())
     ) {
-        SearchWidget(modifier = Modifier.padding(8.dp)) {
+        SearchWidget(modifier = Modifier.padding(horizontal = 16.dp)) {
             onNavigateToSearchScreen()
         }
         GenresBar(windowType = windowInfo.screenHeightInfo, viewModel = viewModel)
@@ -61,14 +63,14 @@ fun SearchWidget(modifier: Modifier,onClick:()->Unit){
         modifier
             .clip(shape = RoundedCornerShape(12.dp))
             .fillMaxWidth()
-            .background(Color.LightGray)
+            .background(GrayBackground)
             .clickable { onClick() }
     ){
         Text(
             text = "Search",
             fontFamily = Roboto,
             fontWeight = FontWeight.Normal,
-            color = Color.Gray,
+            color = SearchWidgetGrayGrayText,
             fontSize = 18.sp,
             modifier = Modifier.padding(8.dp)
         )
@@ -91,12 +93,15 @@ fun GenresBar(
         .fillMaxWidth()
     ){
         items(viewModel.categories){ category ->
-            Spacer(modifier = Modifier.size(8.dp))
+            Spacer(modifier = Modifier.size(16.dp))
             BoxItem(
                 text = category.value.title,
                 windowType = windowType,
                 isChecked = category.value.state.value) {
                viewModel.filterCategories(category.value.title)
+            }
+            if (category.value==viewModel.categories.last().value){
+                Spacer(modifier = Modifier.size(16.dp))
             }
         }
     }
@@ -108,12 +113,15 @@ fun SponsorsBar(viewModel: LibraryViewModel){
         .fillMaxWidth()
     ){
         items(viewModel.partners){ partner->
-            Spacer(modifier = Modifier.size(8.dp))
+            Spacer(modifier = Modifier.size(16.dp))
             SponsorItem(
                 sponsorImageId = partner.imageId,
                 sponsorTitle = partner.title,
                 sponsorText = partner.mainText
             )
+            if (partner ==viewModel.partners.last()){
+                Spacer(modifier = Modifier.size(16.dp))
+            }
         }
     }
 }
@@ -126,7 +134,7 @@ fun SponsorItem(
 ){
     Column(modifier = Modifier
         .clip(shape = RoundedCornerShape(12.dp))
-        .background(Color.LightGray)
+        .background(GrayBackground)
         .width(380.dp)
     ){
         Image(
@@ -174,8 +182,11 @@ fun RecommendationBar(viewModel: LibraryViewModel){
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ){
             items(viewModel.recommendationBooksFiltered){ book->
-                Spacer(modifier = Modifier.size(8.dp))
+                Spacer(modifier = Modifier.size(16.dp))
                 BookItem(book = book!!)
+                if (book ==viewModel.recommendationBooksFiltered.last()){
+                    Spacer(modifier = Modifier.size(16.dp))
+                }
             }
         }
     }
@@ -198,8 +209,11 @@ fun PopularBar(viewModel: LibraryViewModel){
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ){
             items(viewModel.popularBooksFiltered){ book->
-                Spacer(modifier = Modifier.size(8.dp))
+                Spacer(modifier = Modifier.size(16.dp))
                 BookItem(book = book!!)
+                if (book ==viewModel.popularBooksFiltered.last()){
+                    Spacer(modifier = Modifier.size(16.dp))
+                }
             }
         }
     }
@@ -250,16 +264,22 @@ fun RatingIcon(rating:Float, modifier: Modifier){
             .background(Color.White),
     ){
         Row (
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 1.dp),
+            modifier = Modifier.align(Alignment.Center),
             horizontalArrangement = Arrangement.Center
         ){
            Image(
                painter = painterResource(id = R.drawable.ic_like),
                contentDescription = "LikeIcon",
-               modifier = Modifier.size(17.dp)
+               modifier = Modifier
+                   .size(13.dp)
+                   .align(Alignment.CenterVertically)
            )
            Spacer(modifier = Modifier.size(4.dp))
-           Text(text = rating.toString())
+           Text(text = rating.toString(),
+               fontFamily = Roboto,
+               fontWeight = FontWeight.Bold,
+               color = GreenText,
+               fontSize = 14.sp,)
         }
     }
 }
