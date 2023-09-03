@@ -1,5 +1,6 @@
 package com.example.bookcourt.ui.recommendation
 
+import android.util.Log
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.material.ExperimentalMaterialApi
@@ -174,6 +175,13 @@ open class BookCardController(
     fun swipeDown() {
         scope.apply {
             launch {
+//                isInAnimation = true
+//                offsetY.animateTo(screenHeight, animationSpec)
+//                visibilityFirst.animateTo(
+//                    targetValue = 0f,
+//                    animationSpec = tween(durationMillis = 200, easing = LinearEasing)
+//                )
+
                 isInAnimation = true
                 offsetY.animateTo(screenHeight, animationSpec)
                 visibilityFirst.animateTo(
@@ -181,27 +189,51 @@ open class BookCardController(
                     animationSpec = tween(durationMillis = 200, easing = LinearEasing)
                 )
                 onSwipeDown()
-                launch {
-                    offsetX.snapTo(0f)
-                }
-                launch {
-                    offsetY.snapTo(center.y)
-                }
-                launch {
-                    rotation.snapTo(0f)
-                }
-                launch {
-                    visibilityFirst.snapTo(1f)
-                }
-                launch {
-                    skipBookIconSize.snapTo(20.0f)
-                }
-                launch {
-                    skipIconAlpha.snapTo(
-                        0f
-                    )
-                }
+                offsetX.snapTo(0f)
+                offsetY.snapTo(0f)
+                rotation.snapTo(0f)
+                visibilityFirst.snapTo(1f)
+                skipBookIconSize.snapTo(20.0f)
+                skipIconAlpha.snapTo(
+                    0f
+                )
                 isInAnimation = false
+                Log.d("bug123","animation finished")
+//                launch {
+//                    isInAnimation = true
+//                    offsetY.animateTo(screenHeight, animationSpec)
+//                    visibilityFirst.animateTo(
+//                        targetValue = 0f,
+//                        animationSpec = tween(durationMillis = 200, easing = LinearEasing)
+//                    )
+//                    offsetX.snapTo(0f)
+//                    offsetY.snapTo(center.y)
+//                    rotation.snapTo(0f)
+//                    visibilityFirst.snapTo(1f)
+//                    skipBookIconSize.snapTo(20.0f)
+//                    skipIconAlpha.snapTo(
+//                        0f
+//                    )
+//                    isInAnimation = false
+//                }
+//                launch {
+//                    offsetY.snapTo(center.y)
+//                }
+//                launch {
+//                    rotation.snapTo(0f)
+//                }
+//                launch {
+//                    visibilityFirst.snapTo(1f)
+//                }
+//                launch {
+//                    skipBookIconSize.snapTo(20.0f)
+//                }
+//                launch {
+//                    skipIconAlpha.snapTo(
+//                        0f
+//                    )
+//                }
+//                isInAnimation = false
             }
         }
     }
@@ -210,21 +242,14 @@ open class BookCardController(
         scope.apply {
             launch {
                 offsetX.animateTo(center.x, animationSpec)
-            }
-            launch {
                 offsetY.animateTo(center.y, animationSpec)
-            }
-            launch {
                 rotation.animateTo(0f, animationSpec)
-            }
-            launch {
                 visibilityFirst.animateTo(
                     targetValue = 1f,
                     animationSpec = tween(durationMillis = 200, easing = FastOutSlowInEasing)
                 )
             }
-
-            launch {
+            launch{
                 likeIconSize.snapTo(20.0f)
                 wantToReadIconSize.snapTo(20.0f)
                 skipBookIconSize.snapTo(20.0f)
@@ -234,6 +259,29 @@ open class BookCardController(
                 wantToReadIconAlpha.snapTo(0f)
                 skipIconAlpha.snapTo(0f)
             }
+//            launch {
+//                offsetY.animateTo(center.y, animationSpec)
+//            }
+//            launch {
+//                rotation.animateTo(0f, animationSpec)
+//            }
+//            launch {
+//                visibilityFirst.animateTo(
+//                    targetValue = 1f,
+//                    animationSpec = tween(durationMillis = 200, easing = FastOutSlowInEasing)
+//                )
+//            }
+//
+//            launch {
+//                likeIconSize.snapTo(20.0f)
+//                wantToReadIconSize.snapTo(20.0f)
+//                skipBookIconSize.snapTo(20.0f)
+//                dislikeIconSize.snapTo(20.0f)
+//                likeIconAlpha.snapTo(0f)
+//                dislikeIconAlpha.snapTo(0f)
+//                wantToReadIconAlpha.snapTo(0f)
+//                skipIconAlpha.snapTo(0f)
+//            }
 
         }
     }
@@ -303,6 +351,7 @@ fun Modifier.draggableStack(
                         }
                     }
                     controller.swipeDown()
+                    Log.d("bugbug","drag end bottom swipe")
 
                 } else if (isLeftShift(controller)) {
                     controller.scope.apply {
@@ -325,6 +374,7 @@ fun Modifier.draggableStack(
 
                 } else {
                     controller.returnCenter()
+                    Log.d("bugbug","drag end return center")
                 }
 
             },
@@ -365,19 +415,19 @@ fun Modifier.draggableStack(
 }
 
 fun isTopShift(controller: BookCardController): Boolean {
-    return controller.offsetY.value <= -controller.thresholdY
+    return controller.offsetY.value < -controller.thresholdY + 140f
 }
 
 fun isBottomShift(controller: BookCardController): Boolean {
-    return controller.offsetY.value >= controller.thresholdY
+    return controller.offsetY.value > controller.thresholdY - 140f
 }
 
 fun isLeftShift(controller: BookCardController): Boolean {
-    return controller.offsetX.value <= -controller.thresholdX
+    return controller.offsetX.value < -controller.thresholdX + 140f
 }
 
 fun isRightShift(controller: BookCardController): Boolean {
-    return controller.offsetX.value >= controller.thresholdX
+    return controller.offsetX.value > controller.thresholdX - 140f
 }
 
 fun isShiftByX(controller: BookCardController, dragAmount: Offset): Boolean {
