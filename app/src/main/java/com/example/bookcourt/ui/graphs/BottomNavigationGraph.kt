@@ -1,9 +1,12 @@
 package com.example.bookcourt.ui.graphs
 
-import android.annotation.SuppressLint
+import android.util.Log
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -16,13 +19,17 @@ import com.example.bookcourt.ui.statistics.Statistics
 import com.example.bookcourt.utils.BottomNavMenu
 import com.example.bookcourt.utils.BottomNavigationMenu
 import com.example.bookcourt.utils.Graph
+import com.example.bookcourt.utils.Screens
 
 @Composable
 fun HomeScreen(navController: NavHostController = rememberNavController()) {
     Scaffold(
         bottomBar = { BottomNavigationMenu(navController) }
-    ) {
-        BottomNavigationGraph(navController = navController)
+    ) { padding->
+        Box(modifier = Modifier.padding(padding)){
+            BottomNavigationGraph(navController = navController)
+        }
+
     }
 }
 
@@ -44,7 +51,12 @@ fun BottomNavigationGraph(
         }
         composable(route = BottomNavMenu.Library.route){
             LibraryScreen(
-                onNavigateToRecommendation = {navController.popBackStack()}
+                onNavigateToSearchScreen = {navController.navigate(Screens.Search.route)}
+            )
+        }
+        composable(Screens.Search.route) {
+            SearchScreen(
+                onNavigateBack = {navController.popBackStack()}
             )
         }
         composable(route = BottomNavMenu.Statistics.route) {

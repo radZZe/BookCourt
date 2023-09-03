@@ -37,7 +37,7 @@ data class BookData(
     val description: String,
     val createdAt: String,
     val numberOfPage: String,
-    val rate: Int,
+    val rate: Float,
     val owner: String,
     val genre: String,
     val image: String,

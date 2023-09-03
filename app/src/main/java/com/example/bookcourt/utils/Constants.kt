@@ -23,6 +23,9 @@ object Constants {
 
     val genres = listOf(
         "Детективы",
+        "Комедия",
+        "Трагедия",
+        "Драма",
         "Детская литература",
         "Рассказы",
         "Фантастика",
@@ -112,9 +115,11 @@ object AppVersion {
 }
 
 object Partners{
-    const val lyuteraturaUrl = "https://lyuteratura.ru/"
-    const val csiZaryaUrl = "http://zaryavladivostok.ru/ru/shop/books"
-    const val igraSlovUrl = "https://igraslov.store/"
+    val partners = listOf(
+        Sponsors.Lyuteratura,
+        Sponsors.Zarya,
+        Sponsors.IgraSlov
+    )
 }
 
 
