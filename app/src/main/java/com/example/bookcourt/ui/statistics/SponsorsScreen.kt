@@ -23,13 +23,12 @@ import com.example.bookcourt.utils.RedirectButton
 import com.example.bookcourt.utils.Sponsors
 
 @Composable
-fun PartnerZarya(bottomPadding: Dp) {
+fun PartnerZarya() {
     val context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(ZaryaBackground)
-            .padding(bottom = bottomPadding),
+            .background(ZaryaBackground),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
@@ -77,13 +76,12 @@ fun PartnerZarya(bottomPadding: Dp) {
 }
 
 @Composable
-fun PartnerIgraSlov(bottomPadding: Dp) {
+fun PartnerIgraSlov() {
     val context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(IgraSlovBackground)
-            .padding(bottom = bottomPadding),
+            .background(IgraSlovBackground),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
@@ -131,13 +129,13 @@ fun PartnerIgraSlov(bottomPadding: Dp) {
 }
 
 @Composable
-fun PartnerLyuteratura(bottomPadding: Dp) {
+fun PartnerLyuteratura() {
     val context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(LightPinkBackground)
-            .padding(bottom = bottomPadding, top = 50.dp),
+            .padding(top = 50.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
