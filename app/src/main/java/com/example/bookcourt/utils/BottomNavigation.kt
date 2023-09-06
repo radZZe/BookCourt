@@ -29,7 +29,7 @@ import com.example.bookcourt.utils.Constants.LIMIT_WINDOW_HEIGHT
 @Composable
 fun BottomNavigationMenu(navController: NavController) {
     val windowHeight = LocalConfiguration.current.screenHeightDp.toFloat() * LocalDensity.current.density
-    val menuHeight = if(windowHeight > LIMIT_WINDOW_HEIGHT) 72.dp else 56.dp
+    val menuHeight = if (windowHeight > LIMIT_WINDOW_HEIGHT) 72.dp else 56.dp
 
     var visibility by remember {
         mutableStateOf(1f)
@@ -79,14 +79,14 @@ fun CustomBottomNavigationItem(
     val icon = if (isSelected) screen.iconSelected else screen.icon
     Column(
         modifier = Modifier
+            .padding(horizontal = 10.dp)
             .wrapContentWidth()
             .fillMaxHeight()
             .clickable(
                 onClick = { onClick() },
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null
-            )
-            .padding(vertical = 2.dp, horizontal = 20.dp),
+            ),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
