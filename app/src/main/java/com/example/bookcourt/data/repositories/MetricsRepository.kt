@@ -21,7 +21,7 @@ import java.util.*
 import javax.inject.Inject
 
 class MetricsRepository @Inject constructor(
-    private val dataStoreRepository: DataStoreRepository,
+    private val dataStoreRepository: DataStoreRepository
 ) : MetricsRepositoryInterface {
 
 

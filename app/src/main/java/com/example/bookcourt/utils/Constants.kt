@@ -106,4 +106,10 @@ object Partners{
     const val igraSlovUrl = "https://igraslov.store/"
 }
 
+object ApiUrl{
+    const val METRICS_URL = "http://2f65-77-34-189-143.jp.ngrok.io/api/"
+    const val BOOKS_URL = "https://www.jsonkeeper.com/b/"
+}
+
+
 
