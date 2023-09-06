@@ -5,7 +5,7 @@ import com.example.bookcourt.models.book.BookInfo
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class BookRemote(
+data class BookDto(
     val id: String,
     val data: BookData,
 ) {

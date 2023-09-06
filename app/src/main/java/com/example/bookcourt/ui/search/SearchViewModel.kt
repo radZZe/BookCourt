@@ -5,9 +5,10 @@ import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+
+import com.example.bookcourt.data.repositories.DataStoreRepository
 import com.example.bookcourt.data.repositories.NetworkRepository
-import com.example.bookcourt.data.room.searchRequest.SearchRequestRepository
-import com.example.bookcourt.models.BookRemote
+import com.example.bookcourt.models.BookDto
 import com.example.bookcourt.models.book.Book
 import com.example.bookcourt.models.user.SearchRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -114,7 +115,8 @@ class SearchViewModel @Inject constructor(
 
     private suspend fun convertBooksJsonToList(context: Context): List<Book> {
         val json = networkRepository.getAllBooks(context)!!
-        val data = Json.decodeFromString<MutableList<BookRemote>>(json)
-        return data.map { it.toBook() }
+        val data = Json.decodeFromString<MutableList<BookDto>>("""$json""")
+        val allBooksItems = data.map { it.toBook() }
+        return allBooksItems
     }
 }

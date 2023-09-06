@@ -12,12 +12,13 @@ import com.example.bookcourt.data.repositories.MetricsRepository
 import com.example.bookcourt.data.repositories.NetworkRepository
 import com.example.bookcourt.data.room.user.UserRepositoryI
 import com.example.bookcourt.models.book.Book
-import com.example.bookcourt.models.BookRemote
+import com.example.bookcourt.models.BookDto
 import com.example.bookcourt.models.metrics.DataClickMetric
 import com.example.bookcourt.models.user.User
 import com.example.bookcourt.utils.MetricType
 import com.example.bookcourt.utils.MetricType.SKIP_BOOK
 import com.example.bookcourt.utils.MetricType.DISLIKE_BOOK
+import com.example.bookcourt.utils.ResultTask
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -69,6 +70,22 @@ class RecommendationViewModel @Inject constructor(
         }
     }
 
+    fun getAllBooksRemote() {
+        fetchJob?.cancel()
+        fetchJob = viewModelScope.launch(Dispatchers.IO) {
+            user = getUser()
+            val books = networkRepository.getAllBooksRemote()//convertBooksJsonToList(context)
+            if (books is ResultTask.Success && books.data!=null){
+                    booksValidation(user, books.data)
+                isFirstDataLoading = false
+                dataIsReady = true
+            }
+            else{
+                //TODO(негативный сценарий)
+            }
+
+        }
+    }
     fun getAllBooks(context: Context) {
         fetchJob?.cancel()
         fetchJob = viewModelScope.launch(Dispatchers.IO) {
@@ -99,7 +116,7 @@ class RecommendationViewModel @Inject constructor(
 
     private suspend fun convertBooksJsonToList(context: Context): List<Book> {
         val json = networkRepository.getAllBooks(context)!!
-        val data = Json.decodeFromString<MutableList<BookRemote>>(json)
+        val data = Json.decodeFromString<MutableList<BookDto>>(json)
         return data.map { it.toBook() }
     }
 
