@@ -1,6 +1,8 @@
 package com.example.bookcourt.ui.recommendation
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -18,8 +20,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImagePainter
@@ -29,6 +33,7 @@ import coil.size.Size
 import com.example.bookcourt.R
 import com.example.bookcourt.models.book.Book
 import com.example.bookcourt.models.user.User
+import com.example.bookcourt.ui.theme.Roboto
 import com.example.bookcourt.utils.CustomButton
 import kotlin.math.roundToInt
 import com.example.bookcourt.utils.Constants.LIMIT_WINDOW_HEIGHT
@@ -38,18 +43,18 @@ import com.example.bookcourt.utils.Constants.LIMIT_WINDOW_HEIGHT
 fun CardStack(
     modifier: Modifier,
     user: User,
-    frontItem:Book?,
-    backItem:Book?,
+    frontItem: Book?,
+    backItem: Book?,
     thresholdConfig: (Float, Float) -> ThresholdConfig = { _, _ -> FractionalThreshold(0.2f) },
     onSwipeLeft: (item: Book) -> Unit = {},
     onSwipeRight: (item: Book) -> Unit = {},
     onSwipeUp: (item: Book) -> Unit = {},
     onSwipeDown: (item: Book) -> Unit = {},
     viewModel: RecommendationViewModel = hiltViewModel(),
-    disableDraggable:Boolean,
+    disableDraggable: Boolean,
 ) {
 
-    if(frontItem !=null){
+    if (frontItem != null) {
         Box(
             modifier = modifier,
             contentAlignment = Alignment.Center
@@ -69,7 +74,7 @@ fun CardStack(
                 thresholdConfig,
                 disableDraggable
             )
-            if(backItem !=null){
+            if (backItem != null) {
                 BookCard(
                     bookCardController,
                     user,
@@ -86,7 +91,7 @@ fun CardStack(
             }
 
         }
-    }else{
+    } else {
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -123,10 +128,10 @@ fun BookCard(
     onSwipeUp: (item: Book) -> Unit = {},
     onSwipeDown: (item: Book) -> Unit = {},
     thresholdConfig: (Float, Float) -> ThresholdConfig = { _, _ -> FractionalThreshold(0.2f) },
-    disableDraggable:Boolean,
+    disableDraggable: Boolean,
 ) {
 
-    if(isFrontItem){
+    if (isFrontItem) {
         bookCardController.onSwipeLeft = {
             user.readBooksList.add(item)
             viewModel.updateUserStatistic(user)
@@ -163,7 +168,7 @@ fun BookCard(
             .zIndex(if (isFrontItem) 3f else 1f),
     ) {
 
-        if(isFrontItem){
+        if (isFrontItem) {
             RecommendationIcon(
                 Modifier
                     .zIndex(4f)
@@ -219,7 +224,7 @@ fun BookCard(
 
         Card(
             shape = RoundedCornerShape(20.dp),
-            modifier = if(!disableDraggable){
+            modifier = if (!disableDraggable) {
                 Modifier
                     .width(300.dp)
                     .height(if (windowHeight > LIMIT_WINDOW_HEIGHT) 470.dp else 400.dp)
@@ -284,6 +289,44 @@ fun BookCardImage(
         if (painter.state is AsyncImagePainter.State.Loading) {
             CircularProgressIndicator()
         }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth(0.3f)
+                .zIndex(3f)
+                .align(
+                    Alignment.BottomStart
+                )
+                .padding(12.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(40))
+                    .background(Color.White)
+                    .padding(start = 6.dp, end = 6.dp, top = 5.dp, bottom = 5.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.green_rating),
+                        contentDescription = null,
+                        modifier = Modifier.size(21.dp)
+                    )
+                    Spacer(modifier = Modifier.width(5.dp))
+                    Text(
+                        text = "5.0",
+                        fontFamily = Roboto,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp,
+                        color = Color(48, 178, 93)
+                    )
+                }
+            }
+        }
 
         Image(
             painter = painter,
@@ -291,6 +334,7 @@ fun BookCardImage(
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .fillMaxSize()
+                .zIndex(2f)
         )
 
     }
