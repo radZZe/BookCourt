@@ -21,6 +21,7 @@ class DataStoreRepository(val context: Context) {
 
     companion object PreferenceKeys {
         val isTutorChecked: Preferences.Key<Boolean> = booleanPreferencesKey("is_tutor_checked")
+        val isCodeVerificated: Preferences.Key<Boolean> = booleanPreferencesKey("is_code_verificated_checked")
         val isRemembered: Preferences.Key<Boolean> = booleanPreferencesKey("is_remembered")
         val savedName: Preferences.Key<String> = stringPreferencesKey("user_name")
         val savedSurname: Preferences.Key<String> = stringPreferencesKey("user_surname")
@@ -35,7 +36,8 @@ class DataStoreRepository(val context: Context) {
         val savedWantToReadList: Preferences.Key<String> = stringPreferencesKey("want_to_read_genres")
         val dislikedGenresList: Preferences.Key<String> = stringPreferencesKey("disliked_genres")
         val readBooksList: Preferences.Key<String> = stringPreferencesKey("read_books")
-        val isNotificationDisplay: Preferences.Key<Boolean > = booleanPreferencesKey("isNotificationDisplay")
+        val isNotificationDisplay: Preferences.Key<Boolean > = booleanPreferencesKey("is_notification_display")
+        val isCategoriesSelected: Preferences.Key<Boolean > = booleanPreferencesKey("is_categories_selected")
         val recentRequestsList: Preferences.Key<String> = stringPreferencesKey("recent_requests")
     }
 

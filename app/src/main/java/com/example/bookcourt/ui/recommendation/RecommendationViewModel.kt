@@ -10,7 +10,7 @@ import com.example.bookcourt.data.repositories.DataStoreRepository
 import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.uuid
 import com.example.bookcourt.data.repositories.MetricsRepository
 import com.example.bookcourt.data.repositories.NetworkRepository
-import com.example.bookcourt.data.user.UserRepositoryI
+import com.example.bookcourt.data.room.user.UserRepositoryI
 import com.example.bookcourt.models.book.Book
 import com.example.bookcourt.models.BookDto
 import com.example.bookcourt.models.metrics.DataClickMetric
@@ -54,16 +54,19 @@ class RecommendationViewModel @Inject constructor(
 
 
     var blurValueRecommendationScreen = Animatable(0f)
+    var isBlur by mutableStateOf(false)
 
     fun displayNotificationMessage(){
         viewModelScope.launch {
             blurValueRecommendationScreen.snapTo(20f)
+            isBlur = true
         }
     }
 
     fun closeNotificationMessage(){
         viewModelScope.launch {
             blurValueRecommendationScreen.snapTo(0f)
+            isBlur = false
         }
     }
 
@@ -119,7 +122,7 @@ class RecommendationViewModel @Inject constructor(
 
     private suspend fun getUser(): User {
         val userId = dataStoreRepository.getPref(uuid)
-        user = userRepositoryI.loadData(userId.first())!!//TODO
+        user = userRepositoryI.loadData(userId.first())!!
         return user
     }
 

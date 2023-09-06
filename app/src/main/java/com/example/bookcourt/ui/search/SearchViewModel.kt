@@ -5,12 +5,15 @@ import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+
 import com.example.bookcourt.data.repositories.DataStoreRepository
 import com.example.bookcourt.data.repositories.NetworkRepository
 import com.example.bookcourt.models.BookDto
 import com.example.bookcourt.models.book.Book
+import com.example.bookcourt.models.user.SearchRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -21,13 +24,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    private val dataStoreRepository: DataStoreRepository,
+    private val searchRequestRepository: SearchRequestRepository,
     private val networkRepository: NetworkRepository
 ) : ViewModel() {
-    var recentRequests = mutableListOf<String>()
 
-    private val _isDisplayed = MutableStateFlow(false)
-    val isDisplayed = _isDisplayed.asStateFlow()
+    private val _recentRequests = mutableStateListOf<SearchRequest>()
+    val recentRequests = MutableStateFlow(_recentRequests)
 
     private val _searchText = MutableStateFlow("")
     val searchText = _searchText.asStateFlow()
@@ -38,12 +40,17 @@ class SearchViewModel @Inject constructor(
     private var _allBooks = mutableStateListOf<Book>()
     private val _books = MutableStateFlow(_allBooks)
 
+    private val _isDisplayed = MutableStateFlow(false)
+    val isDisplayed = _isDisplayed.asStateFlow()
+
     var recommendedBooks = listOf<Book>()
+
+    @OptIn(FlowPreview::class)
     val books = searchText
-        .debounce(timeoutMillis = 1000L)
+        .debounce(timeoutMillis = 500L)
         .onEach { _isSearching.update { true } }
         .combine(_books) { text, books ->
-            if(text.isBlank()) {
+            if (text.isBlank()) {
                 books
             } else {
                 books.filter { book ->
@@ -63,44 +70,36 @@ class SearchViewModel @Inject constructor(
     fun onSearchTextChange(text: String) {
         _isDisplayed.update { true }
         _searchText.value = text
-        updateRecentRequests(text)
     }
 
     fun onClearSearchText() {
-        _isDisplayed.update { false }
         _searchText.value = ""
     }
 
-    fun getRecentRequests() {
+    fun getSearchRequests() {
         viewModelScope.launch(Dispatchers.IO) {
-            val requests = dataStoreRepository.getPref(DataStoreRepository.recentRequestsList).first()
-            recentRequests = requests.split(" ") as MutableList<String>
+            _recentRequests.addAll(
+                searchRequestRepository.getRequests()
+                    .reversed()
+                    .ifEmpty { listOf() }
+            )
         }
     }
 
-    fun updateRecentRequests(request: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            with(recentRequests) {
-                reverse()
-                add(request)
-                if(size > 5) {
-                    val deletableRange = size - 5
-                    val newRequestsList = slice(deletableRange - 1 until size) as MutableList<String>
-                    recentRequests = newRequestsList
-                }
-                reverse()
+    fun addSearchRequest(currentRequest: String) {
+        if (currentRequest.isNotBlank() &&
+            _recentRequests.find { it.request == _searchText.value } == null
+        ) {
+            viewModelScope.launch(Dispatchers.IO) {
+                searchRequestRepository.addRequest(SearchRequest(request = currentRequest.trim()))
             }
-            var requests = ""
-            for (requestName in recentRequests) {
-                requests += "$requestName "
-            }
-            dataStoreRepository.setPref(requests, DataStoreRepository.recentRequestsList)
         }
     }
-
 
     /* No API, just mockup */
+    // TODO Перенести этот блок на новую реализацию networkRepository с Retrofit
     private var fetchJob: Job? = null
+
     fun getAllBooks(context: Context) {
         fetchJob?.cancel()
         fetchJob = viewModelScope.launch(Dispatchers.IO) {
@@ -113,6 +112,7 @@ class SearchViewModel @Inject constructor(
             }
         }
     }
+
     private suspend fun convertBooksJsonToList(context: Context): List<Book> {
         val json = networkRepository.getAllBooks(context)!!
         val data = Json.decodeFromString<MutableList<BookDto>>("""$json""")

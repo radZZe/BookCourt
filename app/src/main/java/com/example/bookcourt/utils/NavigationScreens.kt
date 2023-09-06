@@ -13,27 +13,32 @@ sealed class Screens(
     object Tutorial : Screens(route = "Tutorial", title = "Tutorial")
     object CategorySelection : Screens(route = "CategorySelection", title = "CategorySelection")
     object Profile:Screens(route = "Profile", title = "Profile")
+    object VerificationCode: Screens(route = "VerificationCode", title = "VerificationCode")
 }
 
 sealed class BottomNavMenu(
     val route: String,
     val title: String,
-    val icon: Int
+    val icon: Int,
+    val iconSelected: Int
 ) {
     object Recommendations : BottomNavMenu(
         route = "Recommendations",
         title = "Рекомендации",
-        icon = R.drawable.ic_recomendations
+        icon = R.drawable.ic_recomendations,
+        iconSelected = R.drawable.ic_tinder_selected
     )
     object Statistics : BottomNavMenu(
         route = "Statistics",
         title = "Статистика",
-        icon = R.drawable.ic_statistics
+        icon = R.drawable.ic_stats,
+        iconSelected = R.drawable.ic_stats_selected
     )
     object Search : BottomNavMenu(
         route = "Search",
         title = "Поиск",
-        icon = R.drawable.ic_search
+        icon = R.drawable.ic_search,
+        iconSelected = R.drawable.ic_search_selected
     )
 }
 

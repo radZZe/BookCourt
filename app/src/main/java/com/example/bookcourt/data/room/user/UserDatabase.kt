@@ -1,4 +1,4 @@
-package com.example.bookcourt.data.user.room
+package com.example.bookcourt.data.room.user
 
 import androidx.room.Database
 import androidx.room.RoomDatabase

@@ -5,6 +5,7 @@ import androidx.navigation.compose.composable
 import com.example.bookcourt.ui.auth.SignInScreen
 import com.example.bookcourt.ui.categorySelection.CategorySelectionScreen
 import com.example.bookcourt.ui.tutorial.TutorScreen
+import com.example.bookcourt.ui.verification.VerificationCodeScreen
 import com.example.bookcourt.utils.Graph
 import com.example.bookcourt.utils.Screens
 import com.example.bookcourt.utils.SplashScreen
@@ -25,7 +26,7 @@ fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
         composable(Screens.SignIn.route) {
 
             SignInScreen(
-                onNavigateToTutorial = {navController.navigate(Screens.Tutorial.route)},
+                onNavigateToVerificationCode = {navController.navigate(Screens.VerificationCode.route)},
                 onNavigateToCategorySelection = {navController.navigate(Screens.CategorySelection.route)}
 
             )
@@ -38,6 +39,12 @@ fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
                 onNavigateToBottomNav = {
                     navController.navigate(Graph.BOTTOM_NAV_GRAPH)
                 }
+            )
+        }
+        composable(Screens.VerificationCode.route) {
+            VerificationCodeScreen(
+                onNavigateToTutorial = { navController.navigate(Screens.Tutorial.route) },
+                onNavigateToSignIn = { navController.navigate(Screens.SignIn.route) }
             )
         }
     }

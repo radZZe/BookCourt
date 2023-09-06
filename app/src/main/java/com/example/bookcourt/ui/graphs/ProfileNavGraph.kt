@@ -4,7 +4,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.example.bookcourt.ui.ProfileScreen
+import com.example.bookcourt.ui.profile.ProfileScreen
 import com.example.bookcourt.utils.Graph
 import com.example.bookcourt.utils.Screens
 

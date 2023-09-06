@@ -1,22 +1,17 @@
 package com.example.bookcourt.ui.statistics
 
-import android.content.Context
-import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.util.Log
-import android.view.View
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookcourt.data.repositories.DataStoreRepository
 import com.example.bookcourt.data.repositories.MetricsRepository
 import com.example.bookcourt.data.repositories.NetworkRepository
-import com.example.bookcourt.data.user.UserRepositoryI
+import com.example.bookcourt.data.room.user.UserRepositoryI
 import com.example.bookcourt.models.book.Book
 import com.example.bookcourt.models.metrics.DataClickMetric
 import com.example.bookcourt.models.user.User
-import com.example.bookcourt.utils.BitmapUtils
 import com.example.bookcourt.utils.MetricType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -35,6 +30,11 @@ class StatisticsViewModel @Inject constructor(
 ) : ViewModel() {
     private val userId = dataStoreRepository.getPref(DataStoreRepository.uuid)
 
+    private val _favAuthorsList = mutableStateMapOf<String, Int>()
+    val favAuthorsList: Map<String, Int> = _favAuthorsList
+    private val _favGenresList = mutableStateMapOf<String, Int>()
+    val favGenresList: Map<String, Int> = _favGenresList
+
     var user = mutableStateOf<User?>(null)
     val readBooks = mutableStateOf<MutableList<Book>?>(null)
     val wantToRead = mutableStateOf<MutableList<Book>?>(null)
@@ -48,7 +48,10 @@ class StatisticsViewModel @Inject constructor(
         }
         runBlocking {
             job.join()
-            user.value?.let { getTopGenres() }
+            user.value?.let {
+                getTopGenres()
+                getTopAuthors()
+            }
         }
     }
 
@@ -60,30 +63,34 @@ class StatisticsViewModel @Inject constructor(
         wantToRead.value = user.wantToRead as MutableList<Book>?
     }
 
-    fun getTopGenres(): Map<String, Int> {
+    private fun getTopGenres() {
         val topGenreMap = mutableMapOf<String, Int>()
-        for (book in user.value!!.readBooksList) {
-            if (topGenreMap.containsKey(book.bookInfo.genre)) {
-                var count = topGenreMap[book.bookInfo.genre]!!
-                topGenreMap[book.bookInfo.genre] = (count + 1)
-            } else {
-                topGenreMap[book.bookInfo.genre] = 1
+        if (user.value?.readBooksList != null) {
+            for (book in user.value!!.readBooksList) {
+                if (topGenreMap.containsKey(book.bookInfo.genre)) {
+                    val count = topGenreMap[book.bookInfo.genre]!!
+                    topGenreMap[book.bookInfo.genre] = (count + 1)
+                } else {
+                    topGenreMap[book.bookInfo.genre] = 1
+                }
             }
         }
-        return topGenreMap.toList().sortedByDescending { (_, value) -> value }.toMap()
+        _favGenresList.plusAssign(topGenreMap.toList().sortedByDescending { (_, value) -> value }.toMap())
     }
 
-    fun getTopAuthors(): Map<String, Int> {
+    private fun getTopAuthors() {
         val topAuthorsMap = mutableMapOf<String, Int>()
-        for (book in user.value!!.readBooksList) {
-            if (topAuthorsMap.containsKey(book.bookInfo.author)) {
-                var count = topAuthorsMap[book.bookInfo.author]!!
-                topAuthorsMap[book.bookInfo.author] = (count + 1)
-            } else {
-                topAuthorsMap[book.bookInfo.author] = 1
+        if (user.value?.readBooksList != null) {
+            for (book in user.value!!.readBooksList) {
+                if (topAuthorsMap.containsKey(book.bookInfo.author)) {
+                    val count = topAuthorsMap[book.bookInfo.author]!!
+                    topAuthorsMap[book.bookInfo.author] = (count + 1)
+                } else {
+                    topAuthorsMap[book.bookInfo.author] = 1
+                }
             }
         }
-        return topAuthorsMap.toList().sortedByDescending { (_, value) -> value }.toMap()
+        _favAuthorsList.plusAssign(topAuthorsMap.toList().sortedByDescending { (_, value) -> value }.toMap())
     }
 
     fun sendOnClickMetric(clickMetric: DataClickMetric) {
@@ -101,38 +108,19 @@ class StatisticsViewModel @Inject constructor(
         Log.d("Screen", "metric worked")
     }
 
-    fun shareStatistics(
-        view:View,
-        context: Context
-    ){
-        val bitmap = Bitmap.createBitmap(
-            view.width,
-            view.height,
-            Bitmap.Config.ARGB_8888
-        )
-        val canvas = Canvas(bitmap)
-        view.layout(
-            view.left,
-            view.top,
-            view.right,
-            view.bottom
-        )
-        view.draw(canvas)
+    fun shareStatistics(): String {
+        val topAuthors = favAuthorsList.toList()
+        val topGenres = favGenresList.toList()
 
-        val shareIntent: Intent = Intent().apply {
-            action = Intent.ACTION_SEND
-            putExtra(
-                Intent.EXTRA_STREAM,
-                BitmapUtils.getBitmapUri(
-                    context,
-                    bitmap,
-                    "statistics",
-                    "images/"
-                )
-            )
-            type = "image/jpeg"
-        }
-        context.startActivity(Intent.createChooser(shareIntent, null))
+        val topAuthorsText = "${topAuthors.getOrNull(0)?.first ?: ""}\n" +
+                "${topAuthors.getOrNull(1)?.first ?: ""}\n" +
+                "${topAuthors.getOrNull(2)?.first ?: ""}\n"
+        val topGenresText = "${topGenres.getOrNull(0)?.first ?: ""}\n" +
+                "${topGenres.getOrNull(1)?.first ?: ""}\n" +
+                "${topGenres.getOrNull(2)?.first ?: ""}\n"
+
+        return "Пользователь ${user.value?.name ?: ""} прочитал ${readBooks.value?.size} книг\n\n" +
+                "Любимые авторы: $topAuthorsText \n" + "Любые жанры: $topGenresText"
     }
 
 }

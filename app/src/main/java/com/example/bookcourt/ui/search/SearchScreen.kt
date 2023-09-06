@@ -6,48 +6,53 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import coil.compose.SubcomposeAsyncImage
 import com.example.bookcourt.R
 import com.example.bookcourt.models.book.Book
+import com.example.bookcourt.models.user.SearchRequest
 import com.example.bookcourt.ui.theme.*
-import com.example.bookcourt.utils.BottomNavMenu
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SearchScreen(
-    navController: NavController,
+    onNavigateToRecommendation: () -> Unit,
     viewModel: SearchViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     val searchText by viewModel.searchText.collectAsState()
     val books by viewModel.books.collectAsState()
     val isSearching by viewModel.isSearching.collectAsState()
     val isDisplayed by viewModel.isDisplayed.collectAsState()
+    val recentRequests by viewModel.recentRequests.collectAsState()
 
-    if (isDisplayed) {
-        LaunchedEffect(key1 = Unit) {
-            viewModel.getAllBooks(context)
-        }
-    } else {
-        LaunchedEffect(key1 = Unit) {
-            viewModel.getRecentRequests()
-        }
+    LaunchedEffect(key1 = Unit) {
+        viewModel.getAllBooks(context)
+        viewModel.getSearchRequests()
     }
 
     Column(
@@ -86,65 +91,52 @@ fun SearchScreen(
                     modifier = Modifier
                         .size(42.dp)
                         .clickable {
-                            navController.navigate(BottomNavMenu.Recommendations.route)
+                            onNavigateToRecommendation()
                         }
+
                 )
             },
-            textStyle = TextStyle(fontFamily = Roboto)
-        )
-        if (!isDisplayed) {
-            Text(
-                text = "Ваши последние запросы:",
-                fontSize = 16.sp,
-                fontFamily = Roboto,
-                color = PrimaryText,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 20.dp, end = 20.dp, top = 20.dp)
+            textStyle = TextStyle(fontFamily = Roboto),
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Search
+            ),
+            keyboardActions = KeyboardActions(
+                onSearch = {
+                    keyboardController?.hide()
+                    viewModel.addSearchRequest(searchText)
+                }
             )
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 20.dp, end = 20.dp, top = 20.dp)
-                    .weight(1f)
-            ) {
-                items(viewModel.recentRequests) { request ->
+        )
+        if (isDisplayed) {
+            if (isSearching) {
+                Box(modifier = Modifier.fillMaxSize()) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+            } else {
+                if (books.isEmpty()) {
                     Text(
-                        text = request,
+                        text = "К сожалению, ничего не найдено, возможно Вас заинтересуют следующие книги:",
                         fontSize = 16.sp,
                         fontFamily = Roboto,
                         color = SecondaryText,
+                        modifier = Modifier.padding(top = 20.dp, start = 20.dp)
                     )
                 }
-            }
-        }
-        if (books.isEmpty() && isDisplayed) {
-            Text(
-                text = "К сожалению, ничего не найдено, возмножно Вас заинтересуют следующие книги:",
-                modifier = Modifier
-                    .padding(start = 20.dp, end = 20.dp, top = 20.dp),
-                fontSize = 16.sp,
-                fontFamily = Roboto,
-                color = SecondaryText,
-            )
-        } 
-        if (isSearching) {
-            Box(modifier = Modifier.fillMaxSize()) {
-                CircularProgressIndicator(
-                    modifier = Modifier.align(Alignment.Center)
-                )
-            }
-        } else {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 20.dp)
-                    .weight(1f)
-            ) {
-                items(books.ifEmpty { viewModel.recommendedBooks }) { book ->
-                    SearchBookCard(book = book)
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 20.dp)
+                        .weight(1f)
+                ) {
+                    items(books.ifEmpty { viewModel.recommendedBooks }) { book ->
+                        SearchBookCard(book = book)
+                    }
                 }
             }
+        } else {
+            RecentRequests(recentRequests, viewModel)
         }
     }
 }
@@ -197,4 +189,41 @@ fun SearchBookCard(book: Book) {
             )
         }
     }
+}
+
+@Composable
+fun RecentRequests(searchRequests: List<SearchRequest>, viewModel: SearchViewModel) {
+    if (searchRequests.isNotEmpty()) {
+        Text(
+            text = "Ваши последние запросы:",
+            fontSize = 16.sp,
+            fontFamily = Roboto,
+            color = PrimaryText,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 20.dp, bottom = 10.dp, start = 20.dp, end = 20.dp)
+        )
+    }
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp)
+    ) {
+        items(searchRequests) { searchRequest ->
+            Text(
+                text = searchRequest.request,
+                fontSize = 16.sp,
+                fontFamily = Roboto,
+                color = SecondaryText,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 10.dp)
+                    .clickable {
+                        viewModel.onSearchTextChange(searchRequest.request)
+                    }
+
+            )
+        }
+    }
+
 }

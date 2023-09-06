@@ -10,15 +10,17 @@ import kotlinx.serialization.Serializable
 data class User(
     @PrimaryKey(autoGenerate = false) val uid: String,
     val name:String? = null,
-    val email:String,
+    var email:String,
     val city: String,
     val image:String? = null,
     val dayBD:String? = null,
-    val sex:String? = null,
+    val sex:Sex? = null,
     var readBooksList: MutableList<Book>,
     var wantToRead: MutableList<Book>,
-//    @Embedded
-//    @Contextual
-//    var statistics: UserStatistics,
-)
-//    val image : String,
+){
+
+}
+
+enum class Sex{
+    MALE,FEMALE
+}

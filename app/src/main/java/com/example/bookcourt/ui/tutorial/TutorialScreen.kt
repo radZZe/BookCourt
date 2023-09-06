@@ -20,16 +20,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.example.bookcourt.R
 import com.example.bookcourt.models.metrics.DataClickMetric
 import com.example.bookcourt.models.ui.TutorialCard
 import com.example.bookcourt.ui.theme.BackGroundWhite
-import com.example.bookcourt.ui.theme.CustomButton
+import com.example.bookcourt.utils.CustomButton
 import com.example.bookcourt.ui.theme.Gilroy
 import com.example.bookcourt.utils.Buttons
 import com.example.bookcourt.utils.Constants.tutorialCards
-import com.example.bookcourt.utils.Graph
 import com.example.bookcourt.utils.Screens
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPagerIndicator
@@ -41,7 +39,7 @@ import kotlinx.coroutines.yield
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun TutorScreen(
-    onNavigateToCategorySelection:()->Unit,
+    onNavigateToCategorySelection: () -> Unit,
     mViewModel: TutorialScreenViewModel = hiltViewModel()
 ) {
     val pagerState = rememberPagerState(pageCount = tutorialCards.size, initialOffscreenLimit = 2)
@@ -57,10 +55,10 @@ fun TutorScreen(
         }
     }
 
-    var tutorialCard = tutorialCards[(pagerState.currentPage)]
+    val tutorialCard = tutorialCards[(pagerState.currentPage)]
     val nextPage = tutorialCards[(pagerState.currentPage + 1) % (pagerState.pageCount)]
 
-    var exitAnim = fadeOut()
+    var exitAnim: ExitTransition
 
     Column(
         verticalArrangement = Arrangement.SpaceBetween,
@@ -71,12 +69,12 @@ fun TutorScreen(
             .background(BackGroundWhite)
             .padding(vertical = 20.dp, horizontal = 20.dp)
     ) {
-        Box() {}
+        Box(modifier = Modifier)
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Box() {
+            Box {
                 Box {
                     Box(
                         modifier = Modifier
@@ -232,22 +230,6 @@ fun TutorScreen(
                                         Cover(tutorialCard, nextPage, exitAnim)
                                     }
                                 }
-
-//                                    Box(     // bookCover
-//                                        modifier = Modifier
-//                                            .height(320.dp)
-//                                            .width(220.dp)
-//                                            .clip(RoundedCornerShape(20.dp))
-//                                            .zIndex(1f)
-//                                    ) {
-//                                        Image(
-//                                            painter = painterResource(id = tutorialCard.cover),
-//                                            contentDescription = "Book Cover",
-//                                            contentScale = ContentScale.Crop,
-//                                            modifier = Modifier
-//                                                .fillMaxSize()
-//                                        )
-//                                    }
                                 BottomPart(
                                     bookTitle = tutorialCard.bookTitle,
                                     bookAuthor = tutorialCard.bookAuthor
@@ -265,7 +247,7 @@ fun TutorScreen(
                         ) {
                             if (tutorialCard.bottomIcon != null) {
                                 Image(
-                                    painter = painterResource(id = tutorialCard.bottomIcon!!),
+                                    painter = painterResource(id = tutorialCard.bottomIcon),
                                     contentDescription = "Bottom Icon",
                                     modifier = Modifier.size(14.dp)
                                 )
