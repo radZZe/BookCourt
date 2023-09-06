@@ -16,6 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BookCourt"
         android:usesCleartextTraffic="true"
+        android:screenOrientation="portrait"
         tools:targetApi="31"
         >
         <activity
