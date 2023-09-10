@@ -5,8 +5,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookcourt.data.repositories.DataStoreRepository
 import com.example.bookcourt.data.repositories.MetricsRepository
+import com.example.bookcourt.data.room.user.UserRepositoryI
 import com.example.bookcourt.models.categorySelection.Category
 import com.example.bookcourt.models.metrics.DataClickMetric
+import com.example.bookcourt.models.user.User
+import com.example.bookcourt.utils.Hashing
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -16,7 +19,9 @@ import javax.inject.Inject
 class CategorySelectionViewModel @Inject constructor(
     private val dataStoreRepository: DataStoreRepository,
     private val metricRep: MetricsRepository,
-): ViewModel() {
+    private val userRepositoryI: UserRepositoryI,
+    private val hashing: Hashing,
+) : ViewModel() {
     val selectedCategories = mutableStateListOf<MutableState<Category>>()
     val categories = mutableStateListOf<MutableState<Category>>(
         mutableStateOf(
@@ -49,13 +54,24 @@ class CategorySelectionViewModel @Inject constructor(
 
     private suspend fun editPrefs() {
         dataStoreRepository.setPref(!isCategoriesSelected, DataStoreRepository.isCategoriesSelected)
+
+        val UUID = hashing.getHash("AB".toByteArray(), "SHA256")
+        val user = User(
+            uid = UUID,
+            email = "",
+            city = "",
+            readBooksList = mutableListOf(),
+            wantToRead = mutableListOf()
+        )
+        userRepositoryI.saveData(user)
+        dataStoreRepository.setPref(UUID, DataStoreRepository.uuid)
     }
 
     fun changeStateCategory(index: Int) {
-        if(categories[index].value.state.value){
+        if (categories[index].value.state.value) {
             categories[index].value.state.value = !categories[index].value.state.value
             selectedCategories.remove(categories[index])
-        }else{
+        } else {
             categories[index].value.state.value = !categories[index].value.state.value
             selectedCategories.add(categories[index])
         }

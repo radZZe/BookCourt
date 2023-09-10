@@ -10,6 +10,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.bookcourt.ui.profile.ProfileScreen
 import com.example.bookcourt.ui.recommendation.RecommendationScreen
 import com.example.bookcourt.ui.search.SearchScreen
+import com.example.bookcourt.ui.statistics.LibraryPlug
 import com.example.bookcourt.ui.statistics.Statistics
 import com.example.bookcourt.utils.BottomNavMenu
 import com.example.bookcourt.utils.BottomNavigationMenu
@@ -46,8 +47,8 @@ fun BottomNavigationGraph(
             )
         }
         composable(route = BottomNavMenu.Library.route) {
-            Statistics(
-                onNavigateToRecommendation = { navController.navigate(Graph.BOTTOM_NAV_GRAPH) }
+            LibraryPlug(
+                onNavigateToLibrary = { navController.navigate(Graph.BOTTOM_NAV_GRAPH) }
             )
         }
         composable(route = BottomNavMenu.Profile.route){
