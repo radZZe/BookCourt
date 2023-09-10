@@ -5,6 +5,7 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -25,9 +26,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -47,9 +48,24 @@ import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.launch
 
 
-@OptIn(ExperimentalPagerApi::class)
 @Composable
 fun Statistics(
+    onNavigateToRecommendation: () -> Unit,
+    viewModel: StatisticsViewModel = hiltViewModel()
+) {
+    if (viewModel.readBooks.value?.size == 0) {
+        EmptyStatistics { onNavigateToRecommendation() }
+    } else {
+        ValidStatistics(
+            onNavigateToRecommendation = { onNavigateToRecommendation() },
+            viewModel
+        )
+    }
+}
+
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+fun ValidStatistics(
     onNavigateToRecommendation: () -> Unit,
     viewModel: StatisticsViewModel = hiltViewModel()
 ) {
@@ -137,6 +153,18 @@ fun Statistics(
                     Spacer(modifier = Modifier.width(4.dp))
                 }
             }
+            Row(
+                horizontalArrangement = Arrangement.End,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(end = 20.dp, top = 10.dp)
+            ) {
+                Image(
+                    modifier = Modifier.size(22.dp).clickable { onNavigateToRecommendation() },
+                    painter = painterResource(id = R.drawable.close_icon),
+                    contentDescription = "pleading face"
+                )
+            }
         }
     }
 }
@@ -206,41 +234,6 @@ fun FavoriteGenresStats(
         )
     }
 
-}
-
-@Composable
-private fun GenreItem(
-    genre: String,
-    booksAmount: Int
-) {
-    val string = if (booksAmount == 1) "книга" else if (booksAmount in 2..4) "книги" else "книг"
-    Box(
-        modifier = Modifier
-            .clip(RoundedCornerShape(20.dp))
-            .background(Color.Blue)
-            .height(100.dp)
-    ) {
-        Column(
-            verticalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxSize()
-        ) {
-            Text(
-                text = genre,
-                modifier = Modifier.padding(start = 16.dp, bottom = 8.dp),
-                fontFamily = Inter,
-                fontWeight = FontWeight.Black,
-                color = Color.White,
-                fontSize = 16.sp
-            )
-            Text(
-                text = "$booksAmount $string",
-                modifier = Modifier.padding(start = 16.dp),
-                fontFamily = Inter,
-                color = Color.White,
-                fontSize = 16.sp
-            )
-        }
-    }
 }
 
 @Composable
@@ -458,6 +451,41 @@ fun TopAuthorItem(
     }
 }
 
+@Composable
+private fun GenreItem(
+    genre: String,
+    booksAmount: Int
+) {
+    val string = if (booksAmount == 1) "книга" else if (booksAmount in 2..4) "книги" else "книг"
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(20.dp))
+            .background(Color.Blue)
+            .height(100.dp)
+    ) {
+        Column(
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Text(
+                text = genre,
+                modifier = Modifier.padding(start = 16.dp, bottom = 8.dp),
+                fontFamily = Inter,
+                fontWeight = FontWeight.Black,
+                color = Color.White,
+                fontSize = 16.sp
+            )
+            Text(
+                text = "$booksAmount $string",
+                modifier = Modifier.padding(start = 16.dp),
+                fontFamily = Inter,
+                color = Color.White,
+                fontSize = 16.sp
+            )
+        }
+    }
+}
+
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun StatisticsPages(
@@ -525,4 +553,60 @@ fun StoriesProgressBar(
         modifier = modifier,
         progress = percent.value
     )
+}
+
+
+@Composable
+fun EmptyStatistics(
+    onNavigateToRecommendation: () -> Unit
+) {
+    Column (
+        verticalArrangement = Arrangement.SpaceBetween,
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = EmptyStatsBackground)
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.End,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(end = 20.dp, top = 20.dp)
+        ) {
+            Image(
+                modifier = Modifier.size(22.dp).clickable { onNavigateToRecommendation() },
+                painter = painterResource(id = R.drawable.close_icon),
+                contentDescription = "pleading face"
+            )
+        }
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp)
+        ) {
+            Image(
+                modifier = Modifier.size(100.dp),
+                painter = painterResource(id = R.drawable.pleading_face),
+                contentDescription = "pleading face"
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            Text(
+                text = "Тут пока ничего нет",
+                fontFamily = Inter,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black,
+                fontSize = 18.sp
+            )
+            Spacer(modifier = Modifier.height(5.dp))
+            Text(
+                text = "Отмечайте понравившиеся и нет книги, создайте свой список для чтения. \n \n" +
+                        "Это поможет нам отобразить интересную статистику и подобрать книги именно для Вас.",
+                fontFamily = Inter,
+                fontWeight = FontWeight.Normal,
+                color = Color.Black,
+                fontSize = 16.sp
+            )
+        }
+        Row() {}
+    }
 }

@@ -36,7 +36,7 @@ fun BottomNavigationGraph(
         composable(BottomNavMenu.Recommendations.route) {
             BackHandler(true) {}
             RecommendationScreen(
-                onNavigateToStatistics = { navController.navigate(BottomNavMenu.Statistics.route) },
+                onNavigateToStatistics = { navController.navigate(BottomNavMenu.Library.route) }, //TODO after the Library screen will be added it is necessary to change BottomNavMenu.Statistics.route or even change navGraph
                 onNavigateToProfile = {navController.navigate(Graph.PROFILE_NAV_GRAPH)}
             )
         }
