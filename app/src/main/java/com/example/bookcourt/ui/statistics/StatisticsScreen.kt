@@ -99,7 +99,6 @@ fun Statistics(
 
     ) {
         StatisticsPages(
-            bottomPadding = bottomPadding,
             pagerState = pagerState,
             Constants.statisticScreensList
         )
@@ -143,7 +142,6 @@ fun Statistics(
 
 @Composable
 fun FavoriteGenresStats(
-    bottomPadding: Dp,
     mViewModel: StatisticsViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
@@ -157,7 +155,7 @@ fun FavoriteGenresStats(
         modifier = Modifier
             .fillMaxSize()
             .background(TopGenresLightPink)
-            .padding(bottom = bottomPadding, top = 50.dp),
+            .padding(top = 50.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
@@ -245,7 +243,6 @@ private fun GenreItem(
 
 @Composable
 fun ReadBooksStats(
-    bottomPadding: Dp,
     mViewModel: StatisticsViewModel = hiltViewModel()
 ) {
     val booksAmount = mViewModel.readBooks.value?.size
@@ -255,7 +252,7 @@ fun ReadBooksStats(
         modifier = Modifier
             .fillMaxSize()
             .background(LighterPinkBackground)
-            .padding(bottom = bottomPadding, top = 50.dp),
+            .padding(top = 50.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
 
@@ -316,7 +313,6 @@ fun ReadBooksStats(
 
 @Composable
 fun FavoriteAuthors(
-    bottomPadding: Dp,
     mViewModel: StatisticsViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
@@ -328,7 +324,7 @@ fun FavoriteAuthors(
         modifier = Modifier
             .fillMaxSize()
             .background(TopAuthorsLightPink)
-            .padding(bottom = bottomPadding, top = 50.dp),
+            .padding( top = 50.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
@@ -461,29 +457,28 @@ fun TopAuthorItem(
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun StatisticsPages(
-    bottomPadding: Dp,
     pagerState: PagerState,
     screens: List<String>
 ) {
     HorizontalPager(state = pagerState, dragEnabled = false) { page ->
         when (screens[page]) {
             "IgraSlov" -> {
-                PartnerIgraSlov(bottomPadding = bottomPadding)
+                PartnerIgraSlov()
             }
             "Lyuteratura" -> {
-                PartnerLyuteratura(bottomPadding = bottomPadding)
+                PartnerLyuteratura()
             }
             "ReadBooks" -> {
-                ReadBooksStats(bottomPadding = bottomPadding)
+                ReadBooksStats()
             }
             "FavoriteAuthors" -> {
-                FavoriteAuthors(bottomPadding = bottomPadding)
+                FavoriteAuthors()
             }
             "FavoriteGenres" -> {
-                FavoriteGenresStats(bottomPadding = bottomPadding)
+                FavoriteGenresStats()
             }
             else -> {
-                PartnerZarya(bottomPadding = bottomPadding)
+                PartnerZarya()
             }
         }
     }

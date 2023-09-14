@@ -13,6 +13,7 @@ sealed class Screens(
     object Tutorial : Screens(route = "Tutorial", title = "Tutorial")
     object CategorySelection : Screens(route = "CategorySelection", title = "CategorySelection")
     object Profile:Screens(route = "Profile", title = "Profile")
+    object Search : Screens(route = "Search", title = "Поиск")
     object VerificationCode: Screens(route = "VerificationCode", title = "VerificationCode")
 }
 
@@ -34,11 +35,11 @@ sealed class BottomNavMenu(
         icon = R.drawable.ic_stats,
         iconSelected = R.drawable.ic_stats_selected
     )
-    object Search : BottomNavMenu(
-        route = "Search",
-        title = "Поиск",
-        icon = R.drawable.ic_search,
-        iconSelected = R.drawable.ic_search_selected
+    object Library: BottomNavMenu(
+        route = "Library",
+        title = "Библиотека",
+        icon = R.drawable.ic_library,
+        iconSelected = R.drawable.ic_library_selected
     )
     object Bag : BottomNavMenu(
         route = "Bag",

@@ -1,5 +1,6 @@
 package com.example.bookcourt.utils
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -31,14 +32,17 @@ fun BottomNavigationMenu(navController: NavController) {
     val windowHeight = LocalConfiguration.current.screenHeightDp.toFloat() * LocalDensity.current.density
     val menuHeight = if (windowHeight > LIMIT_WINDOW_HEIGHT) 72.dp else 56.dp
 
+//    var visibility by remember {
+//        mutableStateOf(1f)
+//    }
     var visibility by remember {
-        mutableStateOf(1f)
+        mutableStateOf(menuHeight)
     }
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
             .fillMaxWidth()
-            .alpha(visibility)
+            .height(visibility)
             .background(MenuBackGround)
     ) {
         BottomNavigation(
@@ -50,10 +54,10 @@ fun BottomNavigationMenu(navController: NavController) {
         ) {
             val navBackStackEntry by navController.currentBackStackEntryAsState()
             val currentRoute = navBackStackEntry?.destination?.route
-            visibility = if (currentRoute == BottomNavMenu.Search.route || currentRoute == Graph.PROFILE_NAV_GRAPH) {
-                0f
+            visibility = if (currentRoute == Screens.Search.route || currentRoute == Graph.PROFILE_NAV_GRAPH) {
+                0.dp
             } else {
-                1f
+                menuHeight
             }
             Constants.navMenuScreensList.forEach { screen ->
                 CustomBottomNavigationItem(
@@ -61,7 +65,9 @@ fun BottomNavigationMenu(navController: NavController) {
                     screen = screen,
                     isSelected = (screen.route == currentRoute)
                 ) {
-                    navController.navigate(screen.route)
+                    navController.navigate(screen.route) {
+                        launchSingleTop = true
+                    }
                 }
             }
         }
