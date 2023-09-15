@@ -53,12 +53,6 @@ sealed class BottomNavMenu(
         icon = R.drawable.profile,
         iconSelected = R.drawable.profile_fill
     )
-    object Library : BottomNavMenu(
-        route = "Library",
-        title = "Библиотека",
-        icon = R.drawable.compass,
-        iconSelected = R.drawable.compass_fill
-    )
 }
 
 object Graph {

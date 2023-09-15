@@ -47,7 +47,7 @@ fun LibraryScreen(onNavigateToSearchScreen:()->Unit, viewModel: LibraryViewModel
         verticalArrangement = Arrangement.spacedBy(16.dp),
         modifier = Modifier.verticalScroll(rememberScrollState())
     ) {
-        SearchWidget(modifier = Modifier.padding(horizontal = 16.dp)) {
+        SearchWidget(modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp)) {
             onNavigateToSearchScreen()
         }
         GenresBar(windowType = windowInfo.screenHeightInfo, viewModel = viewModel)

@@ -31,10 +31,6 @@ import com.example.bookcourt.utils.Constants.LIMIT_WINDOW_HEIGHT
 fun BottomNavigationMenu(navController: NavController) {
     val windowHeight = LocalConfiguration.current.screenHeightDp.toFloat() * LocalDensity.current.density
     val menuHeight = if (windowHeight > LIMIT_WINDOW_HEIGHT) 72.dp else 56.dp
-
-//    var visibility by remember {
-//        mutableStateOf(1f)
-//    }
     var visibility by remember {
         mutableStateOf(menuHeight)
     }
@@ -54,7 +50,7 @@ fun BottomNavigationMenu(navController: NavController) {
         ) {
             val navBackStackEntry by navController.currentBackStackEntryAsState()
             val currentRoute = navBackStackEntry?.destination?.route
-            visibility = if (currentRoute == Screens.Search.route || currentRoute == Graph.PROFILE_NAV_GRAPH) {
+            visibility = if (currentRoute == Screens.Search.route) {
                 0.dp
             } else {
                 menuHeight

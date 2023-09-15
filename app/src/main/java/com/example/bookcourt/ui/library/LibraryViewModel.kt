@@ -8,7 +8,7 @@ import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookcourt.data.repositories.NetworkRepository
-import com.example.bookcourt.models.BookRemote
+import com.example.bookcourt.models.BookDto
 import com.example.bookcourt.models.book.Book
 import com.example.bookcourt.models.categorySelection.Category
 import com.example.bookcourt.utils.Constants.genres
@@ -36,7 +36,7 @@ class LibraryViewModel @Inject constructor(
     fun loadPopularBooks(context: Context){
         viewModelScope.launch(Dispatchers.IO) {
             val json = networkRepository.getAllBooks(context)!!
-            val data = Json.decodeFromString<MutableList<BookRemote>>(json)
+            val data = Json.decodeFromString<MutableList<BookDto>>(json)
             popularBooks.addAll(data.map { it.toBook() })
             popularBooksFiltered.addAll(data.map { it.toBook() })
         }
@@ -45,7 +45,7 @@ class LibraryViewModel @Inject constructor(
     fun loadRecommendations(context: Context){
         viewModelScope.launch(Dispatchers.IO) {
             val json = networkRepository.getAllBooks(context)!!
-            val data = Json.decodeFromString<MutableList<BookRemote>>(json)
+            val data = Json.decodeFromString<MutableList<BookDto>>(json)
             recommendationBooks.addAll(data.map { it.toBook() })
             recommendationBooksFiltered.addAll(data.map { it.toBook() })
         }
