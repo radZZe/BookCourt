@@ -10,11 +10,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.bookcourt.models.order.Order
+import com.example.bookcourt.ui.basket.SuccessPurchaseScreen
 import com.example.bookcourt.ui.library.LibraryScreen
 import com.example.bookcourt.ui.profile.ProfileScreen
 import com.example.bookcourt.ui.recommendation.RecommendationScreen
 import com.example.bookcourt.ui.search.SearchScreen
-import com.example.bookcourt.ui.statistics.Statistics
 import com.example.bookcourt.utils.BottomNavMenu
 import com.example.bookcourt.utils.BottomNavigationMenu
 import com.example.bookcourt.utils.Graph
@@ -48,10 +49,10 @@ fun BottomNavigationGraph(
                 onNavigateToProfile = {navController.navigate(Graph.PROFILE_NAV_GRAPH)}
             )
         }
-        composable(route = BottomNavMenu.Bag.route) {
-            SearchScreen(
-                onNavigateBack = {navController.popBackStack()}
-            )
+        composable(route = BottomNavMenu.Basket.route) {
+            SuccessPurchaseScreen() {
+                navController.popBackStack()
+            }
         }
         composable(route = BottomNavMenu.Library.route){
             LibraryScreen(
