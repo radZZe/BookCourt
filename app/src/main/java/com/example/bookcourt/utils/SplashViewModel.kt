@@ -14,4 +14,5 @@ class SplashViewModel  @Inject constructor(
     val tutorState = dataStoreRepository.getBoolPref(DataStoreRepository.isTutorChecked)
     val verificationState = dataStoreRepository.getBoolPref(DataStoreRepository.isCodeVerificated)
     val categorySelectionState = dataStoreRepository.getBoolPref(DataStoreRepository.isCategoriesSelected)
+
 }

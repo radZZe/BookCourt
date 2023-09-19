@@ -49,6 +49,14 @@ import kotlinx.coroutines.launch
 
 
 @Composable
+fun LibraryPlug(
+    onNavigateToLibrary: () -> Unit
+) {
+    Text(text = "Here would be Library")
+}
+
+@OptIn(ExperimentalPagerApi::class)
+@Composable
 fun Statistics(
     onNavigateToRecommendation: () -> Unit,
     viewModel: StatisticsViewModel = hiltViewModel()

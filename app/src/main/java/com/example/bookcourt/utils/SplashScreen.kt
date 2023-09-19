@@ -42,18 +42,26 @@ fun SplashScreen(
         navController.popBackStack()
         startAnimation = true
         delay(2000)
+//        if (categorySelectionState.value) {
+//            navController.navigate(route = Graph.BOTTOM_NAV_GRAPH)
+//        } else if (tutorState.value) {
+//            navController.navigate(route = Screens.CategorySelection.route)
+//        } else if (verificationState.value) {
+//            navController.navigate(route = Screens.Tutorial.route)
+//        } else if (rememberMeState.value) {
+//            navController.navigate(route = Screens.VerificationCode.route)
+//        } else {
+//            navController.navigate(route = Screens.SignIn.route)
+//        }
 
         if (categorySelectionState.value) {
             navController.navigate(route = Graph.BOTTOM_NAV_GRAPH)
         } else if (tutorState.value) {
             navController.navigate(route = Screens.CategorySelection.route)
-        } else if (verificationState.value) {
-            navController.navigate(route = Screens.Tutorial.route)
-        } else if (rememberMeState.value) {
-            navController.navigate(route = Screens.VerificationCode.route)
         } else {
-            navController.navigate(route = Screens.SignIn.route)
+            navController.navigate(route = Screens.Tutorial.route)
         }
+
     }
     SplashUI(alpha = alphaAnim.value)
 }

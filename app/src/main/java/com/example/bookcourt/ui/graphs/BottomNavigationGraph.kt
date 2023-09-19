@@ -21,6 +21,7 @@ import com.example.bookcourt.ui.library.LibraryScreen
 import com.example.bookcourt.ui.profile.ProfileScreen
 import com.example.bookcourt.ui.recommendation.RecommendationScreen
 import com.example.bookcourt.ui.search.SearchScreen
+import com.example.bookcourt.ui.statistics.LibraryPlug
 import com.example.bookcourt.ui.statistics.Statistics
 import com.example.bookcourt.utils.BottomNavMenu
 import com.example.bookcourt.utils.BottomNavigationMenu
@@ -72,9 +73,9 @@ fun BottomNavigationGraph(
                 onNavigateToSearchScreen = {navController.navigate(Screens.Search.route)}
             )
         }
-        composable(Screens.Search.route) {
-            SearchScreen(
-                onNavigateBack = {navController.popBackStack()}
+        composable(route = BottomNavMenu.Library.route) {
+            LibraryPlug(
+                onNavigateToLibrary = { navController.navigate(Graph.BOTTOM_NAV_GRAPH) }
             )
         }
         composable(route = BottomNavMenu.Profile.route){
