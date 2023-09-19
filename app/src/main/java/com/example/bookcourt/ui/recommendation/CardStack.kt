@@ -1,5 +1,6 @@
 package com.example.bookcourt.ui.recommendation
 
+import android.graphics.BlurMaskFilter
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -11,8 +12,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.*
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalConfiguration
@@ -240,13 +244,21 @@ fun BookCard(
                         rotationZ = if (isFrontItem) bookCardController.rotation.value else 0f,
                     )
                     .alpha(alpha)
-                    .align(Alignment.Center)
+                    .align(Alignment.Center).shadow(
+                        elevation = 20.dp,
+                        spotColor = Color(30, 173, 0, 255),
+                        shape = RoundedCornerShape(20.dp)
+                    )
             } else {
                 Modifier
                     .width(300.dp)
                     .height(if (windowHeight > LIMIT_WINDOW_HEIGHT) 470.dp else 400.dp)
                     .alpha(alpha)
-                    .align(Alignment.Center)
+                    .align(Alignment.Center).shadow(
+                        elevation = 20.dp,
+                        spotColor = Color(30, 173, 0, 255),
+                        shape = RoundedCornerShape(20.dp)
+                    )
             }
         ) {
             Box(
@@ -275,6 +287,7 @@ fun Modifier.moveTo(
 @Composable
 fun BookCardImage(
     uri: String,
+    isBookCardScreen:Boolean = false
 ) {
     Box(
         modifier = Modifier, contentAlignment = Alignment.Center
@@ -291,7 +304,7 @@ fun BookCardImage(
         }
         Box(
             modifier = Modifier
-                .fillMaxWidth(0.3f)
+                .fillMaxWidth(if (isBookCardScreen) 0.4f else 0.32f)
                 .zIndex(3f)
                 .align(
                     Alignment.BottomStart
@@ -314,14 +327,14 @@ fun BookCardImage(
                     Image(
                         painter = painterResource(id = R.drawable.green_rating),
                         contentDescription = null,
-                        modifier = Modifier.size(21.dp)
+                        modifier = Modifier.size(if (isBookCardScreen) 16.dp else 21.dp)
                     )
-                    Spacer(modifier = Modifier.width(5.dp))
+                    Spacer(modifier = Modifier.width(if (isBookCardScreen) 3.dp else 5.dp))
                     Text(
                         text = "5.0",
                         fontFamily = Roboto,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
+                        fontSize = if (isBookCardScreen) 14.sp else 18.sp,
                         color = Color(48, 178, 93)
                     )
                 }
@@ -386,4 +399,5 @@ fun RecommendationIcon(
         }
     }
 }
+
 

@@ -15,6 +15,8 @@ sealed class Screens(
     object Profile:Screens(route = "Profile", title = "Profile")
     object Search : Screens(route = "Search", title = "Поиск")
     object VerificationCode: Screens(route = "VerificationCode", title = "VerificationCode")
+    object LeaveFeedback:Screens(route = "LeaveFeedback", title ="LeaveFeedback")
+    object FeedbackBlock:Screens(route = "FeedbackBlock", title = "FeedbackBlock")
 }
 
 sealed class BottomNavMenu(
