@@ -24,7 +24,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.SubcomposeAsyncImage
 import com.example.bookcourt.R
 import com.example.bookcourt.models.book.Book
-import com.example.bookcourt.ui.categorySelection.BoxItem
+import com.example.bookcourt.ui.categorySelection.CategoryItem
 import com.example.bookcourt.ui.theme.GrayBackground
 import com.example.bookcourt.ui.theme.GreenText
 import com.example.bookcourt.ui.theme.Roboto
@@ -94,7 +94,7 @@ fun GenresBar(
     ){
         items(viewModel.categories){ category ->
             Spacer(modifier = Modifier.size(16.dp))
-            BoxItem(
+            CategoryItem(
                 text = category.value.title,
                 windowType = windowType,
                 isChecked = category.value.isSelected.value) {
