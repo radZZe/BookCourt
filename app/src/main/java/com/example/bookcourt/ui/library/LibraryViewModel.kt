@@ -1,7 +1,6 @@
 package com.example.bookcourt.ui.library
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.toMutableStateList
@@ -62,11 +61,11 @@ class LibraryViewModel @Inject constructor(
                 clear()
                 addAll(popularBooks)
            }
-            selectedCategory.value!!.state.value = false
+            selectedCategory.value!!.isSelected.value = false
             selectedCategory.value = null
         }
         else{
-            selectedCategory.value?.state?.value = false
+            selectedCategory.value?.isSelected?.value = false
             recommendationBooksFiltered.apply {
                 clear()
                 addAll(recommendationBooks.filter {
@@ -80,7 +79,7 @@ class LibraryViewModel @Inject constructor(
                 })
             }
             selectedCategory.value = category.value
-            category.value.state.value = !(category.value.state.value)
+            category.value.isSelected.value = !(category.value.isSelected.value)
         }
     }
 }

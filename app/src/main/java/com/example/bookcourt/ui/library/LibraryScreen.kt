@@ -25,7 +25,10 @@ import coil.compose.SubcomposeAsyncImage
 import com.example.bookcourt.R
 import com.example.bookcourt.models.book.Book
 import com.example.bookcourt.ui.categorySelection.BoxItem
-import com.example.bookcourt.ui.theme.*
+import com.example.bookcourt.ui.theme.GrayBackground
+import com.example.bookcourt.ui.theme.GreenText
+import com.example.bookcourt.ui.theme.Roboto
+import com.example.bookcourt.ui.theme.SearchWidgetGrayGrayText
 import com.example.bookcourt.utils.WindowInfo
 import com.example.bookcourt.utils.rememberWindowSizeClass
 
@@ -94,10 +97,10 @@ fun GenresBar(
     ){
         items(viewModel.categories){ category ->
             Spacer(modifier = Modifier.size(16.dp))
-            BoxItem(
+            CategoryItem(
                 text = category.value.title,
                 windowType = windowType,
-                isChecked = category.value.state.value) {
+                isChecked = category.value.isSelected.value) {
                viewModel.filterCategories(category.value.title)
             }
             if (category.value==viewModel.categories.last().value){
