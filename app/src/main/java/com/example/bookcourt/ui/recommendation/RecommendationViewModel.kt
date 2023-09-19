@@ -13,6 +13,7 @@ import com.example.bookcourt.data.repositories.NetworkRepository
 import com.example.bookcourt.data.room.user.UserRepositoryI
 import com.example.bookcourt.models.book.Book
 import com.example.bookcourt.models.BookDto
+import com.example.bookcourt.models.feedback.BookFeedbacks
 import com.example.bookcourt.models.metrics.DataClickMetric
 import com.example.bookcourt.models.user.User
 import com.example.bookcourt.utils.MetricType
@@ -38,6 +39,17 @@ class RecommendationViewModel @Inject constructor(
 ) : ViewModel() {
 
     lateinit var user: User
+
+    var bottomSheetState = mutableStateOf(false)
+    val leaveFeedbackVisibility = mutableStateOf(true)
+    val username = mutableStateOf("User name")
+    val date = mutableStateOf("10 марта 2023")
+    val title = mutableStateOf("")
+    val rate = mutableStateOf(0)
+    
+    val isNeedToUpdateFeedback = mutableStateOf(false)
+
+    val description = mutableStateOf("")
 
     var validBooks = mutableStateListOf<Book>()
     var dataIsReady by mutableStateOf(false)
@@ -111,6 +123,11 @@ class RecommendationViewModel @Inject constructor(
                 book.bookInfo !in readBooks
             }
             validBooks.addAll(items)
+        }
+        for(item in validBooks){
+//            item.addFeedback(BookFeedbacks(
+//                false,0,null
+//            ))
         }
     }
 

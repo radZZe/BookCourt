@@ -3,7 +3,6 @@ package com.example.bookcourt.data.repositories
 import android.content.Context
 import android.os.Build
 import android.provider.Settings
-import androidx.annotation.RequiresApi
 import androidx.work.*
 import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.uuid
 import com.example.bookcourt.data.workers.SendMetricsWorker
@@ -25,7 +24,6 @@ class MetricsRepository @Inject constructor(
 ) : MetricsRepositoryInterface {
 
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override suspend fun sendUserData(
         name: String,
         surname: String,
@@ -40,10 +38,10 @@ class MetricsRepository @Inject constructor(
         val os = "android"
         val osVersion = "version: " + Build.VERSION.RELEASE
         val deviceModel = getDeviceModel()
-        var GUID = UUID.randomUUID().toString()
+        val GUID = UUID.randomUUID().toString()
         val formatter = DateTimeFormatter.ofPattern(Constants.DATE_TIME_METRIC_FORMAT)
-        var date = LocalDateTime.now().format(formatter)
-        var metric = UserInfoMetric(
+        val date = LocalDateTime.now().format(formatter)
+        val metric = UserInfoMetric(
             Type = USER_DATA_TYPE,
             Data = DataUserInfoMetric(
                 name,
@@ -59,7 +57,7 @@ class MetricsRepository @Inject constructor(
             GUID = GUID,
             UUID = uuid
         )
-        var json = Json.encodeToString(
+        val json = Json.encodeToString(
             serializer = UserInfoMetric.serializer(),
             metric
         )
@@ -71,7 +69,7 @@ class MetricsRepository @Inject constructor(
         val GUID = UUID.randomUUID().toString()
         val uid = dataStoreRepository.getPref(uuid).first()
         val formatter = DateTimeFormatter.ofPattern(Constants.DATE_TIME_METRIC_FORMAT)
-        var date = LocalDateTime.now().format(formatter)
+        val date = LocalDateTime.now().format(formatter)
         val metric = ClickMetric(
             Type = MetricType.CLICK,
             Data = clickMetric,
@@ -84,20 +82,20 @@ class MetricsRepository @Inject constructor(
     }
 
     override suspend fun onSwipe(book: Book, direction: String) {
-        var GUID = UUID.randomUUID().toString()
+        val GUID = UUID.randomUUID().toString()
         val formatter = DateTimeFormatter.ofPattern(Constants.DATE_TIME_METRIC_FORMAT)
-        var date = LocalDateTime.now().format(formatter)
-        var bookMetric = book.toBookMetric(direction)
+        val date = LocalDateTime.now().format(formatter)
+        val bookMetric = book.toBookMetric(direction)
         dataStoreRepository.getPref(uuid).collect {
-            var uuid = it
-            var metric = BookMetric(
+            val uuid = it
+            val metric = BookMetric(
                 Type = MetricType.SWIPE,
                 Data = bookMetric,
                 Date = date,
                 GUID = GUID,
                 UUID = uuid
             )
-            var json = Json.encodeToString(
+            val json = Json.encodeToString(
                 serializer = BookMetric.serializer(),
                 metric
             )
@@ -109,7 +107,7 @@ class MetricsRepository @Inject constructor(
     override suspend fun appTime(sessionTime: Int, type: String, screen: String) {
         val GUID = UUID.randomUUID().toString()
         val formatter = DateTimeFormatter.ofPattern(Constants.DATE_TIME_METRIC_FORMAT)
-        var date = LocalDateTime.now().format(formatter)
+        val date = LocalDateTime.now().format(formatter)
 
         coroutineScope {
             val uid = dataStoreRepository.getPref(uuid).first()
@@ -124,7 +122,7 @@ class MetricsRepository @Inject constructor(
                 GUID = GUID,
                 UUID = uid
             )
-            var json = Json.encodeToString(
+            val json = Json.encodeToString(
                 serializer = SessionMetric.serializer(),
                 metric
             )

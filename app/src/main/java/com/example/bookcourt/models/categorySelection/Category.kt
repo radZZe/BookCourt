@@ -4,5 +4,5 @@ import androidx.compose.runtime.MutableState
 
 data class Category(
     var title:String,
-    var state: MutableState<Boolean>
+    var isSelected: MutableState<Boolean>
 )

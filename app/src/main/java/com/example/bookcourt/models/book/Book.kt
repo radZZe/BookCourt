@@ -1,5 +1,6 @@
 package com.example.bookcourt.models.book
 
+import com.example.bookcourt.models.feedback.BookFeedbacks
 import com.example.bookcourt.models.metrics.DataBookMetric
 
 @kotlinx.serialization.Serializable
@@ -8,8 +9,14 @@ data class Book(
     val bookInfo: BookInfo,
     var onSwipeDirection: String?,
     val shopOwner: String,
-    val buyUri: String
+    val buyUri: String,
+    var feedbacks: BookFeedbacks = BookFeedbacks(
+        false,0,null
+    )
 ){
+    fun addFeedback(bookFeedbacks :BookFeedbacks){
+        this.feedbacks = bookFeedbacks
+    }
     fun toBookMetric(swipeType:String): DataBookMetric {
         return DataBookMetric(
             isbn = this.isbn,

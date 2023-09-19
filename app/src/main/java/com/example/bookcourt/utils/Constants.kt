@@ -21,6 +21,20 @@ object Constants {
         OTHER_CITY
     )
 
+    val genres = listOf(
+        "Детективы",
+        "Комедия",
+        "Трагедия",
+        "Драма",
+        "Детская литература",
+        "Рассказы",
+        "Фантастика",
+        "Экономика",
+        "Научная фантастика",
+        "Фэнтези",
+        "Зарубежная литература"
+    )
+
     val tutorialCards = listOf(
         TutorialCard(
             bookTitle = "Это Владивосток, детка",
@@ -101,9 +115,11 @@ object AppVersion {
 }
 
 object Partners{
-    const val lyuteraturaUrl = "https://lyuteratura.ru/"
-    const val csiZaryaUrl = "http://zaryavladivostok.ru/ru/shop/books"
-    const val igraSlovUrl = "https://igraslov.store/"
+    val partners = listOf(
+        Sponsors.Lyuteratura,
+        Sponsors.Zarya,
+        Sponsors.IgraSlov
+    )
 }
 
 object ApiUrl{
