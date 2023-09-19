@@ -9,6 +9,7 @@ import com.example.bookcourt.data.room.user.UserRepositoryI
 import com.example.bookcourt.models.categorySelection.Category
 import com.example.bookcourt.models.metrics.DataClickMetric
 import com.example.bookcourt.models.user.User
+import com.example.bookcourt.utils.Constants.genres
 import com.example.bookcourt.utils.Hashing
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -45,22 +46,22 @@ class CategorySelectionViewModel @Inject constructor(
     }
 
     fun changeStateCategory(index: Int) {
-        if (categories[index].value.state.value) {
-            categories[index].value.state.value = !categories[index].value.state.value
+        if (categories[index].value.isSelected.value) {
+            categories[index].value.isSelected.value = !categories[index].value.isSelected.value
             selectedCategories.remove(categories[index])
         } else {
-            categories[index].value.state.value = !categories[index].value.state.value
+            categories[index].value.isSelected.value = !categories[index].value.isSelected.value
             selectedCategories.add(categories[index])
             }
         }
-        else{
-            if(categories[index].value.isSelected.value){
-                categories[index].value.isSelected.value = !categories[index].value.isSelected.value
-                selectedCategories.remove(categories[index])
-            }
-        }
-
-    }
+//        else{
+//            if(categories[index].value.isSelected.value){
+//                categories[index].value.isSelected.value = !categories[index].value.isSelected.value
+//                selectedCategories.remove(categories[index])
+//            }
+//        }
+//
+//    }
 
     fun metricClick(clickMetric: DataClickMetric) {
         viewModelScope.launch(Dispatchers.IO) {
