@@ -81,7 +81,7 @@ fun SplashUI(alpha: Float) {
             modifier = Modifier.weight(1f)
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.book_court),
+                painter = painterResource(id = R.drawable.book_court_logo),
                 contentDescription = "",
                 modifier = Modifier
                     .size(120.dp)

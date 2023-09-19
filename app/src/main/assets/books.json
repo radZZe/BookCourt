@@ -10,7 +10,7 @@
       "name": "1",
       "numberOfPage": "158",
       "owner": "b9786ae1-4efb-46c4-a493-cb948cb80103",
-      "rate": 5,
+      "rate": 5.0,
       "price": 1140,
       "shop_owner": "Игра слов",
       "buy_uri": "https://igraslov.store/product/tesson-s-snezhnaya-pantera-tekst-tverd/"
@@ -28,7 +28,7 @@
       "name": "2",
       "numberOfPage": "320",
       "owner": "b9786ae1-4efb-46c4-a493-cb948cb80103",
-      "rate": 5,
+      "rate": 5.0,
       "price": 1140,
       "shop_owner": "Игра слов",
       "buy_uri": "https://igraslov.store/product/genassiya-zh-m-o-vliyanii-devida-boui-na-sudby-yunyh-sozdanij-azbuka-inostranka-tverd/"
@@ -46,7 +46,7 @@
       "name": "3",
       "numberOfPage": "320",
       "owner": "b9786ae1-4efb-46c4-a493-cb948cb80103",
-      "rate": 5,
+      "rate": 4.6,
       "price": 1590,
       "shop_owner": "Игра слов",
       "buy_uri": "https://igraslov.store/product/renata-litvinova-o-schaste-i-zle-seans-klap/"
@@ -64,7 +64,7 @@
       "name": "4",
       "numberOfPage": "158",
       "owner": "b9786ae1-4efb-46c4-a493-cb948cb80103",
-      "rate": 5,
+      "rate": 4.6,
       "price": 1140,
       "shop_owner": "Игра слов",
       "buy_uri": "https://igraslov.store/product/tesson-s-snezhnaya-pantera-tekst-tverd/"
@@ -82,7 +82,7 @@
       "name": "5",
       "numberOfPage": "320",
       "owner": "b9786ae1-4efb-46c4-a493-cb948cb80103",
-      "rate": 5,
+      "rate": 4.8,
       "price": 1140,
       "shop_owner": "Игра слов",
       "buy_uri": "https://igraslov.store/product/genassiya-zh-m-o-vliyanii-devida-boui-na-sudby-yunyh-sozdanij-azbuka-inostranka-tverd/"
@@ -100,7 +100,7 @@
       "name": "6",
       "numberOfPage": "320",
       "owner": "b9786ae1-4efb-46c4-a493-cb948cb80103",
-      "rate": 5,
+      "rate": 5.0,
       "price": 1590,
       "shop_owner": "Игра слов",
       "buy_uri": "https://igraslov.store/product/renata-litvinova-o-schaste-i-zle-seans-klap/"
@@ -118,7 +118,7 @@
       "name": "7",
       "numberOfPage": "158",
       "owner": "b9786ae1-4efb-46c4-a493-cb948cb80103",
-      "rate": 5,
+      "rate": 5.0,
       "price": 1140,
       "shop_owner": "Игра слов",
       "buy_uri": "https://igraslov.store/product/tesson-s-snezhnaya-pantera-tekst-tverd/"
@@ -136,7 +136,7 @@
       "name": "8",
       "numberOfPage": "320",
       "owner": "b9786ae1-4efb-46c4-a493-cb948cb80103",
-      "rate": 5,
+      "rate": 5.0,
       "price": 1140,
       "shop_owner": "Игра слов",
       "buy_uri": "https://igraslov.store/product/genassiya-zh-m-o-vliyanii-devida-boui-na-sudby-yunyh-sozdanij-azbuka-inostranka-tverd/"
@@ -154,7 +154,7 @@
       "name": "9",
       "numberOfPage": "320",
       "owner": "b9786ae1-4efb-46c4-a493-cb948cb80103",
-      "rate": 5,
+      "rate": 5.0,
       "price": 1590,
       "shop_owner": "Игра слов",
       "buy_uri": "https://igraslov.store/product/renata-litvinova-o-schaste-i-zle-seans-klap/"
@@ -172,7 +172,7 @@
       "name": "10",
       "numberOfPage": "158",
       "owner": "b9786ae1-4efb-46c4-a493-cb948cb80103",
-      "rate": 5,
+      "rate": 5.0,
       "price": 1140,
       "shop_owner": "Игра слов",
       "buy_uri": "https://igraslov.store/product/tesson-s-snezhnaya-pantera-tekst-tverd/"
@@ -190,7 +190,7 @@
       "name": "11",
       "numberOfPage": "320",
       "owner": "b9786ae1-4efb-46c4-a493-cb948cb80103",
-      "rate": 5,
+      "rate": 5.0,
       "price": 1140,
       "shop_owner": "Игра слов",
       "buy_uri": "https://igraslov.store/product/genassiya-zh-m-o-vliyanii-devida-boui-na-sudby-yunyh-sozdanij-azbuka-inostranka-tverd/"
@@ -208,7 +208,7 @@
       "name": "12",
       "numberOfPage": "320",
       "owner": "b9786ae1-4efb-46c4-a493-cb948cb80103",
-      "rate": 5,
+      "rate": 5.0,
       "price": 1590,
       "shop_owner": "Игра слов",
       "buy_uri": "https://igraslov.store/product/renata-litvinova-o-schaste-i-zle-seans-klap/"

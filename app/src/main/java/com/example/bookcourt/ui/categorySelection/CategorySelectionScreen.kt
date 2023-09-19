@@ -64,10 +64,10 @@ fun CategoriesGrid(
         crossAxisSpacing = 10.dp,
     ) {
         data.forEachIndexed { index, item ->
-            BoxItem(
+            CategoryItem(
                 text = item.value.title,
                 windowType = windowType,
-                isChecked = item.value.state.value
+                isChecked = item.value.isSelected.value
             ) {
                 viewModel.changeStateCategory(index)
             }
@@ -77,11 +77,11 @@ fun CategoriesGrid(
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun BoxItem(
+fun CategoryItem(
     text: String,
     windowType: WindowInfo.WindowType,
-    isChecked: Boolean,
-    onClick: () -> Unit
+    isChecked: Boolean = false,
+    onClick: () -> Unit?
 ) {
     AnimatedContent(targetState = isChecked,
         transitionSpec = {
