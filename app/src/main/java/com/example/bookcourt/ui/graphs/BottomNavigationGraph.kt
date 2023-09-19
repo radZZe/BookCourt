@@ -54,11 +54,11 @@ fun BottomNavigationGraph(
             val needToUpdate = it.savedStateHandle.get<Boolean>("needToUpdate")
             BackHandler(true) {}
             RecommendationScreen(
+                onNavigateToStatistics = { navController.navigate(BottomNavMenu.Library.route) }, //TODO after the Library screen will be added it is necessary to change BottomNavMenu.Statistics.route or even change navGraph
                 isNeedToUpdateFeedback = needToUpdate ?: false,
                 description = description,
                 onNavigateToLeaveFeedbackScreen = {title,rate -> navController.navigate("${Screens.LeaveFeedback.route}/$title/$rate")},
                 onNavigateToFeedback = {title -> navController.navigate("${Screens.FeedbackBlock.route}/$title")},
-                onNavigateToStatistics = { navController.navigate(BottomNavMenu.Statistics.route) },
                 onNavigateToProfile = {navController.navigate(Graph.PROFILE_NAV_GRAPH)}
             )
         }

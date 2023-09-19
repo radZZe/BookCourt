@@ -50,8 +50,12 @@ fun BottomNavigationMenu(navController: NavController) {
         ) {
             val navBackStackEntry by navController.currentBackStackEntryAsState()
             val currentRoute = navBackStackEntry?.destination?.route
-            visibility = if (currentRoute == Screens.Search.route) {
-                0.dp
+            visibility = if (
+                currentRoute == BottomNavMenu.Search.route
+                 || currentRoute == Graph.PROFILE_NAV_GRAPH
+                  || currentRoute == BottomNavMenu.Statistics.route
+            ) {
+                0f
             } else {
                 menuHeight
             }
