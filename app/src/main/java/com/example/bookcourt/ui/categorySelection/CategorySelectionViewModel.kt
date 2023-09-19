@@ -7,6 +7,7 @@ import com.example.bookcourt.data.repositories.DataStoreRepository
 import com.example.bookcourt.data.repositories.MetricsRepository
 import com.example.bookcourt.models.categorySelection.Category
 import com.example.bookcourt.models.metrics.DataClickMetric
+import com.example.bookcourt.utils.Constants.genres
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -18,32 +19,9 @@ class CategorySelectionViewModel @Inject constructor(
     private val metricRep: MetricsRepository,
 ): ViewModel() {
     val selectedCategories = mutableStateListOf<MutableState<Category>>()
-    val categories = mutableStateListOf<MutableState<Category>>(
-        mutableStateOf(
-            Category("Детективы", mutableStateOf(false))
-        ),
-        mutableStateOf(
-            Category("Детская литература", mutableStateOf(false))
-        ),
-        mutableStateOf(
-            Category("Рассказы", mutableStateOf(false))
-        ),
-        mutableStateOf(
-            Category("Фантастика", mutableStateOf(false))
-        ),
-        mutableStateOf(
-            Category("Экономика", mutableStateOf(false))
-        ),
-        mutableStateOf(
-            Category("Научная фантастика", mutableStateOf(false))
-        ),
-        mutableStateOf(
-            Category("Фэнтези", mutableStateOf(false))
-        ),
-        mutableStateOf(
-            Category("Зарубежная литература", mutableStateOf(false))
-        )
-    )
+    val categories =  genres.map {
+            mutableStateOf(Category(it, mutableStateOf(false)))
+        }.toMutableStateList()
 
     private var isCategoriesSelected by mutableStateOf(false)
 
@@ -52,13 +30,22 @@ class CategorySelectionViewModel @Inject constructor(
     }
 
     fun changeStateCategory(index: Int) {
-        if(categories[index].value.state.value){
-            categories[index].value.state.value = !categories[index].value.state.value
-            selectedCategories.remove(categories[index])
-        }else{
-            categories[index].value.state.value = !categories[index].value.state.value
-            selectedCategories.add(categories[index])
+        if (selectedCategories.size<5){
+            if(categories[index].value.isSelected.value){
+                categories[index].value.isSelected.value = !categories[index].value.isSelected.value
+                selectedCategories.remove(categories[index])
+            }else{
+                categories[index].value.isSelected.value = !categories[index].value.isSelected.value
+                selectedCategories.add(categories[index])
+            }
         }
+        else{
+            if(categories[index].value.isSelected.value){
+                categories[index].value.isSelected.value = !categories[index].value.isSelected.value
+                selectedCategories.remove(categories[index])
+            }
+        }
+
     }
 
     fun metricClick(clickMetric: DataClickMetric) {

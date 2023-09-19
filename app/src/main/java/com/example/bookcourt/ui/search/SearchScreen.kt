@@ -38,7 +38,7 @@ import com.example.bookcourt.ui.theme.*
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SearchScreen(
-    onNavigateToRecommendation: () -> Unit,
+    onNavigateBack: () -> Unit,
     viewModel: SearchViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
@@ -91,7 +91,7 @@ fun SearchScreen(
                     modifier = Modifier
                         .size(42.dp)
                         .clickable {
-                            onNavigateToRecommendation()
+                            onNavigateBack()
                         }
 
                 )

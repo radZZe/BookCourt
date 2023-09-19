@@ -67,7 +67,7 @@ fun CategoriesGrid(
             CategoryItem(
                 text = item.value.title,
                 windowType = windowType,
-                isChecked = item.value.state.value
+                isChecked = item.value.isSelected.value
             ) {
                 viewModel.changeStateCategory(index)
             }

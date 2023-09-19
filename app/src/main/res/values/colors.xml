@@ -7,13 +7,5 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="bottom_nav_bg">#919191</color>
-    <color name="main_color">#0E8EFF</color>
-    <color name="second_color">#5EB4FF</color>
-    <color name="unselected">#9BCEFB</color>
-    <color name="rating_color">#FF9800</color>
-    <color name="light_brown">#B2AC8B</color>
-    <color name="brown">#483936</color>
     <color name="main_bg_color">#FAF8F2</color>
-    <color name="button_color">#FCE181</color>
 </resources>

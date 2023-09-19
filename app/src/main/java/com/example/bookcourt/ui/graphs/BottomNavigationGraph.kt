@@ -17,6 +17,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.bookcourt.ui.feedback.LeaveFeedbackScreen
 import com.example.bookcourt.ui.feedback.ListOfFeedbacksScreen
+import com.example.bookcourt.ui.library.LibraryScreen
 import com.example.bookcourt.ui.profile.ProfileScreen
 import com.example.bookcourt.ui.recommendation.RecommendationScreen
 import com.example.bookcourt.ui.search.SearchScreen
@@ -63,12 +64,17 @@ fun BottomNavigationGraph(
         }
         composable(route = BottomNavMenu.Bag.route) {
             SearchScreen(
-                onNavigateToRecommendation = { navController.popBackStack()}
+                onNavigateBack = {navController.popBackStack()}
             )
         }
-        composable(route = BottomNavMenu.Library.route) {
-            Statistics(
-                onNavigateToRecommendation = { navController.navigate(Graph.BOTTOM_NAV_GRAPH) }
+        composable(route = BottomNavMenu.Library.route){
+            LibraryScreen(
+                onNavigateToSearchScreen = {navController.navigate(Screens.Search.route)}
+            )
+        }
+        composable(Screens.Search.route) {
+            SearchScreen(
+                onNavigateBack = {navController.popBackStack()}
             )
         }
         composable(route = BottomNavMenu.Profile.route){

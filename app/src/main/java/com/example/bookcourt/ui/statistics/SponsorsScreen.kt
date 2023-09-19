@@ -20,15 +20,15 @@ import com.example.bookcourt.R
 import com.example.bookcourt.ui.theme.*
 import com.example.bookcourt.utils.Partners
 import com.example.bookcourt.utils.RedirectButton
+import com.example.bookcourt.utils.Sponsors
 
 @Composable
-fun PartnerZarya(bottomPadding: Dp) {
+fun PartnerZarya() {
     val context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(ZaryaBackground)
-            .padding(bottom = bottomPadding),
+            .background(ZaryaBackground),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
@@ -68,7 +68,7 @@ fun PartnerZarya(bottomPadding: Dp) {
         }
         RedirectButton(
             context = context,
-            redirectUrl = Partners.csiZaryaUrl,
+            redirectUrl = Sponsors.Zarya.url,
             modifier = Modifier
                 .weight(1f,false),
         )
@@ -76,19 +76,18 @@ fun PartnerZarya(bottomPadding: Dp) {
 }
 
 @Composable
-fun PartnerIgraSlov(bottomPadding: Dp) {
+fun PartnerIgraSlov() {
     val context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(IgraSlovBackground)
-            .padding(bottom = bottomPadding),
+            .background(IgraSlovBackground),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Image(
             painter = painterResource(id = R.drawable.igra_slov_logo_unfilled),
-            contentDescription = "Zarya logo",
+            contentDescription = "igra slov logo",
             modifier = Modifier
                 .fillMaxWidth(0.3f)
                 .fillMaxHeight(0.1f)
@@ -97,7 +96,7 @@ fun PartnerIgraSlov(bottomPadding: Dp) {
         )
         Image(
             painter = painterResource(id = R.drawable.igra_slov_screen_cover),
-            contentDescription = "Zarya cover",
+            contentDescription = "igra slov cover",
             modifier = Modifier.fillMaxWidth(),
             contentScale = ContentScale.FillWidth
         )
@@ -122,7 +121,7 @@ fun PartnerIgraSlov(bottomPadding: Dp) {
         }
         RedirectButton(
             context = context,
-            redirectUrl = Partners.igraSlovUrl,
+            redirectUrl = Sponsors.IgraSlov.url,
             modifier = Modifier
                 .weight(1f,false),
         )
@@ -130,13 +129,13 @@ fun PartnerIgraSlov(bottomPadding: Dp) {
 }
 
 @Composable
-fun PartnerLyuteratura(bottomPadding: Dp) {
+fun PartnerLyuteratura() {
     val context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(LightPinkBackground)
-            .padding(bottom = bottomPadding, top = 50.dp),
+            .padding(top = 50.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
@@ -174,7 +173,7 @@ fun PartnerLyuteratura(bottomPadding: Dp) {
         )
         RedirectButton(
             context = context,
-            redirectUrl = Partners.lyuteraturaUrl,
+            redirectUrl = Sponsors.Lyuteratura.url,
             modifier = Modifier
                 .weight(1f,false),
         )
