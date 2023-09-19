@@ -97,7 +97,7 @@ fun GenresBar(
             BoxItem(
                 text = category.value.title,
                 windowType = windowType,
-                isChecked = category.value.state.value) {
+                isChecked = category.value.isSelected.value) {
                viewModel.filterCategories(category.value.title)
             }
             if (category.value==viewModel.categories.last().value){
