@@ -15,6 +15,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.bookcourt.ui.BasketTEMP.BasketScreen
 import com.example.bookcourt.ui.feedback.LeaveFeedbackScreen
 import com.example.bookcourt.ui.feedback.ListOfFeedbacksScreen
 import com.example.bookcourt.ui.library.LibraryScreen
@@ -34,7 +35,9 @@ fun HomeScreen(navController: NavHostController = rememberNavController()) {
         bottomBar = { BottomNavigationMenu(navController) }
     ) {
         val bottomPadding = it.calculateBottomPadding()
-        Box(modifier = Modifier.fillMaxSize().padding(bottom = bottomPadding)){
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .padding(bottom = bottomPadding)){
             BottomNavigationGraph(navController = navController)
         }
 
@@ -64,9 +67,10 @@ fun BottomNavigationGraph(
             )
         }
         composable(route = BottomNavMenu.Bag.route) {
-            SearchScreen(
-                onNavigateBack = {navController.popBackStack()}
-            )
+            BasketScreen()
+//            SearchScreen(
+//                onNavigateBack = {navController.popBackStack()}
+//            )
         }
         composable(route = BottomNavMenu.Library.route){
             LibraryScreen(
