@@ -24,11 +24,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.SubcomposeAsyncImage
 import com.example.bookcourt.R
 import com.example.bookcourt.models.book.Book
-import com.example.bookcourt.ui.categorySelection.BoxItem
-import com.example.bookcourt.ui.theme.GrayBackground
-import com.example.bookcourt.ui.theme.GreenText
-import com.example.bookcourt.ui.theme.Roboto
-import com.example.bookcourt.ui.theme.SearchWidgetGrayGrayText
+import com.example.bookcourt.ui.categorySelection.CategoryItem
+import com.example.bookcourt.ui.theme.*
 import com.example.bookcourt.utils.WindowInfo
 import com.example.bookcourt.utils.rememberWindowSizeClass
 

@@ -127,5 +127,8 @@ object ApiUrl{
     const val BOOKS_URL = "https://www.jsonkeeper.com/b/"
 }
 
+object MapApi{
+    const val API_KEY = "69136701-b14f-40d4-9225-6d8b7242c623"
+}
 
 
