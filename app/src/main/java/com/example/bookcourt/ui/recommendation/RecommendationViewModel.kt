@@ -10,10 +10,12 @@ import com.example.bookcourt.data.repositories.DataStoreRepository
 import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.uuid
 import com.example.bookcourt.data.repositories.MetricsRepository
 import com.example.bookcourt.data.repositories.NetworkRepository
+import com.example.bookcourt.data.room.basket.BasketRepositoryI
 import com.example.bookcourt.data.room.user.UserRepositoryI
 import com.example.bookcourt.models.BookData
 import com.example.bookcourt.models.book.Book
 import com.example.bookcourt.models.BookDto
+import com.example.bookcourt.models.basket.BasketItem
 import com.example.bookcourt.models.feedback.BookFeedbacks
 import com.example.bookcourt.models.metrics.DataClickMetric
 import com.example.bookcourt.models.user.User
@@ -37,7 +39,8 @@ class RecommendationViewModel @Inject constructor(
     private val networkRepository: NetworkRepository,
     private val dataStoreRepository: DataStoreRepository,
     private val metricRep: MetricsRepository,
-    private val userRepositoryI: UserRepositoryI
+    private val userRepositoryI: UserRepositoryI,
+    private val basketRepository: BasketRepositoryI
 ) : ViewModel() {
 
     lateinit var user: User
@@ -217,6 +220,12 @@ class RecommendationViewModel @Inject constructor(
     fun updateUserStatistic(user: User) {
         viewModelScope.launch(Dispatchers.IO) {
             userRepositoryI.updateData(user)
+        }
+    }
+
+    fun addToBasket(item:BasketItem){
+        viewModelScope.launch(Dispatchers.IO) {
+            basketRepository.addData(item)
         }
     }
 

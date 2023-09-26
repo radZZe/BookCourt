@@ -5,6 +5,10 @@ import androidx.room.Room
 
 import com.example.bookcourt.data.repositories.DataStoreRepository
 import com.example.bookcourt.data.repositories.MetricsRepository
+import com.example.bookcourt.data.room.basket.BasketDatabase
+import com.example.bookcourt.data.room.basket.BasketRepository
+import com.example.bookcourt.data.room.basket.BasketRepositoryI
+import com.example.bookcourt.data.room.basket.BasketSource
 import com.example.bookcourt.data.room.user.UserRepository
 import com.example.bookcourt.data.room.user.UserRepositoryI
 import com.example.bookcourt.data.room.searchRequest.SearchRequestDatabase
@@ -50,6 +54,28 @@ class DataModule {
             application,
             UserDatabase::class.java,
             "user_database"
+        ).build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideBasketRepository(source: BasketSource) : BasketRepositoryI {
+        return BasketRepository(source)
+    }
+
+    @Provides
+    @Singleton
+    fun provideBasketSource(db: BasketDatabase) : BasketSource {
+        return BasketSource(db.basketDao())
+    }
+
+    @Provides
+    @Singleton
+    fun provideBasketDatabase(application: Application) : BasketDatabase {
+        return Room.databaseBuilder(
+            application,
+            BasketDatabase::class.java,
+            "basket_table"
         ).build()
     }
 

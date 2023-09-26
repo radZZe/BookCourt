@@ -13,6 +13,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.bookcourt.ui.BasketTEMP.BasketScreen
 import com.example.bookcourt.models.BookDto
 import com.example.bookcourt.models.book.Book
 import com.example.bookcourt.ui.BookCardScreen
@@ -64,8 +65,14 @@ fun BottomNavigationGraph(
                 onNavigateBookCard = {book-> navController.navigate("${Screens.BookCardScreen.route}/$book")}
             )
         }
-        composable(route = BottomNavMenu.Basket.route) {
-            PickUpPointScreen()
+        composable(route = BottomNavMenu.Bag.route) {
+            BasketScreen()
+//            SearchScreen(
+//                onNavigateBack = {navController.popBackStack()}
+//            )
+          //YATO
+        //composable(route = BottomNavMenu.Basket.route) {
+        //PickUpPointScreen()
         }
         composable(route = BottomNavMenu.Library.route){
             LibraryScreen(
