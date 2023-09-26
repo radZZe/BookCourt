@@ -175,7 +175,7 @@ fun BookCard(
         if (isFrontItem) {
             RecommendationIcon(
                 Modifier
-                    .zIndex(4f)
+                    .zIndex(20f)
                     .align(Alignment.TopCenter),
                 bookCardController.wantToReadIconSize.value.dp,
                 bookCardController.currentWantToReadIconColor,
@@ -186,7 +186,7 @@ fun BookCard(
 
             RecommendationIcon(
                 Modifier
-                    .zIndex(4f)
+                    .zIndex(20f)
                     .align(Alignment.CenterStart),
                 bookCardController.dislikeIconSize.value.dp,
                 bookCardController.currentDislikeIconColor,
@@ -197,7 +197,7 @@ fun BookCard(
 
             RecommendationIcon(
                 Modifier
-                    .zIndex(4f)
+                    .zIndex(20f)
                     .align(Alignment.CenterEnd),
                 bookCardController.likeIconSize.value.dp,
                 bookCardController.currentLikeIconColor,
@@ -209,7 +209,7 @@ fun BookCard(
 
             RecommendationIcon(
                 Modifier
-                    .zIndex(4f)
+                    .zIndex(20f)
                     .align(Alignment.BottomCenter),
                 bookCardController.skipBookIconSize.value.dp,
                 bookCardController.currentSkipIconColor,
@@ -305,7 +305,7 @@ fun BookCardImage(
         Box(
             modifier = Modifier
                 .fillMaxWidth(if (isBookCardScreen) 0.4f else 0.32f)
-                .zIndex(3f)
+                .zIndex(19f)
                 .align(
                     Alignment.BottomStart
                 )

@@ -12,12 +12,17 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -30,39 +35,64 @@ import com.example.bookcourt.R
 import com.example.bookcourt.models.book.Book
 import com.example.bookcourt.models.book.BookInfo
 import com.example.bookcourt.models.metrics.DataClickMetric
+import com.example.bookcourt.ui.bookCard.BookCardViewModel
 import com.example.bookcourt.ui.recommendation.BookCardImage
 import com.example.bookcourt.ui.recommendation.CategoriesBlock
 import com.example.bookcourt.ui.recommendation.FeedbackBlock
 import com.example.bookcourt.ui.theme.MainBgColor
 import com.example.bookcourt.utils.Buttons
+import com.example.bookcourt.utils.Constants
 import com.example.bookcourt.utils.Screens
 
 @Composable
-fun BookCardScreen(uri:String,book: Book){
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .verticalScroll(rememberScrollState())
-        .background(
-            MainBgColor
-        )) {
-        BookCardTopBar({},R.drawable.igra_slov_logo)
-        Spacer(modifier = Modifier.height(18.dp))
-        Box(Modifier.fillMaxWidth()){
-            Box(modifier = Modifier
-                .clip(RoundedCornerShape(23.dp))
-                .fillMaxWidth(0.5f)
-                .align(
-                    Alignment.Center
-                )){
-                CardOfBook(uri)
-
-
-            }
-        }
-        Spacer(modifier = Modifier.height(12.dp))
-        BookCardMainContent(book)
-
+fun BookCardScreen(
+    bookId: String,
+    onNavigateBack:()->Unit,
+    onNavigateLeaveFeedback:(title:String,rate:Int)->Unit,
+    onNavigateListFeedbacks:(title:String)->Unit,
+    viewModel:BookCardViewModel = hiltViewModel(),
+    feedbackText:String? = null,
+    needToUpdate:Boolean = false){
+    val context = LocalContext.current
+    LaunchedEffect(key1 = Unit){
+        viewModel.getBookByID(context,bookId)
     }
+    val book = viewModel.book.value
+    if(book != null){
+        Column(modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .background(
+                MainBgColor
+            ))
+        {
+            val windowHeight =
+                LocalConfiguration.current.screenHeightDp.toFloat() * LocalDensity.current.density
+            BookCardTopBar({onNavigateBack()},R.drawable.igra_slov_logo)
+            Spacer(modifier = Modifier.height(18.dp))
+            Box(Modifier.fillMaxWidth().height(if (windowHeight > Constants.LIMIT_WINDOW_HEIGHT) 400.dp else 350.dp)){
+                Box(modifier = Modifier
+                    .clip(RoundedCornerShape(23.dp))
+                    .fillMaxWidth(0.5f)
+                    .align(
+                        Alignment.Center
+                    )){
+                    CardOfBook(book.bookInfo.image)
+
+
+                }
+            }
+            Spacer(modifier = Modifier.height(12.dp))
+            BookCardMainContent(feedbackText,needToUpdate,book,onNavigateLeaveFeedback,onNavigateListFeedbacks,viewModel.rate.value,)
+
+        }
+    }else{
+        Box(){
+
+        }
+    }
+
+
 }
 
 @Composable
@@ -115,7 +145,14 @@ fun CardOfBook(uri:String){
 }
 
 @Composable
-fun BookCardMainContent(book:Book){
+fun BookCardMainContent(
+    feedbackText: String?,
+    needToUpdate: Boolean,
+    book:Book,
+    onNavigateLeaveFeedback:(title:String,rate:Int)->Unit,
+    onNavigateListFeedbacks:(title:String)->Unit,
+    rate:Int,
+){
     Column(
         modifier = Modifier
             .background(MainBgColor),
@@ -298,20 +335,24 @@ fun BookCardMainContent(book:Book){
                     .height(16.dp)
                     .fillMaxWidth()
             )
-//            FeedbackBlock(
-//                username = "username",
-//                date = "date",
-//                title = "title",
-//                description = "Морские города имеют особое очарование. Родиться в одном из них – настоящая удача! И как же хочется, чтобы малыш скорее узнал о соленом ветре, высоких сопках и морских приключениях!",
-//                rate = 5,
-//                leaveFeedbackVisibility = false,
-//                onNavigateToFeedback = {s->},
-//                onClickRatingBar = {
-//
-//                },
-//                disableLeaveFeedbackVisibility = {
-//                }
-//            )
+            FeedbackBlock(
+                username = "username",
+                date = "date",
+                title = "title",
+                description = feedbackText ?: "",
+                rate = book.bookInfo.rate.toInt(),
+                leaveFeedbackVisibility = !needToUpdate,
+                onNavigateToFeedback = {s->},
+                onClickRatingBar = {
+                        onNavigateLeaveFeedback("title",it)
+                },
+                disableLeaveFeedbackVisibility = {
+
+                },
+                frontItem = book,
+                isNeedToUpdateFeedback = needToUpdate
+
+            )
 
             Spacer(
                 modifier = Modifier
@@ -454,7 +495,7 @@ fun BookCardMainContent(book:Book){
                 Spacer(modifier = Modifier.width(62.dp))
                 Column() {
                     Text(
-                        text = "Диана Лютер",
+                        text = book.bookInfo.author,
                         fontSize = 16.sp,
                         fontFamily = FontFamily(
                             Font(
@@ -472,7 +513,7 @@ fun BookCardMainContent(book:Book){
                         )
                     )
                     Text(
-                        text = "Лютература",
+                        text = book.shopOwner,
                         fontSize = 16.sp,
                         fontFamily = FontFamily(
                             Font(
@@ -490,7 +531,7 @@ fun BookCardMainContent(book:Book){
                         )
                     )
                     Text(
-                        text = "152 ст.",
+                        text = "${book.bookInfo.numberOfPages} ст.",
                         fontSize = 16.sp,
                         fontFamily = FontFamily(
                             Font(

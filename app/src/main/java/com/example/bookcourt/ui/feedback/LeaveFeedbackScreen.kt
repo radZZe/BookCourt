@@ -25,7 +25,7 @@ import com.example.bookcourt.ui.recommendation.RecommendationTopBar
 fun LeaveFeedbackScreen(
     title: String,
     rate: Int,
-    onNavigateToRecommendationScreen: (description:String,needToUpdate:Boolean) -> Unit,
+    onBackNavigation: (description:String, needToUpdate:Boolean) -> Unit,
     viewModel:LeaveFeedbackViewModel = hiltViewModel()
 ) {
     Column(
@@ -35,7 +35,9 @@ fun LeaveFeedbackScreen(
     ) {
         RecommendationTopBar(
             visibility = true,
-            onClickBackArrow = { onNavigateToRecommendationScreen(viewModel.feedbackText.value,false) },
+            onClickBackArrow = {
+                onBackNavigation(viewModel.feedbackText.value,false)
+                               },
             title = title
         ) {
             Image(
@@ -43,7 +45,7 @@ fun LeaveFeedbackScreen(
                 contentDescription = null,
                 modifier = Modifier.clickable {
                     viewModel.feedbackIsConfirm.value = true
-                    onNavigateToRecommendationScreen(viewModel.feedbackText.value,true)
+                    onBackNavigation(viewModel.feedbackText.value,true)
 
                 },
                 contentScale = ContentScale.Crop

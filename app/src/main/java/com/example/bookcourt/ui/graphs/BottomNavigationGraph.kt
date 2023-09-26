@@ -1,7 +1,5 @@
 package com.example.bookcourt.ui.graphs
 
-import android.net.NetworkCapabilities
-import android.net.NetworkRequest
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,6 +13,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.bookcourt.models.BookDto
+import com.example.bookcourt.models.book.Book
+import com.example.bookcourt.ui.BookCardScreen
 import com.example.bookcourt.ui.feedback.LeaveFeedbackScreen
 import com.example.bookcourt.ui.feedback.ListOfFeedbacksScreen
 import com.example.bookcourt.ui.library.LibraryScreen
@@ -22,11 +23,12 @@ import com.example.bookcourt.ui.profile.ProfileScreen
 import com.example.bookcourt.ui.recommendation.RecommendationScreen
 import com.example.bookcourt.ui.search.SearchScreen
 import com.example.bookcourt.ui.statistics.LibraryPlug
-import com.example.bookcourt.ui.statistics.Statistics
 import com.example.bookcourt.utils.BottomNavMenu
 import com.example.bookcourt.utils.BottomNavigationMenu
 import com.example.bookcourt.utils.Graph
 import com.example.bookcourt.utils.Screens
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 
 @Composable
 fun HomeScreen(navController: NavHostController = rememberNavController()) {
@@ -51,16 +53,11 @@ fun BottomNavigationGraph(
         startDestination = BottomNavMenu.Recommendations.route
     ) {
         composable(BottomNavMenu.Recommendations.route) {
-            val description = it.savedStateHandle.get<String>("description")
-            val needToUpdate = it.savedStateHandle.get<Boolean>("needToUpdate")
             BackHandler(true) {}
             RecommendationScreen(
                 onNavigateToStatistics = { navController.navigate(BottomNavMenu.Library.route) }, //TODO after the Library screen will be added it is necessary to change BottomNavMenu.Statistics.route or even change navGraph
-                isNeedToUpdateFeedback = needToUpdate ?: false,
-                description = description,
-                onNavigateToLeaveFeedbackScreen = {title,rate -> navController.navigate("${Screens.LeaveFeedback.route}/$title/$rate")},
-                onNavigateToFeedback = {title -> navController.navigate("${Screens.FeedbackBlock.route}/$title")},
-                onNavigateToProfile = {navController.navigate(Graph.PROFILE_NAV_GRAPH)}
+                onNavigateToProfile = {navController.navigate(Graph.PROFILE_NAV_GRAPH)},
+                onNavigateBookCard = {book-> navController.navigate("${Screens.BookCardScreen.route}/$book")}
             )
         }
         composable(route = BottomNavMenu.Bag.route) {
@@ -81,28 +78,62 @@ fun BottomNavigationGraph(
         composable(route = BottomNavMenu.Profile.route){
             ProfileScreen(onNavigateToRecommendation = { navController.navigate(Graph.BOTTOM_NAV_GRAPH)})
         }
+
+        composable(
+            "${Screens.BookCardScreen.route}/{book}"
+        ) {
+            val feedbackText = it.savedStateHandle.get<String>("description")
+            val arguments = requireNotNull(it.arguments)
+            val bookId = arguments.getString("book", "not found")
+
+            val needToUpdate = it.savedStateHandle.get<Boolean>("needToUpdate")
+            BookCardScreen(
+                bookId = bookId,
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateLeaveFeedback = { title, rate ->
+                    navController.navigate("${Screens.LeaveFeedback.route}/$title/$rate") },
+                onNavigateListFeedbacks = { title ->
+                    navController.navigate("${Screens.FeedbackBlock.route}/$title") },
+                feedbackText = feedbackText,
+                needToUpdate = needToUpdate ?: false
+            )
+        }
         composable(route = "${Screens.LeaveFeedback.route}/{title}/{rate}", arguments = listOf(
             navArgument("title") { type = NavType.StringType },
             navArgument("rate") { type = NavType.IntType }
-        )){backStackEntry ->
+        )) { backStackEntry ->
             val arguments = requireNotNull(backStackEntry.arguments)
             val title = arguments.getString("title", "not found")
-            val rate = arguments.getInt("rate",0)
-            LeaveFeedbackScreen(title = title ,rate = rate,
-                onNavigateToRecommendationScreen = {description ,needToUpdate->
-                    navController.previousBackStackEntry?.savedStateHandle?.set("description",description)
-                    navController.previousBackStackEntry?.savedStateHandle?.set("needToUpdate",needToUpdate)
-                    navController.popBackStack()})
+            val rate = arguments.getInt("rate", 0)
+            LeaveFeedbackScreen(title = title, rate = rate,
+                onBackNavigation = { description, needToUpdate ->
+                    navController.previousBackStackEntry?.savedStateHandle?.set(
+                        "description",
+                        description
+                    )
+                    navController.previousBackStackEntry?.savedStateHandle?.set(
+                        "needToUpdate",
+                        needToUpdate
+                    )
+                    navController.popBackStack()
+                })
         }
-        composable(route = "${Screens.FeedbackBlock.route }/{title}", arguments = listOf(
-            navArgument("title") { type = NavType.StringType },
-        )){backStackEntry ->
+        composable(
+            route = "${Screens.FeedbackBlock.route}/{title}", arguments = listOf(
+                navArgument("title") { type = NavType.StringType },
+            )
+        ) { backStackEntry ->
             val arguments = requireNotNull(backStackEntry.arguments)
             val title = arguments.getString("title", "not found")
             ListOfFeedbacksScreen(
                 title = title,
-                onNavigateToRecommendationScreen = { navController.navigate(Graph.BOTTOM_NAV_GRAPH)}
+                onNavigateToRecommendationScreen = { navController.navigate(Graph.BOTTOM_NAV_GRAPH) }
             )
         }
+
     }
+}
+
+fun convertBookJson(json:String): Book {
+    return Json.decodeFromString<BookDto>(json).toBook()
 }

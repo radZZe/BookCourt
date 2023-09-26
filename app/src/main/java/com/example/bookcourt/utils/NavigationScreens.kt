@@ -17,6 +17,7 @@ sealed class Screens(
     object VerificationCode: Screens(route = "VerificationCode", title = "VerificationCode")
     object LeaveFeedback:Screens(route = "LeaveFeedback", title ="LeaveFeedback")
     object FeedbackBlock:Screens(route = "FeedbackBlock", title = "FeedbackBlock")
+    object BookCardScreen:Screens(route = "BookCardScreen",title = "BookCardScreen")
 }
 
 sealed class BottomNavMenu(
@@ -62,4 +63,5 @@ object Graph {
     const val LOGIN = "login_graph"
     const val BOTTOM_NAV_GRAPH = "bottom_nav_graph"
     const val PROFILE_NAV_GRAPH = "profile_nav_graph"
+    const val BOOK_CARD_GRAPH = "book_card_graph"
 }
