@@ -40,25 +40,18 @@ import com.example.bookcourt.utils.Constants.LIMIT_WINDOW_HEIGHT
 
 @Composable
 fun RecommendationScreen(
-    isNeedToUpdateFeedback:Boolean = false,
-    description: String? = null,
     onNavigateToStatistics: () -> Unit,
     onNavigateToProfile: () -> Unit,
-    onNavigateToLeaveFeedbackScreen: (title: String, rate: Int) -> Unit,
-    onNavigateToFeedback: (title: String) -> Unit,
+    onNavigateBookCard:(bookJson:String)->Unit,
     viewModel: RecommendationViewModel = hiltViewModel(),
 ) {
-    if(description != null){
-        viewModel.description.value = description
-    }
-    viewModel.isNeedToUpdateFeedback.value = isNeedToUpdateFeedback
+
 
     RecommendationContent(
         onNavigateToStatistics,
         onNavigateToProfile,
-        onNavigateToLeaveFeedbackScreen,
-        onNavigateToFeedback,
-        viewModel = viewModel
+        viewModel = viewModel,
+        onNavigateBookCard
     )
 }
 
@@ -66,9 +59,8 @@ fun RecommendationScreen(
 fun RecommendationContent(
     onNavigateToStatistics: () -> Unit,
     onNavigateToProfile: () -> Unit,
-    onNavigateToLeaveFeedbackScreen: (title: String, rate: Int) -> Unit,
-    onNavigateToFeedback: (title: String) -> Unit,
     viewModel: RecommendationViewModel,
+    onNavigateBookCard:(bookJson:String)->Unit,
 ) {
     val windowHeight =
         LocalConfiguration.current.screenHeightDp.toFloat() * LocalDensity.current.density
@@ -127,8 +119,7 @@ fun RecommendationContent(
                         cardStackHeight,
                         onNavigateToProfile,
                         itemsIsNotEmpty,
-                        onNavigateToLeaveFeedbackScreen,
-                        onNavigateToFeedback,
+                        onNavigateBookCard
                     )
                 }
 
@@ -142,8 +133,7 @@ fun RecommendationContent(
                     cardStackHeight,
                     onNavigateToProfile,
                     itemsIsNotEmpty,
-                    onNavigateToLeaveFeedbackScreen,
-                    onNavigateToFeedback
+                    onNavigateBookCard
                 )
             }
 
@@ -170,100 +160,45 @@ fun MainRecommendationContent(
     cardStackHeight: Dp,
     onNavigateToProfile: () -> Unit,
     itemsIsNotEmpty: Boolean,
-    onNavigateToLeaveFeedbackScreen: (title: String, rate: Int) -> Unit,
-    onNavigateToFeedback: (title: String) -> Unit,
+    onNavigateBookCard:(bookJson:String)->Unit,
 ) {
-    val visibilityTopBarState = remember { mutableStateOf(false) }
     Box(
         modifier = Modifier
             .background(MainBgColor)
             .fillMaxSize(),
     ) {
-        val screenWidth = with(LocalDensity.current) {
-            LocalConfiguration.current.screenWidthDp.dp.toPx()
-        }
-        val screenHeight = with(LocalDensity.current) {
-            LocalConfiguration.current.screenHeightDp.dp.toPx()
-        }
-        var controller = rememberBottomSheetController(screenWidth, screenHeight)
-
-
-        if(controller.isExpanded.value){
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth(0.9f)
-                    .height(48.dp)
-                    .clip(RoundedCornerShape(65))
-                    .background(Color(252, 225, 129))
-                    .padding(top = 12.dp, bottom = 12.dp)
-                    .clickable(
-//                        interactionSource = Color { MutableInteractionSource() },
-//                        indication = rememberRipple(color = Color.Black),
-                    ) {
-
-                        DataClickMetric(
-                            Buttons.BUY_BOOK,
-                            Screens.Recommendation.route
-                        )
-
-//                        val sendIntent = Intent(
-//                            Intent.ACTION_VIEW, Uri.parse(
-//                                frontItem.buyUri
-//                            )
-//                        )
-//                        val webIntent =
-//                            Intent.createChooser(sendIntent, null)
-//                        context.startActivity(webIntent)
-                    }.align(Alignment.BottomCenter).zIndex(10f),
-                contentAlignment = Alignment.Center
-            ) {
-                Row(
-                    modifier = Modifier.align(Alignment.Center),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_plus),
-                        contentDescription = null
-                    )
-                    Spacer(modifier = Modifier.width(5.dp))
-                    RobotoRegularText(
-                        text = "В корзину ${frontItem?.bookInfo?.price}₽",
-                        fontSize = 16 )
-
-                }
-
-            }
-        }
-
-
-
 
         if (itemsIsNotEmpty) {
             Column() {
-                RecommendationTopBar(visibility = visibilityTopBarState.value,
-                    title = frontItem?.bookInfo?.title,
-                    onClickBackArrow = {
-                        visibilityTopBarState.value = false
-                        controller.hide()
-                    },
-                    rightIcons = {
-                        Image(
-                            painter = painterResource(id = R.drawable.favorite_book_topbar),
-                            contentDescription = null,
-                            modifier = Modifier,
-                            contentScale = ContentScale.Crop
-                        )
-                        Image(
-                            painter = painterResource(id = R.drawable.share_icon),
-                            contentDescription = null,
-                            modifier = Modifier,
-                            contentScale = ContentScale.Crop
-                        )
-                    })
+//                RecommendationTopBar(visibility = visibilityTopBarState.value,
+//                    title = frontItem?.bookInfo?.title,
+//                    onClickBackArrow = {
+//                        visibilityTopBarState.value = false
+//                        controller.hide()
+//                    },
+//                    rightIcons = {
+//                        Image(
+//                            painter = painterResource(id = R.drawable.favorite_book_topbar),
+//                            contentDescription = null,
+//                            modifier = Modifier,
+//                            contentScale = ContentScale.Crop
+//                        )
+//                        Image(
+//                            painter = painterResource(id = R.drawable.share_icon),
+//                            contentDescription = null,
+//                            modifier = Modifier,
+//                            contentScale = ContentScale.Crop
+//                        )
+//                    })
                 Box(modifier = Modifier) {
                     Spacer(modifier = Modifier.height(if (windowHeight > LIMIT_WINDOW_HEIGHT) 10.dp else 5.dp))
                     CardStack(
-                        modifier = Modifier.height(cardStackHeight),
+                        modifier = Modifier.height(cardStackHeight).clickable {
+                            if (frontItem != null) {
+                                onNavigateBookCard(frontItem.isbn!!)
+                            }
+
+                        },
                         user = viewModel.user,
                         frontItem = frontItem,
                         backItem = backItem,
@@ -315,369 +250,194 @@ fun MainRecommendationContent(
             }
 
             frontItem?.bookInfo?.price?.let {
-                BottomSheetCustom(
-                    price = it,
-                    modifier = Modifier.align(Alignment.BottomCenter),
-                    sheetContent = {
-                        if (frontItem != null) {
-                            Column(
+                if (frontItem != null) {
+                    Column(
+                        modifier = Modifier
+                            .background(MainBgColor)
+                            .padding(
+                                start = 20.dp,
+                                end = 20.dp,
+                                top = 12.dp,
+                                bottom = 0.dp
+                            ).align(Alignment.BottomCenter),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Column(
+                            Modifier
+                                .fillMaxWidth()
+                            //.height(60.dp)
+                            ,
+                            verticalArrangement = Arrangement.SpaceBetween,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = frontItem.bookInfo.title,
+                                color = Color.Black,
+                                fontSize = 16.sp,
+                                fontFamily = FontFamily(
+                                    Font(
+                                        R.font.roboto_bold,
+                                    )
+                                ),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                            Row(
                                 modifier = Modifier
-                                    .background(MainBgColor)
-                                    .padding(
-                                        start = 20.dp,
-                                        end = 20.dp,
-                                        top = 12.dp,
-                                        bottom = 10.dp
-                                    ),
-                                horizontalAlignment = Alignment.CenterHorizontally
+                                    .padding()
+                                    .fillMaxWidth()
+                                //.fillMaxHeight()
+                                ,
+                                horizontalArrangement = Arrangement.Center
                             ) {
-                                Column(
-                                    Modifier
-                                        .fillMaxWidth()
-                                    //.height(60.dp)
-                                    ,
-                                    verticalArrangement = Arrangement.SpaceBetween,
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
-                                    Text(
-                                        text = frontItem.bookInfo.title,
-                                        color = Color.Black,
-                                        fontSize = 16.sp,
-                                        fontFamily = FontFamily(
-                                            Font(
-                                                R.font.roboto_bold,
-                                            )
-                                        ),
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis
-                                    )
-                                    Row(
-                                        modifier = Modifier
-                                            .padding()
-                                            .fillMaxWidth()
-                                        //.fillMaxHeight()
-                                        ,
-                                        horizontalArrangement = Arrangement.Center
-                                    ) {
 
-                                        Text(
-                                            modifier = Modifier,
-                                            text = "${frontItem.bookInfo.author} | ${frontItem.bookInfo.genre}",
-                                            color = Color(134, 134, 134),
-                                            fontSize = 14.sp,
-                                            fontFamily = FontFamily(
-                                                Font(
-                                                    R.font.roboto_regular,
-                                                )
-                                            )
-                                        )
-
-
-                                    }
-                                    Image(
-                                        painter = painterResource(id = R.drawable.igra_slov_logo),
-                                        contentDescription = "Logo image",
-                                        modifier = Modifier
-                                            .height(50.dp)
-                                            .width(50.dp)
-                                            .clip(CircleShape),
-                                        contentScale = ContentScale.Crop
-                                    )
-
-
-                                }
-                                Spacer(
-                                    modifier = Modifier
-                                        .height(12.dp)
-                                        .fillMaxWidth()
-                                )
-                                Column(
+                                Text(
                                     modifier = Modifier,
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .height(40.dp),
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.SpaceEvenly
-                                    ) {
-                                        Column(
-                                            verticalArrangement = Arrangement.Center,
-                                            horizontalAlignment = Alignment.CenterHorizontally
-                                        ) {
-                                            Text(
-                                                text = "423",
-                                                color = Color.Black,
-                                                fontFamily = FontFamily(
-                                                    Font(
-                                                        R.font.roboto_medium,
-                                                    )
-                                                ),
-                                                fontSize = 14.sp
-                                            )
-                                            Text(
-                                                text = "Лайки",
-                                                color = Color(134, 134, 134),
-                                                fontFamily = FontFamily(
-                                                    Font(
-                                                        R.font.roboto_medium,
-                                                    )
-                                                ),
-                                                fontSize = 14.sp
-                                            )
-                                        }
-                                        Column(
-                                            verticalArrangement = Arrangement.Center,
-                                            horizontalAlignment = Alignment.CenterHorizontally
-                                        ) {
-                                            Text(
-                                                text = "124",
-                                                color = Color.Black,
-                                                fontFamily = FontFamily(
-                                                    Font(
-                                                        R.font.roboto_medium,
-                                                    )
-                                                ),
-                                                fontSize = 14.sp
-                                            )
-                                            Text(
-                                                text = "Дизлайки",
-                                                color = Color(134, 134, 134),
-                                                fontFamily = FontFamily(
-                                                    Font(
-                                                        R.font.roboto_medium,
-                                                    )
-                                                ),
-                                                fontSize = 14.sp
-                                            )
-                                        }
-                                        Column(
-                                            verticalArrangement = Arrangement.Center,
-                                            horizontalAlignment = Alignment.CenterHorizontally
-                                        ) {
-                                            Text(
-                                                text = "56",
-                                                color = Color.Black,
-                                                fontFamily = FontFamily(
-                                                    Font(
-                                                        R.font.roboto_medium,
-                                                    )
-                                                ),
-                                                fontSize = 14.sp
-                                            )
-                                            Text(
-                                                text = "Интересуются",
-                                                color = Color(134, 134, 134),
-                                                fontFamily = FontFamily(
-                                                    Font(
-                                                        R.font.roboto_medium,
-                                                    )
-                                                ),
-                                                fontSize = 14.sp
-                                            )
-                                        }
-                                        Column(
-                                            verticalArrangement = Arrangement.Center,
-                                            horizontalAlignment = Alignment.CenterHorizontally
-                                        ) {
-                                            Text(
-                                                text = frontItem.bookInfo.rate.toString(),
-                                                color = Color.Black,
-                                                fontFamily = FontFamily(
-                                                    Font(
-                                                        R.font.roboto_medium,
-                                                    )
-                                                ),
-                                                fontSize = 14.sp
-                                            )
-                                            Text(
-                                                text = "Оценка",
-                                                color = Color(134, 134, 134),
-                                                fontFamily = FontFamily(
-                                                    Font(
-                                                        R.font.roboto_medium,
-                                                    )
-                                                ),
-                                                fontSize = 14.sp
-                                            )
-                                        }
-                                    }
-
-                                    Spacer(
-                                        modifier = Modifier
-                                            .height(16.dp)
-                                            .fillMaxWidth()
-                                    )
-                                    FeedbackBlock(
-                                        frontItem = frontItem,
-                                        isNeedToUpdateFeedback = viewModel.isNeedToUpdateFeedback.value,
-                                        username = viewModel.username.value,
-                                        date = viewModel.date.value,
-                                        title = frontItem.bookInfo.title,
-                                        description = viewModel.description.value,
-                                        rate = viewModel.rate.value,
-                                        leaveFeedbackVisibility = viewModel.leaveFeedbackVisibility.value,
-                                        onNavigateToFeedback = onNavigateToFeedback,
-                                        onClickRatingBar = {
-                                            viewModel.rate.value = it
-                                            viewModel.title.value  = frontItem.bookInfo.title
-                                            onNavigateToLeaveFeedbackScreen(viewModel.title.value,viewModel.rate.value)
-                                        },
-                                        disableLeaveFeedbackVisibility = {
-                                            viewModel.leaveFeedbackVisibility.value = false
-                                        }
-                                    )
-                                    Spacer(
-                                        modifier = Modifier
-                                            .height(16.dp)
-                                            .fillMaxWidth()
-                                    )
-                                    var list = listOf("Детективы", "Детская литература", "Рассказы")
-                                    CategoriesBlock(list)
-                                    Spacer(
-                                        modifier = Modifier
-                                            .height(16.dp)
-                                            .fillMaxWidth()
-                                    )
-                                    Column(modifier = Modifier.height(134.dp)) {
-                                        Text(
-                                            text = "Описание",
-                                            color = Color.Black,
-                                            fontFamily = FontFamily(
-                                                Font(
-                                                    R.font.roboto_bold,
-                                                )
-                                            ),
-                                            fontSize = 16.sp,
-                                            modifier = Modifier.padding(bottom = 2.dp)
+                                    text = "${frontItem.bookInfo.author} | ${frontItem.bookInfo.genre}",
+                                    color = Color(134, 134, 134),
+                                    fontSize = 14.sp,
+                                    fontFamily = FontFamily(
+                                        Font(
+                                            R.font.roboto_regular,
                                         )
-                                        Text(
-                                            text = frontItem.bookInfo.description,
-                                            fontFamily = FontFamily(
-                                                Font(
-                                                    R.font.roboto_regular,
-                                                )
-                                            ),
-                                            fontSize = 16.sp,
-                                            color = Color.Black,
-                                            maxLines = 5,
-                                            overflow = TextOverflow.Ellipsis
-                                        )
-                                    }
-                                    Spacer(
-                                        modifier = Modifier
-                                            .height(16.dp)
-                                            .fillMaxWidth()
                                     )
-                                    Row(modifier = Modifier.fillMaxWidth()) {
-                                        Column() {
-                                            RobotoRegularText(
-                                                text = "Автор",
-                                                fontSize = 16,
-                                                color = LightGreyColor
-                                            )
-                                            RobotoRegularText(
-                                                text = "Год издания",
-                                                fontSize = 16,
-                                                color = LightGreyColor
-                                            )
-                                            RobotoRegularText(
-                                                text = "Издательство",
-                                                fontSize = 16,
-                                                color = LightGreyColor
-                                            )
-                                            RobotoRegularText(
-                                                text = "Тип обложки",
-                                                fontSize = 16,
-                                                color = LightGreyColor
-                                            )
-                                            RobotoRegularText(
-                                                text = "Страниц",
-                                                fontSize = 16,
-                                                color = LightGreyColor
-                                            )
-                                            RobotoRegularText(
-                                                text = "Формат",
-                                                fontSize = 16,
-                                                color = LightGreyColor
-                                            )
-                                            RobotoRegularText(
-                                                text = "Язык",
-                                                fontSize = 16,
-                                                color = LightGreyColor
-                                            )
-                                            RobotoRegularText(
-                                                text = "ISBN",
-                                                fontSize = 16,
-                                                color = LightGreyColor
-                                            )
-                                            RobotoRegularText(
-                                                text = "Остаток на полках",
-                                                fontSize = 16,
-                                                color = LightGreyColor
-                                            )
-                                        }
-                                        Spacer(modifier = Modifier.width(62.dp))
-                                        Column() {
-                                            RobotoRegularText(
-                                                text = "Диана Лютер",
-                                                fontSize = 16
-                                            )
-                                            RobotoRegularText(
-                                                text = "2021 г.",
-                                                fontSize = 16
-                                            )
-                                            RobotoRegularText(
-                                                text = "Лютература",
-                                                fontSize = 16
-                                            )
-                                            RobotoRegularText(
-                                                text = "Переплет",
-                                                fontSize = 16
-                                            )
-                                            RobotoRegularText(
-                                                text = "152 ст.",
-                                                fontSize = 16
-                                            )
-                                            RobotoRegularText(
-                                                text = "Печатная книга",
-                                                fontSize = 16
-                                            )
-                                            RobotoRegularText(
-                                                text = "Русский",
-                                                fontSize = 16
-                                            )
-                                            RobotoRegularText(
-                                                text = "9785716410091",
-                                                fontSize = 16,
-                                            )
-                                            RobotoRegularText(
-                                                text = "38 шт.",
-                                                fontSize = 16
-                                            )
-                                        }
-                                    }
-                                    Spacer(
-                                        modifier = Modifier
-                                            .height(36.dp)
-                                            .fillMaxWidth()
-                                    )
-
-                                }
+                                )
 
 
                             }
+                            Image(
+                                painter = painterResource(id = R.drawable.igra_slov_logo),
+                                contentDescription = "Logo image",
+                                modifier = Modifier
+                                    .height(50.dp)
+                                    .width(50.dp)
+                                    .clip(CircleShape),
+                                contentScale = ContentScale.Crop
+                            )
+
+
                         }
-                    },
-                    onExpanding = {
-                        visibilityTopBarState.value = true
-                    },
-                    onCollapsing = {
-                        visibilityTopBarState.value = false
-                    },
-                    controller = controller
-                )
+                        Spacer(
+                            modifier = Modifier
+                                .height(12.dp)
+                                .fillMaxWidth()
+                        )
+                        Column(
+                            modifier = Modifier,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(40.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceEvenly
+                            ) {
+                                Column(
+                                    verticalArrangement = Arrangement.Center,
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Text(
+                                        text = "423",
+                                        color = Color.Black,
+                                        fontFamily = FontFamily(
+                                            Font(
+                                                R.font.roboto_medium,
+                                            )
+                                        ),
+                                        fontSize = 14.sp
+                                    )
+                                    Text(
+                                        text = "Лайки",
+                                        color = Color(134, 134, 134),
+                                        fontFamily = FontFamily(
+                                            Font(
+                                                R.font.roboto_medium,
+                                            )
+                                        ),
+                                        fontSize = 14.sp
+                                    )
+                                }
+                                Column(
+                                    verticalArrangement = Arrangement.Center,
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Text(
+                                        text = "124",
+                                        color = Color.Black,
+                                        fontFamily = FontFamily(
+                                            Font(
+                                                R.font.roboto_medium,
+                                            )
+                                        ),
+                                        fontSize = 14.sp
+                                    )
+                                    Text(
+                                        text = "Дизлайки",
+                                        color = Color(134, 134, 134),
+                                        fontFamily = FontFamily(
+                                            Font(
+                                                R.font.roboto_medium,
+                                            )
+                                        ),
+                                        fontSize = 14.sp
+                                    )
+                                }
+                                Column(
+                                    verticalArrangement = Arrangement.Center,
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Text(
+                                        text = "56",
+                                        color = Color.Black,
+                                        fontFamily = FontFamily(
+                                            Font(
+                                                R.font.roboto_medium,
+                                            )
+                                        ),
+                                        fontSize = 14.sp
+                                    )
+                                    Text(
+                                        text = "Интересуются",
+                                        color = Color(134, 134, 134),
+                                        fontFamily = FontFamily(
+                                            Font(
+                                                R.font.roboto_medium,
+                                            )
+                                        ),
+                                        fontSize = 14.sp
+                                    )
+                                }
+                                Column(
+                                    verticalArrangement = Arrangement.Center,
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Text(
+                                        text = frontItem.bookInfo.rate.toString(),
+                                        color = Color.Black,
+                                        fontFamily = FontFamily(
+                                            Font(
+                                                R.font.roboto_medium,
+                                            )
+                                        ),
+                                        fontSize = 14.sp
+                                    )
+                                    Text(
+                                        text = "Оценка",
+                                        color = Color(134, 134, 134),
+                                        fontFamily = FontFamily(
+                                            Font(
+                                                R.font.roboto_medium,
+                                            )
+                                        ),
+                                        fontSize = 14.sp
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+
             }
 
 
