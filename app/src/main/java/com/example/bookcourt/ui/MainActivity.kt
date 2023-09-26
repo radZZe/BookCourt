@@ -21,6 +21,8 @@ import com.example.bookcourt.ui.error_pages.ErrorPage
 import com.example.bookcourt.ui.error_pages.ErrorType
 import com.example.bookcourt.ui.theme.BookCourtTheme
 import com.example.bookcourt.utils.BottomNavigationMenu
+import com.example.bookcourt.utils.MapApi
+import com.yandex.mapkit.MapKitFactory
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -31,6 +33,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         val connectivityObserver = ConnectivityObserver(applicationContext)
         super.onCreate(savedInstanceState)
+        MapKitFactory.setApiKey(MapApi.API_KEY)
+        MapKitFactory.initialize(this)
         setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
         setContent {
             val status by connectivityObserver.observe().collectAsState(initial =ConnectivityObserverI.Status.Available)
@@ -57,11 +61,13 @@ class MainActivity : ComponentActivity() {
     override fun onStart() {
         super.onStart()
         mViewModel.startTimer()
+        MapKitFactory.getInstance().onStart()
     }
 
     override fun onStop() {
         super.onStop()
         mViewModel.sendMetric()
+        MapKitFactory.getInstance().onStop()
     }
 
 }

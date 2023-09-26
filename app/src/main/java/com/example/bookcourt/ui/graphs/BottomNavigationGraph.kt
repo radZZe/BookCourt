@@ -16,6 +16,8 @@ import androidx.navigation.navArgument
 import com.example.bookcourt.models.BookDto
 import com.example.bookcourt.models.book.Book
 import com.example.bookcourt.ui.BookCardScreen
+import com.example.bookcourt.ui.basket.SuccessPurchaseScreen
+import com.example.bookcourt.ui.basket.pickUpPoint.PickUpPointScreen
 import com.example.bookcourt.ui.feedback.LeaveFeedbackScreen
 import com.example.bookcourt.ui.feedback.ListOfFeedbacksScreen
 import com.example.bookcourt.ui.library.LibraryScreen
@@ -36,7 +38,9 @@ fun HomeScreen(navController: NavHostController = rememberNavController()) {
         bottomBar = { BottomNavigationMenu(navController) }
     ) {
         val bottomPadding = it.calculateBottomPadding()
-        Box(modifier = Modifier.fillMaxSize().padding(bottom = bottomPadding)){
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .padding(bottom = bottomPadding)){
             BottomNavigationGraph(navController = navController)
         }
 
@@ -60,10 +64,8 @@ fun BottomNavigationGraph(
                 onNavigateBookCard = {book-> navController.navigate("${Screens.BookCardScreen.route}/$book")}
             )
         }
-        composable(route = BottomNavMenu.Bag.route) {
-            SearchScreen(
-                onNavigateBack = {navController.popBackStack()}
-            )
+        composable(route = BottomNavMenu.Basket.route) {
+            PickUpPointScreen()
         }
         composable(route = BottomNavMenu.Library.route){
             LibraryScreen(

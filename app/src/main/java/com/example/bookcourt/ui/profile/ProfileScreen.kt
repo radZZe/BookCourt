@@ -46,6 +46,7 @@ import com.example.bookcourt.models.user.Sex
 import com.example.bookcourt.ui.theme.*
 import com.example.bookcourt.utils.CityDropDownMenu
 import com.example.bookcourt.utils.CustomButton
+import com.example.bookcourt.utils.ReturnTopBar
 import com.example.bookcourt.utils.TextRobotoRegular
 import java.util.*
 
@@ -64,7 +65,9 @@ fun ProfileScreen(
                 .background(MainBgColor)
                 .verticalScroll(rememberScrollState())
         ) {
-            ProfileTopSection(Modifier.height(64.dp), onNavigateToRecommendation)
+            ReturnTopBar(curScreenName = stringResource(id = R.string.profile_screen_profile)) {
+                onNavigateToRecommendation()
+            }
             Spacer(modifier = Modifier.height(60.dp))
             ProfileMainSection(viewModel)
             Spacer(modifier = Modifier.height(60.dp))

@@ -8,6 +8,7 @@ sealed class Screens(
     val title: String,
 ) {
     object SignIn : Screens(route = "Sign In", title = "Sign In")
+    object SuccessPurchase : Screens(route = "Success Purchase", title = "Success Purchase")
     object Splash : Screens(route = "Splash", title = "Splash")
     object Recommendation : Screens(route = "Recommendations", title = "Recommendations")
     object Tutorial : Screens(route = "Tutorial", title = "Tutorial")
@@ -44,8 +45,8 @@ sealed class BottomNavMenu(
         icon = R.drawable.ic_library,
         iconSelected = R.drawable.ic_library_selected
     )
-    object Bag : BottomNavMenu(
-        route = "Bag",
+    object Basket : BottomNavMenu(
+        route = "Basket",
         title = "Корзина",
         icon = R.drawable.bag,
         iconSelected = R.drawable.bag_fill
