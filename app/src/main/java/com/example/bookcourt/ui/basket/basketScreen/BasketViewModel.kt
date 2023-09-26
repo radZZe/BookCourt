@@ -1,4 +1,4 @@
-package com.example.bookcourt.ui.BasketTEMP
+package com.example.bookcourt.ui.basket.basketScreen
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf

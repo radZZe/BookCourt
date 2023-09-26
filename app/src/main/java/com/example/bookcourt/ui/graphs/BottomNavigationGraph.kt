@@ -13,18 +13,15 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.bookcourt.ui.BasketTEMP.BasketScreen
+import com.example.bookcourt.ui.basket.basketScreen.BasketScreen
 import com.example.bookcourt.models.BookDto
 import com.example.bookcourt.models.book.Book
 import com.example.bookcourt.ui.BookCardScreen
-import com.example.bookcourt.ui.basket.SuccessPurchaseScreen
-import com.example.bookcourt.ui.basket.pickUpPoint.PickUpPointScreen
 import com.example.bookcourt.ui.feedback.LeaveFeedbackScreen
 import com.example.bookcourt.ui.feedback.ListOfFeedbacksScreen
 import com.example.bookcourt.ui.library.LibraryScreen
 import com.example.bookcourt.ui.profile.ProfileScreen
 import com.example.bookcourt.ui.recommendation.RecommendationScreen
-import com.example.bookcourt.ui.search.SearchScreen
 import com.example.bookcourt.ui.statistics.LibraryPlug
 import com.example.bookcourt.utils.BottomNavMenu
 import com.example.bookcourt.utils.BottomNavigationMenu
@@ -65,7 +62,7 @@ fun BottomNavigationGraph(
                 onNavigateBookCard = {book-> navController.navigate("${Screens.BookCardScreen.route}/$book")}
             )
         }
-        composable(route = BottomNavMenu.Bag.route) {
+        composable(route = BottomNavMenu.Basket.route) {
             BasketScreen()
 //            SearchScreen(
 //                onNavigateBack = {navController.popBackStack()}
