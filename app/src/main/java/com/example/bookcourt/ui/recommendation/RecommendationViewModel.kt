@@ -12,6 +12,7 @@ import com.example.bookcourt.data.repositories.MetricsRepository
 import com.example.bookcourt.data.repositories.NetworkRepository
 import com.example.bookcourt.data.room.basket.BasketRepositoryI
 import com.example.bookcourt.data.room.user.UserRepositoryI
+import com.example.bookcourt.models.BookData
 import com.example.bookcourt.models.book.Book
 import com.example.bookcourt.models.BookDto
 import com.example.bookcourt.models.basket.BasketItem
@@ -28,6 +29,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.IOException
 import javax.inject.Inject
@@ -66,6 +68,32 @@ class RecommendationViewModel @Inject constructor(
 
     val limitSwipeValue = 3
     var counter by mutableStateOf(0)
+
+    val json = Json { encodeDefaults = true }
+
+    fun bookToString(book: Book):String{
+        val item = book.isbn?.let {
+            BookDto(
+                id = it,
+                data = BookData(
+                    name=book.bookInfo.title,
+                    author=book.bookInfo.author,
+                    description=book.bookInfo.description,
+                    createdAt="13213",
+                    numberOfPage=book.bookInfo.numberOfPages,
+                    rate=book.bookInfo.rate,
+                    owner=book.shopOwner,
+                    genre=book.bookInfo.genre,
+                    image=book.bookInfo.image,
+                    loadingAt="123",
+                    price=book.bookInfo.price,
+                    shop_owner=book.shopOwner,
+                    buy_uri=book.buyUri,
+                )
+            )
+        }
+        return json.encodeToString(item)
+    }
 
 
     var blurValueRecommendationScreen = Animatable(0f)
@@ -127,11 +155,7 @@ class RecommendationViewModel @Inject constructor(
             }
             validBooks.addAll(items)
         }
-        for(item in validBooks){
-//            item.addFeedback(BookFeedbacks(
-//                false,0,null
-//            ))
-        }
+
     }
 
     private suspend fun convertBooksJsonToList(context: Context): List<Book> {

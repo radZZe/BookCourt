@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -18,7 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.*
-import com.example.bookcourt.ui.theme.Roboto
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
@@ -27,9 +28,12 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -37,8 +41,9 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.zIndex
 import com.example.bookcourt.R
-import com.example.bookcourt.ui.theme.LightBrown
-import com.example.bookcourt.ui.theme.LightYellowBtn
+import com.example.bookcourt.ui.profile.DarkBgColor
+import com.example.bookcourt.ui.theme.*
+import okhttp3.internal.wait
 import java.util.*
 
 
@@ -79,7 +84,44 @@ fun ClearIconBtn(isVisible: Boolean, onClick: () -> Unit) {
     }
 }
 
+@Composable
+fun ReturnTopBar(
+        curScreenName:String,
+        onNavigateBack: ()->Unit
+){
+    Box(modifier = Modifier.height(64.dp)) {
+        Row(
+            modifier = Modifier
+                .padding(horizontal = 17.dp)
+                .align(Alignment.CenterStart),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Image(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(20.dp))
+                    .clickable {
+                    onNavigateBack()
+                    },
+                painter = painterResource(id = R.drawable.arrow_left),
+                contentDescription = "arrow_left"
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            TextRobotoRegular(
+                text = curScreenName,
+                color = Color.Black,
+                fontSize = 18,
+            )
+        }
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .height(1.dp)
+                .background(DarkBgColor)
+                .align(Alignment.BottomCenter)
+        )
+    }
 
+}
 
 @Composable
 fun RedirectButton(
@@ -150,7 +192,7 @@ fun CityItem(
             .clickable {
                 onSelect(title)
             }
-            .padding(start = 14.dp, end = 14.dp, )
+            .padding(start = 14.dp, end = 14.dp,)
     ) {
         Text(
             text = title,

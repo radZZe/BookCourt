@@ -8,6 +8,7 @@ sealed class Screens(
     val title: String,
 ) {
     object SignIn : Screens(route = "Sign In", title = "Sign In")
+    object SuccessPurchase : Screens(route = "Success Purchase", title = "Success Purchase")
     object Splash : Screens(route = "Splash", title = "Splash")
     object Recommendation : Screens(route = "Recommendations", title = "Recommendations")
     object Tutorial : Screens(route = "Tutorial", title = "Tutorial")
@@ -17,6 +18,7 @@ sealed class Screens(
     object VerificationCode: Screens(route = "VerificationCode", title = "VerificationCode")
     object LeaveFeedback:Screens(route = "LeaveFeedback", title ="LeaveFeedback")
     object FeedbackBlock:Screens(route = "FeedbackBlock", title = "FeedbackBlock")
+    object BookCardScreen:Screens(route = "BookCardScreen",title = "BookCardScreen")
 }
 
 sealed class BottomNavMenu(
@@ -43,8 +45,8 @@ sealed class BottomNavMenu(
         icon = R.drawable.ic_library,
         iconSelected = R.drawable.ic_library_selected
     )
-    object Bag : BottomNavMenu(
-        route = "Bag",
+    object Basket : BottomNavMenu(
+        route = "Basket",
         title = "Корзина",
         icon = R.drawable.bag,
         iconSelected = R.drawable.bag_fill
@@ -62,4 +64,5 @@ object Graph {
     const val LOGIN = "login_graph"
     const val BOTTOM_NAV_GRAPH = "bottom_nav_graph"
     const val PROFILE_NAV_GRAPH = "profile_nav_graph"
+    const val BOOK_CARD_GRAPH = "book_card_graph"
 }

@@ -80,7 +80,7 @@ object Constants {
 
     val statisticScreensList = listOf("ReadBooks", "Lyuteratura", "FavoriteAuthors", "IgraSlov", "Zarya", "FavoriteGenres")
 
-    val navMenuScreensList = listOf(BottomNavMenu.Profile, BottomNavMenu.Library, BottomNavMenu.Recommendations, BottomNavMenu.Bag)
+    val navMenuScreensList = listOf(BottomNavMenu.Profile, BottomNavMenu.Library, BottomNavMenu.Recommendations, BottomNavMenu.Basket)
 }
 
 object MetricType {
@@ -127,5 +127,8 @@ object ApiUrl{
     const val BOOKS_URL = "https://www.jsonkeeper.com/b/"
 }
 
+object MapApi{
+    const val API_KEY = "69136701-b14f-40d4-9225-6d8b7242c623"
+}
 
 
