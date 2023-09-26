@@ -25,10 +25,7 @@ import coil.compose.SubcomposeAsyncImage
 import com.example.bookcourt.R
 import com.example.bookcourt.models.book.Book
 import com.example.bookcourt.ui.categorySelection.CategoryItem
-import com.example.bookcourt.ui.theme.GrayBackground
-import com.example.bookcourt.ui.theme.GreenText
-import com.example.bookcourt.ui.theme.Roboto
-import com.example.bookcourt.ui.theme.SearchWidgetGrayGrayText
+import com.example.bookcourt.ui.theme.*
 import com.example.bookcourt.utils.WindowInfo
 import com.example.bookcourt.utils.rememberWindowSizeClass
 
@@ -45,7 +42,10 @@ fun LibraryScreen(onNavigateToSearchScreen:()->Unit, viewModel: LibraryViewModel
     }
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
-        modifier = Modifier.verticalScroll(rememberScrollState())
+        modifier = Modifier
+            .verticalScroll(rememberScrollState())
+            .background(MainBgColor)
+            .padding(bottom = 16.dp)
     ) {
         SearchWidget(modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp)) {
             onNavigateToSearchScreen()
@@ -70,7 +70,7 @@ fun SearchWidget(modifier: Modifier,onClick:()->Unit){
             text = "Search",
             fontFamily = Roboto,
             fontWeight = FontWeight.Normal,
-            color = SearchWidgetGrayGrayText,
+            color = GrayText,
             fontSize = 18.sp,
             modifier = Modifier.padding(8.dp)
         )
@@ -175,7 +175,7 @@ fun RecommendationBar(viewModel: LibraryViewModel){
             fontWeight = FontWeight.Bold,
             color = Color.Black,
             fontSize = 16.sp,
-            modifier = Modifier.padding(8.dp)
+            modifier = Modifier.padding(16.dp)
         )
         LazyRow(modifier = Modifier
             .fillMaxWidth(),
@@ -202,7 +202,7 @@ fun PopularBar(viewModel: LibraryViewModel){
             fontWeight = FontWeight.Bold,
             color = Color.Black,
             fontSize = 16.sp,
-            modifier = Modifier.padding(8.dp)
+            modifier = Modifier.padding(16.dp)
         )
         LazyRow(modifier = Modifier
             .fillMaxWidth(),
