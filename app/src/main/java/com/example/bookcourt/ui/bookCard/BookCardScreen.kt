@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.bookcourt.R
+import com.example.bookcourt.models.basket.BasketItem
 import com.example.bookcourt.models.book.Book
 import com.example.bookcourt.models.book.BookInfo
 import com.example.bookcourt.models.metrics.DataClickMetric
@@ -83,7 +84,13 @@ fun BookCardScreen(
                 }
             }
             Spacer(modifier = Modifier.height(12.dp))
-            BookCardMainContent(feedbackText,needToUpdate,book,onNavigateLeaveFeedback,onNavigateListFeedbacks,viewModel.rate.value,)
+            BookCardMainContent(feedbackText,needToUpdate,book,onNavigateLeaveFeedback,onNavigateListFeedbacks,viewModel.rate.value){
+                viewModel.addBasketItem(
+                    BasketItem(
+                        data = book
+                    )
+                )
+            }
 
         }
     }else{
@@ -152,6 +159,7 @@ fun BookCardMainContent(
     onNavigateLeaveFeedback:(title:String,rate:Int)->Unit,
     onNavigateListFeedbacks:(title:String)->Unit,
     rate:Int,
+    onClickAddButton: ()->Unit,
 ){
     Column(
         modifier = Modifier
@@ -593,20 +601,13 @@ fun BookCardMainContent(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = rememberRipple(color = Color.Black),
                     ) {
+                        onClickAddButton()
 
                         DataClickMetric(
                             Buttons.BUY_BOOK,
                             Screens.Recommendation.route
                         )
 
-//                        val sendIntent = Intent(
-//                            Intent.ACTION_VIEW, Uri.parse(
-//                                frontItem.buyUri
-//                            )
-//                        )
-//                        val webIntent =
-//                            Intent.createChooser(sendIntent, null)
-//                        context.startActivity(webIntent)
                     },
                 contentAlignment = Alignment.Center
             ) {
@@ -633,19 +634,3 @@ fun BookCardMainContent(
     }
 }
 
-//@Composable
-//@Preview
-//fun BookCardScreenPreview(){
-//    var book:BookInfo = BookInfo(
-//        title = "title",
-//        author = "author",
-//        description = "description",
-//        numberOfPages = "numberOfPages",
-//        rate = 3,
-//        genre = "genre",
-//        price = 286,
-//        image = "https://i0.wp.com/igraslov.store/wp-content/uploads/2023/02/24c468ca-1139-4bc7-b5b5-9757543c62a2_d294c85e-f1e9-43f9-b69e-134e03136f17.jpeg?fit=361%2C575&ssl=1"
-//    )
-//    val uri = "https://i0.wp.com/igraslov.store/wp-content/uploads/2023/02/24c468ca-1139-4bc7-b5b5-9757543c62a2_d294c85e-f1e9-43f9-b69e-134e03136f17.jpeg?fit=361%2C575&ssl=1"
-//    BookCardScreen(uri,book)
-//}

@@ -44,7 +44,7 @@ fun SuccessPurchaseScreen (
             .background(MainBgColor)
             .verticalScroll(rememberScrollState())
     ){
-        ReturnTopBar(curScreenName = "ваш заказ оформлен") {
+        ReturnTopBar(curScreenName = "Ваш заказ оформлен") {
             onNavigateBack()
         }
         Image(
