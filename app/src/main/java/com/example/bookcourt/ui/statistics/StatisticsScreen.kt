@@ -1,5 +1,7 @@
 package com.example.bookcourt.ui.statistics
 
+import android.content.Context
+import android.os.Build
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
@@ -12,24 +14,27 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.LinearProgressIndicator
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.boundsInRoot
+import androidx.compose.ui.layout.boundsInWindow
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
@@ -40,7 +45,6 @@ import com.example.bookcourt.models.book.Book
 import com.example.bookcourt.ui.theme.*
 import com.example.bookcourt.utils.Constants
 import com.example.bookcourt.utils.Constants.LIMIT_WINDOW_HEIGHT
-import com.example.bookcourt.utils.ShareStatisticsButton
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
@@ -77,6 +81,16 @@ fun ValidStatistics(
     onNavigateToRecommendation: () -> Unit,
     viewModel: StatisticsViewModel = hiltViewModel()
 ) {
+
+    if (
+        viewModel.isStoriesBarHidden.value&&
+        viewModel.isShareBtnHidden.value&&
+        viewModel.isExitBtnHidden.value
+    ) {
+        val context= LocalContext.current
+        val view = LocalView.current
+        viewModel.shareStatistics(view,context)
+    }
     val windowHeight =
         LocalConfiguration.current.screenHeightDp.toFloat() * LocalDensity.current.density
     val bottomPadding = if (windowHeight > LIMIT_WINDOW_HEIGHT) 76.dp else 56.dp
@@ -97,7 +111,16 @@ fun ValidStatistics(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .pointerInput(Unit) {
+            .onGloballyPositioned {
+                viewModel.composableBounds.value =
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        it.boundsInWindow()
+                    } else {
+                        it.boundsInRoot()
+                    }
+            }
+            .pointerInput(Unit)
+            {
                 detectTapGestures(
                     onTap = { offset ->
                         coroutineScope.launch {
@@ -143,7 +166,15 @@ fun ValidStatistics(
                     StoriesProgressBar(
                         modifier = Modifier
                             .weight(1f)
-                            .clip(RoundedCornerShape(12.dp)),
+                            .alpha(
+                                viewModel.getStoriesBarAlpha()
+                            )
+                            .clip(RoundedCornerShape(12.dp))
+                            .onGloballyPositioned {
+                                if (viewModel.getStoriesBarAlpha() == 0f) {
+                                    viewModel.isStoriesBarHidden.value = true
+                                }
+                            },
                         startProgress = (i == currentPage),
                         isNext = (i > currentPage)
                     ) {
@@ -167,7 +198,15 @@ fun ValidStatistics(
                     .padding(end = 20.dp, top = 10.dp)
             ) {
                 Image(
-                    modifier = Modifier.size(22.dp).clickable { onNavigateToRecommendation() },
+                    modifier = Modifier
+                        .size(22.dp)
+                        .alpha(viewModel.getExitBtnAlpha())
+                        .clickable { onNavigateToRecommendation() }
+                        .onGloballyPositioned {
+                            if (viewModel.getExitBtnAlpha() == 0f) {
+                                viewModel.isExitBtnHidden.value = true
+                            }
+                        },
                     painter = painterResource(id = R.drawable.close_icon),
                     contentDescription = "pleading face"
                 )
@@ -234,9 +273,15 @@ fun FavoriteGenresStats(
             contentScale = ContentScale.FillBounds
         )
         ShareStatisticsButton(
-            statisticsText = mViewModel.shareStatistics(),
             context = context,
-            modifier = Modifier.weight(1f, false)
+            modifier = Modifier
+                .weight(1f, false)
+                .alpha(mViewModel.getShareBtnAlpha())
+                .onGloballyPositioned {
+                    if (mViewModel.getShareBtnAlpha() == -0f) {
+                        mViewModel.isShareBtnHidden.value = true
+                    }
+                }
         )
     }
 
@@ -264,36 +309,53 @@ fun ReadBooksStats(
         )
         Text(
             text = "$booksAmount $string!",
-            fontFamily = Inter,
+            fontFamily = Roboto,
             fontWeight = FontWeight.Black,
             color = Color.Black,
             fontSize = 32.sp
         )
-        Text(
-            text = "Вы прочитали, хороший результат \uD83D\uDCAA",
-            fontFamily = Inter,
-            fontWeight = FontWeight.Bold,
-            color = Color.Black,
-            fontSize = 18.sp,
-        )
-        Column {
+
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+            .drawBehind {
+                val strokeWidth = density
+                val y = size.height  / 12
+
+                drawLine(
+                    ExtraLightYellow,
+                    Offset(0f, -y),
+                    Offset(size.width, -y),
+                    strokeWidth
+                )
+            }
+        ){
             Text(
-                text = "Продолжайте читать, ведь чтение книг:",
-                fontFamily = Inter,
-                fontWeight = FontWeight.Black,
-                color = Color.Black,
-                fontSize = 18.sp,
-            )
-            Text(
-                text = "1. Увеличивает словарный запас\n" +
-                        "2. Помогает общаться с людьми\n" +
-                        "3. Снижает стресс\n" +
-                        "4. Развивает память и мышление",
-                fontFamily = Inter,
+                text = "Вы прочитали, хороший результат \uD83D\uDCAA",
+                fontFamily = Roboto,
                 fontWeight = FontWeight.Bold,
                 color = Color.Black,
-                fontSize = 18.sp,
+                fontSize = 18.sp
             )
+            Column(modifier = Modifier.padding(top=50.dp)) {
+                Text(
+                    text = "Продолжайте читать, ведь чтение книг:",
+                    fontFamily = Roboto,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black,
+                    fontSize = 18.sp
+                )
+                Text(
+                    text = "1. Увеличивает словарный запас\n" +
+                            "2. Помогает общаться с людьми\n" +
+                            "3. Снижает стресс\n" +
+                            "4. Развивает память и мышление",
+                    fontFamily = Inter,
+                    fontWeight = FontWeight.Normal,
+                    color = Color.Black,
+                    fontSize = 18.sp,
+                )
+            }
         }
 
         Image(
@@ -305,9 +367,15 @@ fun ReadBooksStats(
             contentScale = ContentScale.Fit
         )
         ShareStatisticsButton(
-            statisticsText = mViewModel.shareStatistics(),
             context = context,
-            modifier = Modifier.weight(1f, false)
+            modifier = Modifier
+                .weight(1f, false)
+                .alpha(mViewModel.getShareBtnAlpha())
+                .onGloballyPositioned {
+                    if (mViewModel.getShareBtnAlpha() == -0f) {
+                        mViewModel.isShareBtnHidden.value = true
+                    }
+                }
         )
     }
 }
@@ -325,7 +393,7 @@ fun FavoriteAuthors(
         modifier = Modifier
             .fillMaxSize()
             .background(TopAuthorsLightPink)
-            .padding( top = 50.dp),
+            .padding(top = 50.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
@@ -402,9 +470,15 @@ fun FavoriteAuthors(
             }
         }
         ShareStatisticsButton(
-            statisticsText = mViewModel.shareStatistics(),
             context = context,
-            modifier = Modifier.weight(1f, false)
+            modifier = Modifier
+                .weight(1f, false)
+                .alpha(mViewModel.getShareBtnAlpha())
+                .onGloballyPositioned {
+                    if (mViewModel.getShareBtnAlpha() == -0f) {
+                        mViewModel.isShareBtnHidden.value = true
+                    }
+                }
         )
     }
 }
@@ -418,15 +492,14 @@ fun TopAuthorItem(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .fillMaxSize()
+            .padding(horizontal = 16.dp)
     ) {
         SubcomposeAsyncImage(
             model = book.bookInfo.image,
             contentDescription = "${book.bookInfo.author}'s book image",
             modifier = Modifier
-                .fillMaxHeight()
-                //.fillMaxWidth(0.3f)
-                .width(115.dp)
-                .padding(horizontal = 16.dp)
+                .height(120.dp)
+                .width(83.dp)
                 .clip(RoundedCornerShape(15.dp)),
             contentScale = ContentScale.FillBounds,
             loading = {
@@ -436,7 +509,7 @@ fun TopAuthorItem(
                 )
             }
         )
-        Column {
+        Column(modifier = Modifier.padding(horizontal = 16.dp)) {
             Text(
                 text = book.bookInfo.author,
                 fontFamily = Inter,
@@ -576,7 +649,9 @@ fun EmptyStatistics(
                 .padding(end = 20.dp, top = 20.dp)
         ) {
             Image(
-                modifier = Modifier.size(22.dp).clickable { onNavigateToRecommendation() },
+                modifier = Modifier
+                    .size(22.dp)
+                    .clickable { onNavigateToRecommendation() },
                 painter = painterResource(id = R.drawable.close_icon),
                 contentDescription = "pleading face"
             )
@@ -611,5 +686,29 @@ fun EmptyStatistics(
             )
         }
         Row() {}
+    }
+}
+
+@Composable
+fun ShareStatisticsButton(
+    modifier: Modifier = Modifier,
+    context: Context,
+    viewModel: StatisticsViewModel = hiltViewModel(),
+    color: Color = LightYellowBtn,
+    text: String = "Поделиться"
+) {
+
+    Button(
+        onClick = {
+            viewModel.prepareForShare()
+        },
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = 13.dp, horizontal = 20.dp)
+            .clip(RoundedCornerShape(60.dp))
+            .height(45.dp),
+        colors = ButtonDefaults.buttonColors(color)
+    ) {
+        Text(text = text, fontSize = 16.sp, fontFamily = Roboto)
     }
 }

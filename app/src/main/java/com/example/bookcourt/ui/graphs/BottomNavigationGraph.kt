@@ -22,7 +22,9 @@ import com.example.bookcourt.ui.feedback.ListOfFeedbacksScreen
 import com.example.bookcourt.ui.library.LibraryScreen
 import com.example.bookcourt.ui.profile.ProfileScreen
 import com.example.bookcourt.ui.recommendation.RecommendationScreen
+import com.example.bookcourt.ui.search.SearchScreen
 import com.example.bookcourt.ui.statistics.LibraryPlug
+import com.example.bookcourt.ui.statistics.Statistics
 import com.example.bookcourt.utils.BottomNavMenu
 import com.example.bookcourt.utils.BottomNavigationMenu
 import com.example.bookcourt.utils.Graph
@@ -63,24 +65,24 @@ fun BottomNavigationGraph(
             )
         }
         composable(route = BottomNavMenu.Basket.route) {
-            BasketScreen()
-//            SearchScreen(
-//                onNavigateBack = {navController.popBackStack()}
-//            )
-          //YATO
-        //composable(route = BottomNavMenu.Basket.route) {
-        //PickUpPointScreen()
+           // BasketScreen()
+            Statistics(onNavigateToRecommendation = { /*TODO*/ })
         }
         composable(route = BottomNavMenu.Library.route){
             LibraryScreen(
                 onNavigateToSearchScreen = {navController.navigate(Screens.Search.route)}
             )
         }
-        composable(route = BottomNavMenu.Library.route) {
-            LibraryPlug(
-                onNavigateToLibrary = { navController.navigate(Graph.BOTTOM_NAV_GRAPH) }
+        composable(route = Screens.Search.route){
+            SearchScreen(
+                onNavigateBack = {navController.popBackStack()}
             )
         }
+//        composable(route = BottomNavMenu.Library.route) {
+//            LibraryPlug(
+//                onNavigateToLibrary = { navController.navigate(Graph.BOTTOM_NAV_GRAPH) }
+//            )
+//        }
         composable(route = BottomNavMenu.Profile.route){
             ProfileScreen(onNavigateToRecommendation = { navController.navigate(Graph.BOTTOM_NAV_GRAPH)})
         }

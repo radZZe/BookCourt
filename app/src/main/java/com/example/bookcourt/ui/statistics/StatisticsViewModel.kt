@@ -1,8 +1,20 @@
 package com.example.bookcourt.ui.statistics
 
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
+import android.view.PixelCopy
+import android.view.View
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.toAndroidRect
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookcourt.data.repositories.DataStoreRepository
@@ -12,6 +24,7 @@ import com.example.bookcourt.data.room.user.UserRepositoryI
 import com.example.bookcourt.models.book.Book
 import com.example.bookcourt.models.metrics.DataClickMetric
 import com.example.bookcourt.models.user.User
+import com.example.bookcourt.utils.BitmapUtils
 import com.example.bookcourt.utils.MetricType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -38,6 +51,13 @@ class StatisticsViewModel @Inject constructor(
     var user = mutableStateOf<User?>(null)
     val readBooks = mutableStateOf<MutableList<Book>?>(null)
     val wantToRead = mutableStateOf<MutableList<Book>?>(null)
+    private val isExitBtnVisible = mutableStateOf(true)
+    private val isShareBtnVisible = mutableStateOf(true)
+    private val isStoriesBarVisible = mutableStateOf(true)
+    val isExitBtnHidden = mutableStateOf(false)
+    val isShareBtnHidden = mutableStateOf(false)
+    val isStoriesBarHidden = mutableStateOf(false)
+    val composableBounds= mutableStateOf<Rect?>(null)
     private var sessionTime = System.currentTimeMillis().toInt()
 
     fun getUserStats() {
@@ -93,6 +113,32 @@ class StatisticsViewModel @Inject constructor(
         _favAuthorsList.plusAssign(topAuthorsMap.toList().sortedByDescending { (_, value) -> value }.toMap())
     }
 
+    fun getStoriesBarAlpha():Float{
+        return if (isStoriesBarVisible.value){
+            1f
+        } else{
+            0f
+        }
+    }
+
+    fun getShareBtnAlpha():Float{
+        return if (isShareBtnVisible.value){
+            1f
+        }
+        else{
+            0f
+        }
+    }
+
+    fun getExitBtnAlpha():Float{
+        return if (isExitBtnVisible.value){
+            1f
+        }
+        else{
+            0f
+        }
+    }
+
     fun sendOnClickMetric(clickMetric: DataClickMetric) {
         viewModelScope.launch(Dispatchers.IO) {
             metricsRepository.onClick(clickMetric)
@@ -108,19 +154,79 @@ class StatisticsViewModel @Inject constructor(
         Log.d("Screen", "metric worked")
     }
 
-    fun shareStatistics(): String {
-        val topAuthors = favAuthorsList.toList()
-        val topGenres = favGenresList.toList()
+    fun prepareForShare() {
+        isExitBtnVisible.value=!isExitBtnVisible.value
+        isShareBtnVisible.value=!isShareBtnVisible.value
+        isStoriesBarVisible.value=!isStoriesBarVisible.value
+    }
 
-        val topAuthorsText = "${topAuthors.getOrNull(0)?.first ?: ""}\n" +
-                "${topAuthors.getOrNull(1)?.first ?: ""}\n" +
-                "${topAuthors.getOrNull(2)?.first ?: ""}\n"
-        val topGenresText = "${topGenres.getOrNull(0)?.first ?: ""}\n" +
-                "${topGenres.getOrNull(1)?.first ?: ""}\n" +
-                "${topGenres.getOrNull(2)?.first ?: ""}\n"
-
-        return "Пользователь ${user.value?.name ?: ""} прочитал ${readBooks.value?.size} книг\n\n" +
-                "Любимые авторы: $topAuthorsText \n" + "Любые жанры: $topGenresText"
+    fun shareStatistics(view:View, context:Context){
+        val bitmap = Bitmap.createBitmap(
+            view.width,
+            view.height,
+            Bitmap.Config.ARGB_8888
+        )
+        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.O){
+            PixelCopy.request(
+                (context as Activity).window,
+                composableBounds.value?.let {
+                    android.graphics.Rect(
+                        it.left.toInt(),
+                        it.top.toInt(),
+                        it.right.toInt(),
+                        it.bottom.toInt()
+                    )
+                },
+                bitmap,
+                { resultCode->
+                    if (resultCode==PixelCopy.SUCCESS){
+                        val shareIntent: Intent = Intent().apply {
+                            action = Intent.ACTION_SEND
+                            putExtra(
+                                Intent.EXTRA_STREAM,
+                                BitmapUtils.getBitmapUri(
+                                    context,
+                                    bitmap,
+                                    "statistics",
+                                    "images/"
+                                )
+                            )
+                            type = "image/jpeg"
+                        }
+                        context.startActivity(Intent.createChooser(shareIntent, null))
+                    }
+                }
+                ,Handler(Looper.getMainLooper())
+            )
+        }
+        else{
+            val canvas = Canvas(bitmap)
+            view.layout(
+                view.left,
+                view.top,
+                view.right,
+                view.bottom
+            )
+            view.draw(canvas)
+            val shareIntent: Intent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(
+                    Intent.EXTRA_STREAM,
+                    BitmapUtils.getBitmapUri(
+                        context,
+                        bitmap,
+                        "statistics",
+                        "images/"
+                    )
+                )
+                type = "image/jpeg"
+            }
+            context.startActivity(Intent.createChooser(shareIntent, null))
+        }
+        isShareBtnHidden.value=false
+        isExitBtnHidden.value=false
+        isStoriesBarHidden.value=false
+        prepareForShare()
     }
 
 }
