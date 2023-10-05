@@ -47,13 +47,6 @@ import kotlinx.coroutines.launch
 
 
 @Composable
-fun LibraryPlug(
-    onNavigateToLibrary: () -> Unit
-) {
-    Text(text = "Here would be Library")
-}
-
-@Composable
 fun Statistics(
     onNavigateToProfile: () -> Unit,
     viewModel: StatisticsViewModel = hiltViewModel()
@@ -74,13 +67,8 @@ fun ValidStatistics(
     onNavigateToRecommendation: () -> Unit,
     viewModel: StatisticsViewModel = hiltViewModel()
 ) {
-    val windowHeight =
-        LocalConfiguration.current.screenHeightDp.toFloat() * LocalDensity.current.density
-    val bottomPadding = if (windowHeight > LIMIT_WINDOW_HEIGHT) 76.dp else 56.dp
     LaunchedEffect(key1 = Unit) {
         viewModel.getUserStats()
-//        viewModel.getTopAuthors()
-//        viewModel.getTopAuthors()
     }
 
     val targetOffset = 500
@@ -166,7 +154,7 @@ fun ValidStatistics(
                 Image(
                     modifier = Modifier.size(22.dp).clickable { onNavigateToRecommendation() },
                     painter = painterResource(id = R.drawable.close_icon),
-                    contentDescription = "pleading face"
+                    contentDescription = "Close Icon"
                 )
             }
         }

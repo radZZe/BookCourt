@@ -86,11 +86,6 @@ fun BottomNavigationGraph(
                 onNavigateToSearchScreen = { navController.navigate(Screens.Search.route) }
             )
         }
-        composable(route = BottomNavMenu.Library.route) {
-            LibraryPlug(
-                onNavigateToLibrary = { navController.navigate(Graph.BOTTOM_NAV_GRAPH) }
-            )
-        }
         composable(route = BottomNavMenu.Profile.route) {
             ProfileScreen(
                 onNavigateToStatistics = { navController.navigate(Screens.Statistics.route) },
