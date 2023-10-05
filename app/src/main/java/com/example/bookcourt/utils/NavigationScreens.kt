@@ -14,10 +14,18 @@ sealed class Screens(
     object Tutorial : Screens(route = "Tutorial", title = "Tutorial")
     object CategorySelection : Screens(route = "CategorySelection", title = "CategorySelection")
     object Profile:Screens(route = "Profile", title = "Profile")
+    object Statistics:Screens(route = "Statistics", title = "Statistics")
     object Search : Screens(route = "Search", title = "Поиск")
+    object ProfileSettings:Screens(route = "ProfileSettings", title = "ProfileSettings")
     object VerificationCode: Screens(route = "VerificationCode", title = "VerificationCode")
     object LeaveFeedback:Screens(route = "LeaveFeedback", title ="LeaveFeedback")
     object FeedbackBlock:Screens(route = "FeedbackBlock", title = "FeedbackBlock")
+    object AboutApp: Screens(route = "AboutApp", title = "AboutApp")
+    object Support: Screens(route = "Support", title = "Support")
+    object OrdersNotifications: Screens(route = "OrdersNotifications", title = "OrdersNotifications")
+    object WantToRead: Screens(route = "Want to Read", title = "Want to Read")
+    object Orders: Screens(route = "Orders", title = "Orders")
+    object AskQuestion: Screens(route = "Ask Question", title = "Ask Question")
     object BookCardScreen:Screens(route = "BookCardScreen",title = "BookCardScreen")
 }
 
@@ -32,12 +40,6 @@ sealed class BottomNavMenu(
         title = "Рекомендации",
         icon = R.drawable.ic_recomendations,
         iconSelected = R.drawable.ic_tinder_selected
-    )
-    object Statistics : BottomNavMenu(
-        route = "Statistics",
-        title = "Статистика",
-        icon = R.drawable.ic_stats,
-        iconSelected = R.drawable.ic_stats_selected
     )
     object Library: BottomNavMenu(
         route = "Library",

@@ -13,12 +13,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.bookcourt.R
-import com.example.bookcourt.ui.theme.*
-import com.example.bookcourt.utils.Partners
+import com.example.bookcourt.ui.theme.IgraSlovBackground
+import com.example.bookcourt.ui.theme.Inter
+import com.example.bookcourt.ui.theme.LightPinkBackground
+import com.example.bookcourt.ui.theme.ZaryaBackground
 import com.example.bookcourt.utils.RedirectButton
 import com.example.bookcourt.utils.Sponsors
 
@@ -70,7 +71,8 @@ fun PartnerZarya() {
             context = context,
             redirectUrl = Sponsors.Zarya.url,
             modifier = Modifier
-                .weight(1f,false),
+                .weight(1f, false)
+                .padding(bottom = 40.dp),
         )
     }
 }
@@ -123,7 +125,8 @@ fun PartnerIgraSlov() {
             context = context,
             redirectUrl = Sponsors.IgraSlov.url,
             modifier = Modifier
-                .weight(1f,false),
+                .weight(1f, false)
+                .padding(bottom = 40.dp),
         )
     }
 }
@@ -175,7 +178,8 @@ fun PartnerLyuteratura() {
             context = context,
             redirectUrl = Sponsors.Lyuteratura.url,
             modifier = Modifier
-                .weight(1f,false),
+                .weight(1f, false)
+                .padding(bottom = 40.dp),
         )
     }
 }

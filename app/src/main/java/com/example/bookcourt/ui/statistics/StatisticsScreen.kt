@@ -53,23 +53,15 @@ import kotlinx.coroutines.launch
 
 
 @Composable
-fun LibraryPlug(
-    onNavigateToLibrary: () -> Unit
-) {
-    Text(text = "Here would be Library")
-}
-
-@OptIn(ExperimentalPagerApi::class)
-@Composable
 fun Statistics(
-    onNavigateToRecommendation: () -> Unit,
+    onNavigateToProfile: () -> Unit,
     viewModel: StatisticsViewModel = hiltViewModel()
 ) {
     if (viewModel.readBooks.value?.size == 0) {
-        EmptyStatistics { onNavigateToRecommendation() }
+        EmptyStatistics { onNavigateToProfile() }
     } else {
         ValidStatistics(
-            onNavigateToRecommendation = { onNavigateToRecommendation() },
+            onNavigateToRecommendation = { onNavigateToProfile() },
             viewModel
         )
     }
@@ -96,8 +88,6 @@ fun ValidStatistics(
     val bottomPadding = if (windowHeight > LIMIT_WINDOW_HEIGHT) 76.dp else 56.dp
     LaunchedEffect(key1 = Unit) {
         viewModel.getUserStats()
-//        viewModel.getTopAuthors()
-//        viewModel.getTopAuthors()
     }
 
     val targetOffset = 500
@@ -208,7 +198,7 @@ fun ValidStatistics(
                             }
                         },
                     painter = painterResource(id = R.drawable.close_icon),
-                    contentDescription = "pleading face"
+                    contentDescription = "Close Icon"
                 )
             }
         }

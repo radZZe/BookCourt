@@ -37,9 +37,10 @@ class CategorySelectionViewModel @Inject constructor(
         val user = User(
             uid = UUID,
             email = "",
-            city = "",
+            surname = "",
             readBooksList = mutableListOf(),
-            wantToRead = mutableListOf()
+            wantToRead = mutableListOf(),
+            liked = mutableListOf()
         )
         userRepositoryI.saveData(user)
         dataStoreRepository.setPref(UUID, DataStoreRepository.uuid)

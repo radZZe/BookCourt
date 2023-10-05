@@ -6,7 +6,7 @@ import androidx.room.TypeConverters
 import com.example.bookcourt.models.user.User
 import com.example.bookcourt.utils.Converters
 
-@Database(entities = [User::class], version = 2, exportSchema = false)
+@Database(entities = [User::class], version = 3, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class UserDatabase : RoomDatabase() {
 
