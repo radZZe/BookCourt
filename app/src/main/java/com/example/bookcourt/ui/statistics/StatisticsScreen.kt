@@ -363,8 +363,8 @@ fun ReadBooksStats(
             contentDescription = "cup coffee open book image",
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.3f),
-            contentScale = ContentScale.Fit
+                .fillMaxHeight(0.4f),
+            contentScale = ContentScale.Crop
         )
         ShareStatisticsButton(
             context = context,
