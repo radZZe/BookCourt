@@ -1,10 +1,10 @@
-package com.example.bookcourt.utils
+package com.example.bookcourt.ui.bottomNavigationMenu
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.Icon
@@ -12,7 +12,6 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
@@ -21,15 +20,29 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.bookcourt.ui.theme.*
+import com.example.bookcourt.utils.BottomNavMenu
+import com.example.bookcourt.utils.Constants
 import com.example.bookcourt.utils.Constants.LIMIT_WINDOW_HEIGHT
+import com.example.bookcourt.utils.Graph
+import com.example.bookcourt.utils.Screens
 
 
 @Composable
-fun BottomNavigationMenu(navController: NavController) {
-    val windowHeight = LocalConfiguration.current.screenHeightDp.toFloat() * LocalDensity.current.density
+fun BottomNavigationMenu(
+    navController: NavController,
+    viewModel:BottomNavViewModel = hiltViewModel()
+) {
+    LaunchedEffect(key1 = Unit){
+        viewModel.getBasketSize()
+    }
+    val basketSize = viewModel.basketSize.value
+    val windowHeight =
+        LocalConfiguration.current.screenHeightDp.toFloat() * LocalDensity.current.density
     val menuHeight = if (windowHeight > LIMIT_WINDOW_HEIGHT) 72.dp else 56.dp
     var visibility by remember {
         mutableStateOf(menuHeight)
@@ -52,8 +65,8 @@ fun BottomNavigationMenu(navController: NavController) {
             val currentRoute = navBackStackEntry?.destination?.route
             visibility = if (
             //currentRoute == BottomNavMenu.Search.route
-                  currentRoute == Graph.PROFILE_NAV_GRAPH
-                  || currentRoute == BottomNavMenu.Statistics.route
+                currentRoute == Graph.PROFILE_NAV_GRAPH
+                || currentRoute == BottomNavMenu.Statistics.route || currentRoute == Screens.OrderingScreen.route
             ) {
                 0.dp
             } else {
@@ -61,6 +74,7 @@ fun BottomNavigationMenu(navController: NavController) {
             }
             Constants.navMenuScreensList.forEach { screen ->
                 CustomBottomNavigationItem(
+                    basketSize = basketSize,
                     contentColor = AppLogoBlack,
                     screen = screen,
                     isSelected = (screen.route == currentRoute)
@@ -76,6 +90,7 @@ fun BottomNavigationMenu(navController: NavController) {
 
 @Composable
 fun CustomBottomNavigationItem(
+    basketSize:Int,
     contentColor: Color,
     screen: BottomNavMenu,
     isSelected: Boolean,
@@ -104,6 +119,23 @@ fun CustomBottomNavigationItem(
                 .wrapContentWidth(),
             contentAlignment = Alignment.Center
         ) {
+            if (screen == BottomNavMenu.Basket && basketSize != 0) {
+                Box(modifier = Modifier
+                    .padding(end = 12.dp)
+                    .align(Alignment.TopEnd)
+                    .zIndex(2f)){
+                    Box(
+                        modifier = Modifier
+                            .size(20.dp)
+                            .clip(CircleShape)
+                            .background(Color.Red),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(text = "1", color = Color.White)
+                    }
+                }
+
+            }
             Icon(
                 painter = painterResource(id = icon),
                 contentDescription = "cnbIcon",

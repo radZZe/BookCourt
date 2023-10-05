@@ -19,6 +19,7 @@ sealed class Screens(
     object LeaveFeedback:Screens(route = "LeaveFeedback", title ="LeaveFeedback")
     object FeedbackBlock:Screens(route = "FeedbackBlock", title = "FeedbackBlock")
     object BookCardScreen:Screens(route = "BookCardScreen",title = "BookCardScreen")
+    object OrderingScreen:Screens(route = "OrderingScreen",title = "OrderingScreen")
 }
 
 sealed class BottomNavMenu(

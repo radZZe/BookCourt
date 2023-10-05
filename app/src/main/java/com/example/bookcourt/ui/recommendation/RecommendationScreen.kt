@@ -65,7 +65,7 @@ fun RecommendationContent(
 ) {
     val windowHeight =
         LocalConfiguration.current.screenHeightDp.toFloat() * LocalDensity.current.density
-    val cardStackHeight = if (windowHeight > LIMIT_WINDOW_HEIGHT) 550.dp else 480.dp
+    val cardStackHeight = if (windowHeight > LIMIT_WINDOW_HEIGHT) 530.dp else 450.dp
     val counter = viewModel.counter
     val limitSwipeValue = viewModel.limitSwipeValue
     val context = LocalContext.current
@@ -171,26 +171,6 @@ fun MainRecommendationContent(
 
         if (itemsIsNotEmpty) {
             Column() {
-//                RecommendationTopBar(visibility = visibilityTopBarState.value,
-//                    title = frontItem?.bookInfo?.title,
-//                    onClickBackArrow = {
-//                        visibilityTopBarState.value = false
-//                        controller.hide()
-//                    },
-//                    rightIcons = {
-//                        Image(
-//                            painter = painterResource(id = R.drawable.favorite_book_topbar),
-//                            contentDescription = null,
-//                            modifier = Modifier,
-//                            contentScale = ContentScale.Crop
-//                        )
-//                        Image(
-//                            painter = painterResource(id = R.drawable.share_icon),
-//                            contentDescription = null,
-//                            modifier = Modifier,
-//                            contentScale = ContentScale.Crop
-//                        )
-//                    })
                 Box(modifier = Modifier) {
                     Spacer(modifier = Modifier.height(if (windowHeight > LIMIT_WINDOW_HEIGHT) 10.dp else 5.dp))
                     CardStack(

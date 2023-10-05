@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -14,9 +15,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.bookcourt.ui.basket.basketScreen.BasketScreen
-import com.example.bookcourt.models.BookDto
-import com.example.bookcourt.models.book.Book
 import com.example.bookcourt.ui.BookCardScreen
+import com.example.bookcourt.ui.basket.orderingScreen.OrderingScreen
+import com.example.bookcourt.ui.bottomNavigationMenu.BottomNavViewModel
 import com.example.bookcourt.ui.feedback.LeaveFeedbackScreen
 import com.example.bookcourt.ui.feedback.ListOfFeedbacksScreen
 import com.example.bookcourt.ui.library.LibraryScreen
@@ -24,11 +25,9 @@ import com.example.bookcourt.ui.profile.ProfileScreen
 import com.example.bookcourt.ui.recommendation.RecommendationScreen
 import com.example.bookcourt.ui.statistics.LibraryPlug
 import com.example.bookcourt.utils.BottomNavMenu
-import com.example.bookcourt.utils.BottomNavigationMenu
+import com.example.bookcourt.ui.bottomNavigationMenu.BottomNavigationMenu
 import com.example.bookcourt.utils.Graph
 import com.example.bookcourt.utils.Screens
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
 
 @Composable
 fun HomeScreen(navController: NavHostController = rememberNavController()) {
@@ -63,7 +62,9 @@ fun BottomNavigationGraph(
             )
         }
         composable(route = BottomNavMenu.Basket.route) {
-            BasketScreen()
+            BasketScreen(
+                onNavigateToOrdering = { navController.navigate(Screens.OrderingScreen.route)}
+            )
 //            SearchScreen(
 //                onNavigateBack = {navController.popBackStack()}
 //            )
@@ -137,9 +138,11 @@ fun BottomNavigationGraph(
             )
         }
 
-    }
-}
+        composable(
+            route = "${Screens.OrderingScreen.route}"
+        ) {
+            OrderingScreen(onBackNavigation = {navController.popBackStack()})
+        }
 
-fun convertBookJson(json:String): Book {
-    return Json.decodeFromString<BookDto>(json).toBook()
+    }
 }

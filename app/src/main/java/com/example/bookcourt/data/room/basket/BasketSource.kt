@@ -11,11 +11,22 @@ class BasketSource(
     }
 
     override suspend fun addData(item: BasketItem) {
-        dao.insertBook(item)
+        var list = dao.getBasketItems()
+        if(item !in list){
+            dao.insertBook(item)
+        }else{
+            item.amount = item.amount + 1
+            dao.updateItem(item)
+        }
+
     }
 
     override suspend fun deleteData(item: BasketItem) {
         dao.deleteBook(item)
+    }
+
+    override suspend fun updateData(item: BasketItem){
+        dao.updateItem(item)
     }
 
 }

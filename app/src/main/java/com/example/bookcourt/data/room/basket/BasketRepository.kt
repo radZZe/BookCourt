@@ -18,4 +18,8 @@ class BasketRepository @Inject constructor(
         return source.deleteData(item)
     }
 
+    override suspend fun updateData(item: BasketItem) {
+        return source.updateData(item)
+    }
+
 }

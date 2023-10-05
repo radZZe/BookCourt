@@ -7,4 +7,5 @@ interface BasketSourceI {
     suspend fun getData() : List<BasketItem>
     suspend fun addData(item: BasketItem)
     suspend fun deleteData(item: BasketItem)
+    suspend fun updateData(item: BasketItem)
 }
