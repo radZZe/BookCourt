@@ -16,9 +16,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.AbsoluteRoundedCornerShape
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.BottomCenter
 import androidx.compose.ui.Alignment.Companion.Center
@@ -30,109 +32,35 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.example.bookcourt.R
-import com.example.bookcourt.models.user.Sex
-import com.example.bookcourt.ui.theme.*
-import com.example.bookcourt.utils.CityDropDownMenu
-import com.example.bookcourt.utils.CustomButton
-import com.example.bookcourt.utils.ReturnTopBar
+import com.example.bookcourt.ui.theme.MainBgColor
+import com.example.bookcourt.ui.theme.Roboto
 import com.example.bookcourt.utils.TextRobotoRegular
-import java.util.*
+
 
 @Composable
 fun ProfileScreen(
-    onNavigateToRecommendation: () -> Unit,
+    onNavigateToSupport: () -> Unit = {},
+    onNavigateToSettings: () -> Unit = {},
+    onNavigateToStatistics: () -> Unit = {},
+    onNavigateToAbout: () -> Unit = {},
+    onNavigateToOrdersNotifications: () -> Unit,
+    onNavigateToWantToRead: () -> Unit,
+    onNavigateToOrders: () -> Unit,
+    onNavigateToCategorySelection: () -> Unit,
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
     LaunchedEffect(key1 = Unit, block = {
         viewModel.getUser()
     })
-    Box(modifier = Modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(MainBgColor)
-                .verticalScroll(rememberScrollState())
-        ) {
-            ReturnTopBar(curScreenName = stringResource(id = R.string.profile_screen_profile)) {
-                onNavigateToRecommendation()
-            }
-            Spacer(modifier = Modifier.height(60.dp))
-            ProfileMainSection(viewModel)
-            Spacer(modifier = Modifier.height(60.dp))
-            ProfileBottomSection(viewModel)
-        }
-        SimpleSnackBar(
-            text = "Успешно",
-            modifier = Modifier.align(BottomCenter),
-            visible = viewModel.isVisibleSnackBar
-        )
-
-    }
-
-}
-
-@Composable
-fun ProfileTopSection(modifier: Modifier, onNavigateToRecommendation: () -> Unit) {
-    Box(modifier = modifier) {
-        Row(
-            modifier = Modifier
-                .padding(horizontal = 17.dp)
-                .align(Alignment.CenterStart),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Image(
-                modifier = Modifier.clickable {
-                    onNavigateToRecommendation()
-                },
-                painter = painterResource(id = R.drawable.arrow_left),
-                contentDescription = "arrow_left"
-            )
-            Spacer(modifier = Modifier.width(16.dp))
-            TextRobotoRegular(
-                text = stringResource(R.string.profile_screen_profile),
-                color = Color.Black,
-                fontSize = 18,
-            )
-        }
-        Box(
-            Modifier
-                .fillMaxWidth()
-                .height(1.dp)
-                .background(DarkBgColor)
-                .align(BottomCenter)
-        )
-    }
-}
-
-@Composable
-fun ProfileMainSection(
-    viewModel: ProfileViewModel
-) {
 
     val resources = LocalContext.current.resources
-    val resolver = LocalContext.current.contentResolver
-
-    val galleryLauncher =
-        rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri:Uri? ->
-            if(uri != null){
-                val flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-                resolver.takePersistableUriPermission(uri, flags)
-                viewModel.onProfileImageChanged(uri)
-            }
-        }
-
 
     val imagePlaceholderUri = remember {
         Uri.Builder()
@@ -145,564 +73,387 @@ fun ProfileMainSection(
 
     Column(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 17.dp), horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Box(modifier = Modifier
-            .clickable {
-                galleryLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-            }
-            .size(138.dp)
-            .clip(CircleShape))
-        {
-            AsyncImage(
-                model = if (viewModel.profileImage == null) imagePlaceholderUri else viewModel.profileImage,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .align(Center),
-                contentDescription = "profile_placeholder",
-                contentScale = ContentScale.Crop
-            )
-            Image(
-                modifier = Modifier.align(Center),
-                painter = painterResource(id = R.drawable.image_upload_icon),
-                contentDescription = "button_image_upload"
-            )
-        }
-        Spacer(modifier = Modifier.height(40.dp))
-        ProfileOutlinedTextField(
-            label = stringResource(R.string.profile_screen_name),
-            value = viewModel.name,
-            onValueChanged = { viewModel.onNameChanged(it) },
-            paddingStart = 16.dp,
-            height = 48.dp,
-            labelFontSize = 13,
-            valueFontSize = 16,
-            trailingIcon = R.drawable.ic_close_circle,
-            onClickTrailingIcon = {
-                viewModel.onNameChanged("")
-            }
-        )
-        Spacer(modifier = Modifier.height(24.dp))
-        ProfileOutlinedTextField(
-            label = stringResource(R.string.profile_screen_email),
-            value = viewModel.email,
-            onValueChanged = { viewModel.onEmailChanged(it) },
-            paddingStart = 16.dp,
-            height = 48.dp,
-            labelFontSize = 13,
-            valueFontSize = 16,
-            trailingIcon = R.drawable.ic_close_circle,
-            onClickTrailingIcon = {
-                viewModel.onEmailChanged("")
-            }
-        )
-        Spacer(modifier = Modifier.height(24.dp))
-        CityDropDownMenu(
-            value = viewModel.city,
-            onTFValueChange = { viewModel.onCityChanged(it) },
-            textWrapper = {
-                val lineHeightSp: TextUnit = 13.sp
-                val lineHeightDp: Dp = with(LocalDensity.current) {
-                    lineHeightSp.toDp()
-                }
-                Box(
-                    Modifier
-                        .fillMaxWidth()
-                        .height(48.dp)
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .align(Alignment.TopStart)
-                            .zIndex(3f)
-                    ) {
-                        Spacer(modifier = Modifier.width(16.dp))
-                        Box(
-                            modifier = Modifier
-                                .background(MainBgColor)
-                                .zIndex(4f)
-                                .padding(horizontal = 2.dp)
-                        ) {
-                            TextRobotoRegular(
-                                text = stringResource(id = R.string.profile_screen_city),
-                                color = DarkGreyColor,
-                                fontSize = 13
-                            )
-                        }
-                    }
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(48.dp - lineHeightDp.div(1.5f))
-                            .clip(
-                                RoundedCornerShape(9.dp)
-                            )
-                            .border(
-                                1.dp, BorderColor, RoundedCornerShape(9.dp)
-                            )
-                            .background(MainBgColor)
-                            .align(BottomCenter)
-                            .zIndex(1f),
-                        contentAlignment = Alignment.CenterStart
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(end = 16.dp, start = 16.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            it()
-                            Image(
-                                painter = painterResource(id = R.drawable.arrow_down),
-                                contentDescription = " ",
-                                modifier = Modifier.height(8.dp)
-                            )
-                        }
-
-                    }
-                }
-            },
-            fontSize = 16,
-            itemsFontSize = 16,
-            backgroundColor = MainBgColor
-        )
-        Spacer(modifier = Modifier.height(24.dp))
-        ProfileDatePicker(
-            labelFontSize = 13,
-            height = 48.dp,
-            paddingStart = 16.dp,
-            label = stringResource(R.string.profile_screen_birthday_date),
-            value = viewModel.date,
-            fontSize = 16,
-            onDateChanged = {
-                viewModel.onBDayDAteChanged(it)
-            }
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        SexCheckBox(viewModel)
-        Spacer(modifier = Modifier.height(40.dp))
-        Column {
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .height(56.dp)
-                    .fillMaxWidth()
-            ) {
-                Row {
-                    TextRobotoRegular(
-                        text = stringResource(R.string.profile_screen_push_notification),
-                        color = DarkGreyColor,
-                        fontSize = 16,
-                    )
-                    Spacer(modifier = Modifier.width(3.dp))
-                    TextRobotoRegular(
-                        text = stringResource(R.string.profile_screen_soon),
-                        color = linkColor,
-                        fontSize = 16,
-                    )
-                }
-                Image(
-                    painter = painterResource(id = R.drawable.ic_unenabled_arrow_dropdown),
-                    contentDescription = null
-                )
-            }
-            Spacer(
-                modifier = Modifier
-                    .height(1.dp)
-                    .fillMaxWidth()
-                    .background(DarkBgColor)
-            )
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .height(56.dp)
-                    .fillMaxWidth()
-            ) {
-                TextRobotoRegular(
-                    text = stringResource(R.string.profile_screen_report_the_problem),
-                    color = Color.Black,
-                    fontSize = 16,
-                )
-                Image(
-                    painter = painterResource(id = R.drawable.ic_enabled_arrow_dropdown),
-                    contentDescription = null
-                )
-            }
-            Spacer(
-                modifier = Modifier
-                    .height(1.dp)
-                    .fillMaxWidth()
-                    .background(DarkBgColor)
-            )
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .height(56.dp)
-                    .fillMaxWidth()
-            ) {
-                TextRobotoRegular(
-                    text = stringResource(R.string.profile_screen_legal_information),
-                    color = Color.Black,
-                    fontSize = 16,
-                )
-                Image(
-                    painter = painterResource(id = R.drawable.ic_enabled_arrow_dropdown),
-                    contentDescription = null
-                )
-            }
-            Spacer(
-                modifier = Modifier
-                    .height(1.dp)
-                    .fillMaxWidth()
-                    .background(DarkBgColor)
-            )
-        }
-
-    }
-
-}
-
-@Composable
-fun ProfileDatePicker(
-    labelFontSize: Int,
-    height: Dp,
-    paddingStart: Dp,
-    label: String,
-    value: String,
-    fontSize: Int,
-    onDateChanged: (String) -> Unit
-) {
-    val calendar = Calendar.getInstance()
-    val year = calendar.get(Calendar.YEAR)
-    val month = calendar.get(Calendar.MONTH)
-    val day = calendar.get(Calendar.DAY_OF_MONTH)
-    calendar.time = Date()
-
-    val datePickerDialog = DatePickerDialog(
-        LocalContext.current,
-        { _: DatePicker, selectedYear: Int, selectedMonth: Int, selectedDay: Int ->
-            onDateChanged("$selectedDay.$selectedMonth.$selectedYear")
-        }, year, month, day
-    )
-
-    val lineHeightSp: TextUnit = labelFontSize.sp
-    val lineHeightDp: Dp = with(LocalDensity.current) {
-        lineHeightSp.toDp()
-    }
-    Box(
-        Modifier
-            .fillMaxWidth()
-            .height(height)
-            .clickable {
-                datePickerDialog.show()
-            }
+            .fillMaxSize()
+            .background(MainBgColor)
+            .verticalScroll(rememberScrollState())
     ) {
         Row(
+            horizontalArrangement = Arrangement.Center,
             modifier = Modifier
-                .align(Alignment.TopStart)
-                .zIndex(3f)
+                .fillMaxWidth()
+                .padding(vertical = 20.dp)
         ) {
-            Spacer(modifier = Modifier.width(paddingStart))
-            Box(
-                modifier = Modifier
-                    .background(MainBgColor)
-                    .zIndex(4f)
-                    .padding(horizontal = 2.dp)
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxWidth()
             ) {
-                TextRobotoRegular(text = label, color = DarkGreyColor, fontSize = labelFontSize)
+                Box(
+                    modifier = Modifier
+                        .size(110.dp)
+                        .clip(CircleShape)
+                )
+                {
+                    AsyncImage(
+                        model = if (viewModel.profileImage == null) imagePlaceholderUri else viewModel.profileImage,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .align(Center),
+                        contentDescription = "profile_placeholder",
+                        contentScale = ContentScale.Crop
+                    )
+                }
+                Spacer(modifier = Modifier.height(20.dp))
+                Text(
+                    text = "${viewModel.name} ${viewModel.surname}",
+                    fontFamily = Roboto,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp
+                )
             }
         }
+        StatsHighlights(onNavigateToStatistics = { onNavigateToStatistics() })
+        Spacer(modifier = Modifier.height(20.dp))
+        ProfileOptions(
+            viewModel = viewModel,
+            onNavigateToOrdersNotifications = { onNavigateToOrdersNotifications() },
+            onNavigateToWantToRead = { onNavigateToWantToRead() },
+            onNavigateToOrders = { onNavigateToOrders() }
+        )
+        Spacer(modifier = Modifier.height(20.dp))
+        InfoOptions(
+            onNavigateToSettings = { onNavigateToSettings() },
+            onNavigateToCategorySelection = { onNavigateToCategorySelection() }
+        )
+        Spacer(modifier = Modifier.height(20.dp))
+        AdminOptions(
+            onNavigateToAbout = { onNavigateToAbout() },
+            onNavigateToSupport = { onNavigateToSupport() },
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+    }
+}
+
+////val DarkBgColor = Color(239, 235, 222)
+//val BorderColor = Color(217, 217, 217)
+//val DarkGreyColor = Color(140, 140, 140)
+//val linkColor = Color(14, 125, 255)
+//val logOutColor = Color(252, 87, 59)
+//val DarkBgColor = Color(0xFFEFEBDE)
+
+@Composable
+private fun InfoOptions(
+    onNavigateToSettings: () -> Unit,
+    onNavigateToCategorySelection: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 10.dp)
+            .clip(RoundedCornerShape(10.dp))
+            .background(DarkBgColor)
+    ) {
+        Spacer(modifier = Modifier.height(10.dp))
+        OptionItem(
+            icon = R.drawable.ic_setting,
+            text = "Настройки профиля",
+            onClick = { onNavigateToSettings() })
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(height - lineHeightDp.div(1.5f))
-                .clip(
-                    RoundedCornerShape(9.dp)
-                )
-                .border(
-                    1.dp, BorderColor, RoundedCornerShape(9.dp)
-                )
-                .background(MainBgColor)
-                .align(BottomCenter)
-                .zIndex(1f),
-            contentAlignment = Alignment.CenterStart
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(end = paddingStart),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = value,
-                    fontFamily = FontFamily(
-                        Font(R.font.roboto_regular)
-                    ),
-                    fontSize = fontSize.sp,
-                    modifier = Modifier.padding(start = paddingStart)
-                )
-
-            }
-
-        }
+                .height(1.dp)
+                .padding(horizontal = 10.dp)
+                .background(Color.LightGray)
+        )
+        OptionItem(
+            icon = R.drawable.ic_blank_heart,
+            text = "Предпочтения",
+            onClick = { onNavigateToCategorySelection() }
+        )
+        Spacer(modifier = Modifier.height(10.dp))
     }
 }
 
 @Composable
-fun SexCheckBox(viewModel: ProfileViewModel) {
-    Row(horizontalArrangement = Arrangement.Start, modifier = Modifier.fillMaxWidth()) {
+private fun ProfileOptions(
+    viewModel: ProfileViewModel,
+    onNavigateToOrdersNotifications: () -> Unit,
+    onNavigateToWantToRead: () -> Unit,
+    onNavigateToOrders: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 10.dp)
+            .clip(RoundedCornerShape(10.dp))
+            .background(DarkBgColor)
+    ) {
+        Spacer(modifier = Modifier.height(10.dp))
+
+        OptionItem(
+            icon = R.drawable.ic_box,
+            text = "Заказы",
+            onClick = { onNavigateToOrders() },
+            notification = { NotificationCounter(amount = 12) }
+        )
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(1.dp)
+                .padding(horizontal = 10.dp)
+                .background(Color.LightGray)
+        )
+        OptionItem(
+            R.drawable.ic_archive,
+            "Хочу прочитать",
+            additional = viewModel.wantToRead.toString(),
+            onClick = { onNavigateToWantToRead() }
+        )
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(1.dp)
+                .padding(horizontal = 10.dp)
+                .background(Color.LightGray)
+        )
+        OptionItem(
+            icon = R.drawable.ic_book_saved,
+            text = "Понравиолось",
+            additional = viewModel.liked.toString()
+        )
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(1.dp)
+                .padding(horizontal = 10.dp)
+                .background(Color.LightGray)
+        )
+        OptionItem(
+            icon = R.drawable.ic_books,
+            text = "Прочитано",
+            additional = viewModel.readAmount.toString()
+        )
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(1.dp)
+                .padding(horizontal = 10.dp)
+                .background(Color.LightGray)
+        )
+        OptionItem(
+            icon = R.drawable.ic_notification,
+            text = "Уведомления",
+            onClick = { onNavigateToOrdersNotifications() },
+            notification = { NotificationCounter(amount = 3) })
+        Spacer(modifier = Modifier.height(10.dp))
+    }
+}
+
+@Composable
+fun AdminOptions(
+    onNavigateToAbout: () -> Unit,
+    onNavigateToSupport: () -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 10.dp)
+            .clip(RoundedCornerShape(10.dp))
+            .background(DarkBgColor)
+    ) {
+        Spacer(modifier = Modifier.height(10.dp))
+        OptionItem(
+            icon = R.drawable.ic_help,
+            text = "Поддержка",
+            onClick = { onNavigateToSupport() })
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(1.dp)
+                .padding(horizontal = 10.dp)
+                .background(Color.LightGray)
+        )
+        OptionItem(
+            icon = R.drawable.ic_info,
+            text = "О приложении",
+            onClick = { onNavigateToAbout() }
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+    }
+
+}
+
+@Composable
+fun OptionItem(
+    icon: Int,
+    text: String,
+    onClick: () -> Unit = {}
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(10.dp)
+            .clickable { onClick() }
+    ) {
+        Image(painter = painterResource(id = icon), contentDescription = "Leading Icon")
+        Spacer(modifier = Modifier.width(10.dp))
         TextRobotoRegular(
-            text = stringResource(R.string.profile_screen_sex),
-            color = DarkGreyColor,
+            text = text,
+            color = Color.Black,
+            fontSize = 14,
+        )
+        Spacer(modifier = Modifier.width(10.dp))
+    }
+}
+
+@Composable
+fun OptionItem(
+    icon: Int,
+    text: String,
+    onClick: () -> Unit = {},
+    additional: String = ""
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(10.dp)
+            .clickable { onClick() }
+    ) {
+        Image(painter = painterResource(id = icon), contentDescription = "Leading Icon")
+        Spacer(modifier = Modifier.width(10.dp))
+        TextRobotoRegular(
+            text = text,
+            color = Color.Black,
+            fontSize = 14,
+        )
+        Spacer(modifier = Modifier.width(10.dp))
+        TextRobotoRegular(
+            text = additional,
+            color = Color.Black,
             fontSize = 14,
         )
     }
+}
 
+@Composable
+fun OptionItem(
+    icon: Int,
+    text: String,
+    onClick: () -> Unit = {},
+    notification: @Composable() () -> Unit
+) {
     Row(
+        verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .height(44.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+            .padding(10.dp)
+            .clickable { onClick() }
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth(0.5f)
-                .fillMaxHeight()
-                .clip(
-                    AbsoluteRoundedCornerShape(
-                        topLeft = 15.dp,
-                        bottomLeft = 15.dp,
-                        topRight = 0.dp,
-                        bottomRight = 0.dp
-                    )
-                )
-                .border(
-                    1.dp, BorderColor, AbsoluteRoundedCornerShape(
-                        topLeft = 15.dp,
-                        bottomLeft = 15.dp,
-                        topRight = 0.dp,
-                        bottomRight = 0.dp
-                    )
-                )
-                .background(if (viewModel.sex != Sex.MALE) MainBgColor else DarkBgColor)
-                .clickable {
-                    viewModel.onSexChanged(Sex.MALE)
-                },
-            contentAlignment =Center
-        ) {
-            TextRobotoRegular(
-                text = stringResource(R.string.profile_screen_male),
-                color = Color.Black,
-                fontSize = 14,
-            )
-        }
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight()
-                .clip(
-                    AbsoluteRoundedCornerShape(
-                        topLeft = 0.dp,
-                        bottomLeft = 0.dp,
-                        topRight = 15.dp,
-                        bottomRight = 15.dp
-                    )
-                )
-                .border(
-                    1.dp, BorderColor, AbsoluteRoundedCornerShape(
-                        topLeft = 0.dp,
-                        bottomLeft = 0.dp,
-                        topRight = 15.dp,
-                        bottomRight = 15.dp
-                    )
-                )
-                .background(if (viewModel.sex != Sex.FEMALE) MainBgColor else DarkBgColor)
-                .clickable {
-                    viewModel.onSexChanged(Sex.FEMALE)
-                },
-            contentAlignment = Center
-        ) {
-            TextRobotoRegular(
-                text = stringResource(R.string.profile_screen_female),
-                color = Color.Black,
-                fontSize = 14,
-            )
-        }
+        Image(painter = painterResource(id = icon), contentDescription = "Leading Icon")
+        Spacer(modifier = Modifier.width(10.dp))
+        TextRobotoRegular(
+            text = text,
+            color = Color.Black,
+            fontSize = 14,
+        )
+        Spacer(modifier = Modifier.width(10.dp))
+        notification()
     }
 }
 
 @Composable
-fun ProfileBottomSection(viewModel: ProfileViewModel) {
-    Column(
-        modifier = Modifier.padding(horizontal = 17.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        CustomButton(
-            text = stringResource(R.string.profile_screen_save),
-            textColor = Color.Black,
-            color = LightYellowBtn,
-            onCLick = {
-                viewModel.saveUserData()
-                viewModel.showSnackBar()
-            }
-        )
-        Spacer(Modifier.height(12.dp))
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(50.dp))
-                .background(color = DarkBgColor)
-                .padding(vertical = 13.dp, horizontal = 20.dp)
-                .clickable { }, //TODO
-            Center
-        ) {
-            Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
-                Image(
-                    painter = painterResource(id = R.drawable.google_play_logo),
-                    contentDescription = null,
-                    modifier = Modifier.clickable { }  //TODO
-                )
-                Spacer(Modifier.width(12.dp))
-                TextRobotoRegular(
-                    text = stringResource(R.string.profile_screen_rate_us),
-                    color = Color.Black,
-                    fontSize = 16,
-                )
-            }
-
-        }
-        Spacer(Modifier.height(24.dp))
-        TextRobotoRegular(
-            text = stringResource(R.string.profile_screen_logOut),
-            color = logOutColor,
-            fontSize = 16,
-        )
-        Spacer(Modifier.height(42.dp))
-        TextRobotoRegular(
-            stringResource(R.string.profile_screen_version),
-            DarkGreyColor,
-            14
-        )
-        Spacer(Modifier.height(15.dp))
-    }
-}
-
-@Composable
-fun ProfileOutlinedTextField(
-    label: String,
-    value: String,
-    onValueChanged: (String) -> Unit,
-    paddingStart: Dp,
-    height: Dp,
-    trailingIcon: Int? = null,
-    onClickTrailingIcon: () -> Unit,
-    labelFontSize: Int,
-    valueFontSize: Int,
+private fun StatsHighlights(
+    onNavigateToStatistics: () -> Unit
 ) {
-    val lineHeightSp: TextUnit = labelFontSize.sp
-    val lineHeightDp: Dp = with(LocalDensity.current) {
-        lineHeightSp.toDp()
+    Row(
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 10.dp)
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.last_read),
+            contentDescription = "last read",
+            modifier = Modifier
+                .size(118.dp)
+                .clickable { onNavigateToStatistics() }
+        )
+        Image(
+            painter = painterResource(id = R.drawable.fav_authors),
+            contentDescription = "authors",
+            modifier = Modifier
+                .size(118.dp)
+                .clickable { onNavigateToStatistics() }
+        )
+        Image(
+            painter = painterResource(id = R.drawable.fav_genres),
+            contentDescription = "genres",
+            modifier = Modifier
+                .size(118.dp)
+                .clickable { onNavigateToStatistics() }
+        )
+    }
+}
+
+@Composable
+fun NotificationCounter(amount: Int) {
+    val width = when (amount) {
+        in 0..0 -> 0.dp
+        in 1..9 -> 16.dp
+        in 11..99 -> 21.dp
+        in 100..999 -> 26.dp
+        else -> {
+            31.dp
+        }
+    }
+    Row(
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .height(16.dp)
+            .width(width)
+            .clip(RoundedCornerShape(50.dp))
+            .background(Color.Red)
+    ) {
+        TextRobotoRegular(text = amount.toString(), color = Color.White, fontSize = 12)
+    }
+}
+
+@Composable
+fun ScreenHeader(
+    text: String,
+    goBack: () -> Unit = {}
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(56.dp)
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.ic_arrow_back),
+            contentDescription = "Arrow Back",
+            modifier = Modifier
+                .size(38.dp)
+                .clickable { goBack() }
+        )
+        Spacer(modifier = Modifier.width(10.dp))
+        TextRobotoRegular(
+            text = text,
+            color = Color.Black,
+            fontSize = 18,
+        )
     }
     Box(
-        Modifier
+        modifier = Modifier
             .fillMaxWidth()
-            .height(height)
-    ) {
-        Row(
-            modifier = Modifier
-                .align(Alignment.TopStart)
-                .zIndex(3f)
-        ) {
-            Spacer(modifier = Modifier.width(paddingStart))
-            Box(
-                modifier = Modifier
-                    .background(MainBgColor)
-                    .zIndex(4f)
-                    .padding(horizontal = 2.dp)
-            ) {
-                TextRobotoRegular(text = label, color = DarkGreyColor, fontSize = labelFontSize)
-            }
-        }
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(height - lineHeightDp.div(1.5f))
-                .clip(
-                    RoundedCornerShape(9.dp)
-                )
-                .border(
-                    1.dp, BorderColor, RoundedCornerShape(9.dp)
-                )
-                .background(MainBgColor)
-                .align(BottomCenter)
-                .zIndex(1f),
-            contentAlignment = Alignment.CenterStart
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(end = paddingStart),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                BasicTextField(
-                    value = value,
-                    onValueChange = { onValueChanged(it) },
-                    modifier = Modifier.padding(start = paddingStart),
-                    singleLine = true,
-                    textStyle = TextStyle(
-                        fontSize = valueFontSize.sp,
-                        fontFamily = FontFamily(
-                            Font(R.font.roboto_regular)
-                        )
-                    )
-                )
-                if (trailingIcon != null) Image(
-                    painter = painterResource(id = trailingIcon),
-                    contentDescription = null,
-                    modifier = Modifier.clickable { onClickTrailingIcon() })
-            }
-
-        }
-    }
+            .height(1.dp)
+            .background(DarkBgColor)
+    )
 }
 
-@Composable
-fun SimpleSnackBar(text: String, modifier: Modifier, visible: Boolean) {
-    Box(modifier = modifier, contentAlignment = Center) {
-        AnimatedVisibility(
-            visible = visible,
-            enter = fadeIn(),
-            exit = fadeOut(),
-        ) {
-            Box(
-                modifier = modifier
-                    .clip(RoundedCornerShape(15.dp))
-                    .background(DarkBgColor)
-                    .padding(vertical = 8.dp, horizontal = 20.dp)
-            ) {
-                Text(text = text)
-            }
-            Spacer(modifier = Modifier.height(120.dp))
-        }
 
-    }
-
-}
-
-@Preview
-@Composable
-fun PreviewSimpleSnackBar() {
-    Box() {
-        SimpleSnackBar(text = "Успешно", modifier = Modifier.align(Center), visible = true)
-    }
-}
 
 
 val DarkBgColor = Color(239, 235, 222)

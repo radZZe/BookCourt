@@ -1,16 +1,12 @@
 package com.example.bookcourt.ui.auth
 
 import android.content.Context
-import android.location.Address
-import android.location.Geocoder
-import android.location.Location
 import android.text.TextUtils
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavController
 import com.example.bookcourt.data.repositories.DataStoreRepository
 import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.isRemembered
 import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.savedCity
@@ -23,8 +19,6 @@ import com.example.bookcourt.utils.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.first
-import java.io.IOException
-import java.util.*
 import java.util.regex.Pattern
 import javax.inject.Inject
 
@@ -102,9 +96,10 @@ class SignInViewModel @Inject constructor(
                 val user = User(
                     uid = UUID,
                     email = email,
-                    city = city,
+                    surname = city,
                     readBooksList = mutableListOf(),
-                    wantToRead = mutableListOf()
+                    wantToRead = mutableListOf(),
+                    liked = mutableListOf()
                 )
                 userRepositoryI.saveData(user)
                 sendUserMetric(context,name,surname,phoneNumber,city, UUID)

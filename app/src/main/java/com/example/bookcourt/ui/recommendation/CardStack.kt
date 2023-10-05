@@ -144,6 +144,7 @@ fun BookCard(
 
         bookCardController.onSwipeRight = {
             user.readBooksList.add(item)
+            user.liked.add(item)
             viewModel.updateUserStatistic(user)
             onSwipeRight(item)
         }

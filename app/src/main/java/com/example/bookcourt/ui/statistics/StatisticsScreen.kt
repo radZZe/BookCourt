@@ -28,8 +28,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
@@ -55,17 +53,16 @@ fun LibraryPlug(
     Text(text = "Here would be Library")
 }
 
-@OptIn(ExperimentalPagerApi::class)
 @Composable
 fun Statistics(
-    onNavigateToRecommendation: () -> Unit,
+    onNavigateToProfile: () -> Unit,
     viewModel: StatisticsViewModel = hiltViewModel()
 ) {
     if (viewModel.readBooks.value?.size == 0) {
-        EmptyStatistics { onNavigateToRecommendation() }
+        EmptyStatistics { onNavigateToProfile() }
     } else {
         ValidStatistics(
-            onNavigateToRecommendation = { onNavigateToRecommendation() },
+            onNavigateToRecommendation = { onNavigateToProfile() },
             viewModel
         )
     }
@@ -307,7 +304,7 @@ fun ReadBooksStats(
         ShareStatisticsButton(
             statisticsText = mViewModel.shareStatistics(),
             context = context,
-            modifier = Modifier.weight(1f, false)
+            modifier = Modifier.weight(1f, false).padding(bottom = 40.dp)
         )
     }
 }
@@ -404,7 +401,7 @@ fun FavoriteAuthors(
         ShareStatisticsButton(
             statisticsText = mViewModel.shareStatistics(),
             context = context,
-            modifier = Modifier.weight(1f, false)
+            modifier = Modifier.weight(1f, false).padding(bottom = 40.dp)
         )
     }
 }

@@ -66,7 +66,7 @@ fun CustomButton(
         ),
         contentPadding = PaddingValues(vertical = 13.dp)
     ) {
-        Text(text = text, color = textColor, fontSize = 16.sp, fontFamily = Roboto)
+        Text(text = text, color = textColor, fontSize = 14.sp, fontFamily = Roboto)
     }
 }
 
@@ -353,6 +353,19 @@ fun TextRobotoRegular(text: String, color: Color, fontSize: Int) {
     )
 }
 
+@Composable
+fun TextRobotoBold(text: String, color: Color, fontSize: Int) {
+    Text(
+        text = text,
+        color = color,
+        fontSize = fontSize.sp,
+        fontFamily = FontFamily(
+            Font(
+                R.font.roboto_bold
+            )
+        )
+    )
+}
 
 
 

@@ -4,6 +4,7 @@
     <string name="book_image">Book Image</string>
     <string name="profile_screen_profile">Профиль</string>
     <string name="profile_screen_name">Имя</string>
+    <string name="profile_screen_surname">Фамилия</string>
     <string name="profile_screen_email">Электронная почта</string>
     <string name="profile_screen_city">Город</string>
     <string name="profile_screen_birthday_date">Дата рождения</string>

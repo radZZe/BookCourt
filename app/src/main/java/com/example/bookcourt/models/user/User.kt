@@ -10,11 +10,13 @@ import kotlinx.serialization.Serializable
 data class User(
     @PrimaryKey(autoGenerate = false) val uid: String,
     val name:String? = null,
+    val nickname: String? = null,
     var email:String,
-    val city: String,
+    val surname: String? = null,
     val image:String? = null,
     val dayBD:String? = null,
     val sex:Sex? = null,
+    var liked: MutableList<Book>,
     var readBooksList: MutableList<Book>,
     var wantToRead: MutableList<Book>,
 ){
