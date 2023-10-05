@@ -46,22 +46,22 @@ class CategorySelectionViewModel @Inject constructor(
     }
 
     fun changeStateCategory(index: Int) {
-        if (categories[index].value.isSelected.value) {
-            categories[index].value.isSelected.value = !categories[index].value.isSelected.value
-            selectedCategories.remove(categories[index])
-        } else {
-            categories[index].value.isSelected.value = !categories[index].value.isSelected.value
-            selectedCategories.add(categories[index])
+        if (selectedCategories.size<5){
+            if(categories[index].value.isSelected.value){
+                categories[index].value.isSelected.value = !categories[index].value.isSelected.value
+                selectedCategories.remove(categories[index])
+            }else{
+                categories[index].value.isSelected.value = !categories[index].value.isSelected.value
+                selectedCategories.add(categories[index])
             }
         }
-//        else{
-//            if(categories[index].value.isSelected.value){
-//                categories[index].value.isSelected.value = !categories[index].value.isSelected.value
-//                selectedCategories.remove(categories[index])
-//            }
-//        }
-//
-//    }
+        else{
+            if(categories[index].value.isSelected.value){
+                categories[index].value.isSelected.value = !categories[index].value.isSelected.value
+                selectedCategories.remove(categories[index])
+            }
+        }
+    }
 
     fun metricClick(clickMetric: DataClickMetric) {
         viewModelScope.launch(Dispatchers.IO) {
