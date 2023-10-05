@@ -98,6 +98,19 @@ fun BottomNavigationGraph(
                 onNavigateToCategorySelection = { navController.navigate(Screens.CategorySelection.route) }
             )
         }
+        composable(route = Screens.Search.route){
+            SearchScreen(
+                onNavigateBack = {navController.popBackStack()}
+            )
+        }
+//        composable(route = BottomNavMenu.Library.route) {
+//            LibraryPlug(
+//                onNavigateToLibrary = { navController.navigate(Graph.BOTTOM_NAV_GRAPH) }
+//            )
+//        }
+        composable(route = BottomNavMenu.Profile.route){
+            ProfileScreen(onNavigateToRecommendation = { navController.navigate(Graph.BOTTOM_NAV_GRAPH)})
+        }
 
         composable(
             "${Screens.BookCardScreen.route}/{book}"
