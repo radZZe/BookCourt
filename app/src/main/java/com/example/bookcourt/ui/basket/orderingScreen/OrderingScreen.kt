@@ -48,18 +48,21 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun OrderingScreen(
-    onBackNavigation:()->Unit,
-    viewModel:OrderingScreenViewModel = hiltViewModel()
+    onBackNavigation: () -> Unit,
+    viewModel: OrderingScreenViewModel = hiltViewModel(),
+    onSuccessPurchaseNavigate:()->Unit,
 ) {
-    LaunchedEffect(key1 = Unit,) {
+    LaunchedEffect(key1 = Unit) {
         launch(Dispatchers.IO) {
             viewModel.getItems()
         }
     }
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .verticalScroll(rememberScrollState())) {
-        ReturnTopBar("Оформление заказа", {onBackNavigation()})
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+    ) {
+        ReturnTopBar("Оформление заказа", { onBackNavigation() })
         Spacer(modifier = Modifier.height(8.dp))
         Column(modifier = Modifier.padding(12.dp, 0.dp)) {
             Row(
@@ -102,9 +105,13 @@ fun OrderingScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        RadioButton(selected = true, onClick = { /*TODO*/ },colors = RadioButtonDefaults.colors(
-                            selectedColor = Color.Black,
-                        ))
+                        RadioButton(
+                            selected = viewModel.statePayment.value,
+                            onClick = { viewModel.changeStatePayment(true) },
+                            colors = RadioButtonDefaults.colors(
+                                selectedColor = Color.Black,
+                            )
+                        )
                         Text(
                             "Картой онлайн", fontFamily = FontFamily(Font(R.font.roboto_regular)),
                             fontSize = 16.sp
@@ -125,9 +132,13 @@ fun OrderingScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        RadioButton(selected = false, onClick = { /*TODO*/ },colors = RadioButtonDefaults.colors(
-                            selectedColor = Color.Black,
-                        ))
+                        RadioButton(
+                            selected = !viewModel.statePayment.value,
+                            onClick = { viewModel.changeStatePayment(false) },
+                            colors = RadioButtonDefaults.colors(
+                                selectedColor = Color.Black,
+                            )
+                        )
                         Text(
                             "Перевод через СБП",
                             fontFamily = FontFamily(Font(R.font.roboto_regular)),
@@ -217,7 +228,7 @@ fun OrderingScreen(
                             indication = rememberRipple(color = Color.Black),
                         ) {
                             //onClickAddButton()
-
+                            onSuccessPurchaseNavigate()
                             DataClickMetric(
                                 Buttons.BUY_BOOK, Screens.Recommendation.route
                             )
@@ -243,7 +254,7 @@ fun OrderingScreen(
 
                 }
                 Spacer(modifier = Modifier.height(12.dp))
-                Text(text="Нажимая «Оплатить» вы соглашаетесь с условиями политики конфидециальности и правилами продажи")
+                Text(text = "Нажимая «Оплатить» вы соглашаетесь с условиями политики конфидециальности и правилами продажи")
             }
         }
 

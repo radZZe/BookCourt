@@ -4,7 +4,7 @@ import com.example.bookcourt.models.basket.BasketItem
 import kotlinx.coroutines.flow.Flow
 
 interface BasketSourceI {
-    suspend fun getData() : List<BasketItem>
+    suspend fun getData() : Flow<List<BasketItem>>
     suspend fun addData(item: BasketItem)
     suspend fun deleteData(item: BasketItem)
     suspend fun updateData(item: BasketItem)

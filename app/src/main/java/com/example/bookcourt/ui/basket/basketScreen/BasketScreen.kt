@@ -60,11 +60,12 @@ fun BasketScreen(
         }
     }
 
-    Box() {
+    Box(Modifier
+        .fillMaxSize()
+        .verticalScroll(rememberScrollState())) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
         ) {
             BasketTopBar(numberItems = viewModel.basketItems.size,
                 stateSelectAll = viewModel.stateSelectAll.value,

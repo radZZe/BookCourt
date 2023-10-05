@@ -16,6 +16,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.bookcourt.ui.basket.basketScreen.BasketScreen
 import com.example.bookcourt.ui.BookCardScreen
+import com.example.bookcourt.ui.basket.SuccessPurchaseScreen
 import com.example.bookcourt.ui.basket.orderingScreen.OrderingScreen
 import com.example.bookcourt.ui.bottomNavigationMenu.BottomNavViewModel
 import com.example.bookcourt.ui.feedback.LeaveFeedbackScreen
@@ -141,7 +142,14 @@ fun BottomNavigationGraph(
         composable(
             route = "${Screens.OrderingScreen.route}"
         ) {
-            OrderingScreen(onBackNavigation = {navController.popBackStack()})
+            OrderingScreen(onBackNavigation = {navController.popBackStack()}, onSuccessPurchaseNavigate =
+            {
+                navController.navigate(Screens.SuccessPurchase.route)
+            })
+        }
+
+        composable(route = "${Screens.SuccessPurchase.route}"){
+            SuccessPurchaseScreen(onNavigateBack = {navController.popBackStack()})
         }
 
     }

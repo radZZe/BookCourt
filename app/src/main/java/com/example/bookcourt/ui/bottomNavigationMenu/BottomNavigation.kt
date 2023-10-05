@@ -35,12 +35,12 @@ import com.example.bookcourt.utils.Screens
 @Composable
 fun BottomNavigationMenu(
     navController: NavController,
-    viewModel:BottomNavViewModel = hiltViewModel()
+    viewModel: BottomNavViewModel = hiltViewModel()
 ) {
-    LaunchedEffect(key1 = Unit){
+    LaunchedEffect(key1 = Unit) {
         viewModel.getBasketSize()
     }
-    val basketSize = viewModel.basketSize.value
+    val basketSize = viewModel.basketSize.collectAsState().value
     val windowHeight =
         LocalConfiguration.current.screenHeightDp.toFloat() * LocalDensity.current.density
     val menuHeight = if (windowHeight > LIMIT_WINDOW_HEIGHT) 72.dp else 56.dp
@@ -66,7 +66,9 @@ fun BottomNavigationMenu(
             visibility = if (
             //currentRoute == BottomNavMenu.Search.route
                 currentRoute == Graph.PROFILE_NAV_GRAPH
-                || currentRoute == BottomNavMenu.Statistics.route || currentRoute == Screens.OrderingScreen.route
+                || currentRoute == BottomNavMenu.Statistics.route
+                || currentRoute == Screens.OrderingScreen.route
+                || currentRoute == Screens.SuccessPurchase.route
             ) {
                 0.dp
             } else {
@@ -90,7 +92,7 @@ fun BottomNavigationMenu(
 
 @Composable
 fun CustomBottomNavigationItem(
-    basketSize:Int,
+    basketSize: Int,
     contentColor: Color,
     screen: BottomNavMenu,
     isSelected: Boolean,
@@ -120,10 +122,12 @@ fun CustomBottomNavigationItem(
             contentAlignment = Alignment.Center
         ) {
             if (screen == BottomNavMenu.Basket && basketSize != 0) {
-                Box(modifier = Modifier
-                    .padding(end = 12.dp)
-                    .align(Alignment.TopEnd)
-                    .zIndex(2f)){
+                Box(
+                    modifier = Modifier
+                        .padding(end = 12.dp)
+                        .align(Alignment.TopEnd)
+                        .zIndex(2f)
+                ) {
                     Box(
                         modifier = Modifier
                             .size(20.dp)
@@ -131,7 +135,7 @@ fun CustomBottomNavigationItem(
                             .background(Color.Red),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(text = "1", color = Color.White)
+                        Text(text = basketSize.toString(), color = Color.White)
                     }
                 }
 

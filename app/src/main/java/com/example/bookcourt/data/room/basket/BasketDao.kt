@@ -17,7 +17,7 @@ interface BasketDao {
     @Delete
     suspend fun deleteBook(item:BasketItem)
     @Query("SELECT * FROM basket_table")
-    suspend fun getBasketItems(): List<BasketItem>
+    fun getBasketItems(): Flow<List<BasketItem>>
     @Update
     suspend fun updateItem(item:BasketItem)
 }

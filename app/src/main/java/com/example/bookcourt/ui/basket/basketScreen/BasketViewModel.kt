@@ -9,6 +9,10 @@ import com.example.bookcourt.models.basket.BasketItem
 import com.example.bookcourt.models.basket.OwnerBasketItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,24 +22,54 @@ class BasketViewModel @Inject constructor(
 ): ViewModel() {
 
     var basketItems = mutableStateListOf<BasketItem>()
+    val _flowBasketItems = MutableStateFlow(emptyList<BasketItem>())
+    val flowBasketItems = _flowBasketItems.asStateFlow()
     val repositoryI = repository
     val owners = mutableStateListOf<OwnerBasketItem>()
     val stateSelectAll = mutableStateOf(false)
 
+//    init {
+//        getItems()
+//    }
+
 
     fun getItems(){
         viewModelScope.launch(Dispatchers.IO) {
-            var list = repositoryI.getData()
-            for(item in list){
-                if(!itemInOwners(item.data.shopOwner)){
-                    owners.add(OwnerBasketItem(
-                        value = item.data.shopOwner,
-                        isSelected = false,
-                    ))
+            repositoryI.getData().flowOn(Dispatchers.IO).collect{ list ->
+
+                if(list.isNotEmpty()){
+                    //_flowBasketItems.update { list }
+                    for(item in list){
+                        if(!itemInOwners(item.data.shopOwner)){
+                            owners.add(OwnerBasketItem(
+                                value = item.data.shopOwner,
+                                isSelected = false,
+                            ))
+                        }
+                        if(!itemInBasketItems(item)){
+                            basketItems.add(item)
+                        }
+
+                    }
+                    owners.forEach {
+                        if(checkStateOwner(it.value)){
+                            var index = 0
+                            owners.forEachIndexed { indexItem,item ->
+                                if(it.value == owners[indexItem].value){
+                                    index = indexItem
+                                }
+
+                            }
+                            owners[index] = owners[index].copy(isSelected = true)
+                        }
+                    }
+                    stateSelectAll.value = checkStateAll()
                 }
 
-                basketItems.add(item)
             }
+
+
+
         }
     }
     fun increaseTheAmount(index: Int){
@@ -46,13 +80,26 @@ class BasketViewModel @Inject constructor(
 
     }
 
-    fun reduceTheAmount(index: Int){
-        basketItems[index] = basketItems[index].copy(amount = basketItems[index].amount-1)
-        viewModelScope.launch(Dispatchers.IO) {
-            repositoryI.updateData(basketItems[index])
+    private fun itemInBasketItems(item:BasketItem):Boolean{
+        basketItems.forEach {
+            if(item.id == it.id){
+                return true
+            }
         }
+        return false
+    }
+
+    fun reduceTheAmount(index: Int){
+        if(basketItems[index].amount>1){
+            basketItems[index] = basketItems[index].copy(amount = basketItems[index].amount-1)
+            viewModelScope.launch(Dispatchers.IO) {
+                repositoryI.updateData(basketItems[index])
+            }
+        }
+
     }
     fun selectAll(){
+
         for( i in 0..basketItems.size-1){
             basketItems[i] = basketItems[i].copy(isSelected = !stateSelectAll.value)
             viewModelScope.launch(Dispatchers.IO) {
@@ -70,8 +117,37 @@ class BasketViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             repositoryI.updateData(basketItems[index])
         }
+        var indexOwner = 0
+        owners.forEachIndexed { indexItem,it ->
+            it.value == basketItems[index].data.shopOwner
+            indexOwner = indexItem
+        }
+        if(checkStateOwner(basketItems[index].data.shopOwner)){
+
+
+            owners[indexOwner] = owners[indexOwner].copy(isSelected = true)
+        }else{
+            owners[indexOwner] = owners[indexOwner].copy(isSelected = false)
+        }
+        stateSelectAll.value = checkStateAll()
     }
 
+    private fun checkStateOwner(owner:String):Boolean{
+        basketItems.forEach {
+            if(!it.isSelected && it.data.shopOwner == owner){
+                return  false
+            }
+        }
+        return true
+    }
+    private fun checkStateAll():Boolean{
+        basketItems.forEach {
+            if(!it.isSelected){
+                return  false
+            }
+        }
+        return true
+    }
     fun updateBasketData(){
 
     }

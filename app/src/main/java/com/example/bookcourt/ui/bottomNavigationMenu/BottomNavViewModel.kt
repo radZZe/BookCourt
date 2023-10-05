@@ -6,6 +6,11 @@ import androidx.lifecycle.viewModelScope
 import com.example.bookcourt.data.room.basket.BasketRepositoryI
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -13,12 +18,19 @@ import javax.inject.Inject
 class BottomNavViewModel @Inject constructor(
     val rep:BasketRepositoryI
 ) : ViewModel() {
-    val basketSize = mutableStateOf(0)
+    val _basketSize = MutableStateFlow(0)
+    val basketSize = _basketSize.asStateFlow()
+
+    init {
+        viewModelScope.launch(Dispatchers.IO) {
+            rep.getData().flowOn(Dispatchers.IO).collect{list->
+                _basketSize.update {  list.size}
+            }
+        }
+    }
     fun getBasketSize(){
 
-        viewModelScope.launch(Dispatchers.IO) {
-            basketSize.value = rep.getData().size
-        }
+
 
     }
 }

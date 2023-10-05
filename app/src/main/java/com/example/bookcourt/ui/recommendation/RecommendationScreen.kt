@@ -486,13 +486,13 @@ fun CategoriesBlock(list: List<String>) {
                 modifier = Modifier
                     .clip(RoundedCornerShape(50))
                     .background(Color(134, 134, 134))
-                    .padding(16.dp, 5.dp),
+                    .padding(14.dp, 5.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = item,
                     fontFamily = FontFamily(Font(R.font.roboto_regular)),
-                    fontSize = 14.sp,
+                    fontSize = 11.sp,
                     color = Color.White
                 )
             }

@@ -231,7 +231,7 @@ fun BookCard(
             modifier = if (!disableDraggable) {
                 Modifier
                     .width(300.dp)
-                    .height(if (windowHeight > LIMIT_WINDOW_HEIGHT) 470.dp else 400.dp)
+                    .height(if (windowHeight > LIMIT_WINDOW_HEIGHT) 500.dp else 430.dp)
                     .draggableStack(
                         controller = bookCardController,
                         thresholdConfig = thresholdConfig,
