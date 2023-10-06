@@ -35,6 +35,7 @@ class MainActivity : ComponentActivity() {
         setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
         setContent {
             val status by connectivityObserver.observe().collectAsState(initial =ConnectivityObserverI.Status.Available)
+            val navController = rememberNavController()
             BookCourtTheme {
                 Scaffold(
                 ) { it->
@@ -43,7 +44,7 @@ class MainActivity : ComponentActivity() {
                         Column(
                             modifier = Modifier.fillMaxSize(),
                         ) {
-                            RootNavigationGraph(navController = rememberNavController())
+                            RootNavigationGraph(navController = navController)
                         }
                     }else{
                         ErrorPage(ErrorType.Internet)

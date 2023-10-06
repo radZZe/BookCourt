@@ -33,6 +33,7 @@ import com.example.bookcourt.utils.Screens
 
 
 @Composable
+<<<<<<< HEAD:app/src/main/java/com/example/bookcourt/ui/bottomNavigationMenu/BottomNavigation.kt
 fun BottomNavigationMenu(
     navController: NavController,
     viewModel: BottomNavViewModel = hiltViewModel()
@@ -41,6 +42,19 @@ fun BottomNavigationMenu(
         viewModel.getBasketSize()
     }
     val basketSize = viewModel.basketSize.collectAsState().value
+=======
+fun BottomNavigationMenu(navController: NavController) {
+    val invalidScreens = listOf(
+        Screens.Statistics.route,
+        Screens.ProfileSettings.route,
+        Screens.Support.route,
+        Screens.AboutApp.route,
+        Screens.OrdersNotifications.route,
+        Screens.Orders.route,
+        Screens.AskQuestion.route,
+        Screens.CategorySelection.route
+    )
+>>>>>>> 07e90c30a7f8da07013d2841b186267848308c61:app/src/main/java/com/example/bookcourt/utils/BottomNavigation.kt
     val windowHeight =
         LocalConfiguration.current.screenHeightDp.toFloat() * LocalDensity.current.density
     val menuHeight = if (windowHeight > LIMIT_WINDOW_HEIGHT) 72.dp else 56.dp
@@ -63,6 +77,7 @@ fun BottomNavigationMenu(
         ) {
             val navBackStackEntry by navController.currentBackStackEntryAsState()
             val currentRoute = navBackStackEntry?.destination?.route
+<<<<<<< HEAD:app/src/main/java/com/example/bookcourt/ui/bottomNavigationMenu/BottomNavigation.kt
             visibility = if (
             //currentRoute == BottomNavMenu.Search.route
                 currentRoute == Graph.PROFILE_NAV_GRAPH
@@ -70,6 +85,9 @@ fun BottomNavigationMenu(
                 || currentRoute == Screens.OrderingScreen.route
                 || currentRoute == Screens.SuccessPurchase.route
             ) {
+=======
+            visibility = if (invalidScreens.contains(currentRoute)) {
+>>>>>>> 07e90c30a7f8da07013d2841b186267848308c61:app/src/main/java/com/example/bookcourt/utils/BottomNavigation.kt
                 0.dp
             } else {
                 menuHeight

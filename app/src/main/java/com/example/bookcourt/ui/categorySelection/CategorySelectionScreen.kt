@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.bookcourt.models.metrics.DataClickMetric
+import com.example.bookcourt.ui.profile.ScreenHeader
 import com.example.bookcourt.ui.theme.LightYellowBtn
 import com.example.bookcourt.ui.theme.MainBgColor
 import com.example.bookcourt.utils.*
@@ -27,14 +28,16 @@ import com.google.accompanist.flowlayout.FlowRow
 
 @Composable
 fun CategorySelectionScreen(
-    onNavigateToBottomNav:()->Unit,
+    onNavigateToBottomNav: () -> Unit = {},
     viewModel: CategorySelectionViewModel = hiltViewModel(),
 ) {
     val windowInfo = rememberWindowSizeClass()
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .background(MainBgColor),
-    contentAlignment = Alignment.Center) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MainBgColor),
+        contentAlignment = Alignment.Center
+    ) {
         Column(modifier = Modifier.padding(horizontal = 16.dp)) {
             HeaderCategoryScreen(windowInfo.screenHeightInfo)
             Spacer(modifier = Modifier.height(24.dp))
@@ -45,10 +48,51 @@ fun CategorySelectionScreen(
                 .align(Alignment.BottomCenter)
                 .padding(bottom = if (windowInfo.screenHeightInfo == WindowInfo.WindowType.Compact) 10.dp else 20.dp)
         ) {
-            NextButton(viewModel, windowInfo.screenHeightInfo,onNavigateToBottomNav)
+            NextButton(viewModel, windowInfo.screenHeightInfo, onNavigateToBottomNav)
         }
 
     }
+}
+
+@Composable
+fun CategorySelectionScreen2(
+    onNavigateToProfile: () -> Unit = {},
+    viewModel: CategorySelectionViewModel = hiltViewModel(),
+) {
+    val windowInfo = rememberWindowSizeClass()
+
+    Column(
+        verticalArrangement = Arrangement.SpaceBetween,
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MainBgColor)
+    ) {
+        ScreenHeader(text = "Предпочтения", goBack = { onNavigateToProfile() })
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MainBgColor),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+                HeaderCategoryScreen(windowInfo.screenHeightInfo)
+                Spacer(modifier = Modifier.height(24.dp))
+                CategoriesGrid(viewModel, windowInfo.screenHeightInfo)
+            }
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = if (windowInfo.screenHeightInfo == WindowInfo.WindowType.Compact) 10.dp else 20.dp)
+            ) {
+                NextButton(viewModel, windowInfo.screenHeightInfo) { onNavigateToProfile() }
+            }
+
+        }
+
+        Spacer(modifier = Modifier)
+    }
+
 }
 
 @Composable
@@ -154,7 +198,11 @@ fun CategoryItem(
 }
 
 @Composable
-fun NextButton(viewModel: CategorySelectionViewModel, windowType: WindowInfo.WindowType,onNavigateToBottomNav:()->Unit) {
+fun NextButton(
+    viewModel: CategorySelectionViewModel,
+    windowType: WindowInfo.WindowType,
+    onNavigateToBottomNav: () -> Unit
+) {
     if (viewModel.selectedCategories.size > 0) {
 
         CustomButton(
@@ -181,26 +229,24 @@ fun NextButton(viewModel: CategorySelectionViewModel, windowType: WindowInfo.Win
 @Composable
 fun HeaderCategoryScreen(windowType: WindowInfo.WindowType) {
     Column(Modifier.fillMaxWidth()) {
-        Text(text = "Какие книги Вам нравятся?",
+        Text(
+            text = "Какие книги Вам нравятся?",
             fontFamily = FontFamily(
                 Font(
                     com.example.bookcourt.R.font.roboto_bold,
                 )
             ),
-            fontSize = 22.sp)
+            fontSize = 22.sp
+        )
         Spacer(modifier = Modifier.height(12.dp))
-        Text(text = "Выберите от одного до пяти жанров, чтобы мы могли подобрать книги именно для вас.",
+        Text(
+            text = "Выберите от одного до пяти жанров, чтобы мы могли подобрать книги именно для вас.",
             fontFamily = FontFamily(
                 Font(
                     com.example.bookcourt.R.font.roboto_regular,
                 )
             ),
-            fontSize = 16.sp)
+            fontSize = 16.sp
+        )
     }
 }
-
-//@Preview(showBackground = true)
-//@Composable
-//fun CategorySelectionScreenPreview(){
-//    CategorySelectionScreen()
-//}

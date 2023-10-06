@@ -66,7 +66,7 @@ fun CustomButton(
         ),
         contentPadding = PaddingValues(vertical = 13.dp)
     ) {
-        Text(text = text, color = textColor, fontSize = 16.sp, fontFamily = Roboto)
+        Text(text = text, color = textColor, fontSize = 14.sp, fontFamily = Roboto)
     }
 }
 
@@ -148,37 +148,6 @@ fun RedirectButton(
     }
 }
 
-@Composable
-fun ShareStatisticsButton(
-    modifier: Modifier = Modifier,
-    statisticsText: String,
-    context: Context,
-    color: Color = LightYellowBtn,
-    text: String = "Поделиться"
-) {
-
-    Button(
-        onClick = {
-            val shareIntent: Intent = Intent().apply {
-                action = Intent.ACTION_SEND
-                putExtra(
-                    Intent.EXTRA_TEXT,
-                    statisticsText
-                )
-                type = "text/plain"
-            }
-            context.startActivity(Intent.createChooser(shareIntent, null))
-        },
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(vertical = 13.dp, horizontal = 20.dp)
-            .clip(RoundedCornerShape(60.dp))
-            .height(45.dp),
-        colors = ButtonDefaults.buttonColors(color)
-    ) {
-        Text(text = text, fontSize = 16.sp, fontFamily = Roboto)
-    }
-}
 
 @Composable
 fun CityItem(
@@ -353,6 +322,19 @@ fun TextRobotoRegular(text: String, color: Color, fontSize: Int) {
     )
 }
 
+@Composable
+fun TextRobotoBold(text: String, color: Color, fontSize: Int) {
+    Text(
+        text = text,
+        color = color,
+        fontSize = fontSize.sp,
+        fontFamily = FontFamily(
+            Font(
+                R.font.roboto_bold
+            )
+        )
+    )
+}
 
 
 
