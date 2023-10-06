@@ -232,7 +232,7 @@ fun BookCard(
             modifier = if (!disableDraggable) {
                 Modifier
                     .width(300.dp)
-                    .height(if (windowHeight > LIMIT_WINDOW_HEIGHT) 500.dp else 430.dp)
+                    .height(if (windowHeight > LIMIT_WINDOW_HEIGHT) 530.dp else 460.dp)
                     .draggableStack(
                         controller = bookCardController,
                         thresholdConfig = thresholdConfig,
@@ -324,14 +324,14 @@ fun BookCardImage(
                     Image(
                         painter = painterResource(id = R.drawable.green_rating),
                         contentDescription = null,
-                        modifier = Modifier.size(if (isBookCardScreen) 16.dp else 21.dp)
+                        modifier = Modifier.size(if (isBookCardScreen) 13.dp else 21.dp)
                     )
-                    Spacer(modifier = Modifier.width(if (isBookCardScreen) 3.dp else 5.dp))
+                    Spacer(modifier = Modifier.width(if (isBookCardScreen) 2.dp else 5.dp))
                     Text(
                         text = "5.0",
                         fontFamily = Roboto,
                         fontWeight = FontWeight.Bold,
-                        fontSize = if (isBookCardScreen) 14.sp else 18.sp,
+                        fontSize = if (isBookCardScreen) 11.sp else 18.sp,
                         color = Color(48, 178, 93)
                     )
                 }

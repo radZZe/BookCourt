@@ -3,6 +3,7 @@ package com.example.bookcourt.ui.profile
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
@@ -66,7 +67,8 @@ fun AboutApp(
                 modifier = Modifier
                     .wrapContentSize()
                     .padding(top = 10.dp, bottom = 10.dp)
-                    .clickable { }, //TODO
+                    .clickable(interactionSource =  MutableInteractionSource(),
+                        indication = null) { }, //TODO
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.google_play_logo), //rate us
@@ -102,7 +104,8 @@ private fun AboutOptions() {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(10.dp)
-                .clickable { }
+                .clickable(interactionSource =  MutableInteractionSource(),
+                    indication = null) { }
         ) {
             TextRobotoRegular(
                 text = "Обработка персональных данных",
@@ -122,7 +125,8 @@ private fun AboutOptions() {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(10.dp)
-                .clickable { }
+                .clickable(interactionSource =  MutableInteractionSource(),
+                    indication = null) { }
         ) {
             TextRobotoRegular(
                 text = "Публичная оферта",
@@ -143,7 +147,8 @@ private fun AboutOptions() {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(10.dp)
-                .clickable { }
+                .clickable(interactionSource =  MutableInteractionSource(),
+                    indication = null) { }
         ) {
             TextRobotoRegular(
                 text = "Лицензионное соглашение",
@@ -164,7 +169,8 @@ private fun AboutOptions() {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(10.dp)
-                .clickable { }
+                .clickable(interactionSource =  MutableInteractionSource(),
+                    indication = null) { }
         ) {
             TextRobotoRegular(
                 text = "Условия ипользования Яндекс.Карт",

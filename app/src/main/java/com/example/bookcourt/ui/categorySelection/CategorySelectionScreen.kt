@@ -5,6 +5,7 @@ import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
@@ -145,7 +146,8 @@ fun CategoryItem(
                         }
                     }
         },
-        modifier = Modifier.clickable {
+        modifier = Modifier.clickable(interactionSource =  MutableInteractionSource(),
+            indication = null) {
             onClick()
         }) { state ->
 

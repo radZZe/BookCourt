@@ -3,6 +3,7 @@ package com.example.bookcourt.ui.verification
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -76,7 +77,8 @@ fun VerificationCodeScreen(
                     tint = PrimaryText,
                     modifier = Modifier
                         .size(42.dp)
-                        .clickable { onNavigateToSignIn() }
+                        .clickable(interactionSource =  MutableInteractionSource(),
+                            indication = null) { onNavigateToSignIn() }
                 )
                 Text(
                     text = "Код подтверждения",
@@ -133,7 +135,8 @@ fun VerificationCodeScreen(
             if (isOver) {
                 Text(
                     text = "Повторно отправить код",
-                    modifier = Modifier.clickable { viewModel.resendCode() },
+                    modifier = Modifier.clickable(interactionSource =  MutableInteractionSource(),
+                        indication = null) { viewModel.resendCode() },
                     textAlign = TextAlign.Center,
                     fontSize = 16.sp,
                     fontFamily = Roboto,

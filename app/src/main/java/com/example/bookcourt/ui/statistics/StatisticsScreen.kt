@@ -9,6 +9,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -191,7 +192,8 @@ fun ValidStatistics(
                     modifier = Modifier
                         .size(22.dp)
                         .alpha(viewModel.getExitBtnAlpha())
-                        .clickable { onNavigateToRecommendation() }
+                        .clickable(interactionSource =  MutableInteractionSource(),
+                            indication = null) { onNavigateToRecommendation() }
                         .onGloballyPositioned {
                             if (viewModel.getExitBtnAlpha() == 0f) {
                                 viewModel.isExitBtnHidden.value = true
@@ -641,7 +643,8 @@ fun EmptyStatistics(
             Image(
                 modifier = Modifier
                     .size(22.dp)
-                    .clickable { onNavigateToRecommendation() },
+                    .clickable(interactionSource =  MutableInteractionSource(),
+                        indication = null) { onNavigateToRecommendation() },
                 painter = painterResource(id = R.drawable.close_icon),
                 contentDescription = "pleading face"
             )

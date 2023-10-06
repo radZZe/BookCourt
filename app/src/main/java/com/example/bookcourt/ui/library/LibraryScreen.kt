@@ -1,6 +1,7 @@
 package com.example.bookcourt.ui.library
 
 import androidx.compose.foundation.*
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -33,7 +34,10 @@ import com.example.bookcourt.utils.rememberWindowSizeClass
 
 
 @Composable
-fun LibraryScreen(onNavigateToSearchScreen:()->Unit, viewModel: LibraryViewModel = hiltViewModel()) {
+fun LibraryScreen(
+    onNavigateToSearchScreen:()->Unit,
+    onNavigateBookCard:(bookId:String)->Unit,
+    viewModel: LibraryViewModel = hiltViewModel()) {
     val windowInfo = rememberWindowSizeClass()
     val context = LocalContext.current
     LaunchedEffect(key1 = Unit){
@@ -52,8 +56,8 @@ fun LibraryScreen(onNavigateToSearchScreen:()->Unit, viewModel: LibraryViewModel
         }
         GenresBar(windowType = windowInfo.screenHeightInfo, viewModel = viewModel)
         SponsorsBar(viewModel = viewModel)
-        RecommendationBar(viewModel = viewModel)
-        PopularBar(viewModel = viewModel)
+        RecommendationBar(viewModel = viewModel,onNavigateBookCard)
+        PopularBar(viewModel = viewModel,onNavigateBookCard)
     }
 }
 
@@ -64,7 +68,8 @@ fun SearchWidget(modifier: Modifier,onClick:()->Unit){
             .clip(shape = RoundedCornerShape(12.dp))
             .fillMaxWidth()
             .background(GrayBackground)
-            .clickable { onClick() }
+            .clickable(interactionSource =  MutableInteractionSource(),
+                indication = null) { onClick() }
     ){
         Text(
             text = "Search",
@@ -167,7 +172,9 @@ fun SponsorItem(
 }
 
 @Composable
-fun RecommendationBar(viewModel: LibraryViewModel){
+fun RecommendationBar(
+    viewModel: LibraryViewModel,
+    onNavigateBookCard:(bookId:String)->Unit,){
     Column {
         Text(
             text = "Вам может понравиться",
@@ -183,7 +190,7 @@ fun RecommendationBar(viewModel: LibraryViewModel){
         ){
             items(viewModel.recommendationBooksFiltered){ book->
                 Spacer(modifier = Modifier.size(16.dp))
-                BookItem(book = book!!)
+                BookItem(book = book!!,onNavigateBookCard)
                 if (book ==viewModel.recommendationBooksFiltered.last()){
                     Spacer(modifier = Modifier.size(16.dp))
                 }
@@ -194,7 +201,9 @@ fun RecommendationBar(viewModel: LibraryViewModel){
 }
 
 @Composable
-fun PopularBar(viewModel: LibraryViewModel){
+fun PopularBar(
+    viewModel: LibraryViewModel,
+    onNavigateBookCard:(bookId:String)->Unit,){
     Column {
         Text(
             text = "Популярно сегодня",
@@ -210,7 +219,7 @@ fun PopularBar(viewModel: LibraryViewModel){
         ){
             items(viewModel.popularBooksFiltered){ book->
                 Spacer(modifier = Modifier.size(16.dp))
-                BookItem(book = book!!)
+                BookItem(book = book!!,onNavigateBookCard)
                 if (book ==viewModel.popularBooksFiltered.last()){
                     Spacer(modifier = Modifier.size(16.dp))
                 }
@@ -222,7 +231,8 @@ fun PopularBar(viewModel: LibraryViewModel){
 
 @Composable
 fun BookItem(
-    book: Book
+    book: Book,
+    onNavigateBookCard:(bookId:String)->Unit,
 ) {
    Box(modifier = Modifier
        .height(120.dp)
@@ -234,8 +244,9 @@ fun BookItem(
             modifier = Modifier
                 .fillMaxSize()
                 .clip(RoundedCornerShape(15.dp))
-                .clickable {
-                   //Todo("переадресация на карточку книги")
+                .clickable(interactionSource =  MutableInteractionSource(),
+                    indication = null) {
+                    onNavigateBookCard(book.isbn!!)
                 },
             contentScale = ContentScale.FillBounds,
             loading = {

@@ -12,6 +12,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.*
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.AbsoluteRoundedCornerShape
 import androidx.compose.foundation.shape.CircleShape
@@ -89,7 +90,8 @@ fun ProfileSettings(
                         .fillMaxWidth()
                         .padding(bottom = 20.dp)
                         .height(26.dp)
-                        .clickable { }
+                        .clickable(interactionSource =  MutableInteractionSource(),
+                            indication = null) { }
                 ) {
                     TextRobotoRegular(
                         text = stringResource(R.string.profile_screen_logOut),
@@ -144,7 +146,8 @@ fun ProfileMainSection(
             .padding(horizontal = 20.dp), horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(modifier = Modifier
-            .clickable {
+            .clickable(interactionSource =  MutableInteractionSource(),
+                indication = null) {
                 galleryLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
             }
             .size(138.dp)
@@ -270,7 +273,8 @@ fun ProfileDatePicker(
         Modifier
             .fillMaxWidth()
             .height(height)
-            .clickable {
+            .clickable(interactionSource =  MutableInteractionSource(),
+                indication = null) {
                 datePickerDialog.show()
             }
     ) {
@@ -364,7 +368,8 @@ fun SexCheckBox(viewModel: ProfileSettingsViewModel) {
                     )
                 )
                 .background(if (viewModel.sex != Sex.MALE) MainBgColor else DarkBgColor)
-                .clickable {
+                .clickable(interactionSource =  MutableInteractionSource(),
+                    indication = null) {
                     viewModel.onSexChanged(Sex.MALE)
                 },
             contentAlignment = Alignment.Center
@@ -396,7 +401,8 @@ fun SexCheckBox(viewModel: ProfileSettingsViewModel) {
                     )
                 )
                 .background(if (viewModel.sex != Sex.FEMALE) MainBgColor else DarkBgColor)
-                .clickable {
+                .clickable(interactionSource =  MutableInteractionSource(),
+                    indication = null) {
                     viewModel.onSexChanged(Sex.FEMALE)
                 },
             contentAlignment = Alignment.Center
@@ -483,7 +489,8 @@ fun ProfileOutlinedTextField(
                 if (trailingIcon != null) Image(
                     painter = painterResource(id = trailingIcon),
                     contentDescription = null,
-                    modifier = Modifier.clickable { onClickTrailingIcon() })
+                    modifier = Modifier.clickable(interactionSource =  MutableInteractionSource(),
+                        indication = null) { onClickTrailingIcon() })
             }
 
         }

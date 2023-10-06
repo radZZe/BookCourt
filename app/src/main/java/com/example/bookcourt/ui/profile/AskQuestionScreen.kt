@@ -61,7 +61,8 @@ fun AskQuestionScreen(
                     contentDescription = "Arrow Back",
                     modifier = Modifier
                         .size(38.dp)
-                        .clickable { onNavigateToSupport() }
+                        .clickable(interactionSource =  MutableInteractionSource(),
+                            indication = null) { onNavigateToSupport() }
                 )
                 Spacer(modifier = Modifier.width(10.dp))
                 TextRobotoRegular(
@@ -75,7 +76,8 @@ fun AskQuestionScreen(
                 contentDescription = "Confirm",
                 modifier = Modifier
 
-                    .clickable { }
+                    .clickable(interactionSource =  MutableInteractionSource(),
+                        indication = null) { }
                     .padding(end = 16.dp)
                     .size(22.dp)
             )

@@ -139,8 +139,8 @@ fun BasketScreen(
                             .background(Color(252, 225, 129))
                             .padding(top = 12.dp, bottom = 12.dp)
                             .clickable(
-                                interactionSource = remember { MutableInteractionSource() },
-                                indication = rememberRipple(color = Color.Black),
+                                interactionSource =  MutableInteractionSource(),
+                                indication = null
                             ) {
                                 //onClickAddButton()
                                 onNavigateToOrdering()
@@ -245,7 +245,8 @@ fun BasketTopBar(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth(0.7f)
-                        .clickable {
+                        .clickable(interactionSource =  MutableInteractionSource(),
+                            indication = null) {
                             onDeleteSelected()
                         },
                     verticalAlignment = Alignment.CenterVertically,
@@ -367,7 +368,8 @@ fun OrderItem(
                     )
                     Image(painterResource(id = R.drawable.ic_delete),
                         contentDescription = null,
-                        modifier = Modifier.clickable {
+                        modifier = Modifier.clickable(interactionSource =  MutableInteractionSource(),
+                            indication = null) {
                             onDeleteItem()
                         })
                 }
@@ -383,7 +385,8 @@ fun OrderItem(
                                 RoundedCornerShape(5.dp)
                             )
                             .background(Color(239, 235, 222))
-                            .clickable {
+                            .clickable(interactionSource =  MutableInteractionSource(),
+                                indication = null) {
                                 if (item.amount > 0) {
                                     onMinusClick()
                                 }
@@ -405,7 +408,8 @@ fun OrderItem(
                                 RoundedCornerShape(5.dp)
                             )
                             .background(Color(239, 235, 222))
-                            .clickable {
+                            .clickable(interactionSource =  MutableInteractionSource(),
+                                indication = null) {
                                 onPlusClick()
                             }, contentAlignment = Alignment.Center
                     ) {

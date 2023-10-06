@@ -3,6 +3,7 @@ package com.example.bookcourt.ui.feedback
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
@@ -25,7 +26,7 @@ import com.example.bookcourt.ui.recommendation.RecommendationTopBar
 fun LeaveFeedbackScreen(
     title: String,
     rate: Int,
-    onBackNavigation: (description:String, needToUpdate:Boolean) -> Unit,
+    onBackNavigation: (description:String, needToUpdate:Boolean,rate:Int) -> Unit,
     viewModel:LeaveFeedbackViewModel = hiltViewModel()
 ) {
     Column(
@@ -36,16 +37,17 @@ fun LeaveFeedbackScreen(
         RecommendationTopBar(
             visibility = true,
             onClickBackArrow = {
-                onBackNavigation(viewModel.feedbackText.value,false)
+                onBackNavigation(viewModel.feedbackText.value,false,rate)
                                },
             title = title
         ) {
             Image(
                 painter = painterResource(id = R.drawable.ic_confirm),
                 contentDescription = null,
-                modifier = Modifier.clickable {
+                modifier = Modifier.clickable(interactionSource =  MutableInteractionSource(),
+                    indication = null) {
                     viewModel.feedbackIsConfirm.value = true
-                    onBackNavigation(viewModel.feedbackText.value,true)
+                    onBackNavigation(viewModel.feedbackText.value,true,rate)
 
                 },
                 contentScale = ContentScale.Crop

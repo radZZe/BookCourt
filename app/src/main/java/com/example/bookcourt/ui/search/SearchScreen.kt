@@ -2,6 +2,7 @@ package com.example.bookcourt.ui.search
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -81,7 +82,8 @@ fun SearchScreen(
                     contentDescription = "Trailing Icon",
                     modifier = Modifier
                         .size(20.dp)
-                        .clickable { viewModel.onClearSearchText() }
+                        .clickable(interactionSource =  MutableInteractionSource(),
+                            indication = null) { viewModel.onClearSearchText() }
                 )
             },
             leadingIcon = {
@@ -90,7 +92,8 @@ fun SearchScreen(
                     contentDescription = "Leading Icon",
                     modifier = Modifier
                         .size(42.dp)
-                        .clickable {
+                        .clickable(interactionSource =  MutableInteractionSource(),
+                            indication = null) {
                             onNavigateBack()
                         }
 
@@ -218,7 +221,8 @@ fun RecentRequests(searchRequests: List<SearchRequest>, viewModel: SearchViewMod
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 10.dp)
-                    .clickable {
+                    .clickable(interactionSource =  MutableInteractionSource(),
+                        indication = null) {
                         viewModel.onSearchTextChange(searchRequest.request)
                     }
 

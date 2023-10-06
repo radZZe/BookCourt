@@ -1,6 +1,7 @@
 package com.example.bookcourt.ui.profile
 
 import androidx.compose.foundation.*
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.AbsoluteRoundedCornerShape
 import androidx.compose.runtime.Composable
@@ -62,7 +63,8 @@ fun OrdersOptions(viewModel: OrdersViewModel) {
                     )
                 )
                 .background(if (viewModel.option != OrderOptions.ACTIVE) MainBgColor else DarkBgColor)
-                .clickable {
+                .clickable(interactionSource =  MutableInteractionSource(),
+                    indication = null) {
                     viewModel.onOptionChanged(OrderOptions.ACTIVE)
                 },
             contentAlignment = Alignment.Center
@@ -94,7 +96,8 @@ fun OrdersOptions(viewModel: OrdersViewModel) {
                     )
                 )
                 .background(if (viewModel.option != OrderOptions.BOUGHT) MainBgColor else DarkBgColor)
-                .clickable {
+                .clickable(interactionSource =  MutableInteractionSource(),
+                    indication = null) {
                     viewModel.onOptionChanged(OrderOptions.BOUGHT)
                 },
             contentAlignment = Alignment.Center

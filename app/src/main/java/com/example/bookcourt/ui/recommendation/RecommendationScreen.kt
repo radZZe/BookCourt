@@ -1,6 +1,5 @@
 package com.example.bookcourt.ui.recommendation
 
-import BottomSheetCustom
 import android.content.Context
 import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -8,7 +7,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,15 +23,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.bookcourt.R
-import com.example.bookcourt.models.basket.BasketItem
 import com.example.bookcourt.models.book.Book
 import com.example.bookcourt.models.feedback.UserFeedback
-import com.example.bookcourt.models.metrics.DataClickMetric
 import com.example.bookcourt.ui.notifications.NotificationNothingToShow
-import com.example.bookcourt.ui.theme.LightGreyColor
 import com.example.bookcourt.ui.theme.MainBgColor
 import com.example.bookcourt.utils.*
 import com.skydoves.cloudy.Cloudy
@@ -43,7 +37,7 @@ import com.example.bookcourt.utils.Constants.LIMIT_WINDOW_HEIGHT
 fun RecommendationScreen(
     onNavigateToStatistics: () -> Unit,
     onNavigateToProfile: () -> Unit,
-    onNavigateBookCard:(bookJson:String)->Unit,
+    onNavigateBookCard:(bookId:String)->Unit,
     viewModel: RecommendationViewModel = hiltViewModel(),
 ) {
 
@@ -65,7 +59,7 @@ fun RecommendationContent(
 ) {
     val windowHeight =
         LocalConfiguration.current.screenHeightDp.toFloat() * LocalDensity.current.density
-    val cardStackHeight = if (windowHeight > LIMIT_WINDOW_HEIGHT) 530.dp else 450.dp
+    val cardStackHeight = if (windowHeight > LIMIT_WINDOW_HEIGHT) 530.dp else 460.dp
     val counter = viewModel.counter
     val limitSwipeValue = viewModel.limitSwipeValue
     val context = LocalContext.current
@@ -174,7 +168,8 @@ fun MainRecommendationContent(
                 Box(modifier = Modifier) {
                     Spacer(modifier = Modifier.height(if (windowHeight > LIMIT_WINDOW_HEIGHT) 10.dp else 5.dp))
                     CardStack(
-                        modifier = Modifier.height(cardStackHeight).clickable {
+                        modifier = Modifier.height(cardStackHeight).clickable(interactionSource =  MutableInteractionSource(),
+                            indication = null) {
                             if (frontItem != null) {
                                 onNavigateBookCard(frontItem.isbn!!)
                             }
@@ -451,7 +446,8 @@ fun RecommendationTopBar(
                 Image(
                     painter = painterResource(id = R.drawable.back_arrow),
                     contentDescription = null,
-                    modifier = Modifier.clickable {
+                    modifier = Modifier.clickable(interactionSource =  MutableInteractionSource(),
+                        indication = null) {
                         onClickBackArrow()
 
                     }
@@ -560,7 +556,8 @@ fun FeedbackBar(
             .clip(RoundedCornerShape(20))
             .background(Color(247, 247, 247))
             .padding(8.dp)
-            .clickable {
+            .clickable(interactionSource =  MutableInteractionSource(),
+                indication = null) {
                 onNavigateToFeedback(title)
             }
     ) {
@@ -586,13 +583,13 @@ fun FeedbackBar(
                     Text(
                         text = "5,0",
                         fontFamily = FontFamily(Font(R.font.roboto_bold)),
-                        fontSize = 20.sp
+                        fontSize = 18.sp
                     )
                 }
                 RobotoRegularText(
                     text = "84 отзыва",
                     color = Color(140, 140, 140),
-                    fontSize = 16
+                    fontSize = 13
                 )
             }
             Image(painter = painterResource(id = R.drawable.right_arrow), contentDescription = null)
@@ -656,7 +653,8 @@ fun RatingBar(
                 painter = painterResource(id = R.drawable.star_selected),
                 contentDescription = null,
                 modifier = Modifier
-                    .clickable(enabled = enabled) {
+                    .clickable(enabled = enabled,interactionSource =  MutableInteractionSource(),
+                        indication = null) {
                         onClick(i)
                     }
                     .size(starSize.dp)
@@ -667,7 +665,8 @@ fun RatingBar(
                 painter = painterResource(id = R.drawable.star_unselected),
                 contentDescription = null,
                 modifier = Modifier
-                    .clickable(enabled = enabled) {
+                    .clickable(enabled = enabled,interactionSource =  MutableInteractionSource(),
+                        indication = null) {
                         numberOfSelectedStars.value = i
                         disableLeaveFeedbackVisibility()
                         onClick(i)

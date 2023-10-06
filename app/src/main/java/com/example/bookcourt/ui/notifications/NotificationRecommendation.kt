@@ -2,6 +2,7 @@ package com.example.bookcourt.ui.recommendation
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -35,7 +36,8 @@ fun NotificationRecommendation(navigateToStatistics: () -> Unit, closeCallback: 
             Image(
                 painterResource(id = R.drawable.close_icon),
                 contentDescription = "",
-                modifier = Modifier.clickable {
+                modifier = Modifier.clickable(interactionSource =  MutableInteractionSource(),
+                    indication = null) {
                     closeCallback()
                 }
             )

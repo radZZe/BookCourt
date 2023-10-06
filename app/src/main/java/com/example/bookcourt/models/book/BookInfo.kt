@@ -10,7 +10,7 @@ data class BookInfo(
     val author: String,
     val description: String,
     val numberOfPages: String,
-    val rate: Float,
+    var rate: Float,
     val genre: String,
     val price: Int,
     val image:String,

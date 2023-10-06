@@ -44,6 +44,9 @@ import com.example.bookcourt.ui.theme.MainBgColor
 import com.example.bookcourt.utils.Buttons
 import com.example.bookcourt.utils.Constants
 import com.example.bookcourt.utils.Screens
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun BookCardScreen(
@@ -53,12 +56,16 @@ fun BookCardScreen(
     onNavigateListFeedbacks:(title:String)->Unit,
     viewModel:BookCardViewModel = hiltViewModel(),
     feedbackText:String? = null,
-    needToUpdate:Boolean = false){
+    needToUpdate:Boolean = false,
+    newRate:Int?=null){
     val context = LocalContext.current
     LaunchedEffect(key1 = Unit){
         viewModel.getBookByID(context,bookId)
     }
     val book = viewModel.book.value
+    if(needToUpdate && newRate!=null){
+        book!!.bookInfo.rate = newRate.toFloat()
+    }
     if(book != null){
         Column(modifier = Modifier
             .fillMaxSize()
@@ -71,7 +78,7 @@ fun BookCardScreen(
                 LocalConfiguration.current.screenHeightDp.toFloat() * LocalDensity.current.density
             BookCardTopBar({onNavigateBack()},R.drawable.igra_slov_logo)
             Spacer(modifier = Modifier.height(18.dp))
-            Box(Modifier.fillMaxWidth().height(if (windowHeight > Constants.LIMIT_WINDOW_HEIGHT) 400.dp else 350.dp)){
+            Box(Modifier.fillMaxWidth().height(if (windowHeight > Constants.LIMIT_WINDOW_HEIGHT) 340.dp else 300.dp)){
                 Box(modifier = Modifier
                     .clip(RoundedCornerShape(23.dp))
                     .fillMaxWidth(0.5f)
@@ -117,7 +124,8 @@ fun BookCardTopBar(
             Image(
                 painter = painterResource(id = R.drawable.back_arrow),
                 contentDescription = null,
-                modifier = Modifier.clickable {
+                modifier = Modifier.clickable(interactionSource =  MutableInteractionSource(),
+                    indication = null) {
                     onBackNavigate()
 
                 }
@@ -343,16 +351,18 @@ fun BookCardMainContent(
                     .height(16.dp)
                     .fillMaxWidth()
             )
+            val formatter = DateTimeFormatter.ofPattern("dd.MMMM.yyyy")
+            val current = LocalDateTime.now().format(formatter)
             FeedbackBlock(
                 username = "username",
-                date = "date",
-                title = "title",
+                date = current,
+                title = book.bookInfo.title,
                 description = feedbackText ?: "",
                 rate = book.bookInfo.rate.toInt(),
                 leaveFeedbackVisibility = !needToUpdate,
-                onNavigateToFeedback = {s->},
+                onNavigateToFeedback = {s-> onNavigateListFeedbacks(s)},
                 onClickRatingBar = {
-                        onNavigateLeaveFeedback("title",it)
+                        onNavigateLeaveFeedback(book.bookInfo.title,it)
                 },
                 disableLeaveFeedbackVisibility = {
 
@@ -598,8 +608,8 @@ fun BookCardMainContent(
                     .background(Color(252, 225, 129))
                     .padding(top = 12.dp, bottom = 12.dp)
                     .clickable(
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = rememberRipple(color = Color.Black),
+                        interactionSource =  MutableInteractionSource(),
+                        indication = null,
                     ) {
                         onClickAddButton()
 

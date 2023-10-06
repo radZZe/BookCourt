@@ -12,6 +12,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.*
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.AbsoluteRoundedCornerShape
 import androidx.compose.foundation.shape.CircleShape
@@ -293,7 +294,8 @@ fun OptionItem(
         modifier = Modifier
             .fillMaxWidth()
             .padding(10.dp)
-            .clickable { onClick() }
+            .clickable(interactionSource =  MutableInteractionSource(),
+                indication = null) { onClick() }
     ) {
         Image(painter = painterResource(id = icon), contentDescription = "Leading Icon")
         Spacer(modifier = Modifier.width(10.dp))
@@ -318,7 +320,8 @@ fun OptionItem(
         modifier = Modifier
             .fillMaxWidth()
             .padding(10.dp)
-            .clickable { onClick() }
+            .clickable(interactionSource =  MutableInteractionSource(),
+                indication = null) { onClick() }
     ) {
         Image(painter = painterResource(id = icon), contentDescription = "Leading Icon")
         Spacer(modifier = Modifier.width(10.dp))
@@ -348,7 +351,8 @@ fun OptionItem(
         modifier = Modifier
             .fillMaxWidth()
             .padding(10.dp)
-            .clickable { onClick() }
+            .clickable(interactionSource =  MutableInteractionSource(),
+                indication = null) { onClick() }
     ) {
         Image(painter = painterResource(id = icon), contentDescription = "Leading Icon")
         Spacer(modifier = Modifier.width(10.dp))
@@ -377,21 +381,24 @@ private fun StatsHighlights(
             contentDescription = "last read",
             modifier = Modifier
                 .size(118.dp)
-                .clickable { onNavigateToStatistics() }
+                .clickable(interactionSource =  MutableInteractionSource(),
+                    indication = null) { onNavigateToStatistics() }
         )
         Image(
             painter = painterResource(id = R.drawable.fav_authors),
             contentDescription = "authors",
             modifier = Modifier
                 .size(118.dp)
-                .clickable { onNavigateToStatistics() }
+                .clickable(interactionSource =  MutableInteractionSource(),
+                    indication = null) { onNavigateToStatistics() }
         )
         Image(
             painter = painterResource(id = R.drawable.fav_genres),
             contentDescription = "genres",
             modifier = Modifier
                 .size(118.dp)
-                .clickable { onNavigateToStatistics() }
+                .clickable(interactionSource =  MutableInteractionSource(),
+                    indication = null) { onNavigateToStatistics() }
         )
     }
 }
@@ -436,7 +443,8 @@ fun ScreenHeader(
             contentDescription = "Arrow Back",
             modifier = Modifier
                 .size(38.dp)
-                .clickable { goBack() }
+                .clickable(interactionSource =  MutableInteractionSource(),
+                    indication = null) { goBack() }
         )
         Spacer(modifier = Modifier.width(10.dp))
         TextRobotoRegular(

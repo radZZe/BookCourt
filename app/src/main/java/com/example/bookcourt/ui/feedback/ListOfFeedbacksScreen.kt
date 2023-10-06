@@ -2,6 +2,7 @@ package com.example.bookcourt.ui.feedback
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -38,7 +39,8 @@ fun ListOfFeedbacksScreen(
                 Image(
                     painter = painterResource(id = R.drawable.back_arrow),
                     contentDescription = null,
-                    modifier = Modifier.clickable {
+                    modifier = Modifier.clickable(interactionSource =  MutableInteractionSource(),
+                        indication = null) {
                         onNavigateToRecommendationScreen()
 
                     }

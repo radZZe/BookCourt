@@ -18,20 +18,16 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.bookcourt.ui.basket.basketScreen.BasketScreen
 import com.example.bookcourt.ui.BookCardScreen
-<<<<<<< HEAD
 import com.example.bookcourt.ui.basket.SuccessPurchaseScreen
 import com.example.bookcourt.ui.basket.orderingScreen.OrderingScreen
 import com.example.bookcourt.ui.bottomNavigationMenu.BottomNavViewModel
-=======
 import com.example.bookcourt.ui.categorySelection.CategorySelectionScreen2
->>>>>>> 07e90c30a7f8da07013d2841b186267848308c61
 import com.example.bookcourt.ui.feedback.LeaveFeedbackScreen
 import com.example.bookcourt.ui.feedback.ListOfFeedbacksScreen
 import com.example.bookcourt.ui.library.LibraryScreen
 import com.example.bookcourt.ui.profile.*
 import com.example.bookcourt.ui.recommendation.RecommendationScreen
 import com.example.bookcourt.ui.search.SearchScreen
-import com.example.bookcourt.ui.statistics.LibraryPlug
 import com.example.bookcourt.ui.statistics.Statistics
 import com.example.bookcourt.utils.BottomNavMenu
 import com.example.bookcourt.ui.bottomNavigationMenu.BottomNavigationMenu
@@ -60,7 +56,7 @@ fun BottomNavigationGraph(
     NavHost(
         navController = navController,
         route = Graph.BOTTOM_NAV_GRAPH,
-        startDestination = BottomNavMenu.Recommendations.route
+        startDestination = BottomNavMenu.Library.route
     ) {
         composable(BottomNavMenu.Recommendations.route) {
             BackHandler(true) {}
@@ -71,28 +67,16 @@ fun BottomNavigationGraph(
             )
         }
         composable(route = BottomNavMenu.Basket.route) {
-<<<<<<< HEAD
             BasketScreen(
                 onNavigateToOrdering = { navController.navigate(Screens.OrderingScreen.route)}
             )
-=======
-            SearchScreen(
-                onNavigateBack = { navController.popBackStack() }
-            )
+
         }
-        composable(route = BottomNavMenu.Basket.route) {
-            BasketScreen()
->>>>>>> 07e90c30a7f8da07013d2841b186267848308c61
-//            SearchScreen(
-//                onNavigateBack = {navController.popBackStack()}
-//            )
-          //YATO
-        //composable(route = BottomNavMenu.Basket.route) {
-        //PickUpPointScreen()
-        }
+
         composable(route = BottomNavMenu.Library.route) {
             LibraryScreen(
-                onNavigateToSearchScreen = { navController.navigate(Screens.Search.route) }
+                onNavigateToSearchScreen = { navController.navigate(Screens.Search.route) },
+                onNavigateBookCard = {book-> navController.navigate("${Screens.BookCardScreen.route}/$book")}
             )
         }
         composable(route = BottomNavMenu.Profile.route) {
@@ -118,13 +102,23 @@ fun BottomNavigationGraph(
 //            )
 //        }
         composable(route = BottomNavMenu.Profile.route){
-            ProfileScreen(onNavigateToRecommendation = { navController.navigate(Graph.BOTTOM_NAV_GRAPH)})
+            ProfileScreen(
+                onNavigateToStatistics = { navController.navigate(Screens.Statistics.route) },
+                onNavigateToAbout = { navController.navigate(Screens.AboutApp.route) },
+                onNavigateToSettings = { navController.navigate(Screens.ProfileSettings.route) },
+                onNavigateToSupport = { navController.navigate(Screens.Support.route) },
+                onNavigateToOrdersNotifications = { navController.navigate(Screens.OrdersNotifications.route) },
+                onNavigateToWantToRead = { navController.navigate(Screens.WantToRead.route) },
+                onNavigateToOrders = { navController.navigate(Screens.Orders.route) },
+                onNavigateToCategorySelection = { navController.navigate(Screens.CategorySelection.route) })
+
         }
 
         composable(
             "${Screens.BookCardScreen.route}/{book}"
         ) {
             val feedbackText = it.savedStateHandle.get<String>("description")
+            val rate = it.savedStateHandle.get<Int>("rate")
             val arguments = requireNotNull(it.arguments)
             val bookId = arguments.getString("book", "not found")
 
@@ -137,7 +131,8 @@ fun BottomNavigationGraph(
                 onNavigateListFeedbacks = { title ->
                     navController.navigate("${Screens.FeedbackBlock.route}/$title") },
                 feedbackText = feedbackText,
-                needToUpdate = needToUpdate ?: false
+                needToUpdate = needToUpdate ?: false,
+                newRate = rate ?:null
             )
         }
         composable(route = "${Screens.LeaveFeedback.route}/{title}/{rate}", arguments = listOf(
@@ -148,7 +143,7 @@ fun BottomNavigationGraph(
             val title = arguments.getString("title", "not found")
             val rate = arguments.getInt("rate", 0)
             LeaveFeedbackScreen(title = title, rate = rate,
-                onBackNavigation = { description, needToUpdate ->
+                onBackNavigation = { description, needToUpdate,rate ->
                     navController.previousBackStackEntry?.savedStateHandle?.set(
                         "description",
                         description
@@ -156,6 +151,10 @@ fun BottomNavigationGraph(
                     navController.previousBackStackEntry?.savedStateHandle?.set(
                         "needToUpdate",
                         needToUpdate
+                    )
+                    navController.previousBackStackEntry?.savedStateHandle?.set(
+                        "rate",
+                        rate
                     )
                     navController.popBackStack()
                 })
@@ -173,7 +172,6 @@ fun BottomNavigationGraph(
             )
         }
 
-<<<<<<< HEAD
         composable(
             route = "${Screens.OrderingScreen.route}"
         ) {
@@ -182,7 +180,7 @@ fun BottomNavigationGraph(
                 navController.navigate(Screens.SuccessPurchase.route)
             })
         }
-=======
+
         composable(route = Screens.AboutApp.route) {
             AboutApp(
                 onNavigateToProfile = { navController.navigate(Screens.Profile.route) }
@@ -223,11 +221,6 @@ fun BottomNavigationGraph(
         composable(route = Screens.CategorySelection.route) {
             CategorySelectionScreen2(onNavigateToProfile = { navController.navigate(Screens.Profile.route) })
         }
-
-    }
-}
->>>>>>> 07e90c30a7f8da07013d2841b186267848308c61
-
         composable(route = "${Screens.SuccessPurchase.route}"){
             SuccessPurchaseScreen(onNavigateBack = {navController.popBackStack()})
         }

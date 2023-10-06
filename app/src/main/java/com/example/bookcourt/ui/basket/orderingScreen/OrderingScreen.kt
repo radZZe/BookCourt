@@ -224,8 +224,8 @@ fun OrderingScreen(
                         .background(Color(252, 225, 129))
                         .padding(top = 12.dp, bottom = 12.dp)
                         .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = rememberRipple(color = Color.Black),
+                            interactionSource =  MutableInteractionSource(),
+                            indication = null,
                         ) {
                             //onClickAddButton()
                             onSuccessPurchaseNavigate()

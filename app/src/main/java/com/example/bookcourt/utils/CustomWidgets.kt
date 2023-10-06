@@ -99,7 +99,8 @@ fun ReturnTopBar(
             Image(
                 modifier = Modifier
                     .clip(RoundedCornerShape(20.dp))
-                    .clickable {
+                    .clickable(interactionSource =  MutableInteractionSource(),
+                        indication = null) {
                     onNavigateBack()
                     },
                 painter = painterResource(id = R.drawable.arrow_left),
@@ -158,7 +159,8 @@ fun CityItem(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable {
+            .clickable(interactionSource =  MutableInteractionSource(),
+                indication = null) {
                 onSelect(title)
             }
             .padding(start = 14.dp, end = 14.dp,)
@@ -226,8 +228,8 @@ fun CityDropDownMenu(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(
-                interactionSource = interactionSource,
-                indication = rememberRipple(bounded = true),
+                interactionSource =  MutableInteractionSource(),
+                indication = null,
                 onClick = { expanded = !expanded }
             )
             .onGloballyPositioned {
