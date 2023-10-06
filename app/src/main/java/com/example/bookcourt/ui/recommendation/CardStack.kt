@@ -170,7 +170,7 @@ fun BookCard(
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxSize()
-            .zIndex(if (isFrontItem) 3f else 1f),
+            .zIndex(if (isFrontItem) 30f else 1f),
     ) {
 
         if (isFrontItem) {
@@ -232,7 +232,7 @@ fun BookCard(
             modifier = if (!disableDraggable) {
                 Modifier
                     .width(300.dp)
-                    .height(if (windowHeight > LIMIT_WINDOW_HEIGHT) 470.dp else 400.dp)
+                    .height(if (windowHeight > LIMIT_WINDOW_HEIGHT) 500.dp else 430.dp)
                     .draggableStack(
                         controller = bookCardController,
                         thresholdConfig = thresholdConfig,
@@ -245,11 +245,7 @@ fun BookCard(
                         rotationZ = if (isFrontItem) bookCardController.rotation.value else 0f,
                     )
                     .alpha(alpha)
-                    .align(Alignment.Center).shadow(
-                        elevation = 20.dp,
-                        spotColor = Color(30, 173, 0, 255),
-                        shape = RoundedCornerShape(20.dp)
-                    )
+                    .align(Alignment.Center)
             } else {
                 Modifier
                     .width(300.dp)

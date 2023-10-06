@@ -7,7 +7,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookcourt.data.repositories.NetworkRepository
+import com.example.bookcourt.data.room.basket.BasketRepository
+import com.example.bookcourt.data.room.basket.BasketRepositoryI
 import com.example.bookcourt.models.BookDto
+import com.example.bookcourt.models.basket.BasketItem
 import com.example.bookcourt.models.book.Book
 import com.example.bookcourt.models.user.User
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,7 +24,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BookCardViewModel @Inject constructor(
-    private val networkRepository: NetworkRepository
+    private val networkRepository: NetworkRepository,
+    private val basketRepository: BasketRepositoryI
 ):ViewModel() {
 
     var book = mutableStateOf<Book?>(null)
@@ -48,6 +52,12 @@ class BookCardViewModel @Inject constructor(
             } catch (ioe: IOException) {
                 Log.d("getAllBooks", "error cause ${ioe.cause}")
             }
+        }
+    }
+
+    fun addBasketItem(item:BasketItem){
+        viewModelScope.launch(Dispatchers.IO) {
+            basketRepository.addData(item)
         }
     }
 

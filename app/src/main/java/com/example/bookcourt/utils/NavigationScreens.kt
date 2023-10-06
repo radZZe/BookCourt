@@ -27,6 +27,7 @@ sealed class Screens(
     object Orders: Screens(route = "Orders", title = "Orders")
     object AskQuestion: Screens(route = "Ask Question", title = "Ask Question")
     object BookCardScreen:Screens(route = "BookCardScreen",title = "BookCardScreen")
+    object OrderingScreen:Screens(route = "OrderingScreen",title = "OrderingScreen")
 }
 
 sealed class BottomNavMenu(

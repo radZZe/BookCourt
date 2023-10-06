@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -16,10 +17,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.bookcourt.ui.basket.basketScreen.BasketScreen
-import com.example.bookcourt.models.BookDto
-import com.example.bookcourt.models.book.Book
 import com.example.bookcourt.ui.BookCardScreen
+<<<<<<< HEAD
+import com.example.bookcourt.ui.basket.SuccessPurchaseScreen
+import com.example.bookcourt.ui.basket.orderingScreen.OrderingScreen
+import com.example.bookcourt.ui.bottomNavigationMenu.BottomNavViewModel
+=======
 import com.example.bookcourt.ui.categorySelection.CategorySelectionScreen2
+>>>>>>> 07e90c30a7f8da07013d2841b186267848308c61
 import com.example.bookcourt.ui.feedback.LeaveFeedbackScreen
 import com.example.bookcourt.ui.feedback.ListOfFeedbacksScreen
 import com.example.bookcourt.ui.library.LibraryScreen
@@ -29,11 +34,9 @@ import com.example.bookcourt.ui.search.SearchScreen
 import com.example.bookcourt.ui.statistics.LibraryPlug
 import com.example.bookcourt.ui.statistics.Statistics
 import com.example.bookcourt.utils.BottomNavMenu
-import com.example.bookcourt.utils.BottomNavigationMenu
+import com.example.bookcourt.ui.bottomNavigationMenu.BottomNavigationMenu
 import com.example.bookcourt.utils.Graph
 import com.example.bookcourt.utils.Screens
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
 
 @Composable
 fun HomeScreen(navController: NavHostController = rememberNavController()) {
@@ -68,12 +71,18 @@ fun BottomNavigationGraph(
             )
         }
         composable(route = BottomNavMenu.Basket.route) {
+<<<<<<< HEAD
+            BasketScreen(
+                onNavigateToOrdering = { navController.navigate(Screens.OrderingScreen.route)}
+            )
+=======
             SearchScreen(
                 onNavigateBack = { navController.popBackStack() }
             )
         }
         composable(route = BottomNavMenu.Basket.route) {
             BasketScreen()
+>>>>>>> 07e90c30a7f8da07013d2841b186267848308c61
 //            SearchScreen(
 //                onNavigateBack = {navController.popBackStack()}
 //            )
@@ -164,6 +173,16 @@ fun BottomNavigationGraph(
             )
         }
 
+<<<<<<< HEAD
+        composable(
+            route = "${Screens.OrderingScreen.route}"
+        ) {
+            OrderingScreen(onBackNavigation = {navController.popBackStack()}, onSuccessPurchaseNavigate =
+            {
+                navController.navigate(Screens.SuccessPurchase.route)
+            })
+        }
+=======
         composable(route = Screens.AboutApp.route) {
             AboutApp(
                 onNavigateToProfile = { navController.navigate(Screens.Profile.route) }
@@ -207,7 +226,11 @@ fun BottomNavigationGraph(
 
     }
 }
+>>>>>>> 07e90c30a7f8da07013d2841b186267848308c61
 
-fun convertBookJson(json:String): Book {
-    return Json.decodeFromString<BookDto>(json).toBook()
+        composable(route = "${Screens.SuccessPurchase.route}"){
+            SuccessPurchaseScreen(onNavigateBack = {navController.popBackStack()})
+        }
+
+    }
 }

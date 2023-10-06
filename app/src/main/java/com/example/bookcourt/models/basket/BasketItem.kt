@@ -9,6 +9,7 @@ data class BasketItem(
     @PrimaryKey(autoGenerate = true)
     val id:Int? = null,
     val data: Book,
-    val amount:Int = 1
+    var amount:Int = 1,
+    var isSelected:Boolean = false,
 )
 

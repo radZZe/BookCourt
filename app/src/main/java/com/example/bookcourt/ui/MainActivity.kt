@@ -14,13 +14,10 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.example.bookcourt.ui.graphs.RootNavigationGraph
 import com.example.bookcourt.ui.theme.BookCourtTheme
-import androidx.navigation.NavController
 import com.example.bookcourt.data.observers.ConnectivityObserver
 import com.example.bookcourt.data.observers.ConnectivityObserverI
 import com.example.bookcourt.ui.error_pages.ErrorPage
 import com.example.bookcourt.ui.error_pages.ErrorType
-import com.example.bookcourt.ui.theme.BookCourtTheme
-import com.example.bookcourt.utils.BottomNavigationMenu
 import com.example.bookcourt.utils.MapApi
 import com.yandex.mapkit.MapKitFactory
 import dagger.hilt.android.AndroidEntryPoint

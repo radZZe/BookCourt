@@ -6,7 +6,7 @@ import javax.inject.Inject
 
 class BasketRepository @Inject constructor(
     private val source: BasketSource):BasketRepositoryI {
-    override suspend fun getData(): List<BasketItem> {
+    override suspend fun getData(): Flow<List<BasketItem>> {
         return source.getData()
     }
 
@@ -16,6 +16,10 @@ class BasketRepository @Inject constructor(
 
     override suspend fun deleteData(item: BasketItem) {
         return source.deleteData(item)
+    }
+
+    override suspend fun updateData(item: BasketItem) {
+        return source.updateData(item)
     }
 
 }
