@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.*
 
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
@@ -41,6 +42,7 @@ import com.example.bookcourt.ui.recommendation.BookCardImage
 import com.example.bookcourt.ui.recommendation.CategoriesBlock
 import com.example.bookcourt.ui.recommendation.FeedbackBlock
 import com.example.bookcourt.ui.theme.MainBgColor
+import com.example.bookcourt.ui.theme.dimens
 import com.example.bookcourt.utils.Buttons
 import com.example.bookcourt.utils.Constants
 import com.example.bookcourt.utils.Screens
@@ -77,8 +79,8 @@ fun BookCardScreen(
             val windowHeight =
                 LocalConfiguration.current.screenHeightDp.toFloat() * LocalDensity.current.density
             BookCardTopBar({onNavigateBack()},R.drawable.igra_slov_logo)
-            Spacer(modifier = Modifier.height(18.dp))
-            Box(Modifier.fillMaxWidth().height(if (windowHeight > Constants.LIMIT_WINDOW_HEIGHT) 340.dp else 300.dp)){
+            Spacer(modifier = Modifier.height(MaterialTheme.dimens.paddingBig.dp))
+            Box(Modifier.fillMaxWidth().height(MaterialTheme.dimens.bookCardHeight.dp)){
                 Box(modifier = Modifier
                     .clip(RoundedCornerShape(23.dp))
                     .fillMaxWidth(0.5f)
@@ -117,7 +119,7 @@ fun BookCardTopBar(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(55.dp)
+            //.height(55.dp)
     ) {
         Row(modifier = Modifier.align(Alignment.CenterStart)) {
             Spacer(modifier = Modifier.width(12.dp))
@@ -128,25 +130,25 @@ fun BookCardTopBar(
                     indication = null) {
                     onBackNavigate()
 
-                }
+                }.size(MaterialTheme.dimens.iconSizeSmall.dp)
             )
         }
         Image(painter = painterResource(id = imageLogo), contentDescription = null,modifier = Modifier
             .align(
                 Alignment.Center
             )
-            .size(45.dp))
+            .size(MaterialTheme.dimens.iconSizeBig.dp))
         Row(modifier = Modifier.align(Alignment.CenterEnd)) {
             Image(
                 painter = painterResource(id = R.drawable.favorite_book_topbar),
                 contentDescription = null,
-                modifier = Modifier,
+                modifier = Modifier.size(MaterialTheme.dimens.iconSizeBig.dp),
                 contentScale = ContentScale.Crop
             )
             Image(
                 painter = painterResource(id = R.drawable.share_icon),
                 contentDescription = null,
-                modifier = Modifier,
+                modifier = Modifier.size(MaterialTheme.dimens.iconSizeBig.dp),
                 contentScale = ContentScale.Crop
             )
         }
@@ -186,12 +188,7 @@ fun BookCardMainContent(
             Text(
                 text = book.bookInfo.title,
                 color = Color.Black,
-                fontSize = 16.sp,
-                fontFamily = FontFamily(
-                    Font(
-                        R.font.roboto_bold,
-                    )
-                ),
+                style = MaterialTheme.typography.body2,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
@@ -208,12 +205,7 @@ fun BookCardMainContent(
                     modifier = Modifier,
                     text = "${book.bookInfo.author} | ${book.bookInfo.genre}",
                     color = Color(134, 134, 134),
-                    fontSize = 14.sp,
-                    fontFamily = FontFamily(
-                        Font(
-                            R.font.roboto_regular,
-                        )
-                    )
+                    style= MaterialTheme.typography.subtitle1,
                 )
 
 
@@ -252,22 +244,12 @@ fun BookCardMainContent(
                     Text(
                         text = "423",
                         color = Color.Black,
-                        fontFamily = FontFamily(
-                            Font(
-                                R.font.roboto_medium,
-                            )
-                        ),
-                        fontSize = 14.sp
+                        style = MaterialTheme.typography.subtitle2,
                     )
                     Text(
                         text = "Лайки",
                         color = Color(134, 134, 134),
-                        fontFamily = FontFamily(
-                            Font(
-                                R.font.roboto_medium,
-                            )
-                        ),
-                        fontSize = 14.sp
+                        style = MaterialTheme.typography.subtitle2,
                     )
                 }
                 Column(
@@ -277,22 +259,12 @@ fun BookCardMainContent(
                     Text(
                         text = "124",
                         color = Color.Black,
-                        fontFamily = FontFamily(
-                            Font(
-                                R.font.roboto_medium,
-                            )
-                        ),
-                        fontSize = 14.sp
+                        style = MaterialTheme.typography.subtitle2,
                     )
                     Text(
                         text = "Дизлайки",
                         color = Color(134, 134, 134),
-                        fontFamily = FontFamily(
-                            Font(
-                                R.font.roboto_medium,
-                            )
-                        ),
-                        fontSize = 14.sp
+                        style = MaterialTheme.typography.subtitle2,
                     )
                 }
                 Column(
@@ -302,22 +274,12 @@ fun BookCardMainContent(
                     Text(
                         text = "56",
                         color = Color.Black,
-                        fontFamily = FontFamily(
-                            Font(
-                                R.font.roboto_medium,
-                            )
-                        ),
-                        fontSize = 14.sp
+                        style = MaterialTheme.typography.subtitle2,
                     )
                     Text(
                         text = "Интересуются",
                         color = Color(134, 134, 134),
-                        fontFamily = FontFamily(
-                            Font(
-                                R.font.roboto_medium,
-                            )
-                        ),
-                        fontSize = 14.sp
+                        style = MaterialTheme.typography.subtitle2,
                     )
                 }
                 Column(
@@ -327,22 +289,12 @@ fun BookCardMainContent(
                     Text(
                         text = book.bookInfo.rate.toString(),
                         color = Color.Black,
-                        fontFamily = FontFamily(
-                            Font(
-                                R.font.roboto_medium,
-                            )
-                        ),
-                        fontSize = 14.sp
+                        style = MaterialTheme.typography.subtitle2,
                     )
                     Text(
                         text = "Оценка",
                         color = Color(134, 134, 134),
-                        fontFamily = FontFamily(
-                            Font(
-                                R.font.roboto_medium,
-                            )
-                        ),
-                        fontSize = 14.sp
+                        style = MaterialTheme.typography.subtitle2,
                     )
                 }
             }
@@ -386,27 +338,17 @@ fun BookCardMainContent(
             )
             Box(modifier = Modifier.fillMaxWidth()){
                 Column(modifier = Modifier
-                    .height(134.dp)
+                    //.height(134.dp)
                     .align(Alignment.TopStart)) {
                     Text(
                         text = "Описание",
                         color = Color.Black,
-                        fontFamily = FontFamily(
-                            Font(
-                                R.font.roboto_bold,
-                            )
-                        ),
-                        fontSize = 16.sp,
+                        style = MaterialTheme.typography.body2,
                         modifier = Modifier.padding(bottom = 2.dp)
                     )
                     Text(
                         text = book.bookInfo.description,
-                        fontFamily = FontFamily(
-                            Font(
-                                R.font.roboto_regular,
-                            )
-                        ),
-                        fontSize = 16.sp,
+                        style = MaterialTheme.typography.body1,
                         color = Color.Black,
                         maxLines = 5,
                         overflow = TextOverflow.Ellipsis
@@ -416,7 +358,7 @@ fun BookCardMainContent(
 
             Spacer(
                 modifier = Modifier
-                    .height(16.dp)
+                    .height(MaterialTheme.dimens.paddingBig.dp)
                     .fillMaxWidth()
             )
             Row(modifier = Modifier.fillMaxWidth()) {
@@ -424,174 +366,84 @@ fun BookCardMainContent(
                     Text(
                         text = "Автор",
                         color = Color(78, 78, 78),
-                        fontSize = 16.sp,
-                        fontFamily = FontFamily(
-                            Font(
-                                R.font.roboto_regular,
-                            )
-                        )
+                        style = MaterialTheme.typography.body1,
                     )
                     Text(
                         text = "Год издания",
                         color = Color(78, 78, 78),
-                        fontSize = 16.sp,
-                        fontFamily = FontFamily(
-                            Font(
-                                R.font.roboto_regular,
-                            )
-                        )
+                        style = MaterialTheme.typography.body1,
                     )
                     Text(
                         text = "Издательство",
                         color = Color(78, 78, 78),
-                        fontSize = 16.sp,
-                        fontFamily = FontFamily(
-                            Font(
-                                R.font.roboto_regular,
-                            )
-                        )
+                        style = MaterialTheme.typography.body1,
                     )
                     Text(
                         text = "Тип обложки",
                         color = Color(78, 78, 78),
-                        fontSize = 16.sp,
-                        fontFamily = FontFamily(
-                            Font(
-                                R.font.roboto_regular,
-                            )
-                        )
+                        style = MaterialTheme.typography.body1,
                     )
                     Text(
                         text = "Страниц",
                         color = Color(78, 78, 78),
-                        fontSize = 16.sp,
-                        fontFamily = FontFamily(
-                            Font(
-                                R.font.roboto_regular,
-                            )
-                        )
+                        style = MaterialTheme.typography.body1,
                     )
                     Text(
                         text = "Формат",
                         color = Color(78, 78, 78),
-                        fontSize = 16.sp,
-                        fontFamily = FontFamily(
-                            Font(
-                                R.font.roboto_regular,
-                            )
-                        )
+                        style = MaterialTheme.typography.body1,
                     )
                     Text(
                         text = "Язык",
                         color = Color(78, 78, 78),
-                        fontSize = 16.sp,
-                        fontFamily = FontFamily(
-                            Font(
-                                R.font.roboto_regular,
-                            )
-                        )
+                        style = MaterialTheme.typography.body1,
                     )
                     Text(
                         text = "ISBN", color = Color(78, 78, 78),
-                        fontSize = 16.sp,
-                        fontFamily = FontFamily(
-                            Font(
-                                R.font.roboto_regular,
-                            )
-                        )
+                        style = MaterialTheme.typography.body1,
                     )
                     Text(
                         text = "Остаток на полках", color = Color(78, 78, 78),
-                        fontSize = 16.sp,
-                        fontFamily = FontFamily(
-                            Font(
-                                R.font.roboto_regular,
-                            )
-                        )
+                        style = MaterialTheme.typography.body1,
                     )
                 }
                 Spacer(modifier = Modifier.width(62.dp))
                 Column() {
                     Text(
                         text = book.bookInfo.author,
-                        fontSize = 16.sp,
-                        fontFamily = FontFamily(
-                            Font(
-                                R.font.roboto_regular,
-                            )
-                        )
+                        style = MaterialTheme.typography.body1,
                     )
                     Text(
                         text = "2021 г.",
-                        fontSize = 16.sp,
-                        fontFamily = FontFamily(
-                            Font(
-                                R.font.roboto_regular,
-                            )
-                        )
+                        style = MaterialTheme.typography.body1,
                     )
                     Text(
                         text = book.shopOwner,
-                        fontSize = 16.sp,
-                        fontFamily = FontFamily(
-                            Font(
-                                R.font.roboto_regular,
-                            )
-                        )
+                        style = MaterialTheme.typography.body1,
                     )
                     Text(
                         text = "Переплет",
-                        fontSize = 16.sp,
-                        fontFamily = FontFamily(
-                            Font(
-                                R.font.roboto_regular,
-                            )
-                        )
+                        style = MaterialTheme.typography.body1,
                     )
                     Text(
                         text = "${book.bookInfo.numberOfPages} ст.",
-                        fontSize = 16.sp,
-                        fontFamily = FontFamily(
-                            Font(
-                                R.font.roboto_regular,
-                            )
-                        )
+                        style = MaterialTheme.typography.body1,
                     )
                     Text(
                         text = "Печатная книга",
-                        fontSize = 16.sp,
-                        fontFamily = FontFamily(
-                            Font(
-                                R.font.roboto_regular,
-                            )
-                        )
+                        style = MaterialTheme.typography.body1,
                     )
                     Text(
                         text = "Русский",
-                        fontSize = 16.sp,
-                        fontFamily = FontFamily(
-                            Font(
-                                R.font.roboto_regular,
-                            )
-                        )
+                        style = MaterialTheme.typography.body1,
                     )
                     Text(
                         text = "9785716410091",
-                        fontSize = 16.sp,
-                        fontFamily = FontFamily(
-                            Font(
-                                R.font.roboto_regular,
-                            )
-                        )
+                        style = MaterialTheme.typography.body1,
                     )
                     Text(
                         text = "38 шт.",
-                        fontSize = 16.sp,
-                        fontFamily = FontFamily(
-                            Font(
-                                R.font.roboto_regular,
-                            )
-                        )
+                        style = MaterialTheme.typography.body1,
                     )
                 }
             }
@@ -603,10 +455,10 @@ fun BookCardMainContent(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(48.dp)
+                    .height(MaterialTheme.dimens.bookCardButtonSize.dp)
                     .clip(RoundedCornerShape(65))
                     .background(Color(252, 225, 129))
-                    .padding(top = 12.dp, bottom = 12.dp)
+                    .padding(top = MaterialTheme.dimens.paddingSmall.dp, bottom = MaterialTheme.dimens.paddingSmall.dp)
                     .clickable(
                         interactionSource =  MutableInteractionSource(),
                         indication = null,
@@ -627,12 +479,7 @@ fun BookCardMainContent(
                     Text(
                         text = "В корзину ${book.bookInfo.price}₽",
                         color = Color.Black,
-                        fontFamily = FontFamily(
-                            Font(
-                                R.font.roboto_regular,
-                            )
-                        ),
-                        fontSize = 16.sp,
+                        style = MaterialTheme.typography.body1,
                     )
 
                 }

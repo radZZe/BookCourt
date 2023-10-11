@@ -36,7 +36,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             val status by connectivityObserver.observe().collectAsState(initial =ConnectivityObserverI.Status.Available)
             val navController = rememberNavController()
-            BookCourtTheme {
+            BookCourtTheme(content = {
                 Scaffold(
                 ) { it->
                     val bottomPadding = it.calculateBottomPadding()
@@ -52,7 +52,7 @@ class MainActivity : ComponentActivity() {
 
 
                 }
-            }
+            })
         }
     }
 
