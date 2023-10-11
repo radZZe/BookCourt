@@ -29,6 +29,7 @@ import com.example.bookcourt.models.book.Book
 import com.example.bookcourt.models.feedback.UserFeedback
 import com.example.bookcourt.ui.notifications.NotificationNothingToShow
 import com.example.bookcourt.ui.theme.MainBgColor
+import com.example.bookcourt.ui.theme.dimens
 import com.example.bookcourt.utils.*
 import com.skydoves.cloudy.Cloudy
 import com.example.bookcourt.utils.Constants.LIMIT_WINDOW_HEIGHT
@@ -57,9 +58,7 @@ fun RecommendationContent(
     viewModel: RecommendationViewModel,
     onNavigateBookCard:(bookJson:String)->Unit,
 ) {
-    val windowHeight =
-        LocalConfiguration.current.screenHeightDp.toFloat() * LocalDensity.current.density
-    val cardStackHeight = if (windowHeight > LIMIT_WINDOW_HEIGHT) 530.dp else 460.dp
+
     val counter = viewModel.counter
     val limitSwipeValue = viewModel.limitSwipeValue
     val context = LocalContext.current
@@ -109,10 +108,6 @@ fun RecommendationContent(
                         viewModel,
                         frontItem,
                         backItem,
-                        context,
-                        windowHeight,
-                        cardStackHeight,
-                        onNavigateToProfile,
                         itemsIsNotEmpty,
                         onNavigateBookCard
                     )
@@ -123,10 +118,6 @@ fun RecommendationContent(
                     viewModel,
                     frontItem,
                     backItem,
-                    context,
-                    windowHeight,
-                    cardStackHeight,
-                    onNavigateToProfile,
                     itemsIsNotEmpty,
                     onNavigateBookCard
                 )
@@ -150,10 +141,6 @@ fun MainRecommendationContent(
     viewModel: RecommendationViewModel,
     frontItem: Book?,
     backItem: Book?,
-    context: Context,
-    windowHeight: Float,
-    cardStackHeight: Dp,
-    onNavigateToProfile: () -> Unit,
     itemsIsNotEmpty: Boolean,
     onNavigateBookCard:(bookJson:String)->Unit,
 ) {
@@ -164,11 +151,11 @@ fun MainRecommendationContent(
     ) {
 
         if (itemsIsNotEmpty) {
-            Column() {
-                Box(modifier = Modifier) {
-                    Spacer(modifier = Modifier.height(if (windowHeight > LIMIT_WINDOW_HEIGHT) 10.dp else 5.dp))
+            Column(modifier = Modifier.fillMaxSize()) {
+                Box(modifier = Modifier.fillMaxSize()) {
+                    //Spacer(modifier = Modifier.height(10.dp ))
                     CardStack(
-                        modifier = Modifier.height(cardStackHeight).clickable(interactionSource =  MutableInteractionSource(),
+                        modifier = Modifier.fillMaxHeight(0.75f).clickable(interactionSource =  MutableInteractionSource(),
                             indication = null) {
                             if (frontItem != null) {
                                 onNavigateBookCard(frontItem.isbn!!)
@@ -229,11 +216,12 @@ fun MainRecommendationContent(
                 if (frontItem != null) {
                     Column(
                         modifier = Modifier
+                            .fillMaxHeight(0.25f)
                             .background(MainBgColor)
                             .padding(
-                                start = 20.dp,
-                                end = 20.dp,
-                                top = 12.dp,
+                                start = MaterialTheme.dimens.paddingBig.dp,
+                                end = MaterialTheme.dimens.paddingBig.dp,
+                                top = MaterialTheme.dimens.paddingNormal.dp,
                                 bottom = 0.dp
                             ).align(Alignment.BottomCenter),
                         horizontalAlignment = Alignment.CenterHorizontally
@@ -248,13 +236,7 @@ fun MainRecommendationContent(
                         ) {
                             Text(
                                 text = frontItem.bookInfo.title,
-                                color = Color.Black,
-                                fontSize = 16.sp,
-                                fontFamily = FontFamily(
-                                    Font(
-                                        R.font.roboto_bold,
-                                    )
-                                ),
+                                style = MaterialTheme.typography.body2,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis
                             )
@@ -271,12 +253,7 @@ fun MainRecommendationContent(
                                     modifier = Modifier,
                                     text = "${frontItem.bookInfo.author} | ${frontItem.bookInfo.genre}",
                                     color = Color(134, 134, 134),
-                                    fontSize = 14.sp,
-                                    fontFamily = FontFamily(
-                                        Font(
-                                            R.font.roboto_regular,
-                                        )
-                                    )
+                                    style = MaterialTheme.typography.subtitle1
                                 )
 
 
@@ -285,8 +262,8 @@ fun MainRecommendationContent(
                                 painter = painterResource(id = R.drawable.igra_slov_logo),
                                 contentDescription = "Logo image",
                                 modifier = Modifier
-                                    .height(50.dp)
-                                    .width(50.dp)
+                                    .height(MaterialTheme.dimens.iconSizeBig.dp)
+                                    .width(MaterialTheme.dimens.iconSizeBig.dp)
                                     .clip(CircleShape),
                                 contentScale = ContentScale.Crop
                             )
@@ -295,7 +272,7 @@ fun MainRecommendationContent(
                         }
                         Spacer(
                             modifier = Modifier
-                                .height(12.dp)
+                                .height(MaterialTheme.dimens.paddingSmall.dp)
                                 .fillMaxWidth()
                         )
                         Column(
@@ -316,22 +293,12 @@ fun MainRecommendationContent(
                                     Text(
                                         text = "423",
                                         color = Color.Black,
-                                        fontFamily = FontFamily(
-                                            Font(
-                                                R.font.roboto_medium,
-                                            )
-                                        ),
-                                        fontSize = 14.sp
+                                        style = MaterialTheme.typography.subtitle2
                                     )
                                     Text(
                                         text = "Лайки",
                                         color = Color(134, 134, 134),
-                                        fontFamily = FontFamily(
-                                            Font(
-                                                R.font.roboto_medium,
-                                            )
-                                        ),
-                                        fontSize = 14.sp
+                                        style = MaterialTheme.typography.subtitle2
                                     )
                                 }
                                 Column(
@@ -341,22 +308,12 @@ fun MainRecommendationContent(
                                     Text(
                                         text = "124",
                                         color = Color.Black,
-                                        fontFamily = FontFamily(
-                                            Font(
-                                                R.font.roboto_medium,
-                                            )
-                                        ),
-                                        fontSize = 14.sp
+                                        style = MaterialTheme.typography.subtitle2
                                     )
                                     Text(
                                         text = "Дизлайки",
                                         color = Color(134, 134, 134),
-                                        fontFamily = FontFamily(
-                                            Font(
-                                                R.font.roboto_medium,
-                                            )
-                                        ),
-                                        fontSize = 14.sp
+                                        style = MaterialTheme.typography.subtitle2
                                     )
                                 }
                                 Column(
@@ -366,22 +323,12 @@ fun MainRecommendationContent(
                                     Text(
                                         text = "56",
                                         color = Color.Black,
-                                        fontFamily = FontFamily(
-                                            Font(
-                                                R.font.roboto_medium,
-                                            )
-                                        ),
-                                        fontSize = 14.sp
+                                        style = MaterialTheme.typography.subtitle2
                                     )
                                     Text(
                                         text = "Интересуются",
                                         color = Color(134, 134, 134),
-                                        fontFamily = FontFamily(
-                                            Font(
-                                                R.font.roboto_medium,
-                                            )
-                                        ),
-                                        fontSize = 14.sp
+                                        style = MaterialTheme.typography.subtitle2
                                     )
                                 }
                                 Column(
@@ -391,26 +338,17 @@ fun MainRecommendationContent(
                                     Text(
                                         text = frontItem.bookInfo.rate.toString(),
                                         color = Color.Black,
-                                        fontFamily = FontFamily(
-                                            Font(
-                                                R.font.roboto_medium,
-                                            )
-                                        ),
-                                        fontSize = 14.sp
+                                        style = MaterialTheme.typography.subtitle2
                                     )
                                     Text(
                                         text = "Оценка",
                                         color = Color(134, 134, 134),
-                                        fontFamily = FontFamily(
-                                            Font(
-                                                R.font.roboto_medium,
-                                            )
-                                        ),
-                                        fontSize = 14.sp
+                                        style = MaterialTheme.typography.subtitle2
                                     )
                                 }
                             }
                         }
+                        Spacer(modifier = Modifier.height(MaterialTheme.dimens.paddingSmall.dp))
                     }
                 }
 
@@ -487,8 +425,7 @@ fun CategoriesBlock(list: List<String>) {
             ) {
                 Text(
                     text = item,
-                    fontFamily = FontFamily(Font(R.font.roboto_regular)),
-                    fontSize = 11.sp,
+                    style = MaterialTheme.typography.h5,
                     color = Color.White
                 )
             }
@@ -576,21 +513,18 @@ fun FeedbackBar(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Image(
-                        modifier = Modifier.size(20.dp),
+                        modifier = Modifier.size(MaterialTheme.dimens.iconSizeSmall.dp),
                         painter = painterResource(id = R.drawable.star_selected),
                         contentDescription = null
                     )
                     Text(
                         text = "5,0",
-                        fontFamily = FontFamily(Font(R.font.roboto_bold)),
-                        fontSize = 18.sp
+                        style = MaterialTheme.typography.h3,
                     )
                 }
-                RobotoRegularText(
-                    text = "84 отзыва",
-                    color = Color(140, 140, 140),
-                    fontSize = 13
-                )
+                Text(text="84 отзыва",
+                    style = MaterialTheme.typography.subtitle1,
+                    color = Color(140, 140, 140),)
             }
             Image(painter = painterResource(id = R.drawable.right_arrow), contentDescription = null)
         }
@@ -620,11 +554,7 @@ fun LeaveFeedback(
             modifier = Modifier.fillMaxWidth(0.60f)
         ) {
             Text(
-                text = "Уже читали? Оцените книгу", fontFamily = FontFamily(
-                    Font(
-                        R.font.roboto_bold,
-                    )
-                ), fontSize = 16.sp
+                text = "Уже читали? Оцените книгу", style=MaterialTheme.typography.h4,
             )
             Spacer(modifier = Modifier.height(12.dp))
             RatingBar(rate = rate , enabled = true, onClick = {
@@ -641,7 +571,7 @@ fun RatingBar(
     rate:Int = 0,
     enabled: Boolean,
     numberOfSelectedStarsDefault: Int = 0,
-    starSize: Int = 29,
+    starSize: Int = MaterialTheme.dimens.bookCardRatingBarSize,
     onClick: (rate: Int) -> Unit,
     disableLeaveFeedbackVisibility: () -> Unit
 ) {
@@ -725,7 +655,7 @@ fun Feedback(
                         RatingBar(enabled = false,
                             rate = rate,
                             numberOfSelectedStarsDefault = rate,
-                            starSize = 18,
+                            starSize = MaterialTheme.dimens.listFeedbacksRatingBarSize,
                             onClick = {},
                             disableLeaveFeedbackVisibility ={},
                         )

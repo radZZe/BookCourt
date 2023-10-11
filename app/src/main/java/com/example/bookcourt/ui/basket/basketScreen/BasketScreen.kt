@@ -12,6 +12,7 @@ import androidx.compose.material.Checkbox
 import androidx.compose.material.CheckboxDefaults
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
@@ -43,6 +44,7 @@ import com.example.bookcourt.models.metrics.DataClickMetric
 import com.example.bookcourt.ui.basket.emptyBasketScreen.EmptyBasketScreen
 import com.example.bookcourt.ui.theme.ActiveProgressGrey
 import com.example.bookcourt.ui.theme.DisabledBtnText
+import com.example.bookcourt.ui.theme.dimens
 import com.example.bookcourt.utils.Buttons
 import com.example.bookcourt.utils.Screens
 import kotlinx.coroutines.Dispatchers
@@ -134,7 +136,7 @@ fun BasketScreen(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth(0.5f)
-                            .height(48.dp)
+                            .height(MaterialTheme.dimens.bookCardButtonSize.dp)
                             .clip(RoundedCornerShape(65))
                             .background(Color(252, 225, 129))
                             .padding(top = 12.dp, bottom = 12.dp)
@@ -157,12 +159,7 @@ fun BasketScreen(
                             Text(
                                 text = "К оформлению",
                                 color = Color.Black,
-                                fontFamily = FontFamily(
-                                    Font(
-                                        R.font.roboto_regular,
-                                    )
-                                ),
-                                fontSize = 16.sp,
+                                style= MaterialTheme.typography.body1
                             )
 
                         }
@@ -209,9 +206,7 @@ fun BasketTopBar(
                 if (numberItems > 0) {
                     Spacer(modifier = Modifier.width(7.dp))
                     Text(
-                        text = "${numberItems} товара", fontFamily = FontFamily(
-                            Font(R.font.roboto_regular)
-                        ), fontSize = 14.sp, color = Color(78, 78, 78)
+                        text = "${numberItems} товара", style=MaterialTheme.typography.subtitle1, color = Color(78, 78, 78)
                     )
                 }
             }
@@ -234,11 +229,7 @@ fun BasketTopBar(
                         onStateSelectAllChanged()
                     }
                     Text(
-                        text = "Выбрать все",
-                        fontFamily = FontFamily(
-                            Font(R.font.roboto_regular)
-                        ),
-                        fontSize = 14.sp,
+                        text = "Выбрать все",style = MaterialTheme.typography.subtitle1
                     )
                 }
 
@@ -250,15 +241,11 @@ fun BasketTopBar(
                             onDeleteSelected()
                         },
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    horizontalArrangement = Arrangement.SpaceAround
                 ) {
                     Image(painterResource(id = R.drawable.ic_delete), contentDescription = null)
                     Text(
-                        text = "Удалить выбранное",
-                        fontFamily = FontFamily(
-                            Font(R.font.roboto_regular)
-                        ),
-                        fontSize = 14.sp,
+                        text = "Удалить выбранное",style = MaterialTheme.typography.subtitle1
                     )
                 }
 
@@ -295,7 +282,7 @@ fun OrderItem(
     val book = item.data
     Row(
         Modifier
-            .height(150.dp)
+            .height(MaterialTheme.dimens.basketBookCardHeight.dp)
             .fillMaxWidth()
             .padding(start = 0.dp, end = 12.dp, top = 8.dp, bottom = 8.dp)
             .background(White),
@@ -328,14 +315,14 @@ fun OrderItem(
                 fontFamily = FontFamily(Font(R.font.roboto_regular)),
                 fontSize = 14.sp
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.dimens.paddingSmall.dp))
             Text(
                 text = book.bookInfo.genre,
                 fontFamily = FontFamily(Font(R.font.roboto_regular)),
                 fontSize = 14.sp,
                 color = DisabledBtnText
             )
-            Spacer(modifier = Modifier.height(18.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.dimens.paddingBig.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     text = "${book.bookInfo.price}₽",
@@ -350,7 +337,7 @@ fun OrderItem(
                     color = DisabledBtnText
                 )
             }
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.dimens.paddingSmall.dp))
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth(),
@@ -380,7 +367,7 @@ fun OrderItem(
                 ) {
                     Box(
                         modifier = Modifier
-                            .height(55.dp)
+                            .height(MaterialTheme.dimens.amountButtonsHeight.dp)
                             .clip(
                                 RoundedCornerShape(5.dp)
                             )
@@ -397,13 +384,13 @@ fun OrderItem(
                         Image(
                             painterResource(id = R.drawable.ic_minus),
                             contentDescription = null,
-                            modifier = Modifier.size(30.dp)
+                            modifier = Modifier.size(MaterialTheme.dimens.amountButtonsSize.dp)
                         )
                     }
                     Text(text = item.amount.toString())
                     Box(
                         modifier = Modifier
-                            .height(35.dp)
+                            .height(MaterialTheme.dimens.amountButtonsHeight.dp)
                             .clip(
                                 RoundedCornerShape(5.dp)
                             )
@@ -416,7 +403,7 @@ fun OrderItem(
                         Image(
                             painterResource(id = R.drawable.ic_plus),
                             contentDescription = null,
-                            modifier = Modifier.size(30.dp)
+                            modifier = Modifier.size(MaterialTheme.dimens.amountButtonsSize.dp)
                         )
                     }
                 }

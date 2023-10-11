@@ -8,6 +8,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -35,7 +36,8 @@ import com.example.bookcourt.utils.Screens
 @Composable
 fun BottomNavigationMenu(
     navController: NavController,
-    viewModel: BottomNavViewModel = hiltViewModel()) {
+    viewModel: BottomNavViewModel = hiltViewModel()
+) {
     val invalidScreens = listOf(
         Screens.Statistics.route,
         Screens.ProfileSettings.route,
@@ -45,7 +47,7 @@ fun BottomNavigationMenu(
         Screens.Orders.route,
         Screens.AskQuestion.route,
         Screens.CategorySelection.route,
-        Screens.OrderingScreen.route ,
+        Screens.OrderingScreen.route,
         Screens.SuccessPurchase.route
     )
     LaunchedEffect(key1 = Unit) {
@@ -129,18 +131,22 @@ fun CustomBottomNavigationItem(
             if (screen == BottomNavMenu.Basket && basketSize != 0) {
                 Box(
                     modifier = Modifier
-                        .padding(end = 12.dp)
+                        .padding(end = MaterialTheme.dimens.countBasketItemPaddingEnd.dp)
                         .align(Alignment.TopEnd)
                         .zIndex(2f)
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(20.dp)
+                            .size(MaterialTheme.dimens.countBasketItemsSize.dp)
                             .clip(CircleShape)
                             .background(Color.Red),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(text = basketSize.toString(), color = Color.White)
+                        Text(
+                            text = basketSize.toString(),
+                            color = Color.White,
+                            style = MaterialTheme.typography.caption
+                        )
                     }
                 }
 
@@ -150,15 +156,13 @@ fun CustomBottomNavigationItem(
                 contentDescription = "cnbIcon",
                 tint = contentColor,
                 modifier = Modifier
-                    .padding(vertical = 3.dp, horizontal = 22.dp)
-                    .size(24.dp)
+                    .padding(vertical = 3.dp, horizontal = 18.dp)
+                    .size(MaterialTheme.dimens.bottomNavMenuIconSize.dp)
             )
         }
         Text(
             text = screen.title,
-            fontSize = 12.sp,
-            fontFamily = Roboto,
-            fontWeight = FontWeight.Medium,
+            style = MaterialTheme.typography.caption,
             modifier = Modifier.padding(top = 2.dp, bottom = 0.dp),
             color = contentColor
         )

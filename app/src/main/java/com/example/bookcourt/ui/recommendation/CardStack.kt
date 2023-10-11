@@ -38,6 +38,7 @@ import com.example.bookcourt.R
 import com.example.bookcourt.models.book.Book
 import com.example.bookcourt.models.user.User
 import com.example.bookcourt.ui.theme.Roboto
+import com.example.bookcourt.ui.theme.dimens
 import com.example.bookcourt.utils.CustomButton
 import kotlin.math.roundToInt
 import com.example.bookcourt.utils.Constants.LIMIT_WINDOW_HEIGHT
@@ -60,7 +61,7 @@ fun CardStack(
 
     if (frontItem != null) {
         Box(
-            modifier = modifier,
+            modifier = modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
 
         ) {
@@ -222,17 +223,11 @@ fun BookCard(
         }
 
 
-        val windowHeight =
-            LocalConfiguration.current.screenHeightDp.toFloat() * LocalDensity.current.density
-
-
-
         Card(
             shape = RoundedCornerShape(20.dp),
             modifier = if (!disableDraggable) {
                 Modifier
-                    .width(300.dp)
-                    .height(if (windowHeight > LIMIT_WINDOW_HEIGHT) 530.dp else 460.dp)
+                    .width(MaterialTheme.dimens.recommendationCardWidth.dp)
                     .draggableStack(
                         controller = bookCardController,
                         thresholdConfig = thresholdConfig,
@@ -249,21 +244,17 @@ fun BookCard(
             } else {
                 Modifier
                     .width(300.dp)
-                    .height(if (windowHeight > LIMIT_WINDOW_HEIGHT) 470.dp else 400.dp)
                     .alpha(alpha)
-                    .align(Alignment.Center).shadow(
-                        elevation = 20.dp,
-                        spotColor = Color(30, 173, 0, 255),
-                        shape = RoundedCornerShape(20.dp)
-                    )
+                    .align(Alignment.Center)
+//                    .shadow(
+//                        elevation = 20.dp,
+//                        spotColor = Color(30, 173, 0, 255),
+//                        shape = RoundedCornerShape(20.dp)
+//                    )
             }
         ) {
-            Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(topStart = 23.dp, topEnd = 23.dp))
-            ) {
-                BookCardImage(uri = item.bookInfo.image)
-            }
+
+            BookCardImage(uri = item.bookInfo.image)
         }
 
 
@@ -287,7 +278,7 @@ fun BookCardImage(
     isBookCardScreen:Boolean = false
 ) {
     Box(
-        modifier = Modifier, contentAlignment = Alignment.Center
+        modifier = Modifier.clip(RoundedCornerShape(topStart = 23.dp, topEnd = 23.dp)), contentAlignment = Alignment.Center
     ) {
         val painter = rememberAsyncImagePainter(
             model = ImageRequest.Builder(LocalContext.current)
@@ -324,14 +315,12 @@ fun BookCardImage(
                     Image(
                         painter = painterResource(id = R.drawable.green_rating),
                         contentDescription = null,
-                        modifier = Modifier.size(if (isBookCardScreen) 13.dp else 21.dp)
+                        modifier = Modifier.size(if (isBookCardScreen) 10.dp else MaterialTheme.dimens.iconSizeSmall.dp)
                     )
                     Spacer(modifier = Modifier.width(if (isBookCardScreen) 2.dp else 5.dp))
                     Text(
                         text = "5.0",
-                        fontFamily = Roboto,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = if (isBookCardScreen) 11.sp else 18.sp,
+                        style = MaterialTheme.typography.body2,
                         color = Color(48, 178, 93)
                     )
                 }
@@ -343,7 +332,8 @@ fun BookCardImage(
             contentDescription = stringResource(R.string.book_image),
             contentScale = ContentScale.Crop,
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxWidth()
+                .fillMaxHeight(0.85f)
                 .zIndex(2f)
         )
 

@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
@@ -21,6 +22,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.bookcourt.R
 import com.example.bookcourt.ui.recommendation.RatingBar
 import com.example.bookcourt.ui.recommendation.RecommendationTopBar
+import com.example.bookcourt.ui.theme.dimens
 
 @Composable
 fun LeaveFeedbackScreen(
@@ -64,7 +66,7 @@ fun LeaveFeedbackScreen(
                     rate = rate,
                     enabled = false,
                     numberOfSelectedStarsDefault = rate,
-                    starSize = 28,
+                    starSize = MaterialTheme.dimens.leaveFeedbackRatingBarSize,
                     onClick = {},
                     disableLeaveFeedbackVisibility = {})
             }
