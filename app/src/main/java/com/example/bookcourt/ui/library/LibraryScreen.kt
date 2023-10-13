@@ -17,6 +17,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.DefaultShadowColor
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -182,7 +183,7 @@ fun SponsorItem(
 fun RecommendationBar(
     viewModel: LibraryViewModel,
     onNavigateBookCard:(bookId:String)->Unit,){
-    Column {
+    Column (modifier = Modifier.fillMaxWidth()){
         Text(
             text = stringResource(id = R.string.library_screen_recommendations),
             fontFamily = Roboto,
@@ -191,16 +192,25 @@ fun RecommendationBar(
             fontSize = 16.sp,
             modifier = Modifier.padding(16.dp)
         )
-        LazyRow(modifier = Modifier
-            .fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ){
-            Log.d("test","recommendation: "+viewModel.recommendationBooksFiltered.size)
-            items(viewModel.recommendationBooksFiltered){ book->
-                Spacer(modifier = Modifier.size(16.dp))
-                BookItem(book = book!!,onNavigateBookCard)
-                if (book ==viewModel.recommendationBooksFiltered.last()){
+        if (viewModel.popularBooksFiltered.isEmpty()){
+            CircularProgressIndicator(modifier = Modifier
+                .scale(1f)
+                .align(Alignment.CenterHorizontally)
+            )
+        }
+        else{
+            LazyRow(modifier = Modifier
+                .fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ){
+                Log.d("test","recommendation: "+viewModel.recommendationBooksFiltered.size)
+                items(viewModel.recommendationBooksFiltered){ book->
+                    Log.d("test","recommendation recomposition called normally")
                     Spacer(modifier = Modifier.size(16.dp))
+                    BookItem(book = book!!,onNavigateBookCard)
+                    if (book ==viewModel.recommendationBooksFiltered.last()){
+                        Spacer(modifier = Modifier.size(16.dp))
+                    }
                 }
             }
         }
@@ -212,7 +222,7 @@ fun RecommendationBar(
 fun PopularBar(
     viewModel: LibraryViewModel,
     onNavigateBookCard:(bookId:String)->Unit,){
-    Column {
+    Column(modifier = Modifier.fillMaxWidth()) {
         Text(
             text = stringResource(id = R.string.library_screen_popular),
             fontFamily = Roboto,
@@ -221,16 +231,26 @@ fun PopularBar(
             fontSize = 16.sp,
             modifier = Modifier.padding(16.dp)
         )
-        LazyRow(modifier = Modifier
-            .fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ){
-            Log.d("test","popualar: "+viewModel.popularBooksFiltered.size)
-            items(viewModel.popularBooksFiltered){ book->
-                Spacer(modifier = Modifier.size(16.dp))
-                BookItem(book = book!!,onNavigateBookCard)
-                if (book ==viewModel.popularBooksFiltered.last()){
+        if (viewModel.popularBooksFiltered.isEmpty()){
+            CircularProgressIndicator(modifier = Modifier
+                .scale(1f)
+                .align(Alignment.CenterHorizontally)
+            )
+        }
+        else {
+            LazyRow(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Log.d("test", "popular: " + viewModel.popularBooksFiltered.size)
+                items(viewModel.popularBooksFiltered) { book ->
+                    Log.d("test", "popular recomposition called normally")
                     Spacer(modifier = Modifier.size(16.dp))
+                    BookItem(book = book!!, onNavigateBookCard)
+                    if (book == viewModel.popularBooksFiltered.last()) {
+                        Spacer(modifier = Modifier.size(16.dp))
+                    }
                 }
             }
         }
