@@ -203,9 +203,7 @@ fun RecommendationBar(
                 .fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ){
-                Log.d("test","recommendation: "+viewModel.recommendationBooksFiltered.size)
                 items(viewModel.recommendationBooksFiltered){ book->
-                    Log.d("test","recommendation recomposition called normally")
                     Spacer(modifier = Modifier.size(16.dp))
                     BookItem(book = book!!,onNavigateBookCard)
                     if (book ==viewModel.recommendationBooksFiltered.last()){
@@ -243,9 +241,7 @@ fun PopularBar(
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Log.d("test", "popular: " + viewModel.popularBooksFiltered.size)
                 items(viewModel.popularBooksFiltered) { book ->
-                    Log.d("test", "popular recomposition called normally")
                     Spacer(modifier = Modifier.size(16.dp))
                     BookItem(book = book!!, onNavigateBookCard)
                     if (book == viewModel.popularBooksFiltered.last()) {
