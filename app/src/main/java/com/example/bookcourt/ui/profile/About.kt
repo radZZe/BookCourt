@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.bookcourt.BuildConfig
 import com.example.bookcourt.R
 import com.example.bookcourt.ui.theme.MainBgColor
 import com.example.bookcourt.utils.TextRobotoRegular
@@ -46,7 +47,7 @@ fun AboutApp(
             )
             Spacer(modifier = Modifier.height(10.dp))
             TextRobotoRegular(
-                text = "BookCourt v1.0",
+                text = stringResource(id = R.string.splash_screen_version, BuildConfig.VERSION_NAME),
                 color = Color.Gray,
                 fontSize = 16,
             )

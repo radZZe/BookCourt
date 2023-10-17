@@ -21,4 +21,5 @@
     <string name="profile_screen_female">Женский</string>
     <string name="profile_screen_male">Мужской</string>
     <string name="book_price">%1$d ₽</string>
+    <string name="splash_screen_version">v%s</string>
 </resources>
