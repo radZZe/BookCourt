@@ -6,8 +6,8 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import androidx.room.Upsert
 import com.example.bookcourt.models.basket.BasketItem
+import com.example.bookcourt.models.book.Book
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -20,4 +20,6 @@ interface BasketDao {
     fun getBasketItems(): Flow<List<BasketItem>>
     @Update
     suspend fun updateItem(item:BasketItem)
+    @Query("SELECT * FROM basket_table WHERE data = :data")
+    fun findItem(data: Book): List<BasketItem>
 }

@@ -1,7 +1,5 @@
 package com.example.bookcourt.ui.graphs
 
-import android.net.NetworkCapabilities
-import android.net.NetworkRequest
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,7 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -20,7 +17,7 @@ import com.example.bookcourt.ui.basket.basketScreen.BasketScreen
 import com.example.bookcourt.ui.BookCardScreen
 import com.example.bookcourt.ui.basket.SuccessPurchaseScreen
 import com.example.bookcourt.ui.basket.orderingScreen.OrderingScreen
-import com.example.bookcourt.ui.bottomNavigationMenu.BottomNavViewModel
+import com.example.bookcourt.ui.basket.pickUpPoint.PickUpPointScreen
 import com.example.bookcourt.ui.categorySelection.CategorySelectionScreen2
 import com.example.bookcourt.ui.feedback.LeaveFeedbackScreen
 import com.example.bookcourt.ui.feedback.ListOfFeedbacksScreen
@@ -168,7 +165,7 @@ fun BottomNavigationGraph(
             val title = arguments.getString("title", "not found")
             ListOfFeedbacksScreen(
                 title = title,
-                onNavigateToRecommendationScreen = { navController.navigate(Graph.BOTTOM_NAV_GRAPH) }
+                onNavigateToRecommendationScreen = { navController.popBackStack() }
             )
         }
 
@@ -178,7 +175,8 @@ fun BottomNavigationGraph(
             OrderingScreen(onBackNavigation = {navController.popBackStack()}, onSuccessPurchaseNavigate =
             {
                 navController.navigate(Screens.SuccessPurchase.route)
-            })
+            },
+                onPickUpPointNavigate = {navController.navigate(Screens.PickUpPointScreen.route)})
         }
 
         composable(route = Screens.AboutApp.route) {
@@ -223,6 +221,10 @@ fun BottomNavigationGraph(
         }
         composable(route = "${Screens.SuccessPurchase.route}"){
             SuccessPurchaseScreen(onNavigateBack = {navController.popBackStack()})
+        }
+
+        composable(route = Screens.PickUpPointScreen.route){
+            PickUpPointScreen(onBackNavigate = {navController.popBackStack()})
         }
 
     }

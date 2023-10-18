@@ -1,6 +1,7 @@
 package com.example.bookcourt.ui.theme
 
 import android.app.Activity
+import android.util.Log
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
@@ -58,10 +59,11 @@ fun BookCourtTheme(darkTheme: Boolean = isSystemInDarkTheme(),
 
     when (window.widthSizeClass) {
         WindowWidthSizeClass.Compact -> {
+            Log.d("SCREEN_WIDTH", config.screenWidthDp.toString())
             if (config.screenWidthDp <= 360) {
                 appDimens = CompactSmallDimens
                 typography = CompactSmallTypography
-            } else if (config.screenWidthDp < 599) {
+            } else if (config.screenWidthDp < 390) {
                 appDimens = CompactMediumDimens
                 typography = CompactMediumTypography
             } else {

@@ -7,12 +7,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookcourt.data.repositories.NetworkRepository
-import com.example.bookcourt.data.room.basket.BasketRepository
 import com.example.bookcourt.data.room.basket.BasketRepositoryI
 import com.example.bookcourt.models.BookDto
 import com.example.bookcourt.models.basket.BasketItem
 import com.example.bookcourt.models.book.Book
-import com.example.bookcourt.models.user.User
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -32,6 +30,7 @@ class BookCardViewModel @Inject constructor(
     private var fetchJob: Job? = null
     val rate = mutableStateOf(0)
     val description: MutableState<String?> = mutableStateOf(null)
+    val isActiveBasket = mutableStateOf(true)
 
 
     private suspend fun convertBooksJsonToList(context: Context): List<Book> {
@@ -49,6 +48,7 @@ class BookCardViewModel @Inject constructor(
                     id == it.isbn
                 }
                 book.value = allBooksItems.firstNotNullOf { item -> item.takeIf { it.isbn == id } }
+                isInBasket(book.value!!)
             } catch (ioe: IOException) {
                 Log.d("getAllBooks", "error cause ${ioe.cause}")
             }
@@ -57,8 +57,17 @@ class BookCardViewModel @Inject constructor(
 
     fun addBasketItem(item:BasketItem){
         viewModelScope.launch(Dispatchers.IO) {
+            isActiveBasket.value = false
             basketRepository.addData(item)
         }
+    }
+
+    private fun isInBasket(item:Book){
+        viewModelScope.launch(Dispatchers.IO) {
+            val list = basketRepository.findData(item);
+            isActiveBasket.value = list.isEmpty()
+        }
+
     }
 
 

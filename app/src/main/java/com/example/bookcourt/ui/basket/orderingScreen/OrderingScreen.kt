@@ -22,10 +22,8 @@ import androidx.compose.material.Divider
 import androidx.compose.material.RadioButton
 import androidx.compose.material.RadioButtonDefaults
 import androidx.compose.material.Text
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,7 +31,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -51,6 +48,7 @@ fun OrderingScreen(
     onBackNavigation: () -> Unit,
     viewModel: OrderingScreenViewModel = hiltViewModel(),
     onSuccessPurchaseNavigate:()->Unit,
+    onPickUpPointNavigate:()->Unit,
 ) {
     LaunchedEffect(key1 = Unit) {
         launch(Dispatchers.IO) {
@@ -74,6 +72,12 @@ fun OrderingScreen(
                     fontSize = 16.sp
                 )
                 Text(
+                    modifier = Modifier.clickable(
+                        interactionSource =  MutableInteractionSource(),
+                        indication = null,
+                    ) {
+                        onPickUpPointNavigate()
+                    },
                     text = "Изменить",
                     color = Color.Blue,
                     fontFamily = FontFamily(Font(R.font.roboto_regular)),
