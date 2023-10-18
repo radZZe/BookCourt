@@ -69,7 +69,7 @@ class SearchViewModel @Inject constructor(
         )
 
     fun onSearchTextChange(text: String) {
-        _isDisplayed.update { true }
+        _isDisplayed.update { text != "" }
         _searchText.value = text
     }
 
