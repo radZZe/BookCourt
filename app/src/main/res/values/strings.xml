@@ -22,4 +22,7 @@
     <string name="profile_screen_male">Мужской</string>
     <string name="book_price">%1$d ₽</string>
     <string name="splash_screen_version">v%s</string>
+    <string name="search_widget">Название или автор книги</string>
+    <string name="library_screen_recommendations">Вам может понравиться</string>
+    <string name="library_screen_popular">Популярно сегодня</string>
 </resources>
