@@ -28,6 +28,7 @@ sealed class Screens(
     object AskQuestion: Screens(route = "Ask Question", title = "Ask Question")
     object BookCardScreen:Screens(route = "BookCardScreen",title = "BookCardScreen")
     object OrderingScreen:Screens(route = "OrderingScreen",title = "OrderingScreen")
+    object PickUpPointScreen:Screens(route="PickUpPointScreen",title="PickUpPointScreen")
 }
 
 sealed class BottomNavMenu(

@@ -1,21 +1,16 @@
 package com.example.bookcourt.ui
 
-import android.content.Intent
-import android.net.Uri
+
 import androidx.compose.foundation.*
-import androidx.compose.foundation.gestures.scrollable
+
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,17 +20,12 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.bookcourt.R
 import com.example.bookcourt.models.basket.BasketItem
 import com.example.bookcourt.models.book.Book
-import com.example.bookcourt.models.book.BookInfo
 import com.example.bookcourt.models.metrics.DataClickMetric
 import com.example.bookcourt.ui.bookCard.BookCardViewModel
 import com.example.bookcourt.ui.recommendation.BookCardImage
@@ -44,9 +34,7 @@ import com.example.bookcourt.ui.recommendation.FeedbackBlock
 import com.example.bookcourt.ui.theme.MainBgColor
 import com.example.bookcourt.ui.theme.dimens
 import com.example.bookcourt.utils.Buttons
-import com.example.bookcourt.utils.Constants
 import com.example.bookcourt.utils.Screens
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -76,8 +64,6 @@ fun BookCardScreen(
                 MainBgColor
             ))
         {
-            val windowHeight =
-                LocalConfiguration.current.screenHeightDp.toFloat() * LocalDensity.current.density
             BookCardTopBar({onNavigateBack()},R.drawable.igra_slov_logo)
             Spacer(modifier = Modifier.height(MaterialTheme.dimens.paddingBig.dp))
             Box(Modifier.fillMaxWidth().height(MaterialTheme.dimens.bookCardHeight.dp)){
@@ -93,13 +79,16 @@ fun BookCardScreen(
                 }
             }
             Spacer(modifier = Modifier.height(12.dp))
-            BookCardMainContent(feedbackText,needToUpdate,book,onNavigateLeaveFeedback,onNavigateListFeedbacks,viewModel.rate.value){
-                viewModel.addBasketItem(
-                    BasketItem(
-                        data = book
+            BookCardMainContent(feedbackText,needToUpdate,book,onNavigateLeaveFeedback,onNavigateListFeedbacks,
+                {
+                    viewModel.addBasketItem(
+                        BasketItem(
+                            data = book
+                        )
                     )
+                },
+                viewModel.isActiveBasket.value
                 )
-            }
 
         }
     }else{
@@ -168,8 +157,8 @@ fun BookCardMainContent(
     book:Book,
     onNavigateLeaveFeedback:(title:String,rate:Int)->Unit,
     onNavigateListFeedbacks:(title:String)->Unit,
-    rate:Int,
     onClickAddButton: ()->Unit,
+    isActiveBasket:Boolean,
 ){
     Column(
         modifier = Modifier
@@ -329,7 +318,7 @@ fun BookCardMainContent(
                     .height(16.dp)
                     .fillMaxWidth()
             )
-            var list = listOf("Детективы", "Детская литература", "Рассказы")
+            val list = listOf("Детективы", "Детская литература", "Рассказы")
             CategoriesBlock(list)
             Spacer(
                 modifier = Modifier
@@ -457,30 +446,48 @@ fun BookCardMainContent(
                     .fillMaxWidth()
                     .height(MaterialTheme.dimens.bookCardButtonSize.dp)
                     .clip(RoundedCornerShape(65))
-                    .background(Color(252, 225, 129))
+                    .background( if(isActiveBasket)Color(252, 225, 129) else Color(
+                        179,
+                        179,
+                        179,
+                        255
+                    )
+                    )
                     .padding(top = MaterialTheme.dimens.paddingSmall.dp, bottom = MaterialTheme.dimens.paddingSmall.dp)
                     .clickable(
                         interactionSource =  MutableInteractionSource(),
                         indication = null,
                     ) {
-                        onClickAddButton()
+                        if(isActiveBasket){
+                            onClickAddButton()
 
-                        DataClickMetric(
-                            Buttons.BUY_BOOK,
-                            Screens.Recommendation.route
-                        )
+                            DataClickMetric(
+                                Buttons.BUY_BOOK,
+                                Screens.Recommendation.route
+                            )
+                        }
+
 
                     },
                 contentAlignment = Alignment.Center
             ) {
                 Row(modifier = Modifier.align(Alignment.Center), verticalAlignment = Alignment.CenterVertically){
-                    Image(painter = painterResource(id = R.drawable.ic_plus), contentDescription =null)
-                    Spacer(modifier = Modifier.width(5.dp))
-                    Text(
-                        text = "В корзину ${book.bookInfo.price}₽",
-                        color = Color.Black,
-                        style = MaterialTheme.typography.body1,
-                    )
+                    if(isActiveBasket){
+                        Image(painter = painterResource(id = R.drawable.ic_plus), contentDescription =null)
+                        Spacer(modifier = Modifier.width(5.dp))
+                        Text(
+                            text = "В корзину ${book.bookInfo.price}₽",
+                            color = Color.Black,
+                            style = MaterialTheme.typography.body1,
+                        )
+                    }else{
+                        Text(
+                            text = "Уже в корзине",
+                            color = Color.Black,
+                            style = MaterialTheme.typography.body1,
+                        )
+                    }
+
 
                 }
 

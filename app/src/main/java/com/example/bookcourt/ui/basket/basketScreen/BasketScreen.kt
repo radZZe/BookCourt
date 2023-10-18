@@ -44,6 +44,7 @@ import com.example.bookcourt.models.metrics.DataClickMetric
 import com.example.bookcourt.ui.basket.emptyBasketScreen.EmptyBasketScreen
 import com.example.bookcourt.ui.theme.ActiveProgressGrey
 import com.example.bookcourt.ui.theme.DisabledBtnText
+import com.example.bookcourt.ui.theme.MainBgColor
 import com.example.bookcourt.ui.theme.dimens
 import com.example.bookcourt.utils.Buttons
 import com.example.bookcourt.utils.Screens
@@ -117,6 +118,7 @@ fun BasketScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(18.dp, 8.dp)
+                        .background(MainBgColor)
                     , horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Column() {

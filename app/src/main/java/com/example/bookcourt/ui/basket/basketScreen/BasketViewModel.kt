@@ -2,6 +2,7 @@ package com.example.bookcourt.ui.basket.basketScreen
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookcourt.data.room.basket.BasketRepositoryI
@@ -14,6 +15,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.function.Predicate
 import javax.inject.Inject
 
 @HiltViewModel
@@ -161,8 +163,22 @@ class BasketViewModel @Inject constructor(
     }
 
     fun deleteSelected(){
-        basketItems.removeIf {
-            it.isSelected
+
+        basketItems.removeIfCallback(condition = {
+            if(it.isSelected){
+                viewModelScope.launch(Dispatchers.IO) {
+                    repositoryI.deleteData(it)
+                }
+                true
+            }else{
+                false
+            }
+        })
+
+    }
+    private fun SnapshotStateList<BasketItem>.removeIfCallback(condition:(it:BasketItem)->Boolean){
+        this.removeIf {
+            condition(it)
         }
     }
 

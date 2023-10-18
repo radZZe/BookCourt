@@ -1,6 +1,7 @@
 package com.example.bookcourt.data.room.basket
 
 import com.example.bookcourt.models.basket.BasketItem
+import com.example.bookcourt.models.book.Book
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -20,6 +21,10 @@ class BasketRepository @Inject constructor(
 
     override suspend fun updateData(item: BasketItem) {
         return source.updateData(item)
+    }
+
+    override suspend fun findData(item: Book):List<BasketItem> {
+        return source.findData(item)
     }
 
 }

@@ -1,6 +1,7 @@
 package com.example.bookcourt.data.room.basket
 
 import com.example.bookcourt.models.basket.BasketItem
+import com.example.bookcourt.models.book.Book
 import kotlinx.coroutines.flow.Flow
 
 class BasketSource(
@@ -28,6 +29,10 @@ class BasketSource(
 
     override suspend fun updateData(item: BasketItem){
         dao.updateItem(item)
+    }
+
+    override suspend fun findData(item: Book): List<BasketItem> {
+        return dao.findItem(item)
     }
 
 }
