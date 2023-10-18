@@ -354,8 +354,7 @@ fun ReadBooksStats(
             painter = painterResource(id = R.drawable.cup_coffee_open_book),
             contentDescription = "cup coffee open book image",
             modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(0.4f),
+                .fillMaxWidth(),
             contentScale = ContentScale.Crop
         )
         ShareStatisticsButton(

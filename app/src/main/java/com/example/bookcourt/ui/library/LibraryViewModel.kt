@@ -1,6 +1,7 @@
 package com.example.bookcourt.ui.library
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.toMutableStateList
@@ -35,18 +36,18 @@ class LibraryViewModel @Inject constructor(
     fun loadPopularBooks(context: Context){
         viewModelScope.launch(Dispatchers.IO) {
             val json = networkRepository.getAllBooks(context)!!
-            val data = Json.decodeFromString<MutableList<BookDto>>(json)
-            popularBooks.addAll(data.map { it.toBook() })
-            popularBooksFiltered.addAll(data.map { it.toBook() })
+            val data = Json.decodeFromString<MutableList<BookDto>>(json).map{it.toBook()}
+            popularBooks.addAll(data)
+            popularBooksFiltered.addAll(data)
         }
     }
 
     fun loadRecommendations(context: Context){
         viewModelScope.launch(Dispatchers.IO) {
             val json = networkRepository.getAllBooks(context)!!
-            val data = Json.decodeFromString<MutableList<BookDto>>(json)
-            recommendationBooks.addAll(data.map { it.toBook() })
-            recommendationBooksFiltered.addAll(data.map { it.toBook() })
+            val data = Json.decodeFromString<MutableList<BookDto>>(json).map { it.toBook() }
+            recommendationBooks.addAll(data)
+            recommendationBooksFiltered.addAll(data)
         }
     }
 
