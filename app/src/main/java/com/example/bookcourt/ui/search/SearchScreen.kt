@@ -62,6 +62,7 @@ fun SearchScreen(
             .background(MenuBackGround)
     ) {
         TextField(
+            maxLines=1,
             value = searchText,
             onValueChange = viewModel::onSearchTextChange,
             modifier = Modifier
