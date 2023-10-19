@@ -14,6 +14,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
@@ -171,7 +172,7 @@ fun BookCard(
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxSize()
-            .zIndex(if (isFrontItem) 30f else 1f),
+            .zIndex(if (isFrontItem) 30f else 1f)
     ) {
 
         if (isFrontItem) {
@@ -237,10 +238,15 @@ fun BookCard(
                         y = if (isFrontItem) bookCardController.offsetY.value else 0f
                     )
                     .graphicsLayer(
+                        shape = RoundedCornerShape(20.dp),
                         rotationZ = if (isFrontItem) bookCardController.rotation.value else 0f,
+                        shadowElevation = if (isFrontItem) 55f else 0f,
+                        ambientShadowColor = Color(84, 224, 74, 255),
+                        spotShadowColor = Color(84, 224, 74, 255),
                     )
                     .alpha(alpha)
                     .align(Alignment.Center)
+
             } else {
                 Modifier
                     .width(300.dp)
