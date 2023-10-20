@@ -155,7 +155,7 @@ fun VerificationCodeScreen(
                 )
             }
         }
-        Button( // TODO после мержа перевести на новую реализацию
+        Button(
             onClick = {
                 viewModel.metricClick(DataClickMetric(Buttons.VERIFY_CODE, Screens.Tutorial.route))
                 onNavigateToTutorial()

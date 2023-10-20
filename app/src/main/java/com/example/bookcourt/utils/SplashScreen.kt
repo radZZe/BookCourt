@@ -18,7 +18,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.bookcourt.BuildConfig
 import com.example.bookcourt.R
-import com.example.bookcourt.ui.theme.*
+import com.example.bookcourt.ui.theme.AppLogoBlack
+import com.example.bookcourt.ui.theme.BackGroundWhite
+import com.example.bookcourt.ui.theme.Gilroy
 import kotlinx.coroutines.delay
 
 @Composable
@@ -59,7 +61,7 @@ fun SplashScreen(
         if (categorySelectionState.value) {
             navController.navigate(route = Graph.BOTTOM_NAV_GRAPH)
         } else if (tutorState.value) {
-            navController.navigate(route = Screens.CategorySelection.route)
+            navController.navigate(route = Screens.CategorySelectionRegistrationScreen.route)
         } else {
             navController.navigate(route = Screens.Tutorial.route)
         }

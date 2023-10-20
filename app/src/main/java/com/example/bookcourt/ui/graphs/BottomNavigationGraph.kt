@@ -15,10 +15,10 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.bookcourt.ui.basket.basketScreen.BasketScreen
 import com.example.bookcourt.ui.BookCardScreen
+import com.example.bookcourt.ui.auth.SignInScreen
 import com.example.bookcourt.ui.basket.SuccessPurchaseScreen
 import com.example.bookcourt.ui.basket.orderingScreen.OrderingScreen
 import com.example.bookcourt.ui.basket.pickUpPoint.PickUpPointScreen
-import com.example.bookcourt.ui.categorySelection.CategorySelectionScreen2
 import com.example.bookcourt.ui.feedback.LeaveFeedbackScreen
 import com.example.bookcourt.ui.feedback.ListOfFeedbacksScreen
 import com.example.bookcourt.ui.library.LibraryScreen
@@ -28,8 +28,13 @@ import com.example.bookcourt.ui.search.SearchScreen
 import com.example.bookcourt.ui.statistics.Statistics
 import com.example.bookcourt.utils.BottomNavMenu
 import com.example.bookcourt.ui.bottomNavigationMenu.BottomNavigationMenu
+import com.example.bookcourt.ui.categorySelection.CategorySelectionRegistrationScreen
+import com.example.bookcourt.ui.categorySelection.CategorySelectionScreen
+import com.example.bookcourt.ui.tutorial.TutorScreen
+import com.example.bookcourt.ui.verification.VerificationCodeScreen
 import com.example.bookcourt.utils.Graph
 import com.example.bookcourt.utils.Screens
+import com.example.bookcourt.utils.SplashScreen
 
 @Composable
 fun HomeScreen(navController: NavHostController = rememberNavController()) {
@@ -58,7 +63,7 @@ fun BottomNavigationGraph(
         composable(BottomNavMenu.Recommendations.route) {
             BackHandler(true) {}
             RecommendationScreen(
-                onNavigateToStatistics = { navController.navigate(BottomNavMenu.Library.route) }, //TODO after the Library screen will be added it is necessary to change BottomNavMenu.Statistics.route or even change navGraph
+                onNavigateToStatistics = { navController.navigate(BottomNavMenu.Library.route) },
                 onNavigateToProfile = {navController.navigate(Graph.PROFILE_NAV_GRAPH)},
                 onNavigateBookCard = {book-> navController.navigate("${Screens.BookCardScreen.route}/$book")}
             )
@@ -76,28 +81,11 @@ fun BottomNavigationGraph(
                 onNavigateBookCard = {book-> navController.navigate("${Screens.BookCardScreen.route}/$book")}
             )
         }
-        composable(route = BottomNavMenu.Profile.route) {
-            ProfileScreen(
-                onNavigateToStatistics = { navController.navigate(Screens.Statistics.route) },
-                onNavigateToAbout = { navController.navigate(Screens.AboutApp.route) },
-                onNavigateToSettings = { navController.navigate(Screens.ProfileSettings.route) },
-                onNavigateToSupport = { navController.navigate(Screens.Support.route) },
-                onNavigateToOrdersNotifications = { navController.navigate(Screens.OrdersNotifications.route) },
-                onNavigateToWantToRead = { navController.navigate(Screens.WantToRead.route) },
-                onNavigateToOrders = { navController.navigate(Screens.Orders.route) },
-                onNavigateToCategorySelection = { navController.navigate(Screens.CategorySelection.route) }
-            )
-        }
         composable(route = Screens.Search.route){
             SearchScreen(
                 onNavigateBack = {navController.popBackStack()}
             )
         }
-//        composable(route = BottomNavMenu.Library.route) {
-//            LibraryPlug(
-//                onNavigateToLibrary = { navController.navigate(Graph.BOTTOM_NAV_GRAPH) }
-//            )
-//        }
         composable(route = BottomNavMenu.Profile.route){
             ProfileScreen(
                 onNavigateToStatistics = { navController.navigate(Screens.Statistics.route) },
@@ -107,8 +95,9 @@ fun BottomNavigationGraph(
                 onNavigateToOrdersNotifications = { navController.navigate(Screens.OrdersNotifications.route) },
                 onNavigateToWantToRead = { navController.navigate(Screens.WantToRead.route) },
                 onNavigateToOrders = { navController.navigate(Screens.Orders.route) },
-                onNavigateToCategorySelection = { navController.navigate(Screens.CategorySelection.route) })
-
+                onNavigateToCategorySelection = { navController.navigate(Screens.CategorySelection.route) },
+                onNavigateToSignIn = { navController.navigate(Screens.SignIn.route) }
+            )
         }
 
         composable(
@@ -186,7 +175,10 @@ fun BottomNavigationGraph(
         }
 
         composable(route = Screens.ProfileSettings.route) {
-            ProfileSettings(onNavigateToProfile = { navController.navigate(Screens.Profile.route) })
+            ProfileSettings(
+                onNavigateToProfile = { navController.navigate(Screens.Profile.route) },
+                onNavigateToSignIn = { navController.navigate(Screens.SignIn.route) }
+            )
         }
 
         composable(route = Screens.Support.route) {
@@ -217,10 +209,25 @@ fun BottomNavigationGraph(
         }
 
         composable(route = Screens.CategorySelection.route) {
-            CategorySelectionScreen2(onNavigateToProfile = { navController.navigate(Screens.Profile.route) })
+            CategorySelectionScreen(onNavigateToProfile = { navController.navigate(Screens.Profile.route) })
         }
+
         composable(route = "${Screens.SuccessPurchase.route}"){
             SuccessPurchaseScreen(onNavigateBack = {navController.popBackStack()})
+        }
+
+        composable(Screens.SignIn.route) {
+            SignInScreen(
+                onNavigateToVerificationCode = {navController.navigate(Screens.VerificationCode.route)},
+//                onNavigateToCategorySelection = {navController.navigate(Screens.CategorySelectionRegistrationScreen.route)}
+            )
+        }
+
+        composable(Screens.VerificationCode.route) {
+            VerificationCodeScreen(
+                onNavigateToTutorial = { navController.navigate(Screens.Profile.route) },
+                onNavigateToSignIn = { navController.navigate(Screens.SignIn.route) }
+            )
         }
 
         composable(route = Screens.PickUpPointScreen.route){

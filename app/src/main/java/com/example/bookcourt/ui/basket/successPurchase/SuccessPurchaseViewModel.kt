@@ -1,8 +1,7 @@
 package com.example.bookcourt.ui.basket.successPurchase
 
 import android.content.Context
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookcourt.data.repositories.NetworkRepository
@@ -61,4 +60,52 @@ class SuccessPurchaseViewModel @Inject constructor(
         }
     }
 
+    var option by mutableStateOf<OrderOptions>(OrderOptions.ACTIVE)
+
+    var reason by mutableStateOf("")
+
+    fun onOptionChanged(newText: OrderOptions) {
+        option = newText
+    }
+
+    fun onReasonChanged(newText: String) {
+        reason = newText
+    }
+
+    var checkbox1State by mutableStateOf(false)
+    var checkbox2State by mutableStateOf(false)
+    var checkbox3State by mutableStateOf(false)
+
+    fun onCheckbox1StateChange() {
+        checkbox1State = !checkbox1State
+        checkbox2State = false
+        checkbox3State = false
+    }
+
+    fun onCheckbox2StateChange() {
+        checkbox2State = !checkbox2State
+        checkbox1State = false
+        checkbox3State = false
+    }
+
+    fun onCheckbox3StateChange() {
+        checkbox3State = !checkbox3State
+        checkbox2State = false
+        checkbox1State = false
+    }
+
+    fun sendDeclineOrderReason() {
+        if (checkbox1State) {
+            //TODO "Уже купил книгу по более низкой цене"
+        } else if (checkbox2State) {
+            //TODO "Перехотел читать эту книгу"
+        } else if (checkbox3State) {
+            //TODO reason
+        }
+    }
+
+}
+
+enum class OrderOptions {
+    ACTIVE, BOUGHT
 }
