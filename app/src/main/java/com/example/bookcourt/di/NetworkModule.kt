@@ -39,10 +39,12 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    fun provideBooksApi(client: OkHttpClient):BooksApi{
+    fun provideBooksApi(
+       client: OkHttpClient
+    ):BooksApi{
        return Retrofit.Builder()
             .baseUrl(ApiUrl.BOOKS_URL)
-           .client(client)
+            .client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(BooksApi::class.java)
