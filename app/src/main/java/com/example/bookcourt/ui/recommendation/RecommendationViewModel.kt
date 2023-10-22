@@ -116,9 +116,9 @@ class RecommendationViewModel @Inject constructor(
     }
 
     fun getAllBooksRemote() {
-        viewModelScope.launch(Dispatchers.IO) {
-            bookApi.getBookById("jopa")
-        }
+//        viewModelScope.launch(Dispatchers.IO) {
+//            bookApi.getBookById("jopa")
+//        }
 
 
 //        fetchJob?.cancel()
