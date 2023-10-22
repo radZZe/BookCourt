@@ -6,6 +6,7 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.bookcourt.data.api.BooksApi
 import com.example.bookcourt.data.repositories.DataStoreRepository
 import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.uuid
 import com.example.bookcourt.data.repositories.MetricsRepository
@@ -40,7 +41,8 @@ class RecommendationViewModel @Inject constructor(
     private val dataStoreRepository: DataStoreRepository,
     private val metricRep: MetricsRepository,
     private val userRepositoryI: UserRepositoryI,
-    private val basketRepository: BasketRepositoryI
+    private val basketRepository: BasketRepositoryI,
+    private val bookApi: BooksApi,
 ) : ViewModel() {
 
     lateinit var user: User
@@ -114,22 +116,28 @@ class RecommendationViewModel @Inject constructor(
     }
 
     fun getAllBooksRemote() {
-        fetchJob?.cancel()
-        fetchJob = viewModelScope.launch(Dispatchers.IO) {
-            user = getUser()
-            val books = networkRepository.getAllBooksRemote()//convertBooksJsonToList(context)
-            if (books is ResultTask.Success && books.data!=null){
-                    booksValidation(user, books.data)
-                isFirstDataLoading = false
-                dataIsReady = true
-            }
-            else{
-                //TODO(негативный сценарий)
-            }
+//        viewModelScope.launch(Dispatchers.IO) {
+//            bookApi.getBookById("jopa")
+//        }
 
-        }
+
+//        fetchJob?.cancel()
+//        fetchJob = viewModelScope.launch(Dispatchers.IO) {
+//            user = getUser()
+//            val books = networkRepository.getAllBooksRemote()//convertBooksJsonToList(context)
+//            if (books is ResultTask.Success && books.data!=null){
+//                    booksValidation(user, books.data)
+//                isFirstDataLoading = false
+//                dataIsReady = true
+//            }
+//            else{
+//                //TODO(негативный сценарий)
+//            }
+//
+//        }
     }
     fun getAllBooks(context: Context) {
+        getAllBooksRemote()
         fetchJob?.cancel()
         fetchJob = viewModelScope.launch(Dispatchers.IO) {
             try {
