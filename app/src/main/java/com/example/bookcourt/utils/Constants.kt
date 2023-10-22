@@ -72,7 +72,7 @@ object Constants {
             bookTitle = "Лис и Ча",
             bookAuthor = "Диана Лютер, Детская литература",
             cover = R.drawable.cover_fox_and_cha,
-            bottomText = "Нравится",
+            bottomText = "Пропустить",
             bottomIcon = R.drawable.skip_ic,
             swipe = "Down"
         ),

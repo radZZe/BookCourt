@@ -82,8 +82,11 @@ class SignInViewModel @Inject constructor(
         metricRep.onClick(DataClickMetric(Buttons.SIGN_IN, Screens.SignIn.route))
     }
 
-    fun saveUser(onNavigateToCategorySelection: () -> Unit,
-                 onNavigateToTutorial: () -> Unit, context:Context) {
+    fun saveUser(
+//        onNavigateToVerificationCode: () -> Unit,
+//        onNavigateToTutorial: () -> Unit,
+        context:Context
+    ) {
         isLoading = true
         viewModelScope.launch(Dispatchers.IO) {
             if (dataStoreRepository.getBoolPref(isRemembered).first()) {
@@ -106,17 +109,17 @@ class SignInViewModel @Inject constructor(
                 editPrefs(UUID)
             }
             sendMetrics()
-            withContext(Dispatchers.Main){
-                if (isTutorChecked.first()) {
-                    onNavigateToCategorySelection()
-                } else {
-                    onNavigateToTutorial()
-                }
-            }
+//            withContext(Dispatchers.Main){
+//                if (isTutorChecked.first()) {
+//                    onNavigateToVerificationCode()
+//                } else {
+//                    onNavigateToTutorial()
+//                }
+//            }
         }
     }
 
-    fun isValidEmail(email:String):Boolean{
+    fun isValidEmail(): Boolean{
         return !TextUtils.isEmpty(email) && android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
 

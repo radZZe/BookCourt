@@ -51,13 +51,16 @@ import java.util.*
 
 @Composable
 fun ProfileSettings(
-    onNavigateToProfile: () -> Unit = {},
+    onNavigateToProfile: () -> Unit,
+    onNavigateToSignIn: () -> Unit,
     viewModel: ProfileSettingsViewModel = hiltViewModel()
 ) {
     LaunchedEffect(key1 = Unit, block = {
         viewModel.getUser()
     })
-    Column(modifier = Modifier.fillMaxSize().background(MainBgColor)) {
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .background(MainBgColor)) {
         ScreenHeader(
             text = "Настройки профиля",
             goBack = { onNavigateToProfile() }
@@ -71,7 +74,10 @@ fun ProfileSettings(
             ) {
 
                 Spacer(modifier = Modifier.height(26.dp))
-                ProfileMainSection(viewModel)
+                ProfileMainSection(
+                    { onNavigateToSignIn() },
+                    viewModel
+                )
                 CustomButton(
                     text = "Сохранить",
                     textColor = Color.Black,
@@ -90,8 +96,10 @@ fun ProfileSettings(
                         .fillMaxWidth()
                         .padding(bottom = 20.dp)
                         .height(26.dp)
-                        .clickable(interactionSource =  MutableInteractionSource(),
-                            indication = null) { }
+                        .clickable(
+                            interactionSource = MutableInteractionSource(),
+                            indication = null
+                        ) { }
                 ) {
                     TextRobotoRegular(
                         text = stringResource(R.string.profile_screen_logOut),
@@ -115,6 +123,7 @@ fun ProfileSettings(
 
 @Composable
 fun ProfileMainSection(
+    onNavigateToSignIn: () -> Unit,
     viewModel: ProfileSettingsViewModel
 ) {
 
@@ -134,9 +143,9 @@ fun ProfileMainSection(
     val imagePlaceholderUri = remember {
         Uri.Builder()
             .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE)
-            .authority(resources.getResourcePackageName(com.example.bookcourt.R.drawable.image_placeholder))
-            .appendPath(resources.getResourceTypeName(com.example.bookcourt.R.drawable.image_placeholder))
-            .appendPath(resources.getResourceEntryName(com.example.bookcourt.R.drawable.image_placeholder))
+            .authority(resources.getResourcePackageName(R.drawable.image_placeholder))
+            .appendPath(resources.getResourceTypeName(R.drawable.image_placeholder))
+            .appendPath(resources.getResourceEntryName(R.drawable.image_placeholder))
             .build()
     }
 
@@ -146,8 +155,10 @@ fun ProfileMainSection(
             .padding(horizontal = 20.dp), horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(modifier = Modifier
-            .clickable(interactionSource =  MutableInteractionSource(),
-                indication = null) {
+            .clickable(
+                interactionSource = MutableInteractionSource(),
+                indication = null
+            ) {
                 galleryLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
             }
             .size(138.dp)
@@ -163,7 +174,7 @@ fun ProfileMainSection(
             )
             Image(
                 modifier = Modifier.align(Alignment.Center),
-                painter = painterResource(id = com.example.bookcourt.R.drawable.image_upload_icon),
+                painter = painterResource(id = R.drawable.image_upload_icon),
                 contentDescription = "button_image_upload"
             )
         }
@@ -176,63 +187,59 @@ fun ProfileMainSection(
             height = 48.dp,
             labelFontSize = 13,
             valueFontSize = 16,
-            trailingIcon = com.example.bookcourt.R.drawable.ic_close_circle,
+            trailingIcon = R.drawable.ic_close_circle,
             onClickTrailingIcon = {
                 viewModel.onNameChanged("")
             }
         )
         Spacer(modifier = Modifier.height(16.dp))
         ProfileOutlinedTextField(
-            label = stringResource(com.example.bookcourt.R.string.profile_screen_name),
+            label = stringResource(R.string.profile_screen_name),
             value = viewModel.name,
             onValueChanged = { viewModel.onNameChanged(it) },
             paddingStart = 16.dp,
             height = 48.dp,
             labelFontSize = 13,
             valueFontSize = 16,
-            trailingIcon = com.example.bookcourt.R.drawable.ic_close_circle,
+            trailingIcon = R.drawable.ic_close_circle,
             onClickTrailingIcon = {
                 viewModel.onNameChanged("")
             }
         )
         Spacer(modifier = Modifier.height(16.dp))
         ProfileOutlinedTextField(
-            label = stringResource(com.example.bookcourt.R.string.profile_screen_surname),
+            label = stringResource(R.string.profile_screen_surname),
             value = viewModel.surname,
             onValueChanged = { viewModel.onSurnameChanged(it) },
             paddingStart = 16.dp,
             height = 48.dp,
             labelFontSize = 13,
             valueFontSize = 16,
-            trailingIcon = com.example.bookcourt.R.drawable.ic_close_circle,
+            trailingIcon = R.drawable.ic_close_circle,
             onClickTrailingIcon = {
                 viewModel.onNameChanged("")
             }
         )
         Spacer(modifier = Modifier.height(16.dp))
-        ProfileOutlinedTextField(
-            label = stringResource(com.example.bookcourt.R.string.profile_screen_email),
+        EmailField(
+            label = stringResource(R.string.profile_screen_email),
             value = viewModel.email,
-            onValueChanged = { viewModel.onEmailChanged(it) },
             paddingStart = 16.dp,
             height = 48.dp,
             labelFontSize = 13,
             valueFontSize = 16,
-            trailingIcon = com.example.bookcourt.R.drawable.ic_close_circle,
-            onClickTrailingIcon = {
-                viewModel.onEmailChanged("")
-            }
+            onClick = { onNavigateToSignIn() }
         )
         Spacer(modifier = Modifier.height(16.dp))
         ProfileDatePicker(
             labelFontSize = 13,
             height = 48.dp,
             paddingStart = 16.dp,
-            label = stringResource(com.example.bookcourt.R.string.profile_screen_birthday_date),
+            label = stringResource(R.string.profile_screen_birthday_date),
             value = viewModel.date,
             fontSize = 16,
             onDateChanged = {
-                viewModel.onBDayDAteChanged(it)
+                viewModel.onBDayDateChanged(it)
             }
         )
         Spacer(modifier = Modifier.height(8.dp))
@@ -273,8 +280,10 @@ fun ProfileDatePicker(
         Modifier
             .fillMaxWidth()
             .height(height)
-            .clickable(interactionSource =  MutableInteractionSource(),
-                indication = null) {
+            .clickable(
+                interactionSource = MutableInteractionSource(),
+                indication = null
+            ) {
                 datePickerDialog.show()
             }
     ) {
@@ -318,7 +327,7 @@ fun ProfileDatePicker(
                 Text(
                     text = value,
                     fontFamily = FontFamily(
-                        Font(com.example.bookcourt.R.font.roboto_regular)
+                        Font(R.font.roboto_regular)
                     ),
                     fontSize = fontSize.sp,
                     modifier = Modifier.padding(start = paddingStart)
@@ -334,7 +343,7 @@ fun ProfileDatePicker(
 fun SexCheckBox(viewModel: ProfileSettingsViewModel) {
     Row(horizontalArrangement = Arrangement.Start, modifier = Modifier.fillMaxWidth()) {
         TextRobotoRegular(
-            text = stringResource(com.example.bookcourt.R.string.profile_screen_sex),
+            text = stringResource(R.string.profile_screen_sex),
             color = DarkGreyColor,
             fontSize = 14,
         )
@@ -368,14 +377,16 @@ fun SexCheckBox(viewModel: ProfileSettingsViewModel) {
                     )
                 )
                 .background(if (viewModel.sex != Sex.MALE) MainBgColor else DarkBgColor)
-                .clickable(interactionSource =  MutableInteractionSource(),
-                    indication = null) {
+                .clickable(
+                    interactionSource = MutableInteractionSource(),
+                    indication = null
+                ) {
                     viewModel.onSexChanged(Sex.MALE)
                 },
             contentAlignment = Alignment.Center
         ) {
             TextRobotoRegular(
-                text = stringResource(com.example.bookcourt.R.string.profile_screen_male),
+                text = stringResource(R.string.profile_screen_male),
                 color = Color.Black,
                 fontSize = 14,
             )
@@ -401,14 +412,16 @@ fun SexCheckBox(viewModel: ProfileSettingsViewModel) {
                     )
                 )
                 .background(if (viewModel.sex != Sex.FEMALE) MainBgColor else DarkBgColor)
-                .clickable(interactionSource =  MutableInteractionSource(),
-                    indication = null) {
+                .clickable(
+                    interactionSource = MutableInteractionSource(),
+                    indication = null
+                ) {
                     viewModel.onSexChanged(Sex.FEMALE)
                 },
             contentAlignment = Alignment.Center
         ) {
             TextRobotoRegular(
-                text = stringResource(com.example.bookcourt.R.string.profile_screen_female),
+                text = stringResource(R.string.profile_screen_female),
                 color = Color.Black,
                 fontSize = 14,
             )
@@ -482,15 +495,17 @@ fun ProfileOutlinedTextField(
                     textStyle = TextStyle(
                         fontSize = valueFontSize.sp,
                         fontFamily = FontFamily(
-                            Font(com.example.bookcourt.R.font.roboto_regular)
+                            Font(R.font.roboto_regular)
                         )
                     )
                 )
                 if (trailingIcon != null) Image(
                     painter = painterResource(id = trailingIcon),
                     contentDescription = null,
-                    modifier = Modifier.clickable(interactionSource =  MutableInteractionSource(),
-                        indication = null) { onClickTrailingIcon() })
+                    modifier = Modifier.clickable(
+                        interactionSource = MutableInteractionSource(),
+                        indication = null
+                    ) { onClickTrailingIcon() })
             }
 
         }
@@ -498,7 +513,11 @@ fun ProfileOutlinedTextField(
 }
 
 @Composable
-fun SimpleSnackBar(text: String, modifier: Modifier, visible: Boolean) {
+fun SimpleSnackBar(
+    text: String,
+    modifier: Modifier,
+    visible: Boolean
+) {
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         AnimatedVisibility(
             visible = visible,
@@ -515,7 +534,70 @@ fun SimpleSnackBar(text: String, modifier: Modifier, visible: Boolean) {
             }
             Spacer(modifier = Modifier.height(120.dp))
         }
-
     }
+}
 
+@Composable
+fun EmailField(
+    label: String,
+    value: String,
+    paddingStart: Dp,
+    height: Dp,
+    labelFontSize: Int,
+    valueFontSize: Int,
+    onClick: () -> Unit
+) {
+    val lineHeightSp: TextUnit = labelFontSize.sp
+    val lineHeightDp: Dp = with(LocalDensity.current) {
+        lineHeightSp.toDp()
+    }
+    Box(
+        Modifier
+            .fillMaxWidth()
+            .height(height)
+            .clickable { onClick() }
+    ) {
+        Row(
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .zIndex(3f)
+        ) {
+            Spacer(modifier = Modifier.width(paddingStart))
+            Box(
+                modifier = Modifier
+                    .background(MainBgColor)
+                    .zIndex(4f)
+                    .padding(horizontal = 2.dp)
+            ) {
+                TextRobotoRegular(text = label, color = DarkGreyColor, fontSize = labelFontSize)
+            }
+        }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(height - lineHeightDp.div(1.5f))
+                .clip(RoundedCornerShape(9.dp))
+                .border(1.dp, BorderColor, RoundedCornerShape(9.dp))
+                .background(MainBgColor)
+                .align(Alignment.BottomCenter)
+                .zIndex(1f),
+            contentAlignment = Alignment.CenterStart
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(end = paddingStart)
+                    .clickable { onClick() },
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                TextRobotoRegular(
+                    text = value,
+                    color = Color.Black,
+                    fontSize = valueFontSize,
+                    modifier = Modifier.padding(start = 16.dp)
+                )
+            }
+        }
+    }
 }

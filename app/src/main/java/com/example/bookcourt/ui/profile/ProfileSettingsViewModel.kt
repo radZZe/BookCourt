@@ -75,7 +75,7 @@ class ProfileSettingsViewModel @Inject constructor(
         surname = newText
     }
 
-    fun onBDayDAteChanged(newText: String) {
+    fun onBDayDateChanged(newText: String) {
         date = newText
     }
 

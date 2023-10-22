@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -20,14 +21,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.bookcourt.R
 import com.example.bookcourt.models.metrics.DataClickMetric
 import com.example.bookcourt.models.ui.TutorialCard
 import com.example.bookcourt.ui.theme.BackGroundWhite
-import com.example.bookcourt.utils.CustomButton
 import com.example.bookcourt.ui.theme.Gilroy
 import com.example.bookcourt.utils.Buttons
 import com.example.bookcourt.utils.Constants.tutorialCards
+import com.example.bookcourt.utils.CustomButton
 import com.example.bookcourt.utils.Screens
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPagerIndicator
@@ -43,20 +43,26 @@ fun TutorScreen(
     mViewModel: TutorialScreenViewModel = hiltViewModel()
 ) {
     val pagerState = rememberPagerState(pageCount = tutorialCards.size, initialOffscreenLimit = 2)
+    val tutorialCard = tutorialCards[(pagerState.currentPage)]
+    val nextPage = tutorialCards[(pagerState.currentPage + 1) % (pagerState.pageCount)]
+
+    var isReady by remember { mutableStateOf(true) }
+    var secondReady by remember { mutableStateOf(isReady) }
 
     LaunchedEffect(key1 = Unit) {
         while (true) {
             yield()
+            isReady = true
+            secondReady = false
             delay(1300)
+            isReady = false
+            secondReady = true
             pagerState.animateScrollToPage(
                 page = (pagerState.currentPage + 1) % (pagerState.pageCount),
                 animationSpec = tween(700)
             )
         }
     }
-
-    val tutorialCard = tutorialCards[(pagerState.currentPage)]
-    val nextPage = tutorialCards[(pagerState.currentPage + 1) % (pagerState.pageCount)]
 
     var exitAnim: ExitTransition
 
@@ -69,203 +75,127 @@ fun TutorScreen(
             .background(BackGroundWhite)
             .padding(vertical = 20.dp, horizontal = 20.dp)
     ) {
-        Box(modifier = Modifier)
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth()
         ) {
             Box {
-                Box {
+                Box(
+                    modifier = Modifier
+                        .height(490.dp)
+                        .width(382.dp)
+                        .zIndex(1f)
+                ) {
+                    DirectionArrows(
+                        isReady = isReady,
+                        page = tutorialCard,
+                        nextPage = nextPage
+                    )
+                }
+                Column(
+                    modifier = Modifier
+                        .wrapContentHeight()
+                        .fillMaxWidth()
+                        .zIndex(0f),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
                     Box(
                         modifier = Modifier
                             .height(490.dp)
-                            .width(382.dp)
-                            .zIndex(1f)
+                            .width(260.dp)
+                            .padding(top = 39.dp)
+                            .clip(RoundedCornerShape(24.dp))
+                            .background(Color.Black)
                     ) {
-                        val iconSize = 70
-                        when (tutorialCard.swipe) {
-                            "Right" -> {
-                                exitAnim = slideOutHorizontally(
-                                    targetOffsetX = { -1000 },
-                                    animationSpec = tween(300)
-                                )
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxSize(),
-                                    horizontalArrangement = Arrangement.End,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Image(
-                                        painter = painterResource(id = R.drawable.right_icon_ic),
-                                        contentDescription = "Swipe Right",
-                                        alignment = Alignment.TopCenter,
-                                        modifier = Modifier
-                                            .size((iconSize + 10).dp)
-                                            .alpha(0.9f)
-                                            .zIndex(2f)
-                                    )
-                                }
-                            }
-                            "Left" -> {
-                                exitAnim = slideOutHorizontally(
-                                    targetOffsetX = { 1000 },
-                                    animationSpec = tween(300)
-                                )
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxSize(),
-                                    horizontalArrangement = Arrangement.Start,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Image(
-                                        painter = painterResource(id = R.drawable.left_icon_ic),
-                                        contentDescription = "Swipe Left",
-                                        alignment = Alignment.CenterEnd,
-                                        modifier = Modifier
-                                            .size((iconSize + 10).dp)
-                                            .alpha(0.9f)
-                                            .zIndex(2f)
-                                    )
-                                }
-                            }
-                            "Up" -> {
-                                exitAnim = slideOutVertically(
-                                    targetOffsetY = { -1000 },
-                                    animationSpec = tween(300)
-                                )
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxSize(),
-                                    verticalArrangement = Arrangement.Top,
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
-                                    Image(
-                                        painter = painterResource(id = R.drawable.up_icon_ic),
-                                        contentDescription = "Swipe Up",
-                                        alignment = Alignment.CenterStart,
-                                        modifier = Modifier
-                                            .size(iconSize.dp)
-                                            .alpha(0.9f)
-                                            .zIndex(2f)
-                                    )
-                                }
-                            }
-                            "Down" -> {
-
-                            }
-                            else -> {
-                                exitAnim = slideOutVertically(
-                                    targetOffsetY = { 1000 },
-                                    animationSpec = tween(300)
-                                )
-                            }
-                        }
-                    }
-                    Column(
-                        modifier = Modifier
-                            .wrapContentHeight()
-                            .fillMaxWidth()
-                            .zIndex(0f),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Box(
+                        val animationSpec = 700
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.SpaceBetween,
                             modifier = Modifier
-                                .height(490.dp)
-                                .width(260.dp)
-                                .padding(top = 39.dp)
-                                .clip(RoundedCornerShape(24.dp))
-                                .background(Color.Black)
+                                .fillMaxSize()
+                                .padding(5.dp)
+                                .clip(RoundedCornerShape(20.dp))
+                                .background(BackGroundWhite)
                         ) {
-                            val animationSpec = 700
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.SpaceBetween,
+                            Image(
+                                painter = painterResource(id = com.example.bookcourt.R.drawable.status_bar),
+                                contentDescription = "Status Bar",
                                 modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(5.dp)
-                                    .clip(RoundedCornerShape(20.dp))
-                                    .background(BackGroundWhite)
-                            ) {
-                                Image(
-                                    painter = painterResource(id = R.drawable.status_bar),
-                                    contentDescription = "Status Bar",
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(40.dp)
-                                        .padding(top = 2.dp, start = 10.dp, end = 10.dp)
-                                )
-                                when (tutorialCard.swipe) {
-                                    "Right" -> {
-                                        exitAnim = slideOutHorizontally(
-                                            targetOffsetX = { -1000 },
-                                            animationSpec = tween(animationSpec)
-                                        )
-                                        Cover(tutorialCard, nextPage, exitAnim)
-                                    }
-                                    "Left" -> {
-                                        exitAnim = slideOutVertically(
-                                            targetOffsetY = { -1000 },
-                                            animationSpec = tween(animationSpec)
-                                        )
-                                        Cover(tutorialCard, nextPage, exitAnim)
-                                    }
-                                    "No" -> {
-                                        exitAnim = slideOutHorizontally(
-                                            targetOffsetX = { 1000 },
-                                            animationSpec = tween(animationSpec)
-                                        )
-                                        Cover(tutorialCard, nextPage, exitAnim)
-                                    }
-                                    "Up" -> {
-                                        exitAnim = slideOutVertically(
-                                            targetOffsetY = { 1000 },
-                                            animationSpec = tween(animationSpec)
-                                        )
-                                        Cover(tutorialCard, nextPage, exitAnim)
-                                    }
-                                    else -> {
-                                        exitAnim = fadeOut(
-                                            animationSpec = tween(animationSpec)
-                                        )
-                                        Cover(tutorialCard, nextPage, exitAnim)
-                                    }
+                                    .fillMaxWidth()
+                                    .height(40.dp)
+                                    .padding(top = 2.dp, start = 10.dp, end = 10.dp)
+                            )
+                            when (tutorialCard.swipe) {
+                                "Right" -> {
+                                    exitAnim = slideOutHorizontally(
+                                        targetOffsetX = { -1000 },
+                                        animationSpec = tween(animationSpec)
+                                    )
+                                    Cover(isReady, secondReady, tutorialCard, nextPage, exitAnim)
                                 }
-                                BottomPart(
-                                    bookTitle = tutorialCard.bookTitle,
-                                    bookAuthor = tutorialCard.bookAuthor
-                                )
+                                "Left" -> {
+                                    exitAnim = slideOutVertically(
+                                        targetOffsetY = { -1000 },
+                                        animationSpec = tween(animationSpec)
+                                    )
+                                    Cover(isReady, secondReady, tutorialCard, nextPage, exitAnim)
+                                }
+                                "No" -> {
+                                    exitAnim = slideOutHorizontally(
+                                        targetOffsetX = { 1000 },
+                                        animationSpec = tween(animationSpec)
+                                    )
+                                    Cover(isReady, secondReady, tutorialCard, nextPage, exitAnim)
+                                }
+                                "Up" -> {
+                                    exitAnim = slideOutVertically(
+                                        targetOffsetY = { 1000 },
+                                        animationSpec = tween(animationSpec)
+                                    )
+                                    Cover(isReady, secondReady, tutorialCard, nextPage, exitAnim)
+                                }
+                                else -> {
+                                    exitAnim = fadeOut(
+                                        animationSpec = tween(animationSpec)
+                                    )
+                                    Cover(isReady, secondReady, tutorialCard, nextPage, exitAnim)
+                                }
                             }
-
-                        }
-                        Spacer(modifier = Modifier.height(12.dp))
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .wrapContentHeight(),
-                            horizontalArrangement = Arrangement.Center,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            if (tutorialCard.bottomIcon != null) {
-                                Image(
-                                    painter = painterResource(id = tutorialCard.bottomIcon),
-                                    contentDescription = "Bottom Icon",
-                                    modifier = Modifier.size(14.dp)
-                                )
-                                Spacer(modifier = Modifier.width(6.dp))
-                            }
-                            Text(
-                                text = tutorialCard.bottomText,
-                                fontSize = 15.sp,
-                                fontFamily = Gilroy
+                            BottomPart(
+                                page = tutorialCard,
+                                nextPage = nextPage,
+                                isReady = isReady,
                             )
                         }
-                        Spacer(modifier = Modifier.height(10.dp))
-                        HorizontalPagerIndicator(
-                            pagerState = pagerState,
-                            modifier = Modifier.align(Alignment.CenterHorizontally)
+                    }
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        val currentPage = if (isReady) tutorialCard else nextPage
+                        currentPage.bottomIcon?.let {
+                            Image(
+                                painter = painterResource(id = it),
+                                contentDescription = "Bottom Icon",
+                                modifier = Modifier.size(14.dp)
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                        }
+                        Text(
+                            text = currentPage.bottomText,
+                            fontSize = 15.sp,
+                            fontFamily = Gilroy
                         )
                     }
-
+                    Spacer(modifier = Modifier.height(10.dp))
+                    HorizontalPagerIndicator(
+                        pagerState = pagerState,
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                    )
                 }
             }
         }
@@ -284,21 +214,12 @@ fun TutorScreen(
 
 @Composable
 fun Cover(
+    isReady: Boolean,
+    secondReady: Boolean,
     page: TutorialCard,
     nextPage: TutorialCard,
     animation: ExitTransition = fadeOut()
 ) {
-    var isReady by remember { mutableStateOf(true) }
-    var secondReady by remember { mutableStateOf(false) }
-
-    LaunchedEffect(key1 = Unit) {
-        isReady = true
-        secondReady = false
-        delay(1300)
-        isReady = false
-        secondReady = true
-    }
-
     Box {
         AnimatedVisibility(
             visible = isReady,
@@ -347,8 +268,9 @@ fun Cover(
 
 @Composable
 fun BottomPart(
-    bookTitle: String,
-    bookAuthor: String
+    isReady: Boolean,
+    page: TutorialCard,
+    nextPage: TutorialCard,
 ) {
     Column(
         modifier = Modifier
@@ -382,7 +304,7 @@ fun BottomPart(
                     .wrapContentWidth()
             ) {
                 Text(
-                    text = bookTitle,
+                    text = if (isReady) page.bookTitle else nextPage.bookTitle,
                     fontFamily = Gilroy,
                     fontSize = 10.sp,
                     fontWeight = FontWeight.Medium,
@@ -390,7 +312,7 @@ fun BottomPart(
                 )
                 Spacer(modifier = Modifier.height(1.dp))
                 Text(
-                    text = bookAuthor,
+                    text = if (isReady) page.bookAuthor else nextPage.bookAuthor,
                     fontFamily = Gilroy,
                     fontSize = 8.sp,
                     fontWeight = FontWeight.Medium,
@@ -405,11 +327,110 @@ fun BottomPart(
                     .padding(3.dp)
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.luterature_logo),
+                    painter = painterResource(id = com.example.bookcourt.R.drawable.luterature_logo),
                     contentDescription = "Sponsor Logo",
                     modifier = Modifier.size(30.dp)
                 )
             }
         }
+    }
+
+}
+
+@Composable
+fun DirectionArrows(
+    isReady: Boolean,
+    page: TutorialCard,
+    nextPage: TutorialCard
+) {
+    val tutorialCard = if (isReady) page else nextPage
+    Arrow(swipe = tutorialCard.swipe)
+}
+
+@Composable
+fun Arrow(
+    swipe: String
+) {
+    val iconSize = 70
+    when (swipe) {
+        "Right" -> {
+            Box {
+                Row(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Image(
+                        painter = painterResource(id = com.example.bookcourt.R.drawable.right_icon_ic),
+                        contentDescription = "Swipe Right",
+                        alignment = Alignment.TopCenter,
+                        modifier = Modifier
+                            .size((iconSize + 10).dp)
+                            .alpha(0.9f)
+                            .zIndex(2f)
+                    )
+                }
+
+            }
+
+        }
+        "Left" -> {
+            Row(
+                modifier = Modifier
+                    .fillMaxSize(),
+                horizontalArrangement = Arrangement.Start,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    painter = painterResource(id = com.example.bookcourt.R.drawable.left_icon_ic),
+                    contentDescription = "Swipe Left",
+                    alignment = Alignment.CenterEnd,
+                    modifier = Modifier
+                        .size((iconSize + 10).dp)
+                        .alpha(0.9f)
+                        .zIndex(2f)
+                )
+            }
+        }
+        "Up" -> {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize(),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Image(
+                    painter = painterResource(id = com.example.bookcourt.R.drawable.up_icon_ic),
+                    contentDescription = "Swipe Up",
+                    alignment = Alignment.CenterStart,
+                    modifier = Modifier
+                        .size(iconSize.dp)
+                        .alpha(0.9f)
+                        .zIndex(2f)
+                )
+            }
+        }
+        "Down" -> {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize(),
+                verticalArrangement = Arrangement.Bottom,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Image(
+                    painter = painterResource(id = com.example.bookcourt.R.drawable.up_icon_ic),
+                    contentDescription = "Swipe Up",
+                    alignment = Alignment.CenterStart,
+                    modifier = Modifier
+                        .padding(bottom = 60.dp)
+                        .size(iconSize.dp)
+                        .alpha(0.9f)
+                        .rotate(180f)
+                        .zIndex(2f)
+                )
+            }
+        }
+        else -> {}
     }
 }

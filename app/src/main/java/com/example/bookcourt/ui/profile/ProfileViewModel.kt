@@ -19,6 +19,7 @@ class ProfileViewModel @Inject constructor(
 ) : ViewModel() {
 
     private var user: User? = null
+    val isAuthenticated = dataStoreRepository.getBoolPref(DataStoreRepository.isAuthenticated)
 
 
     suspend fun getUser() {
@@ -55,5 +56,7 @@ class ProfileViewModel @Inject constructor(
     var liked by mutableStateOf(0)
     var wantToRead by mutableStateOf(0)
 
-
+    suspend fun editPrefs() {
+        dataStoreRepository.setPref(true, DataStoreRepository.isAuthenticated)
+    }
 }

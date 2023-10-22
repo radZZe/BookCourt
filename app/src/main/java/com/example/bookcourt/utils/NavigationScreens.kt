@@ -12,6 +12,7 @@ sealed class Screens(
     object Splash : Screens(route = "Splash", title = "Splash")
     object Recommendation : Screens(route = "Recommendations", title = "Recommendations")
     object Tutorial : Screens(route = "Tutorial", title = "Tutorial")
+    object CategorySelectionRegistrationScreen : Screens(route = "CategorySelectionRegistrationScreen", title = "CategorySelectionRegistrationScreen")
     object CategorySelection : Screens(route = "CategorySelection", title = "CategorySelection")
     object Profile:Screens(route = "Profile", title = "Profile")
     object Statistics:Screens(route = "Statistics", title = "Statistics")
@@ -69,4 +70,5 @@ object Graph {
     const val BOTTOM_NAV_GRAPH = "bottom_nav_graph"
     const val PROFILE_NAV_GRAPH = "profile_nav_graph"
     const val BOOK_CARD_GRAPH = "book_card_graph"
+    const val START = "start_graph"
 }

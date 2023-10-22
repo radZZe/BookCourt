@@ -13,6 +13,7 @@ import com.example.bookcourt.utils.Constants.genres
 import com.example.bookcourt.utils.Hashing
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 

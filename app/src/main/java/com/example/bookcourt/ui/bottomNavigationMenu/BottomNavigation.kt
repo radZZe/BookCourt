@@ -48,7 +48,11 @@ fun BottomNavigationMenu(
         Screens.AskQuestion.route,
         Screens.CategorySelection.route,
         Screens.OrderingScreen.route,
-        Screens.SuccessPurchase.route
+        Screens.SuccessPurchase.route,
+        Screens.SignIn.route,
+        Screens.VerificationCode.route,
+        Screens.CategorySelectionRegistrationScreen.route,
+        Screens.Tutorial.route
     )
     LaunchedEffect(key1 = Unit) {
         viewModel.getBasketSize()

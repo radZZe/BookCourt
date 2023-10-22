@@ -27,6 +27,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -311,7 +312,7 @@ fun CityDropDownMenu(
 }
 
 @Composable
-fun TextRobotoRegular(text: String, color: Color, fontSize: Int) {
+fun TextRobotoRegular(text: String, color: Color, fontSize: Int, modifier: Modifier = Modifier) {
     Text(
         text = text,
         color = color,
@@ -320,7 +321,8 @@ fun TextRobotoRegular(text: String, color: Color, fontSize: Int) {
             Font(
                 R.font.roboto_regular
             )
-        )
+        ),
+        modifier = modifier
     )
 }
 

@@ -11,16 +11,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class OrdersViewModel @Inject constructor(
-    private val dataStoreRepository: DataStoreRepository,
-    private val userRepositoryI: UserRepositoryI
+
 ) : ViewModel() {
-    var option by mutableStateOf<OrderOptions?>(null)
-
-    fun onOptionChanged(newText: OrderOptions) {
-        option = newText
-    }
-}
-
-enum class OrderOptions {
-    ACTIVE, BOUGHT
 }

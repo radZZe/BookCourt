@@ -145,6 +145,9 @@ class VerificationCodeViewModel @Inject constructor(
     ) {
         if (code == "1234") { // Test code
             onSuccess()
+            viewModelScope.launch(Dispatchers.IO) {
+                dataStoreRepository.setPref(true, DataStoreRepository.PreferenceKeys.isAuthenticated)
+            }
         } else {
             onError()
         }

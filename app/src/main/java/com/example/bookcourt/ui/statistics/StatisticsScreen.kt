@@ -190,7 +190,7 @@ fun ValidStatistics(
             ) {
                 Image(
                     modifier = Modifier
-                        .size(22.dp)
+                        .size(24.dp)
                         .alpha(viewModel.getExitBtnAlpha())
                         .clickable(interactionSource =  MutableInteractionSource(),
                             indication = null) { onNavigateToRecommendation() }
@@ -269,6 +269,7 @@ fun FavoriteGenresStats(
             modifier = Modifier
                 .weight(1f, false)
                 .alpha(mViewModel.getShareBtnAlpha())
+                .padding(bottom = 40.dp)
                 .onGloballyPositioned {
                     if (mViewModel.getShareBtnAlpha() == -0f) {
                         mViewModel.isShareBtnHidden.value = true
@@ -362,6 +363,7 @@ fun ReadBooksStats(
             modifier = Modifier
                 .weight(1f, false)
                 .alpha(mViewModel.getShareBtnAlpha())
+                .padding(bottom = 40.dp)
                 .onGloballyPositioned {
                     if (mViewModel.getShareBtnAlpha() == -0f) {
                         mViewModel.isShareBtnHidden.value = true
@@ -465,6 +467,7 @@ fun FavoriteAuthors(
             modifier = Modifier
                 .weight(1f, false)
                 .alpha(mViewModel.getShareBtnAlpha())
+                .padding(bottom = 40.dp)
                 .onGloballyPositioned {
                     if (mViewModel.getShareBtnAlpha() == -0f) {
                         mViewModel.isShareBtnHidden.value = true
@@ -641,7 +644,7 @@ fun EmptyStatistics(
         ) {
             Image(
                 modifier = Modifier
-                    .size(22.dp)
+                    .size(24.dp)
                     .clickable(interactionSource =  MutableInteractionSource(),
                         indication = null) { onNavigateToRecommendation() },
                 painter = painterResource(id = R.drawable.close_icon),

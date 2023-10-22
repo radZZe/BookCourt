@@ -28,8 +28,8 @@ import com.example.bookcourt.utils.*
 import com.google.accompanist.flowlayout.FlowRow
 
 @Composable
-fun CategorySelectionScreen(
-    onNavigateToBottomNav: () -> Unit = {},
+fun CategorySelectionRegistrationScreen(
+    onNavigateToLibrary: () -> Unit = {},
     viewModel: CategorySelectionViewModel = hiltViewModel(),
 ) {
     val windowInfo = rememberWindowSizeClass()
@@ -49,14 +49,14 @@ fun CategorySelectionScreen(
                 .align(Alignment.BottomCenter)
                 .padding(bottom = if (windowInfo.screenHeightInfo == WindowInfo.WindowType.Compact) 10.dp else 20.dp)
         ) {
-            NextButton(viewModel, windowInfo.screenHeightInfo, onNavigateToBottomNav)
+            NextButton(viewModel, windowInfo.screenHeightInfo, onNavigateToLibrary)
         }
 
     }
 }
 
 @Composable
-fun CategorySelectionScreen2(
+fun CategorySelectionScreen(
     onNavigateToProfile: () -> Unit = {},
     viewModel: CategorySelectionViewModel = hiltViewModel(),
 ) {

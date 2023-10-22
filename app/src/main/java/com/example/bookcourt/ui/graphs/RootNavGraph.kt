@@ -13,13 +13,13 @@ fun RootNavigationGraph(
     NavHost(
         navController = navController,
         route = Graph.ROOT,
-        startDestination = Graph.LOGIN
+        startDestination = Graph.START
     ) {
         loginNavGraph(navController = navController)
         composable(route = Graph.BOTTOM_NAV_GRAPH) {
             HomeScreen()
         }
-        profileNavGraph(navController = navController)
+        startNavGraph(navController = navController)
         //bookCardGraph(navController = navController)
     }
 }
