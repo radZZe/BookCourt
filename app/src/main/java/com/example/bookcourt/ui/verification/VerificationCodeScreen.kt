@@ -51,6 +51,8 @@ fun VerificationCodeScreen(
     val timer by viewModel.timer.collectAsState()
     val isOver by viewModel.isOver.collectAsState()
     val isValid by viewModel.isValid.collectAsState()
+    val blockTimer by viewModel.blockTimer.collectAsState()
+    val isUnblocked by viewModel.isUnblocked.collectAsState()
     val textList = viewModel.textList
 
     Column(
@@ -77,8 +79,10 @@ fun VerificationCodeScreen(
                     tint = PrimaryText,
                     modifier = Modifier
                         .size(42.dp)
-                        .clickable(interactionSource =  MutableInteractionSource(),
-                            indication = null) { onNavigateToSignIn() }
+                        .clickable(
+                            interactionSource = MutableInteractionSource(),
+                            indication = null
+                        ) { onNavigateToSignIn() }
                 )
                 Text(
                     text = "Код подтверждения",
@@ -117,12 +121,14 @@ fun VerificationCodeScreen(
             VerificationCodeFields(
                 isValid = isValid,
                 viewModel = viewModel,
-                textList = textList
+                textList = textList,
+                isUnblocked = isUnblocked
             )
             Spacer(modifier = Modifier.height(20.dp))
-            if (isValid == false) {
+            if (isValid == false || !isUnblocked) {
+                val text = if (!isUnblocked) "Слишком много попыток" else "Код введён не верно"
                 Text(
-                    text = "Код введён не верно",
+                    text = text,
                     modifier = Modifier,
                     textAlign = TextAlign.Center,
                     fontSize = 16.sp,
@@ -132,20 +138,9 @@ fun VerificationCodeScreen(
                 )
                 Spacer(modifier = Modifier.height(20.dp))
             }
-            if (isOver) {
+            if (!isUnblocked) {
                 Text(
-                    text = "Повторно отправить код",
-                    modifier = Modifier.clickable(interactionSource =  MutableInteractionSource(),
-                        indication = null) { viewModel.resendCode() },
-                    textAlign = TextAlign.Center,
-                    fontSize = 16.sp,
-                    fontFamily = Roboto,
-                    fontWeight = FontWeight.Normal,
-                    color = Color.Blue,
-                )
-            } else {
-                Text(
-                    text = "Повторно отправить код через: 00:${if (timer >= 10) "$timer" else "0$timer"}",
+                    text = "Повторно отправить код через: 0${blockTimer / 60}:${if (blockTimer % 60 >= 10) "${blockTimer % 60}" else "0${blockTimer % 60}"}",
                     modifier = Modifier,
                     textAlign = TextAlign.Center,
                     fontSize = 16.sp,
@@ -153,6 +148,29 @@ fun VerificationCodeScreen(
                     fontWeight = FontWeight.Normal,
                     color = SecondaryText,
                 )
+            } else {
+                if (isOver) {
+                    Text(
+                        text = "Повторно отправить код",
+                        modifier = Modifier.clickable(interactionSource =  MutableInteractionSource(),
+                            indication = null) { viewModel.resendCode() },
+                        textAlign = TextAlign.Center,
+                        fontSize = 16.sp,
+                        fontFamily = Roboto,
+                        fontWeight = FontWeight.Normal,
+                        color = Color.Blue,
+                    )
+                } else {
+                    Text(
+                        text = "Повторно отправить код через: 00:${if (timer >= 10) "$timer" else "0$timer"}",
+                        modifier = Modifier,
+                        textAlign = TextAlign.Center,
+                        fontSize = 16.sp,
+                        fontFamily = Roboto,
+                        fontWeight = FontWeight.Normal,
+                        color = SecondaryText,
+                    )
+                }
             }
         }
         Button(
@@ -186,7 +204,8 @@ private fun InputField(
     value: TextFieldValue,
     borderColor: Color,
     onValueChange: (value: TextFieldValue) -> Unit,
-    focusRequester: FocusRequester
+    focusRequester: FocusRequester,
+    isUnblocked: Boolean
 ) {
     BasicTextField(
         value = value,
@@ -225,7 +244,8 @@ private fun InputField(
         ),
         keyboardActions = KeyboardActions(
             onDone = null
-        )
+        ),
+        enabled = isUnblocked
     )
 }
 
@@ -234,7 +254,8 @@ private fun InputField(
 private fun VerificationCodeFields(
     isValid: Boolean?,
     viewModel: VerificationCodeViewModel,
-    textList: List<TextFieldValue>
+    textList: List<TextFieldValue>,
+    isUnblocked: Boolean
 ) {
     val borderColor = if (isValid == null || isValid == true) Color.Transparent else Color.Red
     val focusManager = LocalFocusManager.current
@@ -288,7 +309,8 @@ private fun VerificationCodeFields(
                     }
                     viewModel.nextFocus()
                 },
-                focusRequester = viewModel.requestList[i]
+                focusRequester = viewModel.requestList[i],
+                isUnblocked = isUnblocked
             )
             if (i != textList.size - 1) {
                 Spacer(modifier = Modifier.width(20.dp))
