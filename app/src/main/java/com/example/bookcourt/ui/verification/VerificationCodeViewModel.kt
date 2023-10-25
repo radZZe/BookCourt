@@ -64,12 +64,20 @@ class VerificationCodeViewModel @Inject constructor(
     private val _timer = MutableStateFlow(59)
     val timer = _timer.asStateFlow()
 
+    private val _blockTimer = MutableStateFlow(300)
+    val blockTimer = _blockTimer.asStateFlow()
+
+    private val _isUnblocked: MutableStateFlow<Boolean> = MutableStateFlow(true)
+    val isUnblocked = _isUnblocked.asStateFlow()
+
     private var isCodeVerified by mutableStateOf(false)
+
+    private var failedAttempts by mutableStateOf(0)
 
     init {
         viewModelScope.launch {
             userEmail.value = getUserEmail()
-            countDownTimer()
+            resendCodeTimer()
         }
     }
 
@@ -82,7 +90,7 @@ class VerificationCodeViewModel @Inject constructor(
         return userRepositoryI.loadData(userId.first())!!.email
     }
 
-    private suspend fun countDownTimer() {
+    private suspend fun resendCodeTimer() {
         while (true) {
             delay(1000)
             _timer.value--
@@ -99,6 +107,16 @@ class VerificationCodeViewModel @Inject constructor(
     fun resendCode() {
         _timer.value = 59
         _isOver.update { false }
+    }
+
+    private suspend fun unblockTimer() {
+        while (true) {
+            delay(1000)
+            _blockTimer.value--
+            if (_blockTimer.value == 0) {
+                _isUnblocked.update { true }
+            }
+        }
     }
 
     fun nextFocus() {
@@ -146,9 +164,14 @@ class VerificationCodeViewModel @Inject constructor(
         if (code == "1234") { // Test code
             onSuccess()
             viewModelScope.launch(Dispatchers.IO) {
-                dataStoreRepository.setPref(true, DataStoreRepository.PreferenceKeys.isAuthenticated)
+                dataStoreRepository.setPref(true, DataStoreRepository.isAuthenticated)
             }
         } else {
+            failedAttempts++
+            if (failedAttempts == 3) {
+                _isUnblocked.update { false }
+                viewModelScope.launch { unblockTimer() }
+            }
             onError()
         }
     }

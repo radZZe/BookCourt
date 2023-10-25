@@ -60,7 +60,7 @@ fun SignInScreen(
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 20.dp)
+                .padding(bottom = 48.dp)
                 .align(Alignment.BottomCenter),
             shape = RoundedCornerShape(50.dp),
             enabled = mViewModel.isValidEmail(),
