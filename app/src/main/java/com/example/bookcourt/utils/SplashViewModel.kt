@@ -7,12 +7,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SplashViewModel  @Inject constructor(
-    private val dataStoreRepository: DataStoreRepository
+    dataStoreRepository: DataStoreRepository
 ) : ViewModel() {
 
-    val rememberMeState = dataStoreRepository.getBoolPref(DataStoreRepository.isRemembered)
     val tutorState = dataStoreRepository.getBoolPref(DataStoreRepository.isTutorChecked)
-    val verificationState = dataStoreRepository.getBoolPref(DataStoreRepository.isCodeVerificated)
     val categorySelectionState = dataStoreRepository.getBoolPref(DataStoreRepository.isCategoriesSelected)
 
 }

@@ -88,9 +88,7 @@ fun CategorySelectionScreen(
             ) {
                 NextButton(viewModel, windowInfo.screenHeightInfo) { onNavigateToProfile() }
             }
-
         }
-
         Spacer(modifier = Modifier)
     }
 
@@ -101,7 +99,7 @@ fun CategoriesGrid(
     viewModel: CategorySelectionViewModel,
     windowType: WindowInfo.WindowType
 ) {
-    var data = viewModel.categories
+    val data = viewModel.categories
     FlowRow(
         modifier = Modifier
             .fillMaxWidth(),
@@ -154,15 +152,15 @@ fun CategoryItem(
         val fontSize = if (windowType == WindowInfo.WindowType.Compact) 14 else 15
         val rowPadding = mutableMapOf<String, Int>()
         if (windowType == WindowInfo.WindowType.Compact) {
-            rowPadding.put("start", 14)
-            rowPadding.put("end", 14)
-            rowPadding.put("top", 3)
-            rowPadding.put("bottom", 3)
+            rowPadding["start"] = 14
+            rowPadding["end"] = 14
+            rowPadding["top"] = 3
+            rowPadding["bottom"] = 3
         } else {
-            rowPadding.put("start", 16)
-            rowPadding.put("end", 16)
-            rowPadding.put("top", 5)
-            rowPadding.put("bottom", 5)
+            rowPadding["start"] = 16
+            rowPadding["end"] = 16
+            rowPadding["top"] = 5
+            rowPadding["bottom"] = 5
         }
 
         Box(

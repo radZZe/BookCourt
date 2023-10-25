@@ -55,10 +55,7 @@ fun SignInScreen(
         }
         Button(
             onClick = {
-                mViewModel.onCheckedChanged()
-                mViewModel.saveUser(
-                    context
-                )
+                mViewModel.saveUser(context)
                 onNavigateToVerificationCode()
             },
             modifier = Modifier

@@ -24,12 +24,17 @@ class CategorySelectionViewModel @Inject constructor(
     private val userRepositoryI: UserRepositoryI,
     private val hashing: Hashing,
 ) : ViewModel() {
+
     val selectedCategories = mutableStateListOf<MutableState<Category>>()
     val categories =  genres.map {
             mutableStateOf(Category(it, mutableStateOf(false)))
         }.toMutableStateList()
 
     private var isCategoriesSelected by mutableStateOf(false)
+
+    private suspend fun onStateChanged() {
+        isCategoriesSelected = !isCategoriesSelected
+    }
 
     private suspend fun editPrefs() {
         dataStoreRepository.setPref(!isCategoriesSelected, DataStoreRepository.isCategoriesSelected)

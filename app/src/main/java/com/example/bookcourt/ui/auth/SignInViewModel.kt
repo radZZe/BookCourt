@@ -8,18 +8,20 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookcourt.data.repositories.DataStoreRepository
-import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.isRemembered
-import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.savedCity
+import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.isAuthenticated
 import com.example.bookcourt.data.repositories.DataStoreRepository.PreferenceKeys.uuid
 import com.example.bookcourt.data.repositories.MetricsRepository
 import com.example.bookcourt.data.room.user.UserRepositoryI
 import com.example.bookcourt.models.metrics.DataClickMetric
 import com.example.bookcourt.models.user.User
-import com.example.bookcourt.utils.*
+import com.example.bookcourt.utils.Buttons
+import com.example.bookcourt.utils.Hashing
+import com.example.bookcourt.utils.MetricType
+import com.example.bookcourt.utils.Screens
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
-import java.util.regex.Pattern
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
@@ -35,61 +37,40 @@ class SignInViewModel @Inject constructor(
     var name by mutableStateOf("")
     var surname by mutableStateOf("")
     var phoneNumber by mutableStateOf("+7")
-    var isRememberMe by mutableStateOf(false)
     var city by mutableStateOf("")
-    var isLoading by mutableStateOf(false)
-    var isTutorChecked = dataStoreRepository.getBoolPref(DataStoreRepository.isTutorChecked)
 
-    var sessionTime = System.currentTimeMillis().toInt()
+    private var sessionTime = System.currentTimeMillis().toInt()
 
-    fun onEmailChanged(newText: String){
+    fun onEmailChanged(newText: String) {
         email = newText
     }
 
-    fun onCheckedChanged() {
-        isRememberMe = !isRememberMe
-    }
-
-    fun onNameChanged(newText: String) {
-        name = newText
-    }
-
-    fun onSurnameChanged(newText: String) {
-        surname = newText
-    }
-
-    fun onPhoneChanged(newText: String) {
-        phoneNumber = newText
-    }
-
-    fun onCityChanged(newText: String) {
-        city = newText
-    }
-
-    suspend fun sendUserMetric(context: Context,name:String,surname:String,phone:String,city:String,uuid:String){
-            metricRep.sendUserData(name,surname,phone,city,uuid,context)
+    private suspend fun sendUserMetric(
+        context: Context,
+        name: String,
+        surname: String,
+        phone: String,
+        city: String,
+        uuid: String
+    ) {
+        metricRep.sendUserData(name, surname, phone, city, uuid, context)
     }
 
     private suspend fun editPrefs(UUID: String) {
-            dataStoreRepository.setPref(isRememberMe, isRemembered)
-            dataStoreRepository.setPref(city, savedCity)
-            dataStoreRepository.setPref(UUID, uuid)
+        dataStoreRepository.setPref(UUID, uuid)
     }
 
     private suspend fun sendMetrics() {
         sessionTime = System.currentTimeMillis().toInt() - sessionTime
-        metricRep.appTime(sessionTime, MetricType.SCREEN_SESSION_TIME,"Sign in")
+        metricRep.appTime(sessionTime, MetricType.SCREEN_SESSION_TIME, "Sign in")
         metricRep.onClick(DataClickMetric(Buttons.SIGN_IN, Screens.SignIn.route))
     }
 
     fun saveUser(
-//        onNavigateToVerificationCode: () -> Unit,
-//        onNavigateToTutorial: () -> Unit,
-        context:Context
+        context: Context
     ) {
-        isLoading = true
         viewModelScope.launch(Dispatchers.IO) {
-            if (dataStoreRepository.getBoolPref(isRemembered).first()) {
+            if (dataStoreRepository.getBoolPref(isAuthenticated).first()) {
                 val userId = dataStoreRepository.getPref(uuid)
                 val user = userRepositoryI.loadData(userId.first())!!
                 user.email = email
@@ -105,27 +86,16 @@ class SignInViewModel @Inject constructor(
                     liked = mutableListOf()
                 )
                 userRepositoryI.saveData(user)
-                sendUserMetric(context,name,surname,phoneNumber,city, UUID)
+                sendUserMetric(context, name, surname, phoneNumber, city, UUID)
                 editPrefs(UUID)
             }
             sendMetrics()
-//            withContext(Dispatchers.Main){
-//                if (isTutorChecked.first()) {
-//                    onNavigateToVerificationCode()
-//                } else {
-//                    onNavigateToTutorial()
-//                }
-//            }
         }
     }
 
-    fun isValidEmail(): Boolean{
-        return !TextUtils.isEmpty(email) && android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
+    fun isValidEmail(): Boolean {
+        return !TextUtils.isEmpty(email) && android.util.Patterns.EMAIL_ADDRESS.matcher(email)
+            .matches()
     }
 
-    fun isValidPhone(): Boolean {
-        val pattern =
-            Pattern.compile("^((8|\\+7)[\\- ]?)?(\\(?\\d{3}\\)?[\\- ]?)?[\\d\\- ]{7,10}\$")
-        return pattern.matcher(phoneNumber).matches()
-    }
 }

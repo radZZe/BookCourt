@@ -18,15 +18,10 @@ class TutorialScreenViewModel @Inject constructor(
     private val dataStoreRepository: DataStoreRepository,
     private val metricRep: MetricsRepository,
 ) : ViewModel() {
-    var currentCardState by mutableStateOf(false)
     var isTutorChecked by mutableStateOf(false)
 
     fun changeIsTutorChecked() {
         isTutorChecked = !isTutorChecked
-    }
-
-    fun changeState() {
-        currentCardState = !currentCardState
     }
 
     private suspend fun editPrefs() {

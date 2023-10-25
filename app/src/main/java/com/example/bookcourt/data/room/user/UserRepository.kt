@@ -26,4 +26,8 @@ class UserRepository @Inject constructor(
         //networkSource.updateUser(user)
     }
 
+    override suspend fun deleteUser(user: User) {
+        localSource.deleteUser(user)
+    }
+
 }

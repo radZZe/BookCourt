@@ -14,4 +14,8 @@ class UserNetworkSource: UserSourceI {
     override suspend fun updateUser(user: User) {
         TODO("Not yet implemented")
     }
+
+    override suspend fun deleteUser(user: User) {
+        TODO("Not yet implemented")
+    }
 }

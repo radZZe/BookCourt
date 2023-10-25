@@ -18,4 +18,9 @@ class UserLocalSource(
     override suspend fun updateUser(user: User) {
         dao.updateUser(user)
     }
+
+    override suspend fun deleteUser(user: User) {
+        dao.deleteUser(user)
+    }
+
 }

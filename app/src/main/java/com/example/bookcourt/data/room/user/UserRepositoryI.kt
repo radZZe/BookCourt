@@ -6,4 +6,5 @@ interface UserRepositoryI {
     suspend fun loadData(id:String): User?
     suspend fun saveData(user:User)
     suspend fun updateData(user:User)
+    suspend fun deleteUser(user: User)
 }
