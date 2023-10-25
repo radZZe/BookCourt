@@ -28,7 +28,6 @@ import com.example.bookcourt.ui.theme.MainBgColor
 
 @Composable
 fun SignInScreen(
-//    onNavigateToCategorySelection: () -> Unit,
     onNavigateToVerificationCode: () -> Unit,
     mViewModel: SignInViewModel = hiltViewModel()
 ) {
@@ -58,15 +57,13 @@ fun SignInScreen(
             onClick = {
                 mViewModel.onCheckedChanged()
                 mViewModel.saveUser(
-//                    onNavigateToCategorySelection,
-//                    onNavigateToVerificationCode,
                     context
                 )
                 onNavigateToVerificationCode()
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 20.dp)
+                .padding(bottom = 48.dp)
                 .align(Alignment.BottomCenter),
             shape = RoundedCornerShape(50.dp),
             enabled = mViewModel.isValidEmail(),
