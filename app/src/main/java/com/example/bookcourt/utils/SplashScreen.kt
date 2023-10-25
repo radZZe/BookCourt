@@ -31,9 +31,7 @@ fun SplashScreen(
     var startAnimation by remember {
         mutableStateOf(false)
     }
-    val rememberMeState = mViewModel.rememberMeState.collectAsState(initial = false)
     val tutorState = mViewModel.tutorState.collectAsState(initial = false)
-    val verificationState = mViewModel.verificationState.collectAsState(initial = false)
     val categorySelectionState = mViewModel.categorySelectionState.collectAsState(initial = false)
 
     val alphaAnim = animateFloatAsState(
@@ -46,17 +44,6 @@ fun SplashScreen(
         navController.popBackStack()
         startAnimation = true
         delay(2000)
-//        if (categorySelectionState.value) {
-//            navController.navigate(route = Graph.BOTTOM_NAV_GRAPH)
-//        } else if (tutorState.value) {
-//            navController.navigate(route = Screens.CategorySelection.route)
-//        } else if (verificationState.value) {
-//            navController.navigate(route = Screens.Tutorial.route)
-//        } else if (rememberMeState.value) {
-//            navController.navigate(route = Screens.VerificationCode.route)
-//        } else {
-//            navController.navigate(route = Screens.SignIn.route)
-//        }
 
         if (categorySelectionState.value) {
             navController.navigate(route = Graph.BOTTOM_NAV_GRAPH)

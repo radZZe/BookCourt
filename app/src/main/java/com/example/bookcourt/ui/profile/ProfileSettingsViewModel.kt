@@ -55,8 +55,7 @@ class ProfileSettingsViewModel @Inject constructor(
     var profileImage by mutableStateOf<Uri?>(null)
     var isVisibleSnackBar by mutableStateOf(false)
 
-    var readAmount by mutableStateOf(0)
-    var liked by mutableStateOf(0)
+    private var readAmount by mutableStateOf(0)
     var wantToRead by mutableStateOf(0)
 
     fun onNameChanged(newText: String) {
@@ -65,10 +64,6 @@ class ProfileSettingsViewModel @Inject constructor(
 
     fun onNicknameChanged(newText: String) {
         nickname = newText
-    }
-
-    fun onEmailChanged(newText: String) {
-        email = newText
     }
 
     fun onSurnameChanged(newText: String) {
@@ -87,7 +82,7 @@ class ProfileSettingsViewModel @Inject constructor(
         profileImage = newUri
     }
 
-    fun showSnackBar(){
+    private fun showSnackBar(){
         viewModelScope.launch {
             isVisibleSnackBar = true
             delay(1000)
@@ -119,5 +114,20 @@ class ProfileSettingsViewModel @Inject constructor(
 
     }
 
+    fun logOutUser(
+        onNavigateToProfile: () -> Unit
+    ) {
+        viewModelScope.launch(Dispatchers.Main) {
+            onNavigateToProfile()
+        }
+        viewModelScope.launch(Dispatchers.IO) {
+            // TODO logOut user on server
+            dataStoreRepository.setPref(false, DataStoreRepository.isAuthenticated)
+            dataStoreRepository.setPref(false, DataStoreRepository.isCodeVerificated)
+            dataStoreRepository.setPref(false, DataStoreRepository.isTutorChecked)
+            dataStoreRepository.setPref(false, DataStoreRepository.isCategoriesSelected)
+            userRepositoryI.deleteUser(user!!)
+        }
+    }
 
 }

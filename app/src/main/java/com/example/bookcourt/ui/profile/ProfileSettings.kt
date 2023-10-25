@@ -99,7 +99,7 @@ fun ProfileSettings(
                         .clickable(
                             interactionSource = MutableInteractionSource(),
                             indication = null
-                        ) { }
+                        ) { viewModel.logOutUser { onNavigateToProfile() } }
                 ) {
                     TextRobotoRegular(
                         text = stringResource(R.string.profile_screen_logOut),

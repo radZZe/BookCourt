@@ -28,7 +28,6 @@ import com.example.bookcourt.ui.theme.MainBgColor
 
 @Composable
 fun SignInScreen(
-//    onNavigateToCategorySelection: () -> Unit,
     onNavigateToVerificationCode: () -> Unit,
     mViewModel: SignInViewModel = hiltViewModel()
 ) {
@@ -56,12 +55,7 @@ fun SignInScreen(
         }
         Button(
             onClick = {
-                mViewModel.onCheckedChanged()
-                mViewModel.saveUser(
-//                    onNavigateToCategorySelection,
-//                    onNavigateToVerificationCode,
-                    context
-                )
+                mViewModel.saveUser(context)
                 onNavigateToVerificationCode()
             },
             modifier = Modifier
