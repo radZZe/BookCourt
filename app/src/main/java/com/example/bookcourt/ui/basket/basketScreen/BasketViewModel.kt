@@ -1,6 +1,7 @@
 package com.example.bookcourt.ui.basket.basketScreen
 
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
@@ -12,6 +13,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.cancellable
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -23,24 +25,43 @@ class BasketViewModel @Inject constructor(
     repository: BasketRepositoryI
 ): ViewModel() {
 
-    var basketItems = mutableStateListOf<BasketItem>()
+    var basketItems = mutableListOf<BasketItem>()
     val _flowBasketItems = MutableStateFlow(emptyList<BasketItem>())
     val flowBasketItems = _flowBasketItems.asStateFlow()
     val repositoryI = repository
     val owners = mutableStateListOf<OwnerBasketItem>()
     val stateSelectAll = mutableStateOf(false)
+    val testValue = mutableStateMapOf<String, SnapshotStateList<BasketItem>>()
 
 //    init {
 //        getItems()
 //    }
 
+    init {
+        viewModelScope.launch(Dispatchers.IO) {
+            repositoryI.getData().flowOn(Dispatchers.IO).collect{ list ->
+                
+            }
+        }
+    }
+
 
     fun getItems(){
         viewModelScope.launch(Dispatchers.IO) {
             repositoryI.getData().flowOn(Dispatchers.IO).collect{ list ->
-
+                //----------------TESTVALUE---------------------
+//                if(list.isNotEmpty()){
+//                    for(item in list){
+//                        if(!testValue.containsKey(item.data.shopOwner)){
+//                            testValue[item.data.shopOwner] = mutableStateListOf(item)
+//                        }else{
+//                            testValue[item.data.shopOwner]?.add(item)
+//                        }
+//                    }
+//                }
                 if(list.isNotEmpty()){
-                    //_flowBasketItems.update { list }
+                    basketItems.clear()
+                    // _flowBasketItems.update { list }
                     for(item in list){
                         if(!itemInOwners(item.data.shopOwner)){
                             owners.add(OwnerBasketItem(
@@ -93,7 +114,7 @@ class BasketViewModel @Inject constructor(
 
     fun reduceTheAmount(index: Int){
         if(basketItems[index].amount>1){
-            basketItems[index] = basketItems[index].copy(amount = basketItems[index].amount-1)
+            //basketItems[index] = basketItems[index].copy(amount = basketItems[index].amount-1)
             viewModelScope.launch(Dispatchers.IO) {
                 repositoryI.updateData(basketItems[index])
             }
@@ -101,7 +122,6 @@ class BasketViewModel @Inject constructor(
 
     }
     fun selectAll(){
-
         for( i in 0..basketItems.size-1){
             basketItems[i] = basketItems[i].copy(isSelected = !stateSelectAll.value)
             viewModelScope.launch(Dispatchers.IO) {
@@ -155,7 +175,7 @@ class BasketViewModel @Inject constructor(
     }
 
     fun deleteBasketItem(item: BasketItem){
-        basketItems.remove(item)
+        //basketItems.remove(item)
         viewModelScope.launch(Dispatchers.IO) {
             repositoryI.deleteData(item)
         }
@@ -163,20 +183,42 @@ class BasketViewModel @Inject constructor(
     }
 
     fun deleteSelected(){
-
-        basketItems.removeIfCallback(condition = {
+        basketItems.forEach{
             if(it.isSelected){
                 viewModelScope.launch(Dispatchers.IO) {
                     repositoryI.deleteData(it)
                 }
-                true
-            }else{
-                false
             }
-        })
+        }
+//        basketItems.removeIfCallback(condition = {
+//            if(it.isSelected){
+//                checkOwnerSize(it.data.shopOwner)
+//                viewModelScope.launch(Dispatchers.IO) {
+//                    repositoryI.deleteData(it)
+//                }
+//                true
+//            }else{
+//                false
+//            }
+//        })
+
 
     }
-    private fun SnapshotStateList<BasketItem>.removeIfCallback(condition:(it:BasketItem)->Boolean){
+
+    private fun checkOwnerSize(owner:String){
+//        var count = 0
+//        basketItems.forEach {
+//            if(it.data.shopOwner == owner){
+//                count+=1;
+//            }
+//        }
+//        if(count <= 1){
+//            owners.removeIf {
+//                it.value == owner
+//            }
+//        }
+    }
+    private fun MutableList<BasketItem>.removeIfCallback(condition:(it:BasketItem)->Boolean){
         this.removeIf {
             condition(it)
         }
@@ -186,7 +228,7 @@ class BasketViewModel @Inject constructor(
         owners[index] = owners[index].copy(isSelected = !owners[index].isSelected)
         for(i in 0 until basketItems.size){
             if(basketItems[i].data.shopOwner == owner){
-                basketItems[i] = basketItems[i].copy(isSelected = owners[index].isSelected)
+                //basketItems[i] = basketItems[i].copy(isSelected = owners[index].isSelected)
                 viewModelScope.launch(Dispatchers.IO) {
                     repositoryI.updateData(basketItems[index])
                 }

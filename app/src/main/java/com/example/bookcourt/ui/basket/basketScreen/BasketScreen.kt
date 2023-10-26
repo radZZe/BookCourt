@@ -33,6 +33,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
@@ -62,63 +63,27 @@ fun BasketScreen(
             viewModel.getItems()
         }
     }
+    Box(Modifier.fillMaxSize()){
+
+    }
 
     Box(Modifier
         .fillMaxSize()
-        .verticalScroll(rememberScrollState())) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
         ) {
-            BasketTopBar(numberItems = viewModel.basketItems.size,
-                stateSelectAll = viewModel.stateSelectAll.value,
-                onStateSelectAllChanged = {
-                    viewModel.selectAll()
-                },
-                onDeleteSelected = { viewModel.deleteSelected() })
-            if (viewModel.basketItems.isEmpty()) {
-                EmptyBasketScreen()
-            } else {
-                for (i in 0..viewModel.owners.size - 1) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        BasketCheckBox(modifier = Modifier, viewModel.owners[i].isSelected) {
-                            viewModel.changeItemSelectStateByOwner(viewModel.owners[i].value, i)
-                        }
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Text(
-                            text = viewModel.owners[i].value,
-                            fontFamily = FontFamily(Font(R.font.roboto_bold)),
-                            fontSize = 18.sp
-                        )
-                    }
-                    viewModel.basketItems.forEachIndexed { index, basketItem ->
-                        if (basketItem.data.shopOwner == viewModel.owners[i].value) {
-                            OrderItem(item = basketItem,
-                                onPlusClick = { viewModel.increaseTheAmount(index) },
-                                onMinusClick = { viewModel.reduceTheAmount(index) },
-                                onStateSelectedChange = { viewModel.changeItemSelectState(index) },
-                                onDeleteItem = { viewModel.deleteBasketItem(basketItem) })
-                        }
-                    }
-                }
-            }
-
-        }
         if (viewModel.isBasketItemsHasSelected()) {
             Column(
                 Modifier
                     .align(Alignment.BottomCenter)
-                    .fillMaxWidth()) {
+                    .fillMaxWidth()
+                    .background(MainBgColor)
+                    .zIndex(5f)
+            ) {
 
                 Divider(color = Color(239, 235, 222), thickness = 1.dp)
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(18.dp, 8.dp)
-                        .background(MainBgColor)
                     , horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Column() {
@@ -174,6 +139,50 @@ fun BasketScreen(
             }
 
         }
+        Column(
+            modifier = Modifier
+               // .fillMaxHeight(0.2f)
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState())
+        ) {
+            BasketTopBar(numberItems = viewModel.basketItems.size,
+                stateSelectAll = viewModel.stateSelectAll.value,
+                onStateSelectAllChanged = {
+                    viewModel.selectAll()
+                },
+                onDeleteSelected = { viewModel.deleteSelected() })
+            if (viewModel.basketItems.isEmpty()) {
+                EmptyBasketScreen()
+            } else {
+                for (i in 0..viewModel.owners.size - 1) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        BasketCheckBox(modifier = Modifier, viewModel.owners[i].isSelected) {
+                            viewModel.changeItemSelectStateByOwner(viewModel.owners[i].value, i)
+                        }
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Text(
+                            text = viewModel.owners[i].value,
+                            fontFamily = FontFamily(Font(R.font.roboto_bold)),
+                            fontSize = 18.sp
+                        )
+                    }
+                    viewModel.basketItems.forEachIndexed { index, basketItem ->
+                        if (basketItem.data.shopOwner == viewModel.owners[i].value) {
+                            OrderItem(item = basketItem,
+                                onPlusClick = { viewModel.increaseTheAmount(index) },
+                                onMinusClick = { viewModel.reduceTheAmount(index) },
+                                onStateSelectedChange = { viewModel.changeItemSelectState(index) },
+                                onDeleteItem = { viewModel.deleteBasketItem(basketItem) })
+                        }
+                    }
+                }
+            }
+
+        }
+
     }
 
 
