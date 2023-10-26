@@ -53,9 +53,12 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    fun provideCatalogApi():LibraryApi{
+    fun provideCatalogApi(
+        client: OkHttpClient
+    ):LibraryApi{
         return Retrofit.Builder()
             .baseUrl(ApiUrl.CATALOG_URL)
+            .client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(LibraryApi::class.java)
