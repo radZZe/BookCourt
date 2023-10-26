@@ -2,19 +2,22 @@ package com.example.bookcourt.ui.library
 
 import android.content.Context
 import android.util.Log
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.toMutableStateList
+import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.bookcourt.data.api.LibraryApi
 import com.example.bookcourt.data.repositories.NetworkRepository
 import com.example.bookcourt.models.BookDto
 import com.example.bookcourt.models.book.Book
+import com.example.bookcourt.models.book.BookRetrofit
 import com.example.bookcourt.models.categorySelection.Category
+import com.example.bookcourt.models.library.BookBlock
+import com.example.bookcourt.models.library.InfoBlock
 import com.example.bookcourt.utils.Constants.genres
 import com.example.bookcourt.utils.Partners
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
@@ -22,62 +25,40 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LibraryViewModel @Inject constructor(
-    val networkRepository: NetworkRepository
+    private val libraryApi: LibraryApi
 ):ViewModel() {
     val categories = genres.map { mutableStateOf(Category(it, mutableStateOf(false))) }
         .toMutableStateList()
-    val partners = Partners.partners
-    private val popularBooks = mutableStateListOf<Book?>()
-    private val recommendationBooks = mutableStateListOf<Book?>()
-    val popularBooksFiltered = mutableStateListOf<Book?>()
-    val recommendationBooksFiltered = mutableStateListOf<Book?>()
+    val infoBLocks = mutableStateListOf<InfoBlock>()
+    val bookBlocks = mutableStateListOf<BookBlock>()
+    val bookBlocksFiltered = mutableStateListOf<MutableState<List<BookRetrofit>>>()
     private val selectedCategory = mutableStateOf<Category?>(null)
-
-    fun loadPopularBooks(context: Context){
+    fun loadCatalog() {
         viewModelScope.launch(Dispatchers.IO) {
-            val json = networkRepository.getAllBooks(context)!!
-            val data = Json.decodeFromString<MutableList<BookDto>>(json).map{it.toBook()}
-            popularBooks.addAll(data)
-            popularBooksFiltered.addAll(data)
-        }
-    }
-
-    fun loadRecommendations(context: Context){
-        viewModelScope.launch(Dispatchers.IO) {
-            val json = networkRepository.getAllBooks(context)!!
-            val data = Json.decodeFromString<MutableList<BookDto>>(json).map { it.toBook() }
-            recommendationBooks.addAll(data)
-            recommendationBooksFiltered.addAll(data)
+            val catalogResponse = libraryApi.fetchCatalog()
+            infoBLocks.addAll(catalogResponse.infoBlocks)
+            bookBlocks.addAll(catalogResponse.bookBlocks)
+            for(book in catalogResponse.bookBlocks){
+                bookBlocksFiltered.add(mutableStateOf(book.blockItems))
+            }
         }
     }
 
     fun filterCategories(filter:String){
         val category = categories.find { it.value.title==filter }!!
         if (category.value==selectedCategory.value){
-            recommendationBooksFiltered.apply {
-                clear()
-                addAll(recommendationBooks)
+            for (i in bookBlocks.indices){
+                bookBlocksFiltered[i].value = bookBlocks[i].blockItems
             }
-           popularBooksFiltered.apply {
-                clear()
-                addAll(popularBooks)
-           }
             selectedCategory.value!!.isSelected.value = false
             selectedCategory.value = null
         }
         else{
             selectedCategory.value?.isSelected?.value = false
-            recommendationBooksFiltered.apply {
-                clear()
-                addAll(recommendationBooks.filter {
-                    it!!.bookInfo.genre==filter
-                })
-            }
-            popularBooksFiltered.apply {
-                clear()
-                addAll(popularBooks.filter {
-                    it!!.bookInfo.genre==filter
-                })
+            for (i in bookBlocks.indices){
+                bookBlocksFiltered[i].value =bookBlocks[i].blockItems.filter {
+                    it.genre==filter
+                }
             }
             selectedCategory.value = category.value
             category.value.isSelected.value = !(category.value.isSelected.value)

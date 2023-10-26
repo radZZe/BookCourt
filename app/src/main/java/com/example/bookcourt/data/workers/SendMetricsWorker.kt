@@ -25,11 +25,12 @@ class SendMetricsWorker(context: Context, workerParams: WorkerParameters) : Coro
     override suspend fun doWork(): Result {
         return try {
             val json = inputData.getString("metricJson")!!
-            metricsApi.sendMetric(json)
+           // metricsApi.sendMetric(json)
             Result.success()
         } catch (ex: IOException) {
             Result.retry()
         }
+
     }
 
 }

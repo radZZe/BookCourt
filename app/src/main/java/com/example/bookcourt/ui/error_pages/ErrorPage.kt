@@ -23,7 +23,6 @@ import com.example.bookcourt.ui.theme.Roboto
 
 @Composable
 fun ErrorPage(errorType:String){
-
     val header:String
     val text:String
     val buttonText:String

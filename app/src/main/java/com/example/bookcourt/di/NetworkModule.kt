@@ -1,6 +1,7 @@
 package com.example.bookcourt.di
 
 import com.example.bookcourt.data.api.BooksApi
+import com.example.bookcourt.data.api.LibraryApi
 import com.example.bookcourt.data.api.MetricsApi
 import com.example.bookcourt.data.repositories.NetworkRepository
 import com.example.bookcourt.utils.ApiUrl
@@ -48,6 +49,16 @@ class NetworkModule {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(BooksApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideCatalogApi():LibraryApi{
+        return Retrofit.Builder()
+            .baseUrl(ApiUrl.CATALOG_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(LibraryApi::class.java)
     }
 
 }
