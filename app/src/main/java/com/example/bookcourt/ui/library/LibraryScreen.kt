@@ -1,9 +1,11 @@
 package com.example.bookcourt.ui.library
 
-import android.util.Log
-import androidx.compose.foundation.*
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,9 +19,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.DefaultShadowColor
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -28,12 +28,13 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.SubcomposeAsyncImage
 import com.example.bookcourt.R
-import com.example.bookcourt.models.book.Book
+import com.example.bookcourt.models.book.BookRetrofit
+import com.example.bookcourt.models.library.BookBlock
+import com.example.bookcourt.models.library.InfoBlock
 import com.example.bookcourt.ui.categorySelection.CategoryItem
 import com.example.bookcourt.ui.theme.*
 import com.example.bookcourt.utils.WindowInfo
 import com.example.bookcourt.utils.rememberWindowSizeClass
-import com.skydoves.cloudy.Cloudy
 
 
 @Composable
@@ -42,29 +43,53 @@ fun LibraryScreen(
     onNavigateBookCard:(bookId:String)->Unit,
     viewModel: LibraryViewModel = hiltViewModel()) {
     val windowInfo = rememberWindowSizeClass()
-    val context = LocalContext.current
-
     LaunchedEffect(key1 = Unit){
-        viewModel.loadPopularBooks(context)
-        viewModel.loadRecommendations(context)
+        viewModel.loadCatalog()
+    }
+    Box(modifier = Modifier
+        .background(MainBgColor)
+        .fillMaxSize()
+    ){
+        if (viewModel.bookBlocks.isEmpty()){
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .scale(1f)
+                    .align(Alignment.Center)
+            )
+        }
+        else{
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(bottom = 16.dp)
+            ) {
+                item {
+                    SearchWidget(modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp)) {
+                        onNavigateToSearchScreen()
+                    }
+                }
+                item {
+                    GenresBar(windowType = windowInfo.screenHeightInfo, viewModel = viewModel)
+                }
+                item {
+                    InfoBar(viewModel = viewModel)
+                }
+                items(viewModel.bookBlocks.size){ i->
+                    BooksBar(
+                        bookBlock = viewModel.bookBlocks[i],
+                        filteredBooks = viewModel.bookBlocksFiltered[i].value,
+                        onNavigateBookCard = onNavigateBookCard
+                    )
+                    if (i == viewModel.bookBlocks.size-1){
+                        Spacer(modifier = Modifier.size(16.dp))
+                    }
+                }
+            }
+        }
+
     }
 
-    Column(
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .background(MainBgColor)
-            .padding(bottom = 16.dp)
-    ) {
-        SearchWidget(modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp)) {
-            onNavigateToSearchScreen()
-        }
-        GenresBar(windowType = windowInfo.screenHeightInfo, viewModel = viewModel)
-        SponsorsBar(viewModel = viewModel)
-        RecommendationBar(viewModel = viewModel,onNavigateBookCard)
-        PopularBar(viewModel = viewModel,onNavigateBookCard)
-    }
 }
 
 @Composable
@@ -121,18 +146,14 @@ fun GenresBar(
 }
 
 @Composable
-fun SponsorsBar(viewModel: LibraryViewModel){
+fun InfoBar(viewModel: LibraryViewModel){
     LazyRow(modifier = Modifier
         .fillMaxWidth()
     ){
-        items(viewModel.partners){ partner->
+        items(viewModel.infoBLocks){ infoBlock->
             Spacer(modifier = Modifier.size(16.dp))
-            SponsorItem(
-                sponsorImageId = partner.imageId,
-                sponsorTitle = partner.title,
-                sponsorText = partner.mainText
-            )
-            if (partner ==viewModel.partners.last()){
+            SponsorItem(infoBlock)
+            if (infoBlock ==viewModel.infoBLocks.last()){
                 Spacer(modifier = Modifier.size(16.dp))
             }
         }
@@ -141,26 +162,31 @@ fun SponsorsBar(viewModel: LibraryViewModel){
 
 @Composable
 fun SponsorItem(
-    sponsorImageId:Int,
-    sponsorTitle:String,
-    sponsorText:String
+    infoBlock: InfoBlock
 ){
     Column(modifier = Modifier
         .clip(shape = RoundedCornerShape(12.dp))
         .background(GrayBackground)
         .width(380.dp)
     ){
-        Image(
-            painter = painterResource(id = sponsorImageId),
-            contentDescription = "Sponsor's image",
+        SubcomposeAsyncImage(
+            model = infoBlock.logoUrl,
+            contentDescription ="info block image",
             modifier = Modifier
                 .width(323.dp)
                 .height(200.dp)
                 .padding(8.dp)
-                .align(Alignment.CenterHorizontally)
+                .align(Alignment.CenterHorizontally),
+            contentScale = ContentScale.FillBounds,
+            loading = {
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .scale(0.2f)
+                )
+            }
         )
         Text(
-            text = sponsorTitle,
+            text = infoBlock.title,
             fontFamily = Roboto,
             fontWeight = FontWeight.Bold,
             color = Color.Black,
@@ -168,7 +194,7 @@ fun SponsorItem(
             modifier = Modifier.padding( horizontal = 8.dp)
         )
         Text(
-            text = sponsorText,
+            text = infoBlock.description,
             fontFamily = Roboto,
             color = Color.Black,
             fontWeight = FontWeight.Normal,
@@ -178,21 +204,36 @@ fun SponsorItem(
 
     }
 }
+//@Composable
+//fun Blocks(viewModel: LibraryViewModel){
+//    LazyColumn{
+//        items(viewModel.bookBlocksFiltered){ bookBlock->
+//            BooksBar(bookBlock=bookBlock, onNavigateBookCard ={
+//
+//            })
+//            if (bookBlock ==viewModel.bookBlocksFiltered.last()){
+//                Spacer(modifier = Modifier.size(16.dp))
+//            }
+//        }
+//    }
+//}
 
 @Composable
-fun RecommendationBar(
-    viewModel: LibraryViewModel,
-    onNavigateBookCard:(bookId:String)->Unit,){
+fun BooksBar(
+    bookBlock: BookBlock,
+    filteredBooks:List<BookRetrofit>,
+    onNavigateBookCard:(bookId:String)->Unit
+){
     Column (modifier = Modifier.fillMaxWidth()){
         Text(
-            text = stringResource(id = R.string.library_screen_recommendations),
+            text = bookBlock.blockName,
             fontFamily = Roboto,
             fontWeight = FontWeight.Bold,
             color = Color.Black,
             fontSize = 16.sp,
             modifier = Modifier.padding(16.dp)
         )
-        if (viewModel.popularBooksFiltered.isEmpty()){
+        if (bookBlock.blockItems.isEmpty()){
             CircularProgressIndicator(modifier = Modifier
                 .scale(1f)
                 .align(Alignment.CenterHorizontally)
@@ -203,50 +244,9 @@ fun RecommendationBar(
                 .fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ){
-                items(viewModel.recommendationBooksFiltered){ book->
+                items(filteredBooks){ book->
                     Spacer(modifier = Modifier.size(16.dp))
-                    BookItem(book = book!!,onNavigateBookCard)
-                    if (book ==viewModel.recommendationBooksFiltered.last()){
-                        Spacer(modifier = Modifier.size(16.dp))
-                    }
-                }
-            }
-        }
-    }
-
-}
-
-@Composable
-fun PopularBar(
-    viewModel: LibraryViewModel,
-    onNavigateBookCard:(bookId:String)->Unit,){
-    Column(modifier = Modifier.fillMaxWidth()) {
-        Text(
-            text = stringResource(id = R.string.library_screen_popular),
-            fontFamily = Roboto,
-            fontWeight = FontWeight.Bold,
-            color = Color.Black,
-            fontSize = 16.sp,
-            modifier = Modifier.padding(16.dp)
-        )
-        if (viewModel.popularBooksFiltered.isEmpty()){
-            CircularProgressIndicator(modifier = Modifier
-                .scale(1f)
-                .align(Alignment.CenterHorizontally)
-            )
-        }
-        else {
-            LazyRow(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(viewModel.popularBooksFiltered) { book ->
-                    Spacer(modifier = Modifier.size(16.dp))
-                    BookItem(book = book!!, onNavigateBookCard)
-                    if (book == viewModel.popularBooksFiltered.last()) {
-                        Spacer(modifier = Modifier.size(16.dp))
-                    }
+                    BookItem(book = book,onNavigateBookCard)
                 }
             }
         }
@@ -256,7 +256,7 @@ fun PopularBar(
 
 @Composable
 fun BookItem(
-    book: Book,
+    book: BookRetrofit,
     onNavigateBookCard:(bookId:String)->Unit,
 ) {
    Box(modifier = Modifier
@@ -268,8 +268,8 @@ fun BookItem(
        )
    ) {
         SubcomposeAsyncImage(
-            model = book.bookInfo.image,
-            contentDescription = "${book.bookInfo.author}'s book image",
+            model = book.imageUrl,
+            contentDescription = "${book.author}'s book image",
             modifier = Modifier
                 .fillMaxSize()
                 .clip(RoundedCornerShape(15.dp))
@@ -277,7 +277,7 @@ fun BookItem(
                     interactionSource = MutableInteractionSource(),
                     indication = null
                 ) {
-                    onNavigateBookCard(book.isbn!!)
+                    onNavigateBookCard(book.isbn)
                 },
             contentScale = ContentScale.FillBounds,
             loading = {
@@ -288,7 +288,7 @@ fun BookItem(
             }
         )
        RatingIcon(
-           rating = book.bookInfo.rate,
+           rating = book.rating,
            modifier = Modifier
                .align(Alignment.BottomStart)
                .padding(8.dp)

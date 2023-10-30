@@ -9,6 +9,8 @@ data class BookRetrofit(
     val title:String,
     val author:String,
     val coverType:String,
+    val genre:String,
+    val rating:Float,
     val pages:Int,
     val bookFormat:String,
     val language:String,
