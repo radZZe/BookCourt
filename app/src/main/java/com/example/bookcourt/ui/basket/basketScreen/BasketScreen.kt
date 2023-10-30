@@ -14,9 +14,9 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -58,14 +58,15 @@ fun BasketScreen(
     onNavigateToOrdering:()->Unit,
 ) {
     val scope = rememberCoroutineScope()
+    val basketItems = viewModel.flowBaksetItems.collectAsState()
     LaunchedEffect(key1 = Unit,) {
         launch(Dispatchers.IO) {
-            viewModel.getItems()
+            viewModel.init()
         }
     }
-    Box(Modifier.fillMaxSize()){
-
-    }
+//    Box(Modifier.fillMaxSize()){
+//
+//    }
 
     Box(Modifier
         .fillMaxSize()
@@ -108,7 +109,7 @@ fun BasketScreen(
                             .background(Color(252, 225, 129))
                             .padding(top = 12.dp, bottom = 12.dp)
                             .clickable(
-                                interactionSource =  MutableInteractionSource(),
+                                interactionSource = MutableInteractionSource(),
                                 indication = null
                             ) {
                                 //onClickAddButton()
@@ -141,17 +142,17 @@ fun BasketScreen(
         }
         Column(
             modifier = Modifier
-               // .fillMaxHeight(0.2f)
+                // .fillMaxHeight(0.2f)
                 .fillMaxWidth()
                 .verticalScroll(rememberScrollState())
         ) {
-            BasketTopBar(numberItems = viewModel.basketItems.size,
+            BasketTopBar(numberItems = basketItems.value.size,
                 stateSelectAll = viewModel.stateSelectAll.value,
                 onStateSelectAllChanged = {
                     viewModel.selectAll()
                 },
                 onDeleteSelected = { viewModel.deleteSelected() })
-            if (viewModel.basketItems.isEmpty()) {
+            if (basketItems.value.isEmpty()) {
                 EmptyBasketScreen()
             } else {
                 for (i in 0..viewModel.owners.size - 1) {
@@ -169,11 +170,12 @@ fun BasketScreen(
                             fontSize = 18.sp
                         )
                     }
-                    viewModel.basketItems.forEachIndexed { index, basketItem ->
+
+                    basketItems.value.forEachIndexed { index, basketItem ->
                         if (basketItem.data.shopOwner == viewModel.owners[i].value) {
                             OrderItem(item = basketItem,
-                                onPlusClick = { viewModel.increaseTheAmount(index) },
-                                onMinusClick = { viewModel.reduceTheAmount(index) },
+                                onPlusClick = { viewModel.increaseTheAmount(index)},
+                                onMinusClick = { viewModel.reduceTheAmount(index)},
                                 onStateSelectedChange = { viewModel.changeItemSelectState(index) },
                                 onDeleteItem = { viewModel.deleteBasketItem(basketItem) })
                         }
@@ -247,8 +249,10 @@ fun BasketTopBar(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth(0.7f)
-                        .clickable(interactionSource =  MutableInteractionSource(),
-                            indication = null) {
+                        .clickable(
+                            interactionSource = MutableInteractionSource(),
+                            indication = null
+                        ) {
                             onDeleteSelected()
                         },
                     verticalAlignment = Alignment.CenterVertically,
@@ -383,8 +387,10 @@ fun OrderItem(
                                 RoundedCornerShape(5.dp)
                             )
                             .background(Color(239, 235, 222))
-                            .clickable(interactionSource =  MutableInteractionSource(),
-                                indication = null) {
+                            .clickable(
+                                interactionSource = MutableInteractionSource(),
+                                indication = null
+                            ) {
                                 if (item.amount > 0) {
                                     onMinusClick()
                                 }
@@ -406,8 +412,10 @@ fun OrderItem(
                                 RoundedCornerShape(5.dp)
                             )
                             .background(Color(239, 235, 222))
-                            .clickable(interactionSource =  MutableInteractionSource(),
-                                indication = null) {
+                            .clickable(
+                                interactionSource = MutableInteractionSource(),
+                                indication = null
+                            ) {
                                 onPlusClick()
                             }, contentAlignment = Alignment.Center
                     ) {
