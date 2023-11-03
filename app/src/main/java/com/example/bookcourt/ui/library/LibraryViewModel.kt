@@ -31,15 +31,19 @@ class LibraryViewModel @Inject constructor(
         .toMutableStateList()
     val infoBLocks = mutableStateListOf<InfoBlock>()
     val bookBlocks = mutableStateListOf<BookBlock>()
+    val isDataLoaded = mutableStateOf(false)
     val bookBlocksFiltered = mutableListOf<MutableState<List<BookRetrofit>>>()
     private val selectedCategory = mutableStateOf<Category?>(null)
     fun loadCatalog() {
         viewModelScope.launch(Dispatchers.IO) {
-            val catalogResponse = libraryApi.fetchCatalog()
-            infoBLocks.addAll(catalogResponse.infoBlocks)
-            bookBlocks.addAll(catalogResponse.bookBlocks)
-            for(book in bookBlocks){
-                bookBlocksFiltered.add(mutableStateOf(book.blockItems))
+            if (!isDataLoaded.value){
+                val catalogResponse = libraryApi.fetchCatalog()
+                isDataLoaded.value = true
+                infoBLocks.addAll(catalogResponse.infoBlocks)
+                bookBlocks.addAll(catalogResponse.bookBlocks)
+                for(book in bookBlocks){
+                    bookBlocksFiltered.add(mutableStateOf(book.blockItems))
+                }
             }
         }
     }
