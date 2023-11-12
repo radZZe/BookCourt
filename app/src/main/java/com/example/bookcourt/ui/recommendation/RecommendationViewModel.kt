@@ -53,7 +53,7 @@ class RecommendationViewModel @Inject constructor(
     val date = mutableStateOf("10 марта 2023")
     val title = mutableStateOf("")
     val rate = mutableStateOf(0)
-    
+
     val isNeedToUpdateFeedback = mutableStateOf(false)
 
     val description = mutableStateOf("")
@@ -118,13 +118,13 @@ class RecommendationViewModel @Inject constructor(
 
     fun getAllBooksRemote() {
         viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val books = bookApi.getRecommendationBooks(10).execute().body()!!
-                bookApi.getRecommendationBooks(10).execute().code() == 200
-                val test = 5;
-            }catch(e:Exception){
-                // TODO("SET VISIBLE ERROR PAGE ")
-            }
+//            try {
+//                val books = bookApi.getRecommendationBooks(10).execute().body()!!
+//                bookApi.getRecommendationBooks(10).execute().code() == 200
+//                val test = 5;
+//            }catch(e:Exception){
+//                // TODO("SET VISIBLE ERROR PAGE ")
+//            }
         }
 
     }

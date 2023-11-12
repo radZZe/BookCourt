@@ -27,9 +27,9 @@ fun ListOfFeedbacksScreen(
     onNavigateToRecommendationScreen: () -> Unit,
     viewModel:ListOfFeedbackViewModel = hiltViewModel(),
 ) {
-    LaunchedEffect(key1 = Unit){
-        viewModel.getFeedbacks(id)
-    }
+//    LaunchedEffect(key1 = Unit){
+//        viewModel.getFeedbacks(id)
+//    }
     Column(modifier = Modifier
         .fillMaxSize()
         .padding(start = 12.dp, end = 12.dp)) {

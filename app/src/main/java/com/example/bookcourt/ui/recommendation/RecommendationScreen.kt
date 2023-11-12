@@ -225,11 +225,10 @@ fun MainRecommendationContent(
                 }
             }
 
-
             frontItem?.bookInfo?.price?.let {
                 if (frontItem != null) {
-                    Box(
-                        Modifier
+                    Column(
+                        modifier = Modifier
                             .fillMaxHeight(0.25f)
                             .background(MainBgColor)
                             .padding(
@@ -244,10 +243,9 @@ fun MainRecommendationContent(
                         Column(
                             Modifier
                                 .fillMaxWidth()
-                                .fillMaxHeight()
                             //.height(60.dp)
                             ,
-                            verticalArrangement = Arrangement.SpaceAround,
+                            verticalArrangement = Arrangement.SpaceBetween,
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
@@ -283,226 +281,90 @@ fun MainRecommendationContent(
                                     .clip(CircleShape),
                                 contentScale = ContentScale.Crop
                             )
-                            Column(
-                                modifier = Modifier,
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(40.dp),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.SpaceEvenly
-                                ) {
-                                    Column(
-                                        verticalArrangement = Arrangement.Center,
-                                        horizontalAlignment = Alignment.CenterHorizontally
-                                    ) {
-                                        Text(
-                                            text = "423",
-                                            color = Color.Black,
-                                            style = MaterialTheme.typography.subtitle2
-                                        )
-                                        Text(
-                                            text = "Лайки",
-                                            color = Color(134, 134, 134),
-                                            style = MaterialTheme.typography.subtitle2
-                                        )
-                                    }
-                                    Column(
-                                        verticalArrangement = Arrangement.Center,
-                                        horizontalAlignment = Alignment.CenterHorizontally
-                                    ) {
-                                        Text(
-                                            text = "124",
-                                            color = Color.Black,
-                                            style = MaterialTheme.typography.subtitle2
-                                        )
-                                        Text(
-                                            text = "Дизлайки",
-                                            color = Color(134, 134, 134),
-                                            style = MaterialTheme.typography.subtitle2
-                                        )
-                                    }
-                                    Column(
-                                        verticalArrangement = Arrangement.Center,
-                                        horizontalAlignment = Alignment.CenterHorizontally
-                                    ) {
-                                        Text(
-                                            text = "56",
-                                            color = Color.Black,
-                                            style = MaterialTheme.typography.subtitle2
-                                        )
-                                        Text(
-                                            text = "Интересуются",
-                                            color = Color(134, 134, 134),
-                                            style = MaterialTheme.typography.subtitle2
-                                        )
-                                    }
-                                    Column(
-                                        verticalArrangement = Arrangement.Center,
-                                        horizontalAlignment = Alignment.CenterHorizontally
-                                    ) {
-                                        Text(
-                                            text = frontItem.bookInfo.rate.toString(),
-                                            color = Color.Black,
-                                            style = MaterialTheme.typography.subtitle2
-                                        )
-                                        Text(
-                                            text = "Оценка",
-                                            color = Color(134, 134, 134),
-                                            style = MaterialTheme.typography.subtitle2
-                                        )
-                                    }
-                                }
-                            }
 
 
                         }
-
-
+                        Spacer(
+                            modifier = Modifier
+                                .height(MaterialTheme.dimens.paddingSmall.dp)
+                                .fillMaxWidth()
+                        )
+                        Column(
+                            modifier = Modifier,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(40.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceEvenly
+                            ) {
+                                Column(
+                                    verticalArrangement = Arrangement.Center,
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Text(
+                                        text = "423",
+                                        color = Color.Black,
+                                        style = MaterialTheme.typography.subtitle2
+                                    )
+                                    Text(
+                                        text = "Лайки",
+                                        color = Color(134, 134, 134),
+                                        style = MaterialTheme.typography.subtitle2
+                                    )
+                                }
+                                Column(
+                                    verticalArrangement = Arrangement.Center,
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Text(
+                                        text = "124",
+                                        color = Color.Black,
+                                        style = MaterialTheme.typography.subtitle2
+                                    )
+                                    Text(
+                                        text = "Дизлайки",
+                                        color = Color(134, 134, 134),
+                                        style = MaterialTheme.typography.subtitle2
+                                    )
+                                }
+                                Column(
+                                    verticalArrangement = Arrangement.Center,
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Text(
+                                        text = "56",
+                                        color = Color.Black,
+                                        style = MaterialTheme.typography.subtitle2
+                                    )
+                                    Text(
+                                        text = "Интересуются",
+                                        color = Color(134, 134, 134),
+                                        style = MaterialTheme.typography.subtitle2
+                                    )
+                                }
+                                Column(
+                                    verticalArrangement = Arrangement.Center,
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Text(
+                                        text = frontItem.bookInfo.rate.toString(),
+                                        color = Color.Black,
+                                        style = MaterialTheme.typography.subtitle2
+                                    )
+                                    Text(
+                                        text = "Оценка",
+                                        color = Color(134, 134, 134),
+                                        style = MaterialTheme.typography.subtitle2
+                                    )
+                                }
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(MaterialTheme.dimens.paddingSmall.dp))
                     }
                 }
-//                if (frontItem != null) {
-//                    Column(
-//                        modifier = Modifier
-////                            .fillMaxHeight(0.25f)
-////                            .background(MainBgColor)
-////                            .padding(
-////                                start = MaterialTheme.dimens.paddingBig.dp,
-////                                end = MaterialTheme.dimens.paddingBig.dp,
-////                                top = MaterialTheme.dimens.paddingNormal.dp,
-////                                bottom = 0.dp
-////                            )
-////                            .align(Alignment.BottomCenter)
-//                        ,
-//                        horizontalAlignment = Alignment.CenterHorizontally
-//                    ) {
-//                        Column(
-//                            Modifier
-//                                .fillMaxWidth()
-//                            //.height(60.dp)
-//                            ,
-//                            verticalArrangement = Arrangement.SpaceBetween,
-//                            horizontalAlignment = Alignment.CenterHorizontally
-//                        ) {
-//                            Text(
-//                                text = frontItem.bookInfo.title,
-//                                style = MaterialTheme.typography.body2,
-//                                maxLines = 1,
-//                                overflow = TextOverflow.Ellipsis
-//                            )
-//                            Row(
-//                                modifier = Modifier
-//                                    .padding()
-//                                    .fillMaxWidth()
-//                                //.fillMaxHeight()
-//                                ,
-//                                horizontalArrangement = Arrangement.Center
-//                            ) {
-//
-//                                Text(
-//                                    modifier = Modifier,
-//                                    text = "${frontItem.bookInfo.author} | ${frontItem.bookInfo.genre}",
-//                                    color = Color(134, 134, 134),
-//                                    style = MaterialTheme.typography.subtitle1
-//                                )
-//
-//
-//                            }
-//                            Image(
-//                                painter = painterResource(id = R.drawable.igra_slov_logo),
-//                                contentDescription = "Logo image",
-//                                modifier = Modifier
-//                                    .height(MaterialTheme.dimens.iconSizeBig.dp)
-//                                    .width(MaterialTheme.dimens.iconSizeBig.dp)
-//                                    .clip(CircleShape),
-//                                contentScale = ContentScale.Crop
-//                            )
-//
-//
-//                        }
-//                        Spacer(
-//                            modifier = Modifier
-//                                .height(MaterialTheme.dimens.paddingSmall.dp)
-//                                .fillMaxWidth()
-//                        )
-//                        Column(
-//                            modifier = Modifier,
-//                            horizontalAlignment = Alignment.CenterHorizontally
-//                        ) {
-//                            Row(
-//                                modifier = Modifier
-//                                    .fillMaxWidth()
-//                                    .height(40.dp),
-//                                verticalAlignment = Alignment.CenterVertically,
-//                                horizontalArrangement = Arrangement.SpaceEvenly
-//                            ) {
-//                                Column(
-//                                    verticalArrangement = Arrangement.Center,
-//                                    horizontalAlignment = Alignment.CenterHorizontally
-//                                ) {
-//                                    Text(
-//                                        text = "423",
-//                                        color = Color.Black,
-//                                        style = MaterialTheme.typography.subtitle2
-//                                    )
-//                                    Text(
-//                                        text = "Лайки",
-//                                        color = Color(134, 134, 134),
-//                                        style = MaterialTheme.typography.subtitle2
-//                                    )
-//                                }
-//                                Column(
-//                                    verticalArrangement = Arrangement.Center,
-//                                    horizontalAlignment = Alignment.CenterHorizontally
-//                                ) {
-//                                    Text(
-//                                        text = "124",
-//                                        color = Color.Black,
-//                                        style = MaterialTheme.typography.subtitle2
-//                                    )
-//                                    Text(
-//                                        text = "Дизлайки",
-//                                        color = Color(134, 134, 134),
-//                                        style = MaterialTheme.typography.subtitle2
-//                                    )
-//                                }
-//                                Column(
-//                                    verticalArrangement = Arrangement.Center,
-//                                    horizontalAlignment = Alignment.CenterHorizontally
-//                                ) {
-//                                    Text(
-//                                        text = "56",
-//                                        color = Color.Black,
-//                                        style = MaterialTheme.typography.subtitle2
-//                                    )
-//                                    Text(
-//                                        text = "Интересуются",
-//                                        color = Color(134, 134, 134),
-//                                        style = MaterialTheme.typography.subtitle2
-//                                    )
-//                                }
-//                                Column(
-//                                    verticalArrangement = Arrangement.Center,
-//                                    horizontalAlignment = Alignment.CenterHorizontally
-//                                ) {
-//                                    Text(
-//                                        text = frontItem.bookInfo.rate.toString(),
-//                                        color = Color.Black,
-//                                        style = MaterialTheme.typography.subtitle2
-//                                    )
-//                                    Text(
-//                                        text = "Оценка",
-//                                        color = Color(134, 134, 134),
-//                                        style = MaterialTheme.typography.subtitle2
-//                                    )
-//                                }
-//                            }
-//                        }
-//                        Spacer(modifier = Modifier.height(MaterialTheme.dimens.paddingSmall.dp))
-//                    }
-//                }
 
             }
 
@@ -621,14 +483,14 @@ fun FeedbackBlock(
     FeedbackBar(onNavigateToFeedback, title)
     Spacer(modifier = Modifier.height(8.dp))
     if (frontItem.feedbacks.isUserLeaveFeedback) {
-            frontItem.feedbacks.userFeedback?.let {
-                Feedback(
-                    it.username,
-                    it.rate,
-                    it.date,
-                    it.description
-                )
-            }
+        frontItem.feedbacks.userFeedback?.let {
+            Feedback(
+                it.username,
+                it.rate,
+                it.date,
+                it.description
+            )
+        }
 
     }
 
@@ -860,6 +722,3 @@ fun RobotoRegularText(
         )
     )
 }
-
-
-
