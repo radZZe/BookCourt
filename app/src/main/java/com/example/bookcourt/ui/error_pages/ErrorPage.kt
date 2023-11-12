@@ -22,7 +22,7 @@ import com.example.bookcourt.ui.theme.MainBgColor
 import com.example.bookcourt.ui.theme.Roboto
 
 @Composable
-fun ErrorPage(errorType:String){
+fun ErrorPage(errorType:String,onClickButton:()->Unit){
     val header:String
     val text:String
     val buttonText:String
@@ -57,7 +57,7 @@ fun ErrorPage(errorType:String){
             Text(text = text, fontFamily = Roboto, fontSize = 16.sp)
             Spacer(modifier = Modifier.height(24.dp))
             Button(
-                onClick = { },
+                onClick = { onClickButton()},
                 modifier = Modifier
                     .fillMaxWidth(),
                 shape = RoundedCornerShape(50.dp),
@@ -74,11 +74,6 @@ fun ErrorPage(errorType:String){
     }
 }
 
-@Composable
-@Preview
-fun PreviewErrorPage(){
-    ErrorPage(ErrorType.NotFound)
-}
 
 object ErrorType{
     const val Internet = "internet"

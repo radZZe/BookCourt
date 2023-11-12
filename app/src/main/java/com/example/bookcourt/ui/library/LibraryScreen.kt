@@ -288,7 +288,7 @@ fun BookItem(
             }
         )
        RatingIcon(
-           rating = book.rating,
+           rating = book.score.toFloat(),
            modifier = Modifier
                .align(Alignment.BottomStart)
                .padding(8.dp)

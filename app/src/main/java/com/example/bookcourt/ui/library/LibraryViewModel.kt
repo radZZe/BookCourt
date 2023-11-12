@@ -34,14 +34,14 @@ class LibraryViewModel @Inject constructor(
     val bookBlocksFiltered = mutableListOf<MutableState<List<BookRetrofit>>>()
     private val selectedCategory = mutableStateOf<Category?>(null)
     fun loadCatalog() {
-        viewModelScope.launch(Dispatchers.IO) {
-            val catalogResponse = libraryApi.fetchCatalog()
-            infoBLocks.addAll(catalogResponse.infoBlocks)
-            bookBlocks.addAll(catalogResponse.bookBlocks)
-            for(book in bookBlocks){
-                bookBlocksFiltered.add(mutableStateOf(book.blockItems))
-            }
-        }
+//        viewModelScope.launch(Dispatchers.IO) {
+//            val catalogResponse = libraryApi.fetchCatalog()
+//            infoBLocks.addAll(catalogResponse.infoBlocks)
+//            bookBlocks.addAll(catalogResponse.bookBlocks)
+//            for(book in bookBlocks){
+//                bookBlocksFiltered.add(mutableStateOf(book.blockItems))
+//            }
+//        }
     }
 
     fun filterCategories(filter:String){
@@ -56,9 +56,9 @@ class LibraryViewModel @Inject constructor(
         else{
             selectedCategory.value?.isSelected?.value = false
             for (i in bookBlocks.indices){
-                bookBlocksFiltered[i].value =bookBlocks[i].blockItems.filter {
-                    it.genre==filter
-                }
+                //bookBlocksFiltered[i].value =bookBlocks[i].blockItems.filter {
+                    //it.genres==filter
+                //}
             }
             selectedCategory.value = category.value
             category.value.isSelected.value = !(category.value.isSelected.value)

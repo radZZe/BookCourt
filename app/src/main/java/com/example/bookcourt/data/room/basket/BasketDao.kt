@@ -15,11 +15,16 @@ interface BasketDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertBook(item:BasketItem)
     @Delete
-    suspend fun deleteBook(item:BasketItem)
+    suspend fun deleteItem(item:BasketItem)
     @Query("SELECT * FROM basket_table")
     fun getBasketItems(): Flow<List<BasketItem>>
     @Update
     suspend fun updateItem(item:BasketItem)
     @Query("SELECT * FROM basket_table WHERE data = :data")
     fun findItem(data: Book): List<BasketItem>
+    @Update
+    suspend fun updateItems(items:List<BasketItem>)
+
+    @Delete
+    suspend fun deleteItems(items:List<BasketItem>)
 }

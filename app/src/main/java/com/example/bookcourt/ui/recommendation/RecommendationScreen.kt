@@ -41,14 +41,23 @@ fun RecommendationScreen(
     onNavigateBookCard:(bookId:String)->Unit,
     viewModel: RecommendationViewModel = hiltViewModel(),
 ) {
+    val isAuthenticated = viewModel.isAuthenticated.collectAsState(initial = false)
+
+    if(isAuthenticated.value){
+        RecommendationContent(
+            onNavigateToStatistics,
+            onNavigateToProfile,
+            viewModel = viewModel,
+            onNavigateBookCard
+        )
+    }else{
+        Box(modifier = Modifier.fillMaxSize().padding(20.dp), contentAlignment = Alignment.Center){
+            Text(text = "Вам необходимо авторизоваться для того чтоб вам были доступны рекомендации")
+        }
+    }
 
 
-    RecommendationContent(
-        onNavigateToStatistics,
-        onNavigateToProfile,
-        viewModel = viewModel,
-        onNavigateBookCard
-    )
+
 }
 
 @Composable
@@ -155,13 +164,17 @@ fun MainRecommendationContent(
                 Box(modifier = Modifier.fillMaxSize()) {
                     //Spacer(modifier = Modifier.height(10.dp ))
                     CardStack(
-                        modifier = Modifier.fillMaxHeight(0.75f).clickable(interactionSource =  MutableInteractionSource(),
-                            indication = null) {
-                            if (frontItem != null) {
-                                onNavigateBookCard(frontItem.isbn!!)
-                            }
+                        modifier = Modifier
+                            .fillMaxHeight(0.75f)
+                            .clickable(
+                                interactionSource = MutableInteractionSource(),
+                                indication = null
+                            ) {
+                                if (frontItem != null) {
+                                    onNavigateBookCard(frontItem.isbn!!)
+                                }
 
-                        },
+                            },
                         user = viewModel.user,
                         frontItem = frontItem,
                         backItem = backItem,
@@ -223,7 +236,8 @@ fun MainRecommendationContent(
                                 end = MaterialTheme.dimens.paddingBig.dp,
                                 top = MaterialTheme.dimens.paddingNormal.dp,
                                 bottom = 0.dp
-                            ).align(Alignment.BottomCenter),
+                            )
+                            .align(Alignment.BottomCenter),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Column(
@@ -445,7 +459,8 @@ fun FeedbackBlock(
     onNavigateToFeedback: (title: String) -> Unit,
     leaveFeedbackVisibility: Boolean,
     onClickRatingBar: (rate:Int) -> Unit,
-    disableLeaveFeedbackVisibility: () -> Unit
+    disableLeaveFeedbackVisibility: () -> Unit,
+    isAuthenticated:Boolean
 ) {
     if (isNeedToUpdateFeedback){
         frontItem.feedbacks.leaveAFeedback(
@@ -457,7 +472,7 @@ fun FeedbackBlock(
             )
         )
     }
-    if (!frontItem.feedbacks.isUserLeaveFeedback) {
+    if (!frontItem.feedbacks.isUserLeaveFeedback && isAuthenticated) {
         LeaveFeedback(
             rate = rate,
             disableLeaveFeedbackVisibility = disableLeaveFeedbackVisibility,
@@ -493,8 +508,10 @@ fun FeedbackBar(
             .clip(RoundedCornerShape(20))
             .background(Color(247, 247, 247))
             .padding(8.dp)
-            .clickable(interactionSource =  MutableInteractionSource(),
-                indication = null) {
+            .clickable(
+                interactionSource = MutableInteractionSource(),
+                indication = null
+            ) {
                 onNavigateToFeedback(title)
             }
     ) {
@@ -583,8 +600,10 @@ fun RatingBar(
                 painter = painterResource(id = R.drawable.star_selected),
                 contentDescription = null,
                 modifier = Modifier
-                    .clickable(enabled = enabled,interactionSource =  MutableInteractionSource(),
-                        indication = null) {
+                    .clickable(
+                        enabled = enabled, interactionSource = MutableInteractionSource(),
+                        indication = null
+                    ) {
                         onClick(i)
                     }
                     .size(starSize.dp)
@@ -595,8 +614,10 @@ fun RatingBar(
                 painter = painterResource(id = R.drawable.star_unselected),
                 contentDescription = null,
                 modifier = Modifier
-                    .clickable(enabled = enabled,interactionSource =  MutableInteractionSource(),
-                        indication = null) {
+                    .clickable(
+                        enabled = enabled, interactionSource = MutableInteractionSource(),
+                        indication = null
+                    ) {
                         numberOfSelectedStars.value = i
                         disableLeaveFeedbackVisibility()
                         onClick(i)

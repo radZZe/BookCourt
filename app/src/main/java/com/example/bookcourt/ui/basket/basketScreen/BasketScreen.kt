@@ -100,7 +100,8 @@ fun BasketScreen(
                                 onPlusClick = { viewModel.increaseTheAmount(index) },
                                 onMinusClick = { viewModel.reduceTheAmount(index) },
                                 onStateSelectedChange = { viewModel.changeItemSelectState(index) },
-                                onDeleteItem = { viewModel.deleteBasketItem(basketItem) })
+                                onDeleteItem = { viewModel.deleteBasketItem(basketItem) },
+                                addToFavorite = {viewModel.addToFavorite(basketItem.data)})
                         }
                     }
                 }
@@ -111,14 +112,15 @@ fun BasketScreen(
             Column(
                 Modifier
                     .align(Alignment.BottomCenter)
-                    .fillMaxWidth()) {
+                    .fillMaxWidth()
+                    .background(MainBgColor)) {
 
                 Divider(color = Color(239, 235, 222), thickness = 1.dp)
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(18.dp, 8.dp)
-                        .background(MainBgColor)
+
                     , horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Column() {
@@ -278,6 +280,7 @@ fun OrderItem(
     onMinusClick: () -> Unit,
     onStateSelectedChange: () -> Unit,
     onDeleteItem: () -> Unit,
+    addToFavorite:()->Unit,
 
     ) {
 
@@ -353,7 +356,9 @@ fun OrderItem(
                     Image(
                         painterResource(id = R.drawable.ic_favorite),
                         contentDescription = null,
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier.size(24.dp).clickable {
+                            addToFavorite()
+                        }
                     )
                     Image(painterResource(id = R.drawable.ic_delete),
                         contentDescription = null,

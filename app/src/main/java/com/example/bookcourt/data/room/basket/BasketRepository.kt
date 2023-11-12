@@ -27,4 +27,12 @@ class BasketRepository @Inject constructor(
         return source.findData(item)
     }
 
+    override suspend fun updateItems(items: List<BasketItem>) {
+        source.updateItems(items)
+    }
+
+    override suspend fun deleteItems(items: List<BasketItem>) {
+        source.deleteItems(items)
+    }
+
 }

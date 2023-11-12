@@ -11,10 +11,12 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -28,6 +30,8 @@ import com.example.bookcourt.models.basket.BasketItem
 import com.example.bookcourt.models.book.Book
 import com.example.bookcourt.models.metrics.DataClickMetric
 import com.example.bookcourt.ui.bookCard.BookCardViewModel
+import com.example.bookcourt.ui.error_pages.ErrorPage
+import com.example.bookcourt.ui.error_pages.ErrorType
 import com.example.bookcourt.ui.recommendation.BookCardImage
 import com.example.bookcourt.ui.recommendation.CategoriesBlock
 import com.example.bookcourt.ui.recommendation.FeedbackBlock
@@ -41,99 +45,140 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun BookCardScreen(
     bookId: String,
-    onNavigateBack:()->Unit,
-    onNavigateLeaveFeedback:(title:String,rate:Int)->Unit,
-    onNavigateListFeedbacks:(title:String)->Unit,
-    viewModel:BookCardViewModel = hiltViewModel(),
-    feedbackText:String? = null,
-    needToUpdate:Boolean = false,
-    newRate:Int?=null){
+    onNavigateBack: () -> Unit,
+    onNavigateLeaveFeedback: (title: String, rate: Int) -> Unit,
+    onNavigateListFeedbacks: (title: String) -> Unit,
+    viewModel: BookCardViewModel = hiltViewModel(),
+    feedbackText: String? = null,
+    needToUpdate: Boolean = false,
+    newRate: Int? = null
+) {
     val context = LocalContext.current
-    LaunchedEffect(key1 = Unit){
-        viewModel.getBookByID(context,bookId)
+    LaunchedEffect(key1 = Unit) {
+        viewModel.getBookByID(context, bookId)
+        //viewModel.testGetBookById("92709a69-9f07-41a3-92ab-a78ee91bfe12")
     }
     val book = viewModel.book.value
-    if(needToUpdate && newRate!=null){
+    if (needToUpdate && newRate != null) {
         book!!.bookInfo.rate = newRate.toFloat()
     }
-    if(book != null){
-        Column(modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .background(
-                MainBgColor
-            ))
-        {
-            BookCardTopBar({onNavigateBack()},R.drawable.igra_slov_logo)
-            Spacer(modifier = Modifier.height(MaterialTheme.dimens.paddingBig.dp))
-            Box(Modifier.fillMaxWidth().height(MaterialTheme.dimens.bookCardHeight.dp)){
-                Box(modifier = Modifier
-                    .clip(RoundedCornerShape(23.dp))
-                    .fillMaxWidth(0.5f)
-                    .align(
-                        Alignment.Center
-                    )){
-                    CardOfBook(book.bookInfo.image)
-
-
-                }
-            }
-            Spacer(modifier = Modifier.height(12.dp))
-            BookCardMainContent(feedbackText,needToUpdate,book,onNavigateLeaveFeedback,onNavigateListFeedbacks,
-                {
-                    viewModel.addBasketItem(
-                        BasketItem(
-                            data = book
-                        )
-                    )
-                },
-                viewModel.isActiveBasket.value
-                )
-
+    if(viewModel.errorPage.value){
+        ErrorPage(errorType = ErrorType.UnknownError){
+            viewModel.testGetBookById("92709a69-9f07-41a3-92ab-a78ee91bfe12")
         }
     }else{
-        Box(){
+        if (book != null) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .background(
+                        MainBgColor
+                    )
+            )
+            {
+                BookCardTopBar(onBackNavigate = { onNavigateBack() },
+                    imageLogo = R.drawable.igra_slov_logo,
+                    addToFavorite = { viewModel.addToFavorite(book) },
+                    isFavorite = viewModel.isFavorite.value,
+                    isAuthenticated = viewModel.isAuthenticated.collectAsState(initial = false).value
+                )
+                Spacer(modifier = Modifier.height(MaterialTheme.dimens.paddingBig.dp))
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .height(MaterialTheme.dimens.bookCardHeight.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(23.dp))
+                            .fillMaxWidth(0.5f)
+                            .align(
+                                Alignment.Center
+                            )
+                    ) {
+                        CardOfBook(book.bookInfo.image)
 
+
+                    }
+                }
+                Spacer(modifier = Modifier.height(12.dp))
+                BookCardMainContent(
+                    feedbackText, needToUpdate, book, onNavigateLeaveFeedback, onNavigateListFeedbacks,
+                    {
+                        viewModel.addBasketItem(
+                            BasketItem(
+                                data = book
+                            )
+                        )
+                    },
+                    viewModel.isActiveBasket.value,
+                    viewModel.isAuthenticated.collectAsState(initial = false).value
+                )
+
+            }
         }
     }
+
 
 
 }
 
 @Composable
 fun BookCardTopBar(
-    onBackNavigate:()->Unit,
-    imageLogo:Int,
-){
+    isAuthenticated: Boolean,
+    isFavorite: Boolean,
+    onBackNavigate: () -> Unit,
+    imageLogo: Int,
+    addToFavorite: () -> Unit
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            //.height(55.dp)
+        //.height(55.dp)
     ) {
         Row(modifier = Modifier.align(Alignment.CenterStart)) {
             Spacer(modifier = Modifier.width(12.dp))
             Image(
                 painter = painterResource(id = R.drawable.back_arrow),
                 contentDescription = null,
-                modifier = Modifier.clickable(interactionSource =  MutableInteractionSource(),
-                    indication = null) {
-                    onBackNavigate()
+                modifier = Modifier
+                    .clickable(
+                        interactionSource = MutableInteractionSource(),
+                        indication = null
+                    ) {
+                        onBackNavigate()
 
-                }.size(MaterialTheme.dimens.iconSizeSmall.dp)
+                    }
+                    .size(MaterialTheme.dimens.iconSizeSmall.dp)
             )
         }
-        Image(painter = painterResource(id = imageLogo), contentDescription = null,modifier = Modifier
-            .align(
-                Alignment.Center
-            )
-            .size(MaterialTheme.dimens.iconSizeBig.dp))
+        Image(
+            painter = painterResource(id = imageLogo),
+            contentDescription = null,
+            modifier = Modifier
+                .align(
+                    Alignment.Center
+                )
+                .size(MaterialTheme.dimens.iconSizeBig.dp)
+        )
         Row(modifier = Modifier.align(Alignment.CenterEnd)) {
-            Image(
-                painter = painterResource(id = R.drawable.favorite_book_topbar),
-                contentDescription = null,
-                modifier = Modifier.size(MaterialTheme.dimens.iconSizeBig.dp),
-                contentScale = ContentScale.Crop
-            )
+            if(isAuthenticated){
+                Image(
+//                    id = if (isFavorite) R.drawable.ic_favorite_fill else R.drawable.favorite_book_topbar)
+                    painter = painterResource(id = R.drawable.favorite_book_topbar),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(MaterialTheme.dimens.iconSizeBig.dp)
+                        .clickable {
+                            addToFavorite()
+                        },
+                    contentScale = ContentScale.Crop,
+                    colorFilter = if (isFavorite) ColorFilter.tint(Color.Yellow) else null
+
+                )
+            }
+
             Image(
                 painter = painterResource(id = R.drawable.share_icon),
                 contentDescription = null,
@@ -145,8 +190,8 @@ fun BookCardTopBar(
 }
 
 @Composable
-fun CardOfBook(uri:String){
-    BookCardImage(uri = uri,true)
+fun CardOfBook(uri: String) {
+    BookCardImage(uri = uri, true)
 
 }
 
@@ -154,12 +199,13 @@ fun CardOfBook(uri:String){
 fun BookCardMainContent(
     feedbackText: String?,
     needToUpdate: Boolean,
-    book:Book,
-    onNavigateLeaveFeedback:(title:String,rate:Int)->Unit,
-    onNavigateListFeedbacks:(title:String)->Unit,
-    onClickAddButton: ()->Unit,
-    isActiveBasket:Boolean,
-){
+    book: Book,
+    onNavigateLeaveFeedback: (title: String, rate: Int) -> Unit,
+    onNavigateListFeedbacks: (title: String) -> Unit,
+    onClickAddButton: () -> Unit,
+    isActiveBasket: Boolean,
+    isAuthenticated: Boolean,
+) {
     Column(
         modifier = Modifier
             .background(MainBgColor),
@@ -194,7 +240,7 @@ fun BookCardMainContent(
                     modifier = Modifier,
                     text = "${book.bookInfo.author} | ${book.bookInfo.genre}",
                     color = Color(134, 134, 134),
-                    style= MaterialTheme.typography.subtitle1,
+                    style = MaterialTheme.typography.subtitle1,
                 )
 
 
@@ -301,15 +347,16 @@ fun BookCardMainContent(
                 description = feedbackText ?: "",
                 rate = book.bookInfo.rate.toInt(),
                 leaveFeedbackVisibility = !needToUpdate,
-                onNavigateToFeedback = {s-> onNavigateListFeedbacks(s)},
+                onNavigateToFeedback = { s -> onNavigateListFeedbacks(s) },
                 onClickRatingBar = {
-                        onNavigateLeaveFeedback(book.bookInfo.title,it)
+                    onNavigateLeaveFeedback(book.bookInfo.title, it)
                 },
                 disableLeaveFeedbackVisibility = {
 
                 },
                 frontItem = book,
-                isNeedToUpdateFeedback = needToUpdate
+                isNeedToUpdateFeedback = needToUpdate,
+                isAuthenticated = isAuthenticated
 
             )
 
@@ -325,10 +372,12 @@ fun BookCardMainContent(
                     .height(16.dp)
                     .fillMaxWidth()
             )
-            Box(modifier = Modifier.fillMaxWidth()){
-                Column(modifier = Modifier
-                    //.height(134.dp)
-                    .align(Alignment.TopStart)) {
+            Box(modifier = Modifier.fillMaxWidth()) {
+                Column(
+                    modifier = Modifier
+                        //.height(134.dp)
+                        .align(Alignment.TopStart)
+                ) {
                     Text(
                         text = "Описание",
                         color = Color.Black,
@@ -446,19 +495,23 @@ fun BookCardMainContent(
                     .fillMaxWidth()
                     .height(MaterialTheme.dimens.bookCardButtonSize.dp)
                     .clip(RoundedCornerShape(65))
-                    .background( if(isActiveBasket)Color(252, 225, 129) else Color(
-                        179,
-                        179,
-                        179,
-                        255
+                    .background(
+                        if (isActiveBasket) Color(252, 225, 129) else Color(
+                            179,
+                            179,
+                            179,
+                            255
+                        )
                     )
+                    .padding(
+                        top = MaterialTheme.dimens.paddingSmall.dp,
+                        bottom = MaterialTheme.dimens.paddingSmall.dp
                     )
-                    .padding(top = MaterialTheme.dimens.paddingSmall.dp, bottom = MaterialTheme.dimens.paddingSmall.dp)
                     .clickable(
-                        interactionSource =  MutableInteractionSource(),
+                        interactionSource = MutableInteractionSource(),
                         indication = null,
                     ) {
-                        if(isActiveBasket){
+                        if (isActiveBasket) {
                             onClickAddButton()
 
                             DataClickMetric(
@@ -471,16 +524,22 @@ fun BookCardMainContent(
                     },
                 contentAlignment = Alignment.Center
             ) {
-                Row(modifier = Modifier.align(Alignment.Center), verticalAlignment = Alignment.CenterVertically){
-                    if(isActiveBasket){
-                        Image(painter = painterResource(id = R.drawable.ic_plus), contentDescription =null)
+                Row(
+                    modifier = Modifier.align(Alignment.Center),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    if (isActiveBasket) {
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_plus),
+                            contentDescription = null
+                        )
                         Spacer(modifier = Modifier.width(5.dp))
                         Text(
                             text = "В корзину ${book.bookInfo.price}₽",
                             color = Color.Black,
                             style = MaterialTheme.typography.body1,
                         )
-                    }else{
+                    } else {
                         Text(
                             text = "Уже в корзине",
                             color = Color.Black,

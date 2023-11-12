@@ -5,13 +5,19 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.bookcourt.data.api.BooksApi
+import com.example.bookcourt.data.repositories.DataStoreRepository
 import com.example.bookcourt.data.room.basket.BasketRepositoryI
+import com.example.bookcourt.data.room.user.UserRepositoryI
 import com.example.bookcourt.models.basket.BasketItem
 import com.example.bookcourt.models.basket.OwnerBasketItem
+import com.example.bookcourt.models.book.Book
+import com.example.bookcourt.models.user.User
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -20,7 +26,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BasketViewModel @Inject constructor(
-    repository: BasketRepositoryI
+    private val repository: BasketRepositoryI,
+    private val dataStoreRepository: DataStoreRepository,
+    private val userRepositoryI: UserRepositoryI,
 ): ViewModel() {
 
     var basketItems = mutableStateListOf<BasketItem>()
@@ -101,12 +109,13 @@ class BasketViewModel @Inject constructor(
 
     }
     fun selectAll(){
-
+        val list = mutableListOf<BasketItem>()
         for( i in 0..basketItems.size-1){
             basketItems[i] = basketItems[i].copy(isSelected = !stateSelectAll.value)
-            viewModelScope.launch(Dispatchers.IO) {
-                repositoryI.updateData(basketItems[i])
-            }
+            list.add(basketItems[i])
+        }
+        viewModelScope.launch(Dispatchers.IO) {
+            repositoryI.updateItems(list)
         }
         for(i in 0..owners.size-1){
             owners[i] = owners[i].copy(isSelected = !owners[i].isSelected)
@@ -150,9 +159,6 @@ class BasketViewModel @Inject constructor(
         }
         return true
     }
-    fun updateBasketData(){
-
-    }
 
     fun deleteBasketItem(item: BasketItem){
         basketItems.remove(item)
@@ -163,17 +169,18 @@ class BasketViewModel @Inject constructor(
     }
 
     fun deleteSelected(){
-
+        val list = mutableListOf<BasketItem>()
         basketItems.removeIfCallback(condition = {
             if(it.isSelected){
-                viewModelScope.launch(Dispatchers.IO) {
-                    repositoryI.deleteData(it)
-                }
+                list.add(it)
                 true
             }else{
                 false
             }
         })
+        viewModelScope.launch(Dispatchers.IO) {
+            repositoryI.deleteItems(list)
+        }
 
     }
     private fun SnapshotStateList<BasketItem>.removeIfCallback(condition:(it:BasketItem)->Boolean){
@@ -184,13 +191,16 @@ class BasketViewModel @Inject constructor(
 
     fun changeItemSelectStateByOwner(owner:String,index:Int){
         owners[index] = owners[index].copy(isSelected = !owners[index].isSelected)
+        val list = mutableListOf<BasketItem>()
         for(i in 0 until basketItems.size){
             if(basketItems[i].data.shopOwner == owner){
                 basketItems[i] = basketItems[i].copy(isSelected = owners[index].isSelected)
-                viewModelScope.launch(Dispatchers.IO) {
-                    repositoryI.updateData(basketItems[index])
-                }
+                list.add(basketItems[i])
+
             }
+        }
+        viewModelScope.launch(Dispatchers.IO) {
+            repositoryI.updateItems(list)
         }
     }
 
@@ -235,6 +245,29 @@ class BasketViewModel @Inject constructor(
             }
         }
         return count
+    }
+
+    private fun updateUserStatistic(user: User){
+        viewModelScope.launch(Dispatchers.IO) {
+            userRepositoryI.updateData(user)
+        }
+    }
+    private suspend fun getUser(): User {
+        val userId = dataStoreRepository.getPref(DataStoreRepository.uuid)
+        return userRepositoryI.loadData(userId.first())!!
+    }
+
+    fun addToFavorite(item: Book){
+        viewModelScope.launch(Dispatchers.IO) {
+            val user = getUser()
+            if(item in user.wantToRead){
+                user.wantToRead.remove(item)
+
+            }else{
+                user.wantToRead.add(item)
+            }
+            updateUserStatistic(user)
+        }
     }
 
 

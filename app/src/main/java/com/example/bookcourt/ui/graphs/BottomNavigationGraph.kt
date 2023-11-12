@@ -114,8 +114,8 @@ fun BottomNavigationGraph(
                 onNavigateBack = { navController.popBackStack() },
                 onNavigateLeaveFeedback = { title, rate ->
                     navController.navigate("${Screens.LeaveFeedback.route}/$title/$rate") },
-                onNavigateListFeedbacks = { title ->
-                    navController.navigate("${Screens.FeedbackBlock.route}/$title") },
+                onNavigateListFeedbacks = { id ->
+                    navController.navigate("${Screens.FeedbackBlock.route}/$id") },
                 feedbackText = feedbackText,
                 needToUpdate = needToUpdate ?: false,
                 newRate = rate ?:null
@@ -146,14 +146,14 @@ fun BottomNavigationGraph(
                 })
         }
         composable(
-            route = "${Screens.FeedbackBlock.route}/{title}", arguments = listOf(
-                navArgument("title") { type = NavType.StringType },
+            route = "${Screens.FeedbackBlock.route}/{id}", arguments = listOf(
+                navArgument("id") { type = NavType.StringType },
             )
         ) { backStackEntry ->
             val arguments = requireNotNull(backStackEntry.arguments)
-            val title = arguments.getString("title", "not found")
+            val id = arguments.getString("id", "not found")
             ListOfFeedbacksScreen(
-                title = title,
+                id = id,
                 onNavigateToRecommendationScreen = { navController.popBackStack() }
             )
         }
