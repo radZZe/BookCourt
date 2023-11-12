@@ -47,7 +47,7 @@ class MainActivity : ComponentActivity() {
                             RootNavigationGraph(navController = navController)
                         }
                     }else{
-                        ErrorPage(ErrorType.Internet)
+                        ErrorPage(ErrorType.Internet){}
                     }
 
 

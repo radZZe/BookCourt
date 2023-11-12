@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,10 +23,13 @@ import com.example.bookcourt.ui.recommendation.Feedback
 
 @Composable
 fun ListOfFeedbacksScreen(
-    title: String,
+    id: String,
     onNavigateToRecommendationScreen: () -> Unit,
-    viewModel:ListOfFeedbackViewModel = hiltViewModel()
+    viewModel:ListOfFeedbackViewModel = hiltViewModel(),
 ) {
+    LaunchedEffect(key1 = Unit){
+        viewModel.getFeedbacks(id)
+    }
     Column(modifier = Modifier
         .fillMaxSize()
         .padding(start = 12.dp, end = 12.dp)) {

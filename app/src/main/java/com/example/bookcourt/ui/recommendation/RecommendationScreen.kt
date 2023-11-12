@@ -41,14 +41,23 @@ fun RecommendationScreen(
     onNavigateBookCard:(bookId:String)->Unit,
     viewModel: RecommendationViewModel = hiltViewModel(),
 ) {
+    val isAuthenticated = viewModel.isAuthenticated.collectAsState(initial = false)
+
+    if(isAuthenticated.value){
+        RecommendationContent(
+            onNavigateToStatistics,
+            onNavigateToProfile,
+            viewModel = viewModel,
+            onNavigateBookCard
+        )
+    }else{
+        Box(modifier = Modifier.fillMaxSize().padding(20.dp), contentAlignment = Alignment.Center){
+            Text(text = "Вам необходимо авторизоваться для того чтоб вам были доступны рекомендации")
+        }
+    }
 
 
-    RecommendationContent(
-        onNavigateToStatistics,
-        onNavigateToProfile,
-        viewModel = viewModel,
-        onNavigateBookCard
-    )
+
 }
 
 @Composable
@@ -229,7 +238,8 @@ fun MainRecommendationContent(
                                 top = MaterialTheme.dimens.paddingNormal.dp,
                                 bottom = 0.dp
                             )
-                            .align(Alignment.BottomCenter)
+                            .align(Alignment.BottomCenter),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Column(
                             Modifier
@@ -587,7 +597,8 @@ fun FeedbackBlock(
     onNavigateToFeedback: (title: String) -> Unit,
     leaveFeedbackVisibility: Boolean,
     onClickRatingBar: (rate:Int) -> Unit,
-    disableLeaveFeedbackVisibility: () -> Unit
+    disableLeaveFeedbackVisibility: () -> Unit,
+    isAuthenticated:Boolean
 ) {
     if (isNeedToUpdateFeedback){
         frontItem.feedbacks.leaveAFeedback(
@@ -599,7 +610,7 @@ fun FeedbackBlock(
             )
         )
     }
-    if (!frontItem.feedbacks.isUserLeaveFeedback) {
+    if (!frontItem.feedbacks.isUserLeaveFeedback && isAuthenticated) {
         LeaveFeedback(
             rate = rate,
             disableLeaveFeedbackVisibility = disableLeaveFeedbackVisibility,

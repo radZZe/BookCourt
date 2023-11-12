@@ -63,6 +63,7 @@ class RecommendationViewModel @Inject constructor(
 
     var isFirstDataLoading by mutableStateOf(true)
     var isNotificationDisplay = dataStoreRepository.getBoolPref(DataStoreRepository.isNotificationDisplay)
+    var isAuthenticated = dataStoreRepository.getBoolPref(DataStoreRepository.isAuthenticated)
     var isFirstNotification = mutableStateOf(false)
 
     private var sessionTime = System.currentTimeMillis().toInt()
@@ -116,25 +117,16 @@ class RecommendationViewModel @Inject constructor(
     }
 
     fun getAllBooksRemote() {
-//        viewModelScope.launch(Dispatchers.IO) {
-//            bookApi.getBookById("jopa")
-//        }
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val books = bookApi.getRecommendationBooks(10).execute().body()!!
+                bookApi.getRecommendationBooks(10).execute().code() == 200
+                val test = 5;
+            }catch(e:Exception){
+                // TODO("SET VISIBLE ERROR PAGE ")
+            }
+        }
 
-
-//        fetchJob?.cancel()
-//        fetchJob = viewModelScope.launch(Dispatchers.IO) {
-//            user = getUser()
-//            val books = networkRepository.getAllBooksRemote()//convertBooksJsonToList(context)
-//            if (books is ResultTask.Success && books.data!=null){
-//                    booksValidation(user, books.data)
-//                isFirstDataLoading = false
-//                dataIsReady = true
-//            }
-//            else{
-//                //TODO(негативный сценарий)
-//            }
-//
-//        }
     }
     fun getAllBooks(context: Context) {
         getAllBooksRemote()

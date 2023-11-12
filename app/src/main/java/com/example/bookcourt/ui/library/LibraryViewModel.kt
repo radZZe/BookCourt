@@ -61,7 +61,7 @@ class LibraryViewModel @Inject constructor(
             selectedCategory.value?.isSelected?.value = false
             for (i in bookBlocks.indices){
                 bookBlocksFiltered[i].value =bookBlocks[i].blockItems.filter {
-                    it.genre==filter
+                    it.genres==filter
                 }
             }
             selectedCategory.value = category.value

@@ -24,7 +24,7 @@ class BasketSource(
     }
 
     override suspend fun deleteData(item: BasketItem) {
-        dao.deleteBook(item)
+        dao.deleteItem(item)
     }
 
     override suspend fun updateData(item: BasketItem){
@@ -33,6 +33,13 @@ class BasketSource(
 
     override suspend fun findData(item: Book): List<BasketItem> {
         return dao.findItem(item)
+    }
+
+    override suspend fun updateItems(items:List<BasketItem>){
+        dao.updateItems(items)
+    }
+    override suspend fun deleteItems(items:List<BasketItem>){
+        dao.deleteItems(items)
     }
 
 }

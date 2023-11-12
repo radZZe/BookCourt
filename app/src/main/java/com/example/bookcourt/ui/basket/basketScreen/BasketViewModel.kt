@@ -5,24 +5,31 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.bookcourt.data.api.BooksApi
+import com.example.bookcourt.data.repositories.DataStoreRepository
 import com.example.bookcourt.data.room.basket.BasketRepositoryI
+import com.example.bookcourt.data.room.user.UserRepositoryI
 import com.example.bookcourt.models.basket.BasketItem
 import com.example.bookcourt.models.basket.OwnerBasketItem
+import com.example.bookcourt.models.book.Book
+import com.example.bookcourt.models.user.User
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class BasketViewModel @Inject constructor(
-    repository: BasketRepositoryI
-) : ViewModel() {
-
+    private val repository: BasketRepositoryI,
+    private val dataStoreRepository: DataStoreRepository,
+    private val userRepositoryI: UserRepositoryI,
+): ViewModel() {
     private val _flowBasketItems =  MutableStateFlow(emptyList<BasketItem>())
     val flowBaksetItems = _flowBasketItems.asStateFlow()
     var basketItems = mutableStateListOf<BasketItem>()
@@ -71,14 +78,14 @@ class BasketViewModel @Inject constructor(
         }
 
     }
-
-    fun selectAll() {
-        stateSelectAll.value = !stateSelectAll.value
-        for (i in 0.._flowBasketItems.value.size - 1) {
-            val item = _flowBasketItems.value[i].copy(isSelected = stateSelectAll.value)
-            viewModelScope.launch(Dispatchers.IO) {
-                repositoryI.updateData(item)
-            }
+    fun selectAll(){
+        val list = mutableListOf<BasketItem>()
+        for( i in 0..basketItems.size-1){
+            basketItems[i] = basketItems[i].copy(isSelected = !stateSelectAll.value)
+            list.add(basketItems[i])
+        }
+        viewModelScope.launch(Dispatchers.IO) {
+            repositoryI.updateItems(list)
         }
         for (i in 0..owners.size - 1) {
             owners[i] = owners[i].copy(isSelected = stateSelectAll.value)
@@ -121,22 +128,28 @@ class BasketViewModel @Inject constructor(
         return true
     }
 
-    fun deleteBasketItem(item: BasketItem) {
+    fun deleteBasketItem(item: BasketItem){
+        basketItems.remove(item)
         viewModelScope.launch(Dispatchers.IO) {
             repositoryI.deleteData(item)
         }
 
     }
 
-    fun deleteSelected() {
-        _flowBasketItems.value.forEach {
-            if (it.isSelected) {
-                checkOwnerSize(it.data.shopOwner)
-                viewModelScope.launch(Dispatchers.IO) {
-                    repositoryI.deleteData(it)
-                }
+    fun deleteSelected(){
+        val list = mutableListOf<BasketItem>()
+        basketItems.removeIfCallback(condition = {
+            if(it.isSelected){
+                list.add(it)
+                true
+            }else{
+                false
             }
+        })
+        viewModelScope.launch(Dispatchers.IO) {
+            repositoryI.deleteItems(list)
         }
+
     }
 
     private fun checkOwnerSize(owner: String) {
@@ -155,13 +168,15 @@ class BasketViewModel @Inject constructor(
 
     fun changeItemSelectStateByOwner(owner: String, index: Int) {
         owners[index] = owners[index].copy(isSelected = !owners[index].isSelected)
-        for (i in 0 until _flowBasketItems.value.size) {
-            if (_flowBasketItems.value[i].data.shopOwner == owner) {
-                val item = _flowBasketItems.value[i].copy(isSelected = owners[index].isSelected )
-                viewModelScope.launch(Dispatchers.IO) {
-                    repositoryI.updateData(item)
-                }
+        val list = mutableListOf<BasketItem>()
+        for(i in 0 until basketItems.size){
+            if(basketItems[i].data.shopOwner == owner){
+                basketItems[i] = basketItems[i].copy(isSelected = owners[index].isSelected)
+                list.add(basketItems[i])
             }
+        }
+        viewModelScope.launch(Dispatchers.IO) {
+            repositoryI.updateItems(list)
         }
     }
 
@@ -206,6 +221,29 @@ class BasketViewModel @Inject constructor(
             }
         }
         return count
+    }
+
+    private fun updateUserStatistic(user: User){
+        viewModelScope.launch(Dispatchers.IO) {
+            userRepositoryI.updateData(user)
+        }
+    }
+    private suspend fun getUser(): User {
+        val userId = dataStoreRepository.getPref(DataStoreRepository.uuid)
+        return userRepositoryI.loadData(userId.first())!!
+    }
+
+    fun addToFavorite(item: Book){
+        viewModelScope.launch(Dispatchers.IO) {
+            val user = getUser()
+            if(item in user.wantToRead){
+                user.wantToRead.remove(item)
+
+            }else{
+                user.wantToRead.add(item)
+            }
+            updateUserStatistic(user)
+        }
     }
 
 

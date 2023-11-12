@@ -11,4 +11,8 @@ interface BasketRepositoryI {
     suspend fun updateData(item: BasketItem)
 
     suspend fun findData(item: Book) :List<BasketItem>
+
+    suspend fun updateItems(items:List<BasketItem>)
+
+    suspend fun deleteItems(items:List<BasketItem>)
 }

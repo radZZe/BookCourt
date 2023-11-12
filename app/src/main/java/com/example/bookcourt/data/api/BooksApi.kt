@@ -5,10 +5,12 @@ import com.example.bookcourt.models.book.BookRetrofit
 import com.example.bookcourt.models.book.MarkBook
 import com.example.bookcourt.models.feedback.PostReviewRetrofit
 import com.example.bookcourt.models.feedback.ReviewRetrofit
+import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Query
 
 interface BooksApi {
     @GET("4N4X")
@@ -17,19 +19,19 @@ interface BooksApi {
     //---------------------RECOMMENDATION--------------------------------------
 
     @GET("tinder/books")
-    suspend fun getRecommendationBooks(@Body countBooks:Int):List<BookRetrofit>
+    fun getRecommendationBooks(@Query("countBooks") countBooks:Int):Call<List<BookRetrofit>>
 
     @POST("tinder/book/mark")
     suspend fun postMarkBook(@Body markBook: MarkBook)
 
     //---------------------BOOK-CARD-----------------------------------------------
-    @POST("testMetric.json") // book
-    suspend fun getBookById(@Body bookId:String):BookRetrofit
+    @GET("book") // book
+    fun getBookById(@Query("bookId") bookId:String): Call<BookRetrofit>
 
     //---------------------REVIEWS-----------------------------------------------
 
     @GET("book/review")
-    suspend fun getReviews(@Body bookId:String):List<ReviewRetrofit>
+    fun getReviews(@Query("bookId") bookId: String):Call<List<ReviewRetrofit>>
 
     @POST("book/review")
     suspend fun postReview(@Body postReviewRetrofit: PostReviewRetrofit)

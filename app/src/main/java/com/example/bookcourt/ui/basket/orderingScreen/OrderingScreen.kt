@@ -29,8 +29,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -258,7 +261,20 @@ fun OrderingScreen(
 
                 }
                 Spacer(modifier = Modifier.height(12.dp))
-                Text(text = "Нажимая «Оплатить» вы соглашаетесь с условиями политики конфидециальности и правилами продажи")
+                Text(buildAnnotatedString {
+                    withStyle(style = SpanStyle(color = Color.Black)) {
+                        append("Нажимая «Оплатить» вы соглашаетесь с условиями ")
+                    }
+                    withStyle(style = SpanStyle(color = Color.Blue)) {
+                        append("политики конфидециальности")
+                    }
+                    withStyle(style = SpanStyle(color = Color.Black)) {
+                        append(" и ")
+                    }
+                    withStyle(style = SpanStyle(color = Color.Blue)) {
+                        append(" правилами продажи ")
+                    }
+                })
             }
         }
 
