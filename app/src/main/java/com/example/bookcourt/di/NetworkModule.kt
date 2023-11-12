@@ -3,6 +3,7 @@ package com.example.bookcourt.di
 import com.example.bookcourt.data.api.BooksApi
 import com.example.bookcourt.data.api.LibraryApi
 import com.example.bookcourt.data.api.MetricsApi
+import com.example.bookcourt.data.api.SearchApi
 import com.example.bookcourt.data.repositories.NetworkRepository
 import com.example.bookcourt.utils.ApiUrl
 import dagger.Module
@@ -62,6 +63,20 @@ class NetworkModule {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(LibraryApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSearchApi(
+        client: OkHttpClient
+    ):SearchApi{
+        return Retrofit
+            .Builder()
+            .baseUrl(ApiUrl.SEARCH_URL)
+            .client(client)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(SearchApi::class.java)
     }
 
 }

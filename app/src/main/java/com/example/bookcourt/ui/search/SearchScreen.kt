@@ -33,6 +33,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.SubcomposeAsyncImage
 import com.example.bookcourt.R
 import com.example.bookcourt.models.book.Book
+import com.example.bookcourt.models.search.SearchBook
 import com.example.bookcourt.models.user.SearchRequest
 import com.example.bookcourt.ui.theme.*
 
@@ -52,7 +53,7 @@ fun SearchScreen(
     val recentRequests by viewModel.recentRequests.collectAsState()
 
     LaunchedEffect(key1 = Unit) {
-        viewModel.getAllBooks(context)
+
         viewModel.getSearchRequests()
     }
 
@@ -120,13 +121,15 @@ fun SearchScreen(
                 }
             } else {
                 if (books.isEmpty()) {
-                    Text(
-                        text = "К сожалению, ничего не найдено, возможно Вас заинтересуют следующие книги:",
-                        fontSize = 16.sp,
-                        fontFamily = Roboto,
-                        color = SecondaryText,
-                        modifier = Modifier.padding(top = 20.dp, start = 20.dp)
-                    )
+                    if (viewModel.recommendedBooks.isNotEmpty()){
+                        Text(
+                            text = "К сожалению, ничего не найдено, возможно Вас заинтересуют следующие книги:",
+                            fontSize = 16.sp,
+                            fontFamily = Roboto,
+                            color = SecondaryText,
+                            modifier = Modifier.padding(top = 20.dp, start = 20.dp)
+                        )
+                    }
                 }
                 LazyColumn(
                     modifier = Modifier
@@ -146,7 +149,7 @@ fun SearchScreen(
 }
 
 @Composable
-fun SearchBookCard(book: Book) {
+fun SearchBookCard(book: SearchBook) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -154,8 +157,8 @@ fun SearchBookCard(book: Book) {
             .padding(top = 20.dp)
     ) {
         SubcomposeAsyncImage(
-            model = book.bookInfo.image,
-            contentDescription = "${book.bookInfo.title} image",
+            model = book.imageUrl,
+            contentDescription = "${book.title} image",
             modifier = Modifier
                 .fillMaxHeight()
                 .width(100.dp)
@@ -177,20 +180,20 @@ fun SearchBookCard(book: Book) {
                 .padding(start = 20.dp)
         ) {
             Text(
-                text = book.bookInfo.title,
+                text = book.title,
                 fontFamily = Roboto,
                 fontWeight = FontWeight.Bold,
                 color = PrimaryText,
                 fontSize = 22.sp
             )
             Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = book.bookInfo.author,
-                fontFamily = Roboto,
-                fontWeight = FontWeight.Normal,
-                color = SecondaryText,
-                fontSize = 16.sp
-            )
+//            Text(
+//                text = book,
+//                fontFamily = Roboto,
+//                fontWeight = FontWeight.Normal,
+//                color = SecondaryText,
+//                fontSize = 16.sp
+//            )
         }
     }
 }
