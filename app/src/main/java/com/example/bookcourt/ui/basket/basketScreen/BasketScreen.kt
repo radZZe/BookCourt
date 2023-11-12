@@ -14,9 +14,9 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -33,6 +33,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
@@ -57,68 +58,33 @@ fun BasketScreen(
     onNavigateToOrdering:()->Unit,
 ) {
     val scope = rememberCoroutineScope()
+    val basketItems = viewModel.flowBaksetItems.collectAsState()
     LaunchedEffect(key1 = Unit,) {
         launch(Dispatchers.IO) {
-            viewModel.getItems()
+            viewModel.init()
         }
     }
+//    Box(Modifier.fillMaxSize()){
+//
+//    }
 
     Box(Modifier
         .fillMaxSize()
-        .verticalScroll(rememberScrollState())) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
         ) {
-            BasketTopBar(numberItems = viewModel.basketItems.size,
-                stateSelectAll = viewModel.stateSelectAll.value,
-                onStateSelectAllChanged = {
-                    viewModel.selectAll()
-                },
-                onDeleteSelected = { viewModel.deleteSelected() })
-            if (viewModel.basketItems.isEmpty()) {
-                EmptyBasketScreen()
-            } else {
-                for (i in 0..viewModel.owners.size - 1) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        BasketCheckBox(modifier = Modifier, viewModel.owners[i].isSelected) {
-                            viewModel.changeItemSelectStateByOwner(viewModel.owners[i].value, i)
-                        }
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Text(
-                            text = viewModel.owners[i].value,
-                            fontFamily = FontFamily(Font(R.font.roboto_bold)),
-                            fontSize = 18.sp
-                        )
-                    }
-                    viewModel.basketItems.forEachIndexed { index, basketItem ->
-                        if (basketItem.data.shopOwner == viewModel.owners[i].value) {
-                            OrderItem(item = basketItem,
-                                onPlusClick = { viewModel.increaseTheAmount(index) },
-                                onMinusClick = { viewModel.reduceTheAmount(index) },
-                                onStateSelectedChange = { viewModel.changeItemSelectState(index) },
-                                onDeleteItem = { viewModel.deleteBasketItem(basketItem) })
-                        }
-                    }
-                }
-            }
-
-        }
         if (viewModel.isBasketItemsHasSelected()) {
             Column(
                 Modifier
                     .align(Alignment.BottomCenter)
-                    .fillMaxWidth()) {
+                    .fillMaxWidth()
+                    .background(MainBgColor)
+                    .zIndex(5f)
+            ) {
 
                 Divider(color = Color(239, 235, 222), thickness = 1.dp)
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(18.dp, 8.dp)
-                        .background(MainBgColor)
                     , horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Column() {
@@ -143,7 +109,7 @@ fun BasketScreen(
                             .background(Color(252, 225, 129))
                             .padding(top = 12.dp, bottom = 12.dp)
                             .clickable(
-                                interactionSource =  MutableInteractionSource(),
+                                interactionSource = MutableInteractionSource(),
                                 indication = null
                             ) {
                                 //onClickAddButton()
@@ -174,6 +140,51 @@ fun BasketScreen(
             }
 
         }
+        Column(
+            modifier = Modifier
+                // .fillMaxHeight(0.2f)
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState())
+        ) {
+            BasketTopBar(numberItems = basketItems.value.size,
+                stateSelectAll = viewModel.stateSelectAll.value,
+                onStateSelectAllChanged = {
+                    viewModel.selectAll()
+                },
+                onDeleteSelected = { viewModel.deleteSelected() })
+            if (basketItems.value.isEmpty()) {
+                EmptyBasketScreen()
+            } else {
+                for (i in 0..viewModel.owners.size - 1) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        BasketCheckBox(modifier = Modifier, viewModel.owners[i].isSelected) {
+                            viewModel.changeItemSelectStateByOwner(viewModel.owners[i].value, i)
+                        }
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Text(
+                            text = viewModel.owners[i].value,
+                            fontFamily = FontFamily(Font(R.font.roboto_bold)),
+                            fontSize = 18.sp
+                        )
+                    }
+
+                    basketItems.value.forEachIndexed { index, basketItem ->
+                        if (basketItem.data.shopOwner == viewModel.owners[i].value) {
+                            OrderItem(item = basketItem,
+                                onPlusClick = { viewModel.increaseTheAmount(index)},
+                                onMinusClick = { viewModel.reduceTheAmount(index)},
+                                onStateSelectedChange = { viewModel.changeItemSelectState(index) },
+                                onDeleteItem = { viewModel.deleteBasketItem(basketItem) })
+                        }
+                    }
+                }
+            }
+
+        }
+
     }
 
 
@@ -238,8 +249,10 @@ fun BasketTopBar(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth(0.7f)
-                        .clickable(interactionSource =  MutableInteractionSource(),
-                            indication = null) {
+                        .clickable(
+                            interactionSource = MutableInteractionSource(),
+                            indication = null
+                        ) {
                             onDeleteSelected()
                         },
                     verticalAlignment = Alignment.CenterVertically,
@@ -374,8 +387,10 @@ fun OrderItem(
                                 RoundedCornerShape(5.dp)
                             )
                             .background(Color(239, 235, 222))
-                            .clickable(interactionSource =  MutableInteractionSource(),
-                                indication = null) {
+                            .clickable(
+                                interactionSource = MutableInteractionSource(),
+                                indication = null
+                            ) {
                                 if (item.amount > 0) {
                                     onMinusClick()
                                 }
@@ -397,8 +412,10 @@ fun OrderItem(
                                 RoundedCornerShape(5.dp)
                             )
                             .background(Color(239, 235, 222))
-                            .clickable(interactionSource =  MutableInteractionSource(),
-                                indication = null) {
+                            .clickable(
+                                interactionSource = MutableInteractionSource(),
+                                indication = null
+                            ) {
                                 onPlusClick()
                             }, contentAlignment = Alignment.Center
                     ) {

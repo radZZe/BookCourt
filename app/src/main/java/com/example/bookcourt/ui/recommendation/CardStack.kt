@@ -298,7 +298,7 @@ fun BookCardImage(
         }
         Box(
             modifier = Modifier
-                .fillMaxWidth(if (isBookCardScreen) 0.4f else 0.32f)
+                .fillMaxWidth(if (isBookCardScreen) 0.4f else 0.37f)
                 .zIndex(19f)
                 .align(
                     Alignment.BottomStart
