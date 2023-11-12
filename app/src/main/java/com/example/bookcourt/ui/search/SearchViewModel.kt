@@ -1,32 +1,22 @@
 package com.example.bookcourt.ui.search
 
-import android.content.Context
-import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.bookcourt.data.api.SearchApi
 
-import com.example.bookcourt.data.repositories.DataStoreRepository
-import com.example.bookcourt.data.repositories.NetworkRepository
 import com.example.bookcourt.data.room.searchRequest.SearchRequestRepository
-import com.example.bookcourt.models.BookDto
-import com.example.bookcourt.models.book.Book
+import com.example.bookcourt.models.search.SearchBook
 import com.example.bookcourt.models.user.SearchRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
-import java.io.IOException
 import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
     private val searchRequestRepository: SearchRequestRepository,
-    private val networkRepository: NetworkRepository
+    private val searchApi: SearchApi
 ) : ViewModel() {
 
     private val _recentRequests = mutableStateListOf<SearchRequest>()
@@ -38,30 +28,17 @@ class SearchViewModel @Inject constructor(
     private val _isSearching = MutableStateFlow(false)
     val isSearching = _isSearching.asStateFlow()
 
-    private var _allBooks = mutableStateListOf<Book>()
+    private var _allBooks = mutableStateListOf<SearchBook>()
     private val _books = MutableStateFlow(_allBooks)
 
     private val _isDisplayed = MutableStateFlow(false)
     val isDisplayed = _isDisplayed.asStateFlow()
 
-    var recommendedBooks = listOf<Book>()
+    var recommendedBooks = listOf<SearchBook>()
 
     @OptIn(FlowPreview::class)
-    val books = searchText
+    val books = _books.asStateFlow()
         .debounce(timeoutMillis = 500L)
-        .onEach { _isSearching.update { true } }
-        .combine(_books) { text, books ->
-            if (text.isBlank()) {
-                books
-            } else {
-                books.filter { book ->
-                    book.doesMatchSearchQuery(text)
-                }
-            }
-        }
-        .onEach {
-            _isSearching.update { false }
-        }
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(stopTimeoutMillis = 1000L),
@@ -71,6 +48,7 @@ class SearchViewModel @Inject constructor(
     fun onSearchTextChange(text: String) {
         _isDisplayed.update { text != "" }
         _searchText.value = text
+        getBooks(text)
     }
 
     fun onClearSearchText() {
@@ -97,27 +75,24 @@ class SearchViewModel @Inject constructor(
         }
     }
 
-    /* No API, just mockup */
-    // TODO Перенести этот блок на новую реализацию networkRepository с Retrofit
-    private var fetchJob: Job? = null
+    private var currentJob:Job?=null
 
-    fun getAllBooks(context: Context) {
-        fetchJob?.cancel()
-        fetchJob = viewModelScope.launch(Dispatchers.IO) {
+    private fun getBooks(query:String){
+        currentJob?.cancel()
+        currentJob = viewModelScope.launch(Dispatchers.IO) {
+            _isSearching.update { true }
             try {
-                val allBooksItems = convertBooksJsonToList(context)
-                recommendedBooks = allBooksItems
-                _allBooks.addAll(allBooksItems)
-            } catch (ioe: IOException) {
-                Log.d("getAllBooks", "error cause ${ioe.cause}")
+                val searchResponse = searchApi.searchBooks(query)
+                _allBooks.clear()
+                _allBooks.addAll(searchResponse.books)
+                recommendedBooks = searchResponse.otherBooks
+            } catch (e:retrofit2.HttpException){
+                _allBooks.clear()
+                recommendedBooks = emptyList()
+            } finally {
+                _isSearching.update { false }
             }
-        }
-    }
 
-    private suspend fun convertBooksJsonToList(context: Context): List<Book> {
-        val json = networkRepository.getAllBooks(context)!!
-        val data = Json.decodeFromString<MutableList<BookDto>>("""$json""")
-        val allBooksItems = data.map { it.toBook() }
-        return allBooksItems
+        }
     }
 }

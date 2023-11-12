@@ -50,14 +50,7 @@ fun LibraryScreen(
         .background(MainBgColor)
         .fillMaxSize()
     ){
-        if (viewModel.bookBlocks.isEmpty()){
-            CircularProgressIndicator(
-                modifier = Modifier
-                    .scale(1f)
-                    .align(Alignment.Center)
-            )
-        }
-        else{
+        if (viewModel.isDataLoaded.value){
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier
@@ -86,6 +79,13 @@ fun LibraryScreen(
                     }
                 }
             }
+        }
+        else{
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .scale(1f)
+                    .align(Alignment.Center)
+            )
         }
 
     }
@@ -204,19 +204,6 @@ fun SponsorItem(
 
     }
 }
-//@Composable
-//fun Blocks(viewModel: LibraryViewModel){
-//    LazyColumn{
-//        items(viewModel.bookBlocksFiltered){ bookBlock->
-//            BooksBar(bookBlock=bookBlock, onNavigateBookCard ={
-//
-//            })
-//            if (bookBlock ==viewModel.bookBlocksFiltered.last()){
-//                Spacer(modifier = Modifier.size(16.dp))
-//            }
-//        }
-//    }
-//}
 
 @Composable
 fun BooksBar(

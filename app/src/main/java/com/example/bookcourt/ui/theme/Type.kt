@@ -65,7 +65,7 @@ val CompactTypography = Typography(
     h4 = TextStyle(
         fontFamily = Roboto,
         fontWeight = FontWeight.Bold,
-        fontSize = 15.sp
+        fontSize = 13.sp
     ),
     h5 = TextStyle(
         fontFamily = Roboto,
@@ -119,7 +119,7 @@ val CompactMediumTypography = Typography(
     h4 = TextStyle(
         fontFamily = Roboto,
         fontWeight = FontWeight.Bold,
-        fontSize = 15.sp
+        fontSize = 13.sp
     ),
     h5 = TextStyle(
         fontFamily = Roboto,
