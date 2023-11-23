@@ -56,6 +56,7 @@ fun OrderingScreen(
     LaunchedEffect(key1 = Unit) {
         launch(Dispatchers.IO) {
             viewModel.getItems()
+            viewModel.getAddress()
         }
     }
     Column(
@@ -79,20 +80,46 @@ fun OrderingScreen(
                         interactionSource =  MutableInteractionSource(),
                         indication = null,
                     ) {
-                        onPickUpPointNavigate()
+                      viewModel.isDialogShown.value = true
+//                      PickUpDialog(onDismiss = { /*TODO*/ }, onConfirm = { /*TODO*/ })
+//                        onPickUpPointNavigate()
                     },
                     text = "Изменить",
                     color = Color.Blue,
                     fontFamily = FontFamily(Font(R.font.roboto_regular)),
                     fontSize = 14.sp
                 )
+                if (viewModel.isDialogShown.value){
+                    PickUpDialog(
+                        onDismiss = {
+                            viewModel.isDialogShown.value = false
+                                    },
+                        onConfirm = {
+                            viewModel.getDeliveryInfo()
+                            //todo loading
+                            viewModel.isDialogShown.value = false
+                        }
+                    )
+                }
             }
             //TODO
-            Text(
-                text = "г. Владивосток, ул. Крыгина 23, пункт выдачи “Wildberries”",
-                fontFamily = FontFamily(Font(R.font.roboto_regular)),
-                fontSize = 16.sp
-            )
+            if (viewModel.address.value.isNotBlank()){//todo
+                Text(
+                    text =
+                    "${viewModel.regionName.value}, ${viewModel.cityName.value}," +
+                            "${viewModel.address.value}, ${viewModel.postOfficeIndex.value}",
+                    fontFamily = FontFamily(Font(R.font.roboto_regular)),
+                    fontSize = 16.sp
+                )
+            }
+            else{
+                Text(
+                    text ="",
+                    fontFamily = FontFamily(Font(R.font.roboto_regular)),
+                    fontSize = 16.sp
+                )
+            }
+
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = "11-12 апреля ", fontFamily = FontFamily(Font(R.font.roboto_bold)),
@@ -231,7 +258,7 @@ fun OrderingScreen(
                         .background(Color(252, 225, 129))
                         .padding(top = 12.dp, bottom = 12.dp)
                         .clickable(
-                            interactionSource =  MutableInteractionSource(),
+                            interactionSource = MutableInteractionSource(),
                             indication = null,
                         ) {
                             //onClickAddButton()

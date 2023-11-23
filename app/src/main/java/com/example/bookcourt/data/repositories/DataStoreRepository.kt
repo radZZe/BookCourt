@@ -19,6 +19,10 @@ class DataStoreRepository(val context: Context) {
     private val dataStore = context.dataStore
 
     companion object PreferenceKeys {
+        val postOfficeIndex:Preferences.Key<String>  = stringPreferencesKey("post office index")
+        val cityName:Preferences.Key<String>  = stringPreferencesKey("city name")
+        val regionName:Preferences.Key<String>  = stringPreferencesKey("region name")
+        val address:Preferences.Key<String>  = stringPreferencesKey("address")
         val isTutorChecked: Preferences.Key<Boolean> = booleanPreferencesKey("is_tutor_checked")
         val isCodeVerificated: Preferences.Key<Boolean> = booleanPreferencesKey("is_code_verificated_checked")
         val isAuthenticated: Preferences.Key<Boolean> = booleanPreferencesKey("is_authenticated")
