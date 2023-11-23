@@ -1,9 +1,6 @@
 package com.example.bookcourt.di
 
-import com.example.bookcourt.data.api.BooksApi
-import com.example.bookcourt.data.api.LibraryApi
-import com.example.bookcourt.data.api.MetricsApi
-import com.example.bookcourt.data.api.SearchApi
+import com.example.bookcourt.data.api.*
 import com.example.bookcourt.data.repositories.NetworkRepository
 import com.example.bookcourt.utils.ApiUrl
 import dagger.Module
@@ -77,6 +74,19 @@ class NetworkModule {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(SearchApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideDeliveryApi(
+        client: OkHttpClient
+    ):DeliveryApi{
+        return Retrofit.Builder()
+            .baseUrl(ApiUrl.DELIVERY_URL)
+            .client(client)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(DeliveryApi::class.java)
     }
 
 }

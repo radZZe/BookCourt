@@ -123,10 +123,11 @@ object Partners{
 }
 
 object ApiUrl{
-    private const val IP = "255.255.255.0"
+    private const val IP = "192.168.0.11"
     const val METRICS_URL = "http://2f65-77-34-189-143.jp.ngrok.io/api/"
     const val BOOKS_URL = "http://10.23.2.203:5145/api/v1/"
     const val SEARCH_URL = "http://$IP:5145/api/v1/"
+    const val DELIVERY_URL = "http://$IP:5145/api/v1/"
     const val CATALOG_URL = "https://www.jsonkeeper.com/b/"
 }
 
